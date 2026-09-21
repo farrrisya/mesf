@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 50" fill="none">
+  <!-- MSN Torch Flame Insignia -->
+  <g transform="translate(6, 6)">
+    <!-- Dynamic Curves Torch -->
+    <path d="M12 36 C14 26, 20 20, 24 14 C22 22, 28 20, 30 10 C34 18, 34 28, 26 36 Z" fill="url(#msn-gold)" />
+    <circle cx="18" cy="12" r="4" fill="#F59E0B" />
+    <path d="M10 38 L28 38" stroke="#FBBF24" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <defs>
+    <linearGradient id="msn-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FDE68A" />
+      <stop offset="50%" stop-color="#FBBF24" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+  </defs>
+  <!-- Text -->
+  <text x="48" y="22" fill="#FFFFFF" font-family="Montserrat, Anton, sans-serif" font-weight="900" font-size="16" letter-spacing="1.5">MSN</text>
+  <text x="48" y="34" fill="#9CA3AF" font-family="sans-serif" font-weight="600" font-size="7.5" letter-spacing="0.5">MAJLIS SUKAN NEGARA</text>
+</svg>

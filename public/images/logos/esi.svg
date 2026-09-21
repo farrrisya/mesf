@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 50" fill="none">
+  <!-- ESI Geometric Hexagon Nodes -->
+  <g transform="translate(6, 6)">
+    <polygon points="18,4 30,11 30,25 18,32 6,25 6,11" stroke="#FBBF24" stroke-width="1.8" fill="#FBBF24" fill-opacity="0.12"/>
+    <circle cx="18" cy="18" r="4" fill="#FBBF24"/>
+    <line x1="18" y1="4" x2="18" y2="14" stroke="#FBBF24" stroke-width="1.5"/>
+    <line x1="6" y1="25" x2="14" y2="20" stroke="#FBBF24" stroke-width="1.5"/>
+    <line x1="30" y1="25" x2="22" y2="20" stroke="#FBBF24" stroke-width="1.5"/>
+  </g>
+  <!-- Text -->
+  <text x="48" y="22" fill="#FFFFFF" font-family="Montserrat, Anton, sans-serif" font-weight="900" font-size="16" letter-spacing="1.5">ESI</text>
+  <text x="48" y="34" fill="#9CA3AF" font-family="sans-serif" font-weight="600" font-size="7.5" letter-spacing="0.5">ESPORTS INTEGRATED</text>
+</svg>

@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Oswald:wght@500;700;800;900&family=Inter:wght@400;500;600;700;800;900&family=Montserrat:wght@400;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    html {
+        scroll-padding-top: clamp(75px, 10vw, 105px);
+        scrollbar-gutter: stable;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Normatica Display', 'Montserrat', sans-serif;
+    }
+    p, .prose, .prose p, .prose div, .prose li {
+        font-family: 'Normatica Display', 'Montserrat', sans-serif;
+    }
+}
+
+/* scrollbar */
+::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #475569;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #1e293b transparent;
+}
+
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.prose > :first-child {
+    margin-top: 0 !important;
+}
+.prose > :last-child {
+    margin-bottom: 0 !important;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+.animate-marquee {
+    animation: marquee 40s linear infinite;
+}
+.animate-marquee-slow {
+    animation: marquee 80s linear infinite;
+}
+.group\/marquee:hover .animate-marquee,
+.group\/marquee:hover .animate-marquee-slow {
+    animation-play-state: paused;
+}
+
+/* inline emoji images */
+.ql-editor img[src*="emoji"],
+.ql-editor img[src*="fbcdn"] {
+    display: inline-block !important;
+    height: 1.25em !important;
+    width: auto !important;
+    margin: 0 0.1em !important;
+    vertical-align: -0.2em !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* page loader */
+#nprogress {
+    pointer-events: none;
+}
+#nprogress .bar {
+    height: 3px !important;
+    background: #f59e0b !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 5px #fbbf24 !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 12px #f59e0b, 0 0 6px #fbbf24 !important;
+}
+
+
