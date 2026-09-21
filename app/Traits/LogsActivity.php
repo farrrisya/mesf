@@ -58,16 +58,12 @@ trait LogsActivity
         $names = [
             'Notice' => 'Notis & Berita',
             'Penerbitan' => 'Penerbitan',
-            'Product' => 'Produk & Perkhidmatan',
             'Document' => 'Muat Turun (Dokumen)',
             'Gallery' => 'Galeri',
             'Album' => 'Album',
-            'FinancingScheme' => 'Skim Pembiayaan',
-            'Application' => 'Permohonan',
             'Slider' => 'Slider',
-            'Faq' => 'Soalan Lazim (FAQ)',
             'Setting' => 'Tetapan Sistem',
-            'User' => 'Pengguna (Admin)',
+            'User' => 'Pengguna (Staff & Admin)',
             'Media' => 'Media',
         ];
 

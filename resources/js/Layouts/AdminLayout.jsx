@@ -34,7 +34,7 @@ const ADMIN_MENU_ITEMS = [
     { label: 'Matches', href: '/admin/matches', icon: Calendar },
     { label: 'Gallery', href: '/admin/gallery', icon: Image },
     { label: 'Documents', href: '/admin/documents', icon: FileText },
-    { label: 'FAQ', href: '/admin/faq', icon: HelpCircle },
+    { label: 'Manage Roles', href: '/admin/users', icon: UserCheck, superAdminOnly: true },
     { label: 'Settings', href: '/admin/settings', icon: SettingsIcon, superAdminOnly: true },
 ];
 

@@ -50,6 +50,17 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = Auth::user();
+        if ($user && isset($user->is_active) && !$user->is_active) {
+            Auth::logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Akaun anda telah dinyahaktifkan. Sila hubungi pihak pentadbir.',
+            ]);
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 

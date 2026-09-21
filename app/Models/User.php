@@ -26,6 +26,7 @@ class User extends Authenticatable
         'ic_number',
         'staff_id',
         'role',
+        'is_active',
         'phone_number',
         'bank_name',
         'bank_account_number',
@@ -53,11 +54,7 @@ class User extends Authenticatable
         return [ // convert
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
         ];
-    }
-
-    public function applications()
-    {
-        return $this->hasMany(Application::class); // properties
     }
 }

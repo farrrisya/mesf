@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\SettingController;
+use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\SecretariatController;
 use App\Models\Gallery;
@@ -142,12 +143,6 @@ Route::get('/hubungi-kami', function () {
     ]);
 })->name('hubungi-kami');
 
-Route::get('/faq', function () {
-    return Inertia::render('Public/FAQ', [ // screen
-        'faqs' => \App\Models\Faq::where('is_active', true)->orderBy('sort_order', 'asc')->orderBy('created_at', 'asc')->get() // state
-    ]);
-})->name('faq');
-
 Route::get('/keanggotaan', function () {
     return Inertia::render('Public/Keanggotaan');
 })->name('keanggotaan');
@@ -234,10 +229,6 @@ Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretaria
         Route::get('/documents', function () {
             return Inertia::render('Admin/Documents'); // screen
         })->name('documents');
-
-        Route::get('/faq', function () {
-            return Inertia::render('Admin/FAQ'); // screen
-        })->name('faq');
     });
 
     // Inquiries management (Secretariat, Admin, Super Admin)
@@ -249,6 +240,13 @@ Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretaria
 
     // Super Admin only routes
     Route::middleware('role:super_admin')->group(function () { // check
+        Route::get('/users', [UserManagementController::class, 'index'])->name('users.index'); // screen
+        Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create'); // screen
+        Route::post('/users', [UserManagementController::class, 'store'])->name('users.store'); // save
+        Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit'); // screen
+        Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update'); // save
+        Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy'); // save
+
         Route::get('/settings', [SettingController::class, 'index'])->name('settings'); // screen
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update'); // save
         Route::post('/sliders', [SliderController::class, 'store'])->name('sliders.store'); // save
