@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Models\Slider;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,6 +16,7 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::all()->pluck('value', 'key')->toArray(); // state
+        $sliders = Slider::orderBy('sort_order', 'asc')->orderBy('created_at', 'desc')->get(); // state
 
         // Ensure valid default asset paths if unset or corrupted
         if (empty($settings['logoUrl']) || $settings['logoUrl'] === '[object Object]' || $settings['logoUrl'] === '[object File]') {
@@ -25,7 +27,8 @@ class SettingController extends Controller
         }
 
         return Inertia::render('Admin/Settings', [ // screen
-            'settings' => $settings
+            'settings' => $settings,
+            'sliders' => $sliders
         ]);
     }
 

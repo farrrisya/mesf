@@ -25,20 +25,17 @@ const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // clock
 const WARNING_DURATION_MS = 60 * 1000; // clock
 const WARNING_THRESHOLD_MS = IDLE_TIMEOUT_MS - WARNING_DURATION_MS; // clock
 
-// super_admin / admin: full menu
+// super_admin / admin menu
 const ADMIN_MENU_ITEMS = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'News', href: '/admin/news', icon: Newspaper },
     { label: 'Leagues', href: '/admin/leagues', icon: Trophy },
     { label: 'Teams', href: '/admin/teams', icon: Users },
     { label: 'Matches', href: '/admin/matches', icon: Calendar },
-    { label: 'Gallery', href: '/galeri', icon: Image },
-    { label: 'Documents', href: '/dokumen', icon: FileText },
-    { label: 'FAQ', href: '/faq', icon: HelpCircle },
-    { label: 'Sliders', href: '/admin/settings#sliders', icon: SlidersHorizontal },
-    { label: 'Products', href: '/perkhidmatan', icon: Package },
+    { label: 'Gallery', href: '/admin/gallery', icon: Image },
+    { label: 'Documents', href: '/admin/documents', icon: FileText },
+    { label: 'FAQ', href: '/admin/faq', icon: HelpCircle },
     { label: 'Settings', href: '/admin/settings', icon: SettingsIcon, superAdminOnly: true },
-    { label: 'Members', href: '/profil', icon: UserCheck, superAdminOnly: true },
 ];
 
 // editor: News, Leagues, Teams, Matches, Gallery only
@@ -48,13 +45,13 @@ const EDITOR_MENU_ITEMS = [
     { label: 'Leagues', href: '/admin/leagues', icon: Trophy },
     { label: 'Teams', href: '/admin/teams', icon: Users },
     { label: 'Matches', href: '/admin/matches', icon: Calendar },
-    { label: 'Gallery', href: '/galeri', icon: Image },
+    { label: 'Gallery', href: '/admin/gallery', icon: Image },
 ];
 
 // secretariat: Inquiries only
 const SECRETARIAT_MENU_ITEMS = [
     { label: 'Dashboard', href: '/secretariat/dashboard', icon: LayoutDashboard },
-    { label: 'Inquiries', href: '/secretariat/dashboard', icon: MessageSquare },
+    { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
 ];
 
 // --3. main component--
@@ -84,11 +81,13 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
     const bannerUrl = props?.settings?.bannerUrl || '/images/mesf_bg_v2.jpg'; // properties
     const orgAcronym = props?.settings?.orgAcronym || 'MESF'; // properties
 
-    const defaultPortalLabel = userRole === 'editor'
-        ? `${orgAcronym} EDITOR`
-        : userRole === 'secretariat'
-            ? `${orgAcronym} SECRETARIAT`
-            : `${orgAcronym} ADMIN`;
+    const defaultPortalLabel = userRole === 'super_admin'
+        ? `${orgAcronym} SUPER ADMIN`
+        : userRole === 'editor'
+            ? `${orgAcronym} EDITOR`
+            : userRole === 'secretariat'
+                ? `${orgAcronym} SECRETARY`
+                : `${orgAcronym} ADMIN`;
 
     const displayPortalTitle = portalTitle || defaultPortalLabel;
 

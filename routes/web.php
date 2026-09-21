@@ -136,25 +136,6 @@ Route::get('/galeri/{gallery}', function (\App\Models\Gallery $gallery) {
     ]);
 })->name('galeri.show');
 
-Route::get('/perkhidmatan', function () {
-    return Inertia::render('Public/Perkhidmatan', [
-        'products' => \App\Models\Product::where('is_active', true)->orderBy('category', 'asc')->orderBy('created_at', 'asc')->get()
-    ]);
-})->name('perkhidmatan');
-
-Route::get('/perkhidmatan/pembiayaan/{subcategory}', function ($subcategory) {
-    return Inertia::render('Public/PembiayaanSubcategory', [
-        'products' => \App\Models\Product::where('is_active', true)
-            ->where('category', 'SKIM PEMBIAYAAN')
-            ->where('sub_category', $subcategory)
-            ->orderBy('created_at', 'asc')
-            ->get(),
-        'subcategoryName' => $subcategory
-    ]);
-})->name('perkhidmatan.pembiayaan');
-
-Route::get('/produk-dan-perkhidmatan/{product}', [\App\Http\Controllers\PublicProductController::class, 'show'])->name('public.produk.show');
-
 Route::get('/hubungi-kami', function () {
     return Inertia::render('Public/HubungiKami', [ // screen
         'settings' => \App\Models\Setting::all()->pluck('value', 'key') // state
@@ -211,35 +192,69 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
 })->name('dashboard');
 
 // --5. admin portal--
-Route::middleware(['auth', 'verified', 'role:admin,super_admin'])->prefix('admin')->name('admin.')->group(function () { // check
-    Route::get('/', function () {
+Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretariat'])->prefix('admin')->name('admin.')->group(function () { // check
+    Route::get('/', function (\Illuminate\Http\Request $request) {
+        $user = $request->user();
+        if ($user && $user->role === 'editor') return redirect()->route('editor.dashboard');
+        if ($user && $user->role === 'secretariat') return redirect()->route('secretariat.dashboard');
         return redirect()->route('admin.dashboard'); // redirect
     });
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Admin/Dashboard'); // screen
-    })->name('dashboard');
+    Route::middleware('role:admin,super_admin')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Admin/Dashboard'); // screen
+        })->name('dashboard');
+    });
 
-    Route::get('/news', function () {
-        return Inertia::render('Admin/News'); // screen
-    })->name('news');
+    // Content management (Admin, Super Admin, Editor)
+    Route::middleware('role:admin,super_admin,editor')->group(function () {
+        Route::get('/news', function () {
+            return Inertia::render('Admin/News'); // screen
+        })->name('news');
 
-    Route::get('/leagues', function () {
-        return Inertia::render('Admin/Leagues'); // screen
-    })->name('leagues');
+        Route::get('/leagues', function () {
+            return Inertia::render('Admin/Leagues'); // screen
+        })->name('leagues');
 
-    Route::get('/matches', function () {
-        return Inertia::render('Admin/Matches'); // screen
-    })->name('matches');
+        Route::get('/matches', function () {
+            return Inertia::render('Admin/Matches'); // screen
+        })->name('matches');
 
-    Route::get('/teams', function () {
-        return Inertia::render('Admin/Teams'); // screen
-    })->name('teams');
+        Route::get('/teams', function () {
+            return Inertia::render('Admin/Teams'); // screen
+        })->name('teams');
+
+        Route::get('/gallery', function () {
+            return Inertia::render('Admin/Gallery'); // screen
+        })->name('gallery');
+    });
+
+    // Admin & Super Admin only routes
+    Route::middleware('role:admin,super_admin')->group(function () { // check
+        Route::get('/documents', function () {
+            return Inertia::render('Admin/Documents'); // screen
+        })->name('documents');
+
+        Route::get('/faq', function () {
+            return Inertia::render('Admin/FAQ'); // screen
+        })->name('faq');
+    });
+
+    // Inquiries management (Secretariat, Admin, Super Admin)
+    Route::middleware('role:secretariat,admin,super_admin')->group(function () { // check
+        Route::get('/inquiries', function () {
+            return Inertia::render('Admin/Inquiries'); // screen
+        })->name('inquiries');
+    });
 
     // Super Admin only routes
     Route::middleware('role:super_admin')->group(function () { // check
         Route::get('/settings', [SettingController::class, 'index'])->name('settings'); // screen
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update'); // save
+        Route::post('/sliders', [SliderController::class, 'store'])->name('sliders.store'); // save
+        Route::put('/sliders/{slider}', [SliderController::class, 'update'])->name('sliders.update'); // save
+        Route::patch('/sliders/{slider}/status', [SliderController::class, 'updateStatus'])->name('sliders.status'); // save
+        Route::delete('/sliders/{slider}', [SliderController::class, 'destroy'])->name('sliders.destroy'); // save
     });
 });
 

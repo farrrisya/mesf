@@ -28,7 +28,9 @@ import {
     Plus,
     RotateCcw,
     Shield,
-    BookOpen
+    BookOpen,
+    Eye,
+    EyeOff
 } from 'lucide-react';
 
 // --2. properties--
@@ -55,6 +57,7 @@ const CATEGORY_TABS = [
     { id: 'all', label: 'All' },
     { id: 'general', label: 'General' },
     { id: 'branding', label: 'Branding' },
+    { id: 'sliders', label: 'Hero Sliders' },
     { id: 'about', label: 'About & Committee' },
     { id: 'contact', label: 'Contact' },
     { id: 'address', label: 'Address' },
@@ -163,7 +166,7 @@ const getEmbedMapSrc = (input) => {
 };
 
 // --3. main component--
-export default function Settings({ settings = {} }) {
+export default function Settings({ settings = {}, sliders = [] }) {
     const [activeTab, setActiveTab] = useState('all'); // state
     const [hoveredTab, setHoveredTab] = useState(null); // state
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 }); // state
@@ -180,10 +183,17 @@ export default function Settings({ settings = {} }) {
 
     const logoInputRef = useRef(null); // properties
     const bannerInputRef = useRef(null); // properties
+    const sliderFileInputRef = useRef(null); // properties
     const tabRefs = useRef({}); // properties
 
     const [logoFile, setLogoFile] = useState(null); // state
     const [bannerFile, setBannerFile] = useState(null); // state
+
+    const [newSliderFile, setNewSliderFile] = useState(null); // state
+    const [newSliderPreview, setNewSliderPreview] = useState(''); // state
+    const [newSliderTitle, setNewSliderTitle] = useState(''); // state
+    const [newSliderSortOrder, setNewSliderSortOrder] = useState(0); // state
+    const [isUploadingSlider, setIsUploadingSlider] = useState(false); // state
 
     const [formData, setFormData] = useState({
         orgName: settings?.orgName || '',
@@ -229,6 +239,62 @@ export default function Settings({ settings = {} }) {
     }, [activeTab, hoveredTab]);
 
     // --4. actions--
+    const handleSliderFileSelect = (e) => { // trigger
+        const file = e.target.files?.[0]; // input
+        if (file) { // check
+            setNewSliderFile(file); // save
+            setNewSliderPreview(URL.createObjectURL(file)); // convert
+        }
+    };
+
+    const handleCreateSlider = (e) => { // trigger
+        if (e) e.preventDefault(); // check
+        if (!newSliderFile) return; // check
+        setIsUploadingSlider(true); // toggle
+
+        const payload = new FormData(); // convert
+        payload.append('image', newSliderFile); // save
+        if (newSliderTitle) payload.append('title', newSliderTitle); // save
+        payload.append('sort_order', newSliderSortOrder); // save
+
+        router.post(route('admin.sliders.store'), payload, { // redirect
+            forceFormData: true,
+            preserveScroll: true,
+            onSuccess: () => { // trigger
+                setIsUploadingSlider(false); // toggle
+                setNewSliderFile(null); // save
+                setNewSliderPreview(''); // save
+                setNewSliderTitle(''); // save
+                setNewSliderSortOrder(0); // save
+                if (sliderFileInputRef.current) sliderFileInputRef.current.value = ''; // save
+            },
+            onError: () => { // error
+                setIsUploadingSlider(false); // toggle
+            }
+        });
+    };
+
+    const handleToggleSliderStatus = (slider) => { // trigger
+        router.patch(route('admin.sliders.status', slider.id), { // redirect
+            is_active: !slider.is_active // convert
+        }, {
+            preserveScroll: true
+        });
+    };
+
+    const handleDeleteSlider = (slider) => { // trigger
+        askConfirmation({
+            title: 'Delete Slider?',
+            message: `Are you sure you want to delete "${slider.title || 'this slider'}"?`,
+            confirmLabel: 'Delete Slider',
+            onConfirm: () => { // trigger
+                router.delete(route('admin.sliders.destroy', slider.id), { // redirect
+                    preserveScroll: true
+                });
+            }
+        });
+    };
+
     const askConfirmation = ({ title = 'Are you sure?', message, confirmLabel = 'Delete', onConfirm }) => { // trigger
         setConfirmModal({ // save
             isOpen: true,
@@ -740,7 +806,203 @@ export default function Settings({ settings = {} }) {
                         </div>
                     )}
 
-                    {/* 3. organization name */}
+                    {/* 3. hero sliders management */}
+                    {(activeTab === 'all' || activeTab === 'sliders') && (
+                        <div className="pb-8 border-b border-white/10 space-y-6">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                <div>
+                                    <h3 className="text-sm font-bold text-white tracking-wide">
+                                        Hero Sliders
+                                    </h3>
+                                    <p className="text-xs text-slate-400 mt-0.5">
+                                        Upload and manage rotating banner slides featured on the public homepage carousel.
+                                    </p>
+                                </div>
+                                <span className="text-[11px] font-mono px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-300 w-fit">
+                                    {sliders.length} {sliders.length === 1 ? 'Slide' : 'Slides'} Total
+                                </span>
+                            </div>
+
+                            {/* add new slider card */}
+                            <div className="rounded-2xl bg-[#070B14] border border-white/10 p-4 sm:p-5 space-y-4">
+                                <div className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                                    Add New Slide
+                                </div>
+
+                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                                    {/* image selector */}
+                                    <div className="lg:col-span-5 space-y-2">
+                                        <input
+                                            type="file"
+                                            ref={sliderFileInputRef} // properties
+                                            onChange={handleSliderFileSelect} // trigger
+                                            accept="image/*"
+                                            className="hidden"
+                                        />
+
+                                        {newSliderPreview ? (
+                                            <div className="relative rounded-xl overflow-hidden border border-white/20 aspect-[16/9] bg-black/40 group">
+                                                <img
+                                                    src={newSliderPreview}
+                                                    alt="New Slide Preview"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setNewSliderFile(null); // save
+                                                        setNewSliderPreview(''); // save
+                                                        if (sliderFileInputRef.current) sliderFileInputRef.current.value = ''; // save
+                                                    }} // trigger
+                                                    className="absolute top-2 right-2 p-1 rounded-full bg-rose-500 text-white hover:bg-rose-600 shadow transition-all cursor-pointer"
+                                                >
+                                                    <X className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            <div
+                                                onClick={() => sliderFileInputRef.current?.click()} // trigger
+                                                className="border-2 border-dashed border-white/15 hover:border-amber-400/50 rounded-xl p-5 flex flex-col items-center justify-center gap-2 bg-white/[0.01] hover:bg-amber-400/[0.02] transition-all cursor-pointer text-center aspect-[16/9]"
+                                            >
+                                                <UploadCloud className="w-6 h-6 text-amber-400" />
+                                                <div className="text-[11px] text-slate-300">
+                                                    <span className="text-amber-300 font-semibold hover:underline">Select slide image</span> (PNG, JPG, WEBP)
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* title and sort order */}
+                                    <div className="lg:col-span-7 space-y-3">
+                                        <div>
+                                            <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Slide Title / Caption (Optional)
+                                            </label>
+                                            <input
+                                                type="text"
+                                                value={newSliderTitle} // state
+                                                onChange={(e) => setNewSliderTitle(e.target.value)} // trigger
+                                                placeholder="e.g. National Esports Championship 2026"
+                                                className="w-full px-3.5 py-2 rounded-xl bg-[#0B101D] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-xs outline-none transition-all"
+                                            />
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-3 items-end">
+                                            <div>
+                                                <label className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                    Display Order
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={newSliderSortOrder} // state
+                                                    onChange={(e) => setNewSliderSortOrder(parseInt(e.target.value) || 0)} // trigger
+                                                    className="w-full px-3.5 py-2 rounded-xl bg-[#0B101D] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-xs outline-none transition-all font-mono"
+                                                />
+                                            </div>
+
+                                            <div>
+                                                <button
+                                                    type="button"
+                                                    onClick={handleCreateSlider} // trigger
+                                                    disabled={!newSliderFile || isUploadingSlider} // check
+                                                    className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 disabled:opacity-50 text-black text-xs font-bold uppercase tracking-wider shadow-md transition-all cursor-pointer"
+                                                >
+                                                    <Plus className="w-4 h-4" />
+                                                    <span>{isUploadingSlider ? 'Uploading...' : 'Add Slide'}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* existing sliders list */}
+                            <div className="space-y-3 pt-2">
+                                <div className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                                    Current Sliders ({sliders.length})
+                                </div>
+
+                                {sliders.length === 0 ? (
+                                    <div className="rounded-2xl border border-white/10 bg-[#070B14]/50 p-6 text-center text-xs text-slate-400">
+                                        No slides added yet. Use the form above to add your first hero carousel slide.
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {sliders.map((slider) => {
+                                            const slideImgUrl = slider.image_path ? (slider.image_path.startsWith('http') || slider.image_path.startsWith('/') ? slider.image_path : `/storage/${slider.image_path}`) : '/images/mesf_bg_v2.jpg'; // convert
+
+                                            return (
+                                                <div
+                                                    key={slider.id}
+                                                    className="group relative rounded-2xl bg-[#070B14] border border-white/10 overflow-hidden flex flex-col justify-between hover:border-white/25 transition-all shadow-lg"
+                                                >
+                                                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-black/50">
+                                                        <img
+                                                            src={slideImgUrl}
+                                                            alt={slider.title || 'Hero Slide'}
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                            onError={(e) => {
+                                                                e.currentTarget.onerror = null;
+                                                                e.currentTarget.src = '/images/mesf_bg_v2.jpg';
+                                                            }}
+                                                        />
+                                                        <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                                                            <span className="px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-sm text-[10px] font-mono font-bold text-white border border-white/15">
+                                                                #{slider.sort_order}
+                                                            </span>
+                                                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold backdrop-blur-sm border ${slider.is_active ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-slate-800/80 text-slate-400 border-white/10'}`}>
+                                                                {slider.is_active ? 'Active' : 'Inactive'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="p-3.5 space-y-3 flex-1 flex flex-col justify-between">
+                                                        <div>
+                                                            <h4 className="text-xs font-bold text-white line-clamp-1">
+                                                                {slider.title || 'Untitled Slide'}
+                                                            </h4>
+                                                        </div>
+
+                                                        <div className="flex items-center justify-between gap-2 pt-2 border-t border-white/10">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleToggleSliderStatus(slider)} // trigger
+                                                                className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold border transition-all cursor-pointer ${slider.is_active ? 'bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border-emerald-500/20' : 'bg-white/5 hover:bg-white/10 text-slate-400 border-white/10'}`}
+                                                            >
+                                                                {slider.is_active ? (
+                                                                    <>
+                                                                        <Eye className="w-3 h-3" />
+                                                                        <span>Active</span>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <EyeOff className="w-3 h-3" />
+                                                                        <span>Hidden</span>
+                                                                    </>
+                                                                )}
+                                                            </button>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleDeleteSlider(slider)} // trigger
+                                                                className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 border border-rose-500/20 transition-all cursor-pointer"
+                                                                title="Delete Slide"
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 4. organization name */}
                     {(activeTab === 'all' || activeTab === 'general') && (
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center pb-8 border-b border-white/10">
                             <div className="md:col-span-4 space-y-1">

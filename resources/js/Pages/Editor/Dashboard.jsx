@@ -1,99 +1,58 @@
 // --1. imports--
+import { useState } from 'react';
+import { Head, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
-import { Head, Link } from '@inertiajs/react';
-import { Newspaper, Trophy, Users, Calendar, Image, ArrowRight } from 'lucide-react';
+import {
+    LayoutDashboard,
+    Search
+} from 'lucide-react';
 
-// --2. main component--
+// --2. properties--
+
+// --3. main component--
 export default function Dashboard() {
-    const modules = [
-        {
-            title: 'News Articles',
-            description: 'Publish and curate esports editorial stories, press releases, and articles.',
-            href: '/admin/news',
-            icon: Newspaper,
-            tag: 'Editorial'
-        },
-        {
-            title: 'Leagues & Tournaments',
-            description: 'Manage sanctioned tournaments, competitive formats, and league brackets.',
-            href: '/admin/leagues',
-            icon: Trophy,
-            tag: 'Competitions'
-        },
-        {
-            title: 'Teams & Rosters',
-            description: 'Maintain national teams, state affiliates, and registered rosters.',
-            href: '/admin/teams',
-            icon: Users,
-            tag: 'Directory'
-        },
-        {
-            title: 'Match Schedules & Results',
-            description: 'Update live match scores, upcoming fixtures, and verified standings.',
-            href: '/admin/matches',
-            icon: Calendar,
-            tag: 'Fixtures'
-        },
-        {
-            title: 'Media Gallery',
-            description: 'Upload and organize official tournament albums, photos, and highlights.',
-            href: '/galeri',
-            icon: Image,
-            tag: 'Media'
-        }
-    ];
+    const { auth } = usePage().props; // properties
+    const user = auth?.user; // state
+    const [searchQuery, setSearchQuery] = useState(''); // state
 
-    // --3. UI--
+    // --4. actions--
+
+    // --5. UI--
     return (
-        <AdminLayout title="Editor Dashboard - MESF" role="editor" portalTitle="MESF EDITOR">
+        <AdminLayout title="Editor Dashboard - MESF" role="editor">
             <Head title="Editor Dashboard" />
 
             <div className="space-y-8 max-w-7xl">
-                {/* Header */}
-                <div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-wider font-heading">
-                        Editor Dashboard
-                    </h1>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-1 font-sans">
-                        Editorial and competitive content management portal for MESF esports leagues, teams, matches, news, and gallery.
-                    </p>
+                {/* search bar */}
+                <div className="p-4 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl">
+                    <div className="relative">
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                        <input
+                            type="text"
+                            value={searchQuery} // state
+                            onChange={(e) => setSearchQuery(e.target.value)} // trigger
+                            placeholder="Search news, leagues, teams, matches, gallery..."
+                            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
+                        />
+                    </div>
                 </div>
 
-                {/* Module Quick Access Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {modules.map((mod) => (
-                        <Link
-                            key={mod.title}
-                            href={mod.href} // redirect
-                            className="group relative overflow-hidden rounded-3xl border border-white/10 bg-[#090D18]/80 backdrop-blur-2xl p-6 sm:p-7 transition-all duration-300 hover:border-amber-400/40 hover:bg-[#0E1526]/90 hover:shadow-[0_15px_35px_rgba(0,0,0,0.6)] cursor-pointer flex flex-col justify-between"
-                        >
-                            <div>
-                                <div className="flex items-start justify-between">
-                                    <div className="p-3.5 rounded-2xl bg-white/5 border border-white/10 text-amber-400 group-hover:bg-amber-400/10 group-hover:border-amber-400/30 transition-all duration-300">
-                                        <mod.icon className="w-5 h-5" />
-                                    </div>
-                                    <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-neutral-400 group-hover:text-amber-400 transition-colors">
-                                        Open
-                                        <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
-                                    </span>
-                                </div>
+                {/* Dashboard Overview Section */}
+                <div className="space-y-6 animate-fadeIn">
+                    <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-2xl text-center space-y-4">
+                        <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
+                            <LayoutDashboard className="w-8 h-8" />
+                        </div>
 
-                                <div className="mt-5 space-y-1.5">
-                                    <h2 className="text-base sm:text-lg font-bold text-white tracking-wide group-hover:text-amber-300 transition-colors">
-                                        {mod.title}
-                                    </h2>
-                                    <p className="text-xs text-slate-400 leading-relaxed font-normal">
-                                        {mod.description}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between text-xs">
-                                <span className="font-semibold text-amber-400">{mod.tag}</span>
-                                <span className="text-neutral-400">MESF Portal</span>
-                            </div>
-                        </Link>
-                    ))}
+                        <div className="space-y-1.5 max-w-md mx-auto">
+                            <h3 className="text-lg font-bold text-white tracking-wide">
+                                Editor Dashboard
+                            </h3>
+                            <p className="text-xs text-slate-400 leading-relaxed font-normal">
+                                Welcome, {user?.name || 'Editor'}. This workspace is ready for your editorial widgets and content design.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </AdminLayout>

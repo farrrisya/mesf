@@ -31,7 +31,7 @@ export default function Login({ status, canResetPassword }) {
     // --4. UI--
     return (
         <div className="relative min-h-screen w-full font-sans bg-[#070B14] text-white selection:bg-amber-400 selection:text-black overflow-x-hidden flex flex-col justify-between items-center py-6 sm:py-8 px-4 sm:px-6">
-            <Head title="Admin Portal Sign In - MESF" />
+            <Head title="Management Portal Sign In - MESF" />
 
             {/* texture effect */}
             <div
@@ -102,10 +102,10 @@ export default function Login({ status, canResetPassword }) {
                         {orgName}
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
-                        Admin Portal
+                        Management Portal
                     </h1>
                     <p className="text-sm text-slate-400 mt-1 font-medium">
-                        Enter your credentials to access the console
+                        Enter your credentials to access the management portal
                     </p>
                 </div>
 

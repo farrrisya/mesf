@@ -3,6 +3,7 @@
 // --1. imports--
 namespace App\Http\Controllers;
 
+use App\Models\Setting;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -14,6 +15,14 @@ class SecretariatController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Secretariat/Dashboard'); // screen
+        $settings = Setting::pluck('value', 'key')->all(); // state
+
+        return Inertia::render('Secretariat/Dashboard', [ // screen
+            'inquiryChannels' => [
+                'generalEmail' => $settings['email_general'] ?? 'inquiry@mesf.my',
+                'mediaEmail' => $settings['email_media'] ?? 'media@mesf.my',
+                'phone' => $settings['phone'] ?? '+603-0000 0000',
+            ]
+        ]);
     }
 }

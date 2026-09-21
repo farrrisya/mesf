@@ -47,7 +47,7 @@ class SliderController extends Controller
             'is_active' => true,
         ]);
 
-        return redirect()->route('admin.sliders.index')->with('success', 'Slider berjaya ditambah.');
+        return redirect()->back()->with('success', 'Slider berjaya ditambah.');
     }
 
     public function edit(Slider $slider)

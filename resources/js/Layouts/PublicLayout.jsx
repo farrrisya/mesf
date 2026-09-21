@@ -180,15 +180,6 @@ export default function PublicLayout({ auth = {}, isHome = false, hideNavbar = f
                                                 </Link>
                                             </li>
 
-
-
-                                            {/* Perkhidmatan */}
-                                            <li className="relative group/item">
-                                                <Link href={route('perkhidmatan')} className={`relative flex items-center py-1 transition-colors duration-300 ${getLinkStyle('/perkhidmatan')}`}>
-                                                    Perkhidmatan
-                                                </Link>
-                                            </li>
-
                                             {/* Dokumen */}
                                             <li className="relative group/item">
                                                 <Link href={route('dokumen')} className={`relative flex items-center py-1 transition-colors duration-300 ${getLinkStyle('/dokumen')}`}>
@@ -326,10 +317,6 @@ export default function PublicLayout({ auth = {}, isHome = false, hideNavbar = f
                                      <Link href={route('profil')} className="group flex items-center justify-center sm:justify-start gap-1.5" /* redirect */>
                                          <svg className="w-3 h-3 text-slate-500 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
                                          Profil
-                                     </Link>
-                                     <Link href={route('perkhidmatan')} className="group flex items-center justify-center sm:justify-start gap-1.5" /* redirect */>
-                                         <svg className="w-3 h-3 text-slate-500 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
-                                         Perkhidmatan
                                      </Link>
                                      <Link href={route('dokumen')} className="group flex items-center justify-center sm:justify-start gap-1.5" /* redirect */>
                                          <svg className="w-3 h-3 text-slate-500 transform group-hover:translate-x-1 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
@@ -486,14 +473,6 @@ export default function PublicLayout({ auth = {}, isHome = false, hideNavbar = f
                         <Link href={route('home')} className="block py-3 border-b border-slate-100 transition-colors hover:opacity-50 text-slate-800" onClick={() => setIsSidebarOpen(false)}>Utama</Link>
 
                         <Link href={route('profil')} className="block py-3 border-b border-slate-100 transition-colors hover:opacity-50 text-slate-800" onClick={() => setIsSidebarOpen(false)}>Profil</Link>
-
-
-
-                        <div className="border-b border-slate-100">
-                            <Link href={route('perkhidmatan')} className="block w-full py-3 transition-colors hover:opacity-50 text-slate-800" onClick={() => setIsSidebarOpen(false)}>
-                                Perkhidmatan
-                            </Link>
-                        </div>
 
                         <div className="border-b border-slate-100">
                             <Link href={route('dokumen')} className="block w-full py-3 transition-colors hover:opacity-50 text-slate-800" onClick={() => setIsSidebarOpen(false)}>
