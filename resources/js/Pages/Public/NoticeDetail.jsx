@@ -7,7 +7,7 @@ import 'react-quill/dist/quill.snow.css';
 export default function NoticeDetail({ auth, notice }) {
     return (
         <PublicLayout auth={auth}>
-            <Head title={`${notice.title} - Kopmedia`} />
+            <Head title={`${notice.title} - MESF`} />
 
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-slate-900 text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">

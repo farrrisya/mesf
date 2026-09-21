@@ -24,11 +24,11 @@ export default function Register() {
 
     return (
         <GuestLayout>
-            <Head title="Daftar Ahli - Kopmedia" />
+            <Head title="Daftar Ahli - MESF" />
 
             <div className="mb-6 text-center">
                 <h2 className="text-xl font-black text-[#0a192f] uppercase tracking-wide">Pendaftaran Anggota</h2>
-                <p className="text-xs text-slate-400 mt-1">Sila isi borang di bawah untuk memohon sebagai anggota koperasi.</p>
+                <p className="text-xs text-slate-400 mt-1">Sila isi borang di bawah untuk memohon sebagai anggota MESF.</p>
             </div>
 
             <form onSubmit={submit} className="space-y-4">

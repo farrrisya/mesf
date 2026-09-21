@@ -3,7 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import PublicLayout from '@/Layouts/PublicLayout';
 
 // --2. main component--
-export default function Penerbitan({ auth, buletinKopmedia, buletinKontemporari, laporanTahunan }) {
+export default function Penerbitan({ auth, buletinKontemporari, laporanTahunan }) {
     
     // Smooth scroll handler for anchor links
     const handleSmoothScroll = (e, id) => {
@@ -119,7 +119,7 @@ export default function Penerbitan({ auth, buletinKopmedia, buletinKontemporari,
 
     return (
         <PublicLayout auth={auth}>
-            <Head title="Penerbitan - Kopmedia" />
+            <Head title="Penerbitan - MESF" />
 
             {/* Hero Section */}
             <div className="relative overflow-hidden bg-slate-900 text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">
@@ -144,14 +144,6 @@ export default function Penerbitan({ auth, buletinKopmedia, buletinKontemporari,
                     {/* Horizontal Menu */}
                     <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 mt-2">
                         <a 
-                            href="#buletin-kopmedia" 
-                            onClick={(e) => handleSmoothScroll(e, 'buletin-kopmedia')}
-                            className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-300"
-                        >
-                            Buletin Kopmedia
-                        </a>
-                        <span className="text-white/20 text-xs hidden sm:block">•</span>
-                        <a 
                             href="#buletin-kontemporari" 
                             onClick={(e) => handleSmoothScroll(e, 'buletin-kontemporari')}
                             className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-300"
@@ -171,27 +163,6 @@ export default function Penerbitan({ auth, buletinKopmedia, buletinKontemporari,
             </div>
 
             <main className="max-w-[1350px] mx-auto px-4 md:px-8 pt-10 md:pt-16 pb-16 md:pb-20 space-y-16 md:space-y-24">
-                
-                {/* No Intro Text */}
-
-                {/* Buletin Kopmedia Section */}
-                <section id="buletin-kopmedia" className="scroll-mt-28">
-                    <div className="mb-10 flex items-center gap-4">
-                        <div className="h-px bg-slate-200 flex-1"></div>
-                        <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-wide uppercase">
-                            Buletin Kopmedia
-                        </h2>
-                        <div className="h-px bg-slate-200 flex-1"></div>
-                    </div>
-                    
-                    {buletinKopmedia && buletinKopmedia.length > 0 ? (
-                        <PosterGrid items={buletinKopmedia} />
-                    ) : (
-                        <div className="py-12 text-center text-slate-500 font-medium bg-slate-50 rounded border border-slate-100 max-w-4xl mx-auto text-sm">
-                            Tiada buletin direkodkan.
-                        </div>
-                    )}
-                </section>
 
                 {/* Buletin Kontemporari Section */}
                 <section id="buletin-kontemporari" className="scroll-mt-28">
@@ -235,3 +206,4 @@ export default function Penerbitan({ auth, buletinKopmedia, buletinKontemporari,
         </PublicLayout>
     );
 }
+

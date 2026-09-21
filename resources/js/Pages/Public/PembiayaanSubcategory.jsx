@@ -6,7 +6,7 @@ export default function PembiayaanSubcategory({ auth, products = [], subcategory
   // --2. UI--
   return (
     <PublicLayout auth={auth}>
-      <Head title={`${subcategoryName} - Kopmedia`} />
+      <Head title={`${subcategoryName} - MESF`} />
       
       {/* Header section */}
       <div className="relative overflow-hidden bg-[#0a192f] text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">

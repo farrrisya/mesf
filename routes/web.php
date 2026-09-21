@@ -2,7 +2,6 @@
 
 // --1. imports--
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\NoticeController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\AlbumController;
@@ -174,7 +173,6 @@ Route::get('/keanggotaan', function () {
 
 Route::get('/penerbitan', function () {
     return Inertia::render('Public/Penerbitan', [ // screen
-        'buletinKopmedia' => \App\Models\Penerbitan::where('is_active', true)->where('category', 'buletin')->where('sub_category', 'kopmedia')->orderBy('created_at', 'desc')->get(), // state
         'buletinKontemporari' => \App\Models\Penerbitan::where('is_active', true)->where('category', 'buletin')->where('sub_category', 'kontemporari')->orderBy('created_at', 'desc')->get(), // state
         'laporanTahunan' => \App\Models\Penerbitan::where('is_active', true)->where('category', 'laporan')->orderBy('created_at', 'desc')->get() // state
     ]);
@@ -193,10 +191,6 @@ Route::middleware('auth')->group(function () { // check
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::get('/login', function () {
-    return redirect('/admin'); // redirect
 });
 
 // --4. member portal / generic dashboard redirection--

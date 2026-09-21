@@ -26,7 +26,7 @@ export default function JadualBayaranBalik({ auth, documents = [] }) {
   // --5. UI--
   return (
     <PublicLayout auth={auth}>
-      <Head title="Jadual Bayaran Balik - Kopmedia" />
+      <Head title="Jadual Bayaran Balik - MESF" />
       <div className="max-w-[1350px] mx-auto px-4 md:px-8 py-8 md:py-10 text-left border-b border-slate-300">
         <h1 className="text-3xl md:text-4xl font-black mt-2 text-slate-900 leading-tight">
           Jadual Bayaran Balik <span className="text-slate-900">Pembiayaan</span>

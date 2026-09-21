@@ -51,7 +51,7 @@ export default function ProdukShow({ auth, product }) {
 
   return (
     <PublicLayout auth={auth}>
-      <Head title={`${product.title || product.category} - Kopmedia`} />
+      <Head title={`${product.title || product.category} - MESF`} />
       
       {/* Background Container */}
       <div className="bg-[#f4f7fb] min-h-screen pb-24 font-sans">

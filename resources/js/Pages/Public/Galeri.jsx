@@ -160,7 +160,7 @@ export default function Galeri({ auth, galleries = [], albums = [] }) {
 
     return (
         <PublicLayout auth={auth}>
-            <Head title="Galeri - Kopmedia" />
+            <Head title="Galeri - MESF" />
 
             {/* Header Section */}
             <div className="relative overflow-hidden bg-[#0a192f] text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">

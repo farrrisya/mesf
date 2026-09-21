@@ -38,7 +38,7 @@ const ADMIN_MENU_ITEMS = [
     { label: 'Sliders', href: '/admin/settings#sliders', icon: SlidersHorizontal },
     { label: 'Products', href: '/perkhidmatan', icon: Package },
     { label: 'Settings', href: '/admin/settings', icon: SettingsIcon, superAdminOnly: true },
-    { label: 'Members', href: '/profil', icon: UserCheck },
+    { label: 'Members', href: '/profil', icon: UserCheck, superAdminOnly: true },
 ];
 
 // editor: News, Leagues, Teams, Matches, Gallery only

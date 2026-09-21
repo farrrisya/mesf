@@ -27,7 +27,7 @@ class PenerbitanController extends Controller
         $validated = $request->validate([ // validate
             'title' => 'required|string|max:255',
             'category' => 'required|in:buletin,laporan',
-            'sub_category' => 'nullable|required_if:category,buletin|in:kopmedia,kontemporari',
+            'sub_category' => 'nullable|required_if:category,buletin|in:kontemporari',
             'media_type' => 'required|in:file,url,media',
             'file' => 'required_if:media_type,file|nullable|file|max:40960',
             'url_link' => 'required_if:media_type,url|nullable|url|max:255',
@@ -70,7 +70,7 @@ class PenerbitanController extends Controller
         $validated = $request->validate([ // validate
             'title' => 'required|string|max:255',
             'category' => 'required|in:buletin,laporan',
-            'sub_category' => 'nullable|required_if:category,buletin|in:kopmedia,kontemporari',
+            'sub_category' => 'nullable|required_if:category,buletin|in:kontemporari',
             'media_type' => 'required|in:file,url,media',
             'file' => 'required_if:media_type,file|nullable|file|max:40960',
             'url_link' => 'required_if:media_type,url|nullable|url|max:255',

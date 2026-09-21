@@ -7,7 +7,7 @@ export default function Keanggotaan() {
     // --2. UI--
     return (
         <PublicLayout isHome={false}>
-            <Head title="Keanggotaan - Kopmedia" />
+            <Head title="Keanggotaan - MESF" />
             
             {/* Header Section */}
             <div className="relative overflow-hidden bg-[#0a192f] text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">

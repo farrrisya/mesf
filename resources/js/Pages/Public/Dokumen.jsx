@@ -211,7 +211,7 @@ export default function Dokumen({ auth, documents = [] }) {
     // --2. UI--
     return (
         <PublicLayout auth={auth}>
-            <Head title="Dokumen & Muat Turun - Kopmedia" />
+            <Head title="Dokumen & Muat Turun - MESF" />
 
             <div className="bg-[#f4f7fb] min-h-screen pb-24">
                 {/* Header section */}

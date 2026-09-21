@@ -14,7 +14,7 @@ export default function FAQ({ auth, faqs = [] }) {
 
   return (
     <PublicLayout auth={auth}>
-      <Head title="Soalan Lazim (FAQ) - Kopmedia" />
+      <Head title="Soalan Lazim (FAQ) - MESF" />
 
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-slate-900 text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">

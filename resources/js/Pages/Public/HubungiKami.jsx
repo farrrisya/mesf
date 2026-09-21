@@ -26,7 +26,7 @@ export default function HubungiKami({ auth, settings = {} }) {
 
   return (
     <PublicLayout auth={auth}>
-      <Head title="Hubungi Kami - Kopmedia" />
+      <Head title="Hubungi Kami - MESF" />
 
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-[#0a192f] text-white min-h-[220px] md:min-h-[280px] flex items-center justify-center">

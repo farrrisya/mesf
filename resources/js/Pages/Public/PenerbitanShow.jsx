@@ -6,7 +6,7 @@ import PublicLayout from '@/Layouts/PublicLayout';
 export default function PenerbitanShow({ auth, penerbitan }) {
     return (
         <PublicLayout auth={auth}>
-            <Head title={`${penerbitan.title} - Kopmedia`} />
+            <Head title={`${penerbitan.title} - MESF`} />
 
             <div className="max-w-[1350px] mx-auto px-4 md:px-8 py-8 md:py-10 text-left border-b border-slate-300">
 

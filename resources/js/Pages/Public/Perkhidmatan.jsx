@@ -224,7 +224,7 @@ export default function Perkhidmatan({ auth, products = [] }) {
     // --3. UI--
     return (
         <PublicLayout auth={auth}>
-            <Head title="Perkhidmatan - Kopmedia" />
+            <Head title="Perkhidmatan - MESF" />
 
             {/* Soft icy blue background for the entire page body */}
             <div className="bg-[#f4f7fb] min-h-screen pb-24">
@@ -511,7 +511,7 @@ export default function Perkhidmatan({ auth, products = [] }) {
                     <div className="mt-16 bg-gradient-to-br from-[#0a192f] to-[#112a4f] rounded-2xl p-7 md:p-10 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-md border border-slate-800">
                         <div className="space-y-1.5 text-center md:text-left">
                             <h3 className="text-xl md:text-2xl font-black tracking-tight">Perlukan Bantuan atau Pertanyaan Lanjut?</h3>
-                            <p className="text-xs md:text-sm text-slate-300 max-w-xl leading-relaxed">Pegawai perkhidmatan anggota KOPMEDIA sedia membantu menjawab sebarang pertanyaan mengenai kemudahan dan perkhidmatan kami.</p>
+                            <p className="text-xs md:text-sm text-slate-300 max-w-xl leading-relaxed">Pegawai perkhidmatan MESF sedia membantu menjawab sebarang pertanyaan mengenai kemudahan dan perkhidmatan kami.</p>
                         </div>
                         <div className="flex items-center gap-3 shrink-0">
                             <Link href={route('faq')} className="px-5 py-2.5 rounded-xl border border-white/20 hover:bg-white/10 text-xs font-bold uppercase tracking-wider transition-all" /* redirect */>

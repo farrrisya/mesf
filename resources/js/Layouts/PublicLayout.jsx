@@ -234,12 +234,12 @@ export default function PublicLayout({ auth = {}, isHome = false, hideNavbar = f
                                 <div className="flex items-center gap-4 transition-opacity duration-300 hover:opacity-80">
                                     <img
                                         src="/logo.png"
-                                        alt="Kopmedia Logo"
+                                        alt="MESF Logo"
                                         className="h-16 w-auto object-contain drop-shadow-sm brightness-[2] drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]"
                                     />
                                     <div className="text-left">
-                                        <span className="font-black text-white tracking-wide text-xl block leading-none mb-1">KOPMEDIA</span>
-                                        <span className="text-[10px] text-red-600 font-bold uppercase tracking-widest block leading-tight">Koperasi Media Prima Berhad</span>
+                                        <span className="font-black text-white tracking-wide text-xl block leading-none mb-1">MESF</span>
+                                        <span className="text-[10px] text-red-600 font-bold uppercase tracking-widest block leading-tight">Malaysia Esports Federation</span>
                                     </div>
                                 </div>
                                 
@@ -449,7 +449,7 @@ export default function PublicLayout({ auth = {}, isHome = false, hideNavbar = f
                     {/* Footer Bottom */}
                     <div className="bg-transparent py-6 border-t border-slate-800">
                         <div className="max-w-[1350px] mx-auto px-4 md:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium text-slate-500">
-                            <p className="text-center md:text-left">© Koperasi Media Prima Berhad. Hak cipta terpelihara.</p>
+                            <p className="text-center md:text-left">© MESF. Hak cipta terpelihara.</p>
                             <button onClick={scrollToTop} className="group flex items-center gap-2 font-normal text-slate-500 hover:text-slate-300 transition-colors">
                                 Kembali ke Atas
                                 <svg className="w-4 h-4 group-hover:-translate-y-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" /></svg>

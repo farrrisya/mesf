@@ -14,7 +14,7 @@ export default {
     theme: {
         extend: {
             colors: {
-                // Override all amber classes to a custom Kopmedia yellow-orange
+                // Override all amber classes to a custom MESF yellow-orange
                 amber: {
                     50: '#fff8eb',
                     100: '#ffefc6',
