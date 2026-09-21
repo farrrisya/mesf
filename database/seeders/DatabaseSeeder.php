@@ -19,20 +19,12 @@ class DatabaseSeeder extends Seeder
     {
         // 1. Seed Users
         User::updateOrCreate(
-            ['email' => 'super_admin@mesf.my'],
-            [
-                'name' => 'MESF Super Admin',
-                'password' => Hash::make('mesfmy'),
-                'role' => 'super_admin',
-            ]
-        );
-
-        User::updateOrCreate(
             ['email' => 'admin@mesf.my'],
             [
                 'name' => 'MESF Administrator',
                 'password' => Hash::make('mesfmy'),
                 'role' => 'admin',
+                'is_active' => true,
             ]
         );
 

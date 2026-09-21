@@ -38,7 +38,7 @@ class UserManagementController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => ['required', Rule::in(['super_admin', 'admin', 'editor', 'secretariat'])],
+            'role' => ['required', Rule::in(['admin', 'editor', 'secretariat'])],
         ]);
 
         User::create([ // save
@@ -79,19 +79,19 @@ class UserManagementController extends Controller
         }
 
         $validated = $request->validate([ // validate
-            'role' => ['required', Rule::in(['super_admin', 'admin', 'editor', 'secretariat'])],
+            'role' => ['required', Rule::in(['admin', 'editor', 'secretariat'])],
             'is_active' => 'required|boolean',
         ]);
 
-        // safeguard: cannot remove the last super admin
-        if ($user->role === 'super_admin' && ($validated['role'] !== 'super_admin' || !$validated['is_active'])) { // check
-            $otherSuperAdminsCount = User::where('role', 'super_admin')
+        // safeguard: cannot remove the last admin
+        if ($user->role === 'admin' && ($validated['role'] !== 'admin' || !$validated['is_active'])) { // check
+            $otherAdminsCount = User::where('role', 'admin')
                 ->where('is_active', true)
                 ->where('id', '!=', $user->id)
                 ->count(); // check
 
-            if ($otherSuperAdminsCount === 0) { // check
-                return back()->withErrors(['error' => 'Cannot remove the last Super Admin.']); // error
+            if ($otherAdminsCount === 0) { // check
+                return back()->withErrors(['error' => 'Cannot remove the last Admin.']); // error
             }
         }
 
@@ -115,14 +115,14 @@ class UserManagementController extends Controller
             return back()->withErrors(['error' => 'You cannot delete your own account while logged in.']); // error
         }
 
-        // safeguard 2: cannot delete the last super admin
-        if ($user->role === 'super_admin') { // check
-            $otherSuperAdminsCount = User::where('role', 'super_admin')
+        // safeguard 2: cannot delete the last admin
+        if ($user->role === 'admin') { // check
+            $otherAdminsCount = User::where('role', 'admin')
                 ->where('id', '!=', $user->id)
                 ->count(); // check
 
-            if ($otherSuperAdminsCount === 0) { // check
-                return back()->withErrors(['error' => 'Cannot remove the last Super Admin.']); // error
+            if ($otherAdminsCount === 0) { // check
+                return back()->withErrors(['error' => 'Cannot remove the last Admin.']); // error
             }
         }
 

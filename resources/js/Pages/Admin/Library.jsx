@@ -11,14 +11,14 @@ import {
 // --2. properties--
 
 // --3. main component--
-export default function Gallery() {
+export default function Library() {
     // --4. actions--
     const [searchQuery, setSearchQuery] = useState(''); // state
 
     // --5. UI--
     return (
-        <AdminLayout title="Gallery Management - MESF Admin">
-            <Head title="Gallery Management - Admin" />
+        <AdminLayout title="Library Management - MESF Admin">
+            <Head title="Library Management - Admin" />
 
             <div className="space-y-8 max-w-7xl">
                 {/* search bar */}
@@ -29,13 +29,13 @@ export default function Gallery() {
                             type="text"
                             value={searchQuery} // state
                             onChange={(e) => setSearchQuery(e.target.value)} // trigger
-                            placeholder="Search photo albums, tournament galleries, media..."
+                            placeholder="Search media library, photo albums, tournament assets..."
                             className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
                         />
                     </div>
                 </div>
 
-                {/* Media Gallery Section */}
+                {/* Media Library Section */}
                 <div className="space-y-6 animate-fadeIn">
                     <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-2xl text-center space-y-4">
                         <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
@@ -44,10 +44,10 @@ export default function Gallery() {
 
                         <div className="space-y-1.5 max-w-md mx-auto">
                             <h3 className="text-lg font-bold text-white tracking-wide">
-                                Media Gallery Section
+                                Media Library Section
                             </h3>
                             <p className="text-xs text-slate-400 leading-relaxed font-normal">
-                                Manage official tournament photography, highlight albums, and media assets.
+                                Manage official tournament photography, media library albums, and visual assets.
                             </p>
                         </div>
 

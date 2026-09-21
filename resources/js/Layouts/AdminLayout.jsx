@@ -9,12 +9,10 @@ import {
     Calendar,
     Image,
     FileText,
-    HelpCircle,
-    SlidersHorizontal,
-    Package,
     Settings as SettingsIcon,
     UserCheck,
     MessageSquare,
+    Activity,
     LogOut,
     Menu,
     X
@@ -25,27 +23,29 @@ const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // clock
 const WARNING_DURATION_MS = 60 * 1000; // clock
 const WARNING_THRESHOLD_MS = IDLE_TIMEOUT_MS - WARNING_DURATION_MS; // clock
 
-// super_admin / admin menu
+// admin menu (full menu)
 const ADMIN_MENU_ITEMS = [
     { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
     { label: 'News', href: '/admin/news', icon: Newspaper },
     { label: 'Leagues', href: '/admin/leagues', icon: Trophy },
     { label: 'Teams', href: '/admin/teams', icon: Users },
     { label: 'Matches', href: '/admin/matches', icon: Calendar },
-    { label: 'Gallery', href: '/admin/gallery', icon: Image },
+    { label: 'Library', href: '/admin/library', icon: Image },
     { label: 'Documents', href: '/admin/documents', icon: FileText },
-    { label: 'Manage Roles', href: '/admin/users', icon: UserCheck, superAdminOnly: true },
-    { label: 'Settings', href: '/admin/settings', icon: SettingsIcon, superAdminOnly: true },
+    { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
+    { label: 'Activity Logs', href: '/admin/activity-logs', icon: Activity },
+    { label: 'Manage Roles', href: '/admin/users', icon: UserCheck },
+    { label: 'Settings', href: '/admin/settings', icon: SettingsIcon },
 ];
 
-// editor: News, Leagues, Teams, Matches, Gallery only
+// editor: News, Leagues, Teams, Matches, Library only
 const EDITOR_MENU_ITEMS = [
     { label: 'Dashboard', href: '/editor/dashboard', icon: LayoutDashboard },
     { label: 'News', href: '/admin/news', icon: Newspaper },
     { label: 'Leagues', href: '/admin/leagues', icon: Trophy },
     { label: 'Teams', href: '/admin/teams', icon: Users },
     { label: 'Matches', href: '/admin/matches', icon: Calendar },
-    { label: 'Gallery', href: '/admin/gallery', icon: Image },
+    { label: 'Library', href: '/admin/library', icon: Image },
 ];
 
 // secretariat: Inquiries only
@@ -62,7 +62,6 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
     const [countdownSeconds, setCountdownSeconds] = useState(60); // state
 
     const userRole = role || props?.auth?.user?.role || 'admin'; // state
-    const isSuperAdmin = userRole === 'super_admin'; // check
 
     let displayMenuItems = menuItems;
     if (!displayMenuItems) {
@@ -71,9 +70,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
         } else if (userRole === 'secretariat') {
             displayMenuItems = SECRETARIAT_MENU_ITEMS;
         } else {
-            displayMenuItems = ADMIN_MENU_ITEMS.filter(
-                (item) => !item.superAdminOnly || isSuperAdmin
-            );
+            displayMenuItems = ADMIN_MENU_ITEMS;
         }
     }
 
@@ -81,13 +78,11 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
     const bannerUrl = props?.settings?.bannerUrl || '/images/mesf_bg_v2.jpg'; // properties
     const orgAcronym = props?.settings?.orgAcronym || 'MESF'; // properties
 
-    const defaultPortalLabel = userRole === 'super_admin'
-        ? `${orgAcronym} SUPER ADMIN`
-        : userRole === 'editor'
-            ? `${orgAcronym} EDITOR`
-            : userRole === 'secretariat'
-                ? `${orgAcronym} SECRETARY`
-                : `${orgAcronym} ADMIN`;
+    const defaultPortalLabel = userRole === 'editor'
+        ? `${orgAcronym} EDITOR`
+        : userRole === 'secretariat'
+            ? `${orgAcronym} SECRETARY`
+            : `${orgAcronym} ADMIN`;
 
     const displayPortalTitle = portalTitle || defaultPortalLabel;
 

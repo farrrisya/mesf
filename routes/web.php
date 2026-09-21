@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\SecretariatController;
 use App\Models\Gallery;
@@ -173,7 +174,7 @@ Route::middleware('auth')->group(function () { // check
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
     $user = $request->user(); // state
     if ($user) { // check
-        if ($user->role === 'super_admin' || $user->role === 'admin') { // check
+        if ($user->role === 'admin') { // check
             return redirect()->route('admin.dashboard'); // redirect
         }
         if ($user->role === 'editor') { // check
@@ -187,7 +188,7 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
 })->name('dashboard');
 
 // --5. admin portal--
-Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretariat'])->prefix('admin')->name('admin.')->group(function () { // check
+Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix('admin')->name('admin.')->group(function () { // check
     Route::get('/', function (\Illuminate\Http\Request $request) {
         $user = $request->user();
         if ($user && $user->role === 'editor') return redirect()->route('editor.dashboard');
@@ -195,14 +196,14 @@ Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretaria
         return redirect()->route('admin.dashboard'); // redirect
     });
 
-    Route::middleware('role:admin,super_admin')->group(function () {
+    Route::middleware('role:admin')->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('Admin/Dashboard'); // screen
         })->name('dashboard');
     });
 
-    // Content management (Admin, Super Admin, Editor)
-    Route::middleware('role:admin,super_admin,editor')->group(function () {
+    // Content management (Admin, Editor)
+    Route::middleware('role:admin,editor')->group(function () {
         Route::get('/news', function () {
             return Inertia::render('Admin/News'); // screen
         })->name('news');
@@ -219,27 +220,29 @@ Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretaria
             return Inertia::render('Admin/Teams'); // screen
         })->name('teams');
 
-        Route::get('/gallery', function () {
-            return Inertia::render('Admin/Gallery'); // screen
-        })->name('gallery');
+        Route::get('/library', function () {
+            return Inertia::render('Admin/Library'); // screen
+        })->name('library');
     });
 
-    // Admin & Super Admin only routes
-    Route::middleware('role:admin,super_admin')->group(function () { // check
+    // Documents management (Admin only)
+    Route::middleware('role:admin')->group(function () { // check
         Route::get('/documents', function () {
             return Inertia::render('Admin/Documents'); // screen
         })->name('documents');
     });
 
-    // Inquiries management (Secretariat, Admin, Super Admin)
-    Route::middleware('role:secretariat,admin,super_admin')->group(function () { // check
+    // Inquiries management (Secretariat, Admin)
+    Route::middleware('role:secretariat,admin')->group(function () { // check
         Route::get('/inquiries', function () {
             return Inertia::render('Admin/Inquiries'); // screen
         })->name('inquiries');
     });
 
-    // Super Admin only routes
-    Route::middleware('role:super_admin')->group(function () { // check
+    // Admin top-level routes
+    Route::middleware('role:admin')->group(function () { // check
+        Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index'); // screen
+
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index'); // screen
         Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create'); // screen
         Route::post('/users', [UserManagementController::class, 'store'])->name('users.store'); // save
@@ -257,7 +260,7 @@ Route::middleware(['auth', 'verified', 'role:admin,super_admin,editor,secretaria
 });
 
 // --6. editor portal--
-Route::middleware(['auth', 'verified', 'role:editor,super_admin'])->prefix('editor')->name('editor.')->group(function () { // check
+Route::middleware(['auth', 'verified', 'role:editor,admin'])->prefix('editor')->name('editor.')->group(function () { // check
     Route::get('/', function () {
         return redirect()->route('editor.dashboard'); // redirect
     });
@@ -266,7 +269,7 @@ Route::middleware(['auth', 'verified', 'role:editor,super_admin'])->prefix('edit
 });
 
 // --7. secretariat portal--
-Route::middleware(['auth', 'verified', 'role:secretariat,super_admin'])->prefix('secretariat')->name('secretariat.')->group(function () { // check
+Route::middleware(['auth', 'verified', 'role:secretariat,admin'])->prefix('secretariat')->name('secretariat.')->group(function () { // check
     Route::get('/', function () {
         return redirect()->route('secretariat.dashboard'); // redirect
     });
@@ -275,3 +278,4 @@ Route::middleware(['auth', 'verified', 'role:secretariat,super_admin'])->prefix(
 });
 
 require __DIR__.'/auth.php';
+

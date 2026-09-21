@@ -12,9 +12,8 @@ import {
 
 // --2. properties--
 const ROLES = [
-    { value: 'super_admin', label: 'Super Admin', desc: 'Full unrestricted system access, system settings & role management.' },
-    { value: 'admin', label: 'Admin', desc: 'Full administration except settings and user role management.' },
-    { value: 'editor', label: 'Editor', desc: 'Manage editorial content, news, leagues, matches, teams, and gallery.' },
+    { value: 'admin', label: 'Admin', desc: 'Full administration, system settings, activity logs & role management.' },
+    { value: 'editor', label: 'Editor', desc: 'Manage editorial content, news, leagues, matches, teams, and library.' },
     { value: 'secretariat', label: 'Secretariat', desc: 'Manage official inquiries, incoming correspondence, and secretariat desk.' }
 ];
 

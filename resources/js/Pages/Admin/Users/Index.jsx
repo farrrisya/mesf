@@ -18,13 +18,9 @@ import {
 
 // --2. properties--
 const ROLE_BADGES = {
-    super_admin: {
-        label: 'Super Admin',
-        badge: 'bg-amber-400/20 text-amber-300 border-amber-400/30'
-    },
     admin: {
         label: 'Admin',
-        badge: 'bg-sky-400/20 text-sky-300 border-sky-400/30'
+        badge: 'bg-amber-400/20 text-amber-300 border-amber-400/30'
     },
     editor: {
         label: 'Editor',
@@ -134,7 +130,6 @@ export default function Index({ users = [] }) {
                             className="w-full sm:w-auto px-3.5 py-2 rounded-xl bg-[#0B101D] border border-white/10 text-xs sm:text-sm text-slate-300 focus:border-amber-400 outline-none transition-all cursor-pointer font-sans"
                         >
                             <option value="all">All Roles</option>
-                            <option value="super_admin">Super Admin</option>
                             <option value="admin">Admin</option>
                             <option value="editor">Editor</option>
                             <option value="secretariat">Secretariat</option>
