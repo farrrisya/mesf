@@ -35,17 +35,17 @@ export default function Footer({ showCta = true }) {
                     <div className="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-10 border-b border-white/5">
                         <div className="space-y-1.5 text-left">
                             <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white uppercase">
-                                READY TO COMPETE?
+                                JOIN, PARTNER &amp; BUILD WITH MESF
                             </h2>
                             <p className="text-xs sm:text-sm font-semibold tracking-wider text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.3)]">
-                                Join official sanctioned leagues and represent your state or nation.
+                                Official registration and inquiry hub for athletes, brands, organizers, and communities.
                             </p>
                         </div>
                         <Link
                             href="/get-involved"
                             className="relative overflow-hidden px-8 py-3.5 rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-bold text-xs sm:text-sm tracking-widest uppercase border border-white/20 hover:border-amber-400/60 shadow-[0_0_25px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(251,191,36,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group shrink-0 inline-flex items-center justify-center select-none"
                         >
-                            <span className="relative z-10">REGISTER NOW</span>
+                            <span className="relative z-10">GET STARTED</span>
                         </Link>
                     </div>
                 )}
