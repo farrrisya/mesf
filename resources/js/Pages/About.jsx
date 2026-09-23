@@ -376,7 +376,7 @@ export default function About() {
 
             {/* Main Content Area */}
             <main className="relative z-10 pt-32 md:pt-40 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
-                
+
                 {/* Section 1: Hero Header */}
                 <section className="relative text-center max-w-3xl mx-auto space-y-5 pt-4">
                     <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-semibold tracking-wider uppercase">
@@ -403,7 +403,7 @@ export default function About() {
                             <div className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-amber-400">
                                 About Us
                             </div>
-                            
+
                             <div
                                 className="about-story-rich-text text-neutral-300 text-sm sm:text-base leading-relaxed"
                                 dangerouslySetInnerHTML={{ __html: aboutStoryHtml }}
@@ -537,11 +537,10 @@ export default function About() {
                                         >
                                             <div className="flex items-center gap-4 sm:gap-5 min-w-0 flex-1">
                                                 {/* High-Contrast Monogram Box */}
-                                                <div className={`rounded-xl flex items-center justify-center shrink-0 shadow-inner transition-colors bg-[#080D18] border border-amber-400/40 text-amber-300 group-hover:border-amber-400 ${
-                                                    section.id === 'leadership'
+                                                <div className={`rounded-xl flex items-center justify-center shrink-0 shadow-inner transition-colors bg-[#080D18] border border-amber-400/40 text-amber-300 group-hover:border-amber-400 ${section.id === 'leadership'
                                                         ? 'h-16 w-16 sm:h-20 sm:w-20 text-xl sm:text-2xl font-black'
                                                         : 'h-14 w-14 sm:h-16 sm:w-16 text-base sm:text-lg font-bold'
-                                                }`}>
+                                                    }`}>
                                                     {getMemberInitials(member.name)}
                                                 </div>
 
@@ -627,11 +626,10 @@ export default function About() {
                                             type="button"
                                             onClick={() => scrollCarousel('left')}
                                             disabled={!canScrollLeft}
-                                            className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
-                                                canScrollLeft
+                                            className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${canScrollLeft
                                                     ? 'bg-slate-800/80 hover:bg-amber-400/20 border-slate-700/60 hover:border-amber-400/50 text-white hover:text-amber-300 shadow-sm'
                                                     : 'bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed opacity-40'
-                                            }`}
+                                                }`}
                                             aria-label="Previous members"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -642,11 +640,10 @@ export default function About() {
                                             type="button"
                                             onClick={() => scrollCarousel('right')}
                                             disabled={!canScrollRight}
-                                            className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
-                                                canScrollRight
+                                            className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${canScrollRight
                                                     ? 'bg-slate-800/80 hover:bg-amber-400/20 border-slate-700/60 hover:border-amber-400/50 text-white hover:text-amber-300 shadow-sm'
                                                     : 'bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed opacity-40'
-                                            }`}
+                                                }`}
                                             aria-label="Next members"
                                         >
                                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -660,16 +657,14 @@ export default function About() {
                                 <div className="relative group">
                                     {/* Left subtle fade gradient indicator */}
                                     <div
-                                        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-20 bg-gradient-to-r from-[#070B14] to-transparent transition-opacity duration-300 ${
-                                            canScrollLeft ? 'opacity-100' : 'opacity-0'
-                                        }`}
+                                        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-20 bg-gradient-to-r from-[#070B14] to-transparent transition-opacity duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-0'
+                                            }`}
                                     />
 
                                     {/* Right subtle fade gradient indicator */}
                                     <div
-                                        className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-20 bg-gradient-to-l from-[#070B14] to-transparent transition-opacity duration-300 ${
-                                            canScrollRight ? 'opacity-100' : 'opacity-0'
-                                        }`}
+                                        className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-20 bg-gradient-to-l from-[#070B14] to-transparent transition-opacity duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-0'
+                                            }`}
                                     />
 
                                     {/* Smooth Horizontal Scrolling Container */}
@@ -679,9 +674,8 @@ export default function About() {
                                         onMouseDown={handleMouseDown}
                                         onMouseUp={handleMouseUp}
                                         onMouseMove={handleMouseMove}
-                                        className={`flex gap-4 overflow-x-auto pb-3 pt-2 touch-pan-x overscroll-x-contain select-none will-change-scroll ${
-                                            isDragging ? 'cursor-grabbing scroll-auto' : 'cursor-grab scroll-smooth snap-x snap-mandatory'
-                                        }`}
+                                        className={`flex gap-4 overflow-x-auto pb-3 pt-2 touch-pan-x overscroll-x-contain select-none will-change-scroll ${isDragging ? 'cursor-grabbing scroll-auto' : 'cursor-grab scroll-smooth snap-x snap-mandatory'
+                                            }`}
                                         style={{
                                             WebkitOverflowScrolling: 'touch',
                                             scrollbarWidth: 'none',
