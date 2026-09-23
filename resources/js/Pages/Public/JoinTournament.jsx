@@ -194,7 +194,7 @@ export default function JoinTournament() {
                                         required
                                         value={data.team_name} // state
                                         onChange={(e) => setData('team_name', e.target.value)} // trigger
-                                        placeholder="e.g. Todak Alpha / Team MYS Junior"
+                                        placeholder="e.g. Team Alpha / Shadow Squad"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.team_name && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.team_name}</p>}
@@ -232,7 +232,7 @@ export default function JoinTournament() {
                                                 required
                                                 value={customGameTitle} // state
                                                 onChange={(e) => setCustomGameTitle(e.target.value)} // trigger
-                                                placeholder="e.g. Apex Legends / Street Fighter 6 / Free Fire"
+                                                placeholder="e.g. Game Title / Competitive Discipline"
                                                 className="w-full px-4 py-3 rounded-xl bg-black/60 border border-amber-400/50 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                             />
                                         </div>
@@ -287,7 +287,7 @@ export default function JoinTournament() {
                                                 required
                                                 value={customState} // state
                                                 onChange={(e) => setCustomState(e.target.value)} // trigger
-                                                placeholder="e.g. Singapore / Indonesia / Brunei"
+                                                placeholder="e.g. Country / Regional Area"
                                                 className="w-full px-4 py-3 rounded-xl bg-black/60 border border-amber-400/50 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                             />
                                         </div>
@@ -319,7 +319,7 @@ export default function JoinTournament() {
                                         required
                                         value={data.name} // state
                                         onChange={(e) => setData('name', e.target.value)} // trigger
-                                        placeholder="Full legal name"
+                                        placeholder="e.g. Full Name"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.name && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.name}</p>}
@@ -334,7 +334,7 @@ export default function JoinTournament() {
                                         required
                                         value={data.email} // state
                                         onChange={(e) => setData('email', e.target.value)} // trigger
-                                        placeholder="captain@team.com"
+                                        placeholder="e.g. contact@example.com"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.email && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.email}</p>}
@@ -349,7 +349,7 @@ export default function JoinTournament() {
                                         required
                                         value={data.phone} // state
                                         onChange={(e) => setData('phone', e.target.value)} // trigger
-                                        placeholder="+6012-345 6789"
+                                        placeholder="e.g. +60 12-345 6789"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.phone && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.phone}</p>}
@@ -363,7 +363,7 @@ export default function JoinTournament() {
                                         type="text"
                                         value={data.organization} // state
                                         onChange={(e) => setData('organization', e.target.value)} // trigger
-                                        placeholder="e.g. Todak Esports / Academy Name"
+                                        placeholder="e.g. Organization / Gaming Club Name"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.organization && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.organization}</p>}
@@ -389,7 +389,7 @@ export default function JoinTournament() {
                                     rows="4"
                                     value={data.message} // state
                                     onChange={(e) => setData('message', e.target.value)} // trigger
-                                    placeholder="e.g. Player 1: [IGN] (ID), Player 2: [IGN] (ID)..."
+                                    placeholder="e.g. Player 1: Nickname (ID), Player 2: Nickname (ID)..."
                                     className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600 leading-relaxed"
                                 />
                                 {errors.message && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.message}</p>}

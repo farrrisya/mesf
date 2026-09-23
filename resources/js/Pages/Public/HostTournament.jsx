@@ -149,7 +149,7 @@ export default function HostTournament() {
                                         required
                                         value={data.organization} // state
                                         onChange={(e) => setData('organization', e.target.value)} // trigger
-                                        placeholder="e.g. Universiti Malaya Esports Club / Geek Events Sdn Bhd"
+                                        placeholder="e.g. Organization / Event Organizer / Esports Club"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.organization && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.organization}</p>}
@@ -164,7 +164,7 @@ export default function HostTournament() {
                                         required
                                         value={data.name} // state
                                         onChange={(e) => setData('name', e.target.value)} // trigger
-                                        placeholder="Full legal name"
+                                        placeholder="e.g. Full Name"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.name && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.name}</p>}
@@ -179,7 +179,7 @@ export default function HostTournament() {
                                         required
                                         value={data.email} // state
                                         onChange={(e) => setData('email', e.target.value)} // trigger
-                                        placeholder="organizer@domain.com"
+                                        placeholder="e.g. contact@example.com"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.email && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.email}</p>}
@@ -194,7 +194,7 @@ export default function HostTournament() {
                                         required
                                         value={data.phone} // state
                                         onChange={(e) => setData('phone', e.target.value)} // trigger
-                                        placeholder="+6012-345 6789"
+                                        placeholder="e.g. +60 12-345 6789"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.phone && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.phone}</p>}
@@ -225,7 +225,7 @@ export default function HostTournament() {
                                         required
                                         value={data.proposed_event_name} // state
                                         onChange={(e) => setData('proposed_event_name', e.target.value)} // trigger
-                                        placeholder="e.g. Selangor Youth Esports Cup 2026 / Campus Championship Season 4"
+                                        placeholder="e.g. Tournament Title / Championship Series"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.proposed_event_name && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.proposed_event_name}</p>}
@@ -240,7 +240,7 @@ export default function HostTournament() {
                                         required
                                         value={data.proposed_dates} // state
                                         onChange={(e) => setData('proposed_dates', e.target.value)} // trigger
-                                        placeholder="e.g. 15-20 November 2026"
+                                        placeholder="e.g. DD/MM/YYYY or Proposed Date Range"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.proposed_dates && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.proposed_dates}</p>}
@@ -255,7 +255,7 @@ export default function HostTournament() {
                                         required
                                         value={data.expected_teams} // state
                                         onChange={(e) => setData('expected_teams', e.target.value)} // trigger
-                                        placeholder="e.g. 64 Teams / 320 Players"
+                                        placeholder="e.g. 32 Teams / 160 Players"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.expected_teams && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.expected_teams}</p>}
@@ -270,7 +270,7 @@ export default function HostTournament() {
                                         required
                                         value={data.venue} // state
                                         onChange={(e) => setData('venue', e.target.value)} // trigger
-                                        placeholder="e.g. Online Qualifiers + Grand Finals LAN at Axiata Arena, Bukit Jalil"
+                                        placeholder="e.g. Online Qualifiers + LAN Finals (Venue / City)"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.venue && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.venue}</p>}
@@ -296,7 +296,7 @@ export default function HostTournament() {
                                     rows="4"
                                     value={data.message} // state
                                     onChange={(e) => setData('message', e.target.value)} // trigger
-                                    placeholder="e.g. Total Prize Pool: RM 20,000. Games included: MLBB & PUBG Mobile. Link to deck/rulebook..."
+                                    placeholder="e.g. Prize pool breakdown, tournament format, link to rulebook or deck..."
                                     className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600 leading-relaxed"
                                 />
                                 {errors.message && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.message}</p>}

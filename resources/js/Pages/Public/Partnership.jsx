@@ -158,7 +158,7 @@ export default function Partnership() {
                                         required
                                         value={data.organization} // state
                                         onChange={(e) => setData('organization', e.target.value)} // trigger
-                                        placeholder="e.g. MOONTON Games / Red Bull Malaysia / Predator Gaming"
+                                        placeholder="e.g. Company Name / Brand Agency / Partner Entity"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.organization && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.organization}</p>}
@@ -173,7 +173,7 @@ export default function Partnership() {
                                         required
                                         value={data.name} // state
                                         onChange={(e) => setData('name', e.target.value)} // trigger
-                                        placeholder="Full legal name"
+                                        placeholder="e.g. Full Name"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.name && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.name}</p>}
@@ -188,7 +188,7 @@ export default function Partnership() {
                                         required
                                         value={data.email} // state
                                         onChange={(e) => setData('email', e.target.value)} // trigger
-                                        placeholder="corporate@brand.com"
+                                        placeholder="e.g. partner@example.com"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.email && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.email}</p>}
@@ -203,7 +203,7 @@ export default function Partnership() {
                                         required
                                         value={data.phone} // state
                                         onChange={(e) => setData('phone', e.target.value)} // trigger
-                                        placeholder="+6012-345 6789"
+                                        placeholder="e.g. +60 12-345 6789"
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
                                     />
                                     {errors.phone && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.phone}</p>}
@@ -251,7 +251,7 @@ export default function Partnership() {
                                     required
                                     value={data.proposal_summary} // state
                                     onChange={(e) => setData('proposal_summary', e.target.value)} // trigger
-                                    placeholder="Provide a summary of your partnership interest, proposed brand activation, or sponsorship terms..."
+                                    placeholder="e.g. Outline your proposed collaboration, sponsorship terms, or brand activation..."
                                     className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600 leading-relaxed"
                                 />
                                 {errors.proposal_summary && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.proposal_summary}</p>}
@@ -265,7 +265,7 @@ export default function Partnership() {
                                     rows="2"
                                     value={data.message} // state
                                     onChange={(e) => setData('message', e.target.value)} // trigger
-                                    placeholder="Link to presentation deck, official website, or specific timeline requirements..."
+                                    placeholder="e.g. Link to presentation deck, official website, or timeline notes..."
                                     className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600 leading-relaxed"
                                 />
                                 {errors.message && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.message}</p>}
