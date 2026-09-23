@@ -11,7 +11,6 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\SecretaryController;
-use App\Http\Controllers\SecretariatController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Admin\InquiryManagementController;
 use App\Models\Gallery;
