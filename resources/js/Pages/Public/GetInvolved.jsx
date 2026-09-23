@@ -58,7 +58,7 @@ const INQUIRY_OPTIONS = [
         id: 'host-tournament',
         title: 'Host a Tournament',
         eyebrow: 'For Organizers & Agencies',
-        description: 'Apply for official MESF sanctioning, technical endorsement, certified referees, national circuit points, and safety regulations.',
+        description: 'Apply for official MESF endorsement, certified referees, national circuit points, technical assistance, and event scheduling.',
         href: '/host-tournament',
         icon: Trophy,
         badgeBg: 'bg-amber-400/10 text-amber-300 border-amber-400/25',
@@ -66,12 +66,13 @@ const INQUIRY_OPTIONS = [
         hoverBorder: 'hover:border-amber-400/50',
         actionLabel: 'Apply to Host',
         highlights: [
-            'Official federation sanction & endorsement',
+            'Official federation endorsement & support',
             'MESF-certified arbiters & marshals',
             'National calendar scheduling support'
         ]
     }
 ];
+
 
 // --3. main component--
 export default function GetInvolved() {
@@ -164,9 +165,10 @@ export default function GetInvolved() {
                         Get Involved
                     </h1>
                     <p className="text-sm sm:text-base text-neutral-400 mt-3 max-w-2xl font-normal leading-relaxed">
-                        Choose an option below to enter official competitions, establish commercial partnerships, or request tournament sanctioning under MESF.
+                        Choose an option below to enter official competitions, establish commercial partnerships, or apply to host official tournaments under MESF.
                     </p>
                 </header>
+
 
                 {/* Main Cards Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:gap-10">

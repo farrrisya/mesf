@@ -55,7 +55,7 @@ export default function HostTournament() {
     // --4. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
-            <Head title="Host / Sanction a Tournament - MESF" />
+            <Head title="Host a Tournament - MESF" />
 
             {/* Background SVG grain texture */}
             <div
@@ -93,13 +93,13 @@ export default function HostTournament() {
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
                             <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 font-mono">
-                                Official Tournament Sanctioning
+                                Official Tournament Hosting
                             </span>
                             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-white mt-1">
-                                Host &amp; Sanction An Event
+                                Host A Tournament
                             </h1>
                             <p className="text-sm sm:text-base text-neutral-400 max-w-2xl font-normal leading-relaxed mt-2">
-                                Apply for official MESF sanctioning, certified referees, national circuit ranking points, and technical federation endorsement.
+                                Apply for official MESF endorsement, certified referees, national circuit ranking points, and technical federation support.
                             </p>
                         </div>
 
@@ -121,7 +121,7 @@ export default function HostTournament() {
                             </Link>
                             <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400 text-black shadow-[0_0_18px_rgba(251,191,36,0.3)]">
                                 <Trophy className="w-3.5 h-3.5" />
-                                <span>Host Event</span>
+                                <span>Host a Tournament</span>
                             </span>
                         </div>
                     </div>
@@ -135,9 +135,9 @@ export default function HostTournament() {
                     <div className="mb-8 p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 flex items-start gap-4 backdrop-blur-xl animate-fadeIn shadow-xl">
                         <CheckCircle2 className="w-6 h-6 shrink-0 text-emerald-400 mt-0.5" />
                         <div className="space-y-1">
-                            <h3 className="text-base font-bold text-white">Sanctioning Request Received!</h3>
+                            <h3 className="text-base font-bold text-white">Hosting Application Received!</h3>
                             <p className="text-xs text-neutral-300 leading-relaxed">
-                                {flash?.success || 'Thank you, your sanctioning application has been received. Our competitions committee will review the event specifications and contact your organizing lead.'}
+                                {flash?.success || 'Thank you, your tournament hosting application has been received. Our competitions committee will review the event specifications and contact your organizing lead.'}
                             </p>
                         </div>
                     </div>
@@ -257,7 +257,7 @@ export default function HostTournament() {
                                             Event Specifications &amp; Scale
                                         </h2>
                                         <p className="text-xs text-neutral-400">
-                                            Specifications for the tournament applying for MESF federation sanctioning.
+                                            Specifications for the tournament applying for official MESF endorsement &amp; support.
                                         </p>
                                     </div>
                                 </div>
@@ -385,7 +385,7 @@ export default function HostTournament() {
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div className="flex items-center gap-2.5 text-xs text-neutral-400 text-left">
                                     <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
-                                    <span>Sanctioning is issued in compliance with National Sports Council guidelines.</span>
+                                    <span>Event endorsement is issued in compliance with National Sports Council guidelines.</span>
                                 </div>
 
                                 <button
@@ -393,7 +393,7 @@ export default function HostTournament() {
                                     disabled={processing}
                                     className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.35)] hover:scale-105 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                                 >
-                                    {processing ? 'Submitting Application...' : 'Submit Sanctioning Request'}
+                                    {processing ? 'Submitting Application...' : 'Submit Hosting Application'}
                                 </button>
                             </div>
                         </form>
@@ -401,11 +401,11 @@ export default function HostTournament() {
 
                     {/* Right: Secretariat Sidebar */}
                     <div className="lg:col-span-4 space-y-6">
-                        {/* Sanctioning Process Card */}
+                        {/* Hosting Process Card */}
                         <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-5">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
                                 <Clock className="w-4 h-4 text-amber-400" />
-                                <span>Sanctioning Process</span>
+                                <span>Hosting Application Process</span>
                             </h3>
 
                             <div className="space-y-4">
@@ -440,18 +440,18 @@ export default function HostTournament() {
                                     <div>
                                         <p className="text-xs font-bold text-white">Official Endorsement</p>
                                         <p className="text-[11px] text-neutral-400 leading-relaxed mt-0.5">
-                                            Sanction certificate issuance, public listing on the MESF events portal, and ranking points.
+                                            Official certificate issuance, public listing on the MESF events portal, and ranking points.
                                         </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Direct Sanctioning Desk Contact Card */}
+                        {/* Direct Competitions Desk Contact Card */}
                         <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-4">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
                                 <HelpCircle className="w-4 h-4 text-amber-400" />
-                                <span>Sanctioning Desk</span>
+                                <span>Competitions Desk</span>
                             </h3>
 
                             <p className="text-xs text-neutral-400 leading-relaxed">
@@ -515,4 +515,5 @@ export default function HostTournament() {
         </div>
     );
 }
+
 
