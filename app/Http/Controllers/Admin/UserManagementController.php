@@ -173,7 +173,7 @@ class UserManagementController extends Controller
         }
 
         if ($user->role === 'secretariat') { // check
-            return redirect()->route('secretariat.dashboard')->with('success', "Now viewing as {$user->name} ({$user->role})."); // redirect
+            return redirect()->route('secretary.dashboard')->with('success', "Now viewing as {$user->name} ({$user->role})."); // redirect
         }
 
         return redirect()->route('dashboard'); // redirect

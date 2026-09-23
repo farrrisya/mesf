@@ -96,7 +96,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
     const dashboardHref = userRole === 'editor'
         ? '/editor/dashboard'
         : userRole === 'secretariat'
-            ? '/secretariat/dashboard'
+            ? '/secretary/dashboard'
             : '/admin/dashboard';
 
     // filter categories and items based on role
@@ -309,7 +309,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                 <nav className="relative z-10 flex-1 overflow-y-auto px-3.5 py-4 space-y-4">
                     {/* Top Standalone Dashboard Item */}
                     {(() => {
-                        const isDashboardActive = url === dashboardHref || url === '/admin' || url === '/editor' || url === '/secretariat';
+                        const isDashboardActive = url === dashboardHref || url === '/admin' || url === '/editor' || url === '/secretary' || url === '/secretariat';
 
                         return (
                             <Link

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\EditorController;
+use App\Http\Controllers\SecretaryController;
 use App\Http\Controllers\SecretariatController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Admin\InquiryManagementController;
@@ -206,7 +207,7 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
             return redirect()->route('editor.dashboard'); // redirect
         }
         if ($user->role === 'secretariat') { // check
-            return redirect()->route('secretariat.dashboard'); // redirect
+            return redirect()->route('secretary.dashboard'); // redirect
         }
     }
     return redirect('/'); // redirect
@@ -217,7 +218,7 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
     Route::get('/', function (\Illuminate\Http\Request $request) {
         $user = $request->user();
         if ($user && $user->role === 'editor') return redirect()->route('editor.dashboard');
-        if ($user && $user->role === 'secretariat') return redirect()->route('secretariat.dashboard');
+        if ($user && $user->role === 'secretariat') return redirect()->route('secretary.dashboard');
         return redirect()->route('admin.dashboard'); // redirect
     });
 
@@ -293,13 +294,20 @@ Route::middleware(['auth', 'verified', 'role:editor,admin'])->prefix('editor')->
     Route::get('/dashboard', [EditorController::class, 'index'])->name('dashboard'); // screen
 });
 
-// --7. secretariat portal--
-Route::middleware(['auth', 'verified', 'role:secretariat,admin'])->prefix('secretariat')->name('secretariat.')->group(function () { // check
+// --7. secretary portal--
+Route::middleware(['auth', 'verified', 'role:secretariat,admin'])->prefix('secretary')->name('secretary.')->group(function () { // check
     Route::get('/', function () {
-        return redirect()->route('secretariat.dashboard'); // redirect
+        return redirect()->route('secretary.dashboard'); // redirect
     });
 
-    Route::get('/dashboard', [SecretariatController::class, 'index'])->name('dashboard'); // screen
+    Route::get('/dashboard', [SecretaryController::class, 'index'])->name('dashboard'); // screen
+});
+
+// fallback for legacy secretariat urls
+Route::middleware(['auth', 'verified', 'role:secretariat,admin'])->prefix('secretariat')->group(function () { // check
+    Route::get('/{any?}', function () {
+        return redirect()->route('secretary.dashboard'); // redirect
+    })->where('any', '.*');
 });
 
 require __DIR__.'/auth.php';

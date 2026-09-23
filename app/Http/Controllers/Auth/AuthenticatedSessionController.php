@@ -44,7 +44,7 @@ class AuthenticatedSessionController extends Controller
         }
 
         if ($user->role === 'secretariat') { // check
-            return redirect()->intended(route('secretariat.dashboard', absolute: false)); // redirect
+            return redirect()->intended(route('secretary.dashboard', absolute: false)); // redirect
         }
 
         return redirect()->intended('/'); // redirect
