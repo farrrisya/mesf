@@ -38,120 +38,27 @@ const AFFILIATED_PARTNERS = [
     }
 ];
 
-// Exact committee structure from mesf.my with natural lighter-to-darker hierarchy
-const EXECUTIVE_SECTIONS = [
-    {
-        id: 'leadership',
-        sectionTitle: 'Executive Leadership',
+// Styling templates for executive sections
+const SECTION_STYLES = {
+    leadership: {
         gridCols: 'grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto',
         cardBg: 'bg-[#222A3A]',
         borderColor: 'border-slate-600/50',
         badgeClass: 'bg-amber-400/20 border-amber-400/40 text-amber-300 font-bold',
-        members: [
-            {
-                id: 'naim',
-                name: 'Muhammad Naim Al-Amin',
-                title: 'President',
-                contact: 'naim@mesf.my'
-            },
-            {
-                id: 'afiq',
-                name: 'Afiq Fadhli',
-                title: 'Deputy President',
-                contact: 'afiq@mesf.my'
-            }
-        ]
     },
-    {
-        id: 'vice_presidents',
-        sectionTitle: 'Vice Presidents',
+    vice_presidents: {
         gridCols: 'grid-cols-1 md:grid-cols-2 gap-5',
         cardBg: 'bg-[#1C2332]',
         borderColor: 'border-slate-700/50',
         badgeClass: 'bg-amber-400/10 border-amber-400/25 text-amber-300 font-semibold',
-        members: [
-            {
-                id: 'khir',
-                name: 'Mohamad Khir',
-                title: 'Vice President 1',
-                contact: 'khir@mesf.my'
-            },
-            {
-                id: 'faries',
-                name: 'Faries Faizal',
-                title: 'Vice President 2',
-                contact: 'faries@mesf.my'
-            },
-            {
-                id: 'zatul',
-                name: 'Dr. Zatul Iffah',
-                title: 'Vice President Women',
-                contact: 'drzatul@mesf.my'
-            },
-            {
-                id: 'muzakkir',
-                name: 'Muzakkir',
-                title: 'Vice President Youth',
-                contact: 'muzakkir@mesf.my'
-            }
-        ]
     },
-    {
-        id: 'secretariat',
-        sectionTitle: 'Secretary & Administration',
+    secretariat: {
         gridCols: 'grid-cols-1 md:grid-cols-2 gap-5',
         cardBg: 'bg-[#161D2A]',
         borderColor: 'border-slate-700/40',
         badgeClass: 'bg-slate-700/50 border-slate-600/50 text-slate-200 font-medium',
-        members: [
-            {
-                id: 'syed',
-                name: 'Syed Fakrurrozi',
-                title: 'Secretary General',
-                contact: 'syed@mesf.my'
-            },
-            {
-                id: 'hakimi',
-                name: 'Alif Hakimi',
-                title: 'Asst. Secretary General',
-                contact: 'hakimi@mesf.my'
-            },
-            {
-                id: 'shahrul',
-                name: 'Shahrul Nizam',
-                title: 'Treasurer',
-                contact: 'shahrul@mesf.my'
-            },
-            {
-                id: 'azrai',
-                name: 'Azrai Abdul Aziz',
-                title: 'Chief Communication',
-                contact: 'azrai@mesf.my'
-            }
-        ]
     }
-];
-
-const GENERAL_COMMITTEE_MEMBERS = [
-    { id: 'adib', name: 'Adib', title: 'Committee', contact: 'adib@mesf.my' },
-    { id: 'akbar', name: 'Akbar', title: 'Committee', contact: 'akbar@mesf.my' },
-    { id: 'akif', name: 'Akif', title: 'Committee', contact: 'contact@mesf.my' },
-    { id: 'alex', name: 'Alex', title: 'Committee', contact: 'alex@mesf.my' },
-    { id: 'azza', name: 'Azza', title: 'Committee', contact: 'azzarizal@mesf.my' },
-    { id: 'chucky', name: 'Chucky', title: 'Committee', contact: 'cheoh@mesf.my' },
-    { id: 'dr-yew', name: 'Dr. Yew', title: 'Committee', contact: 'dryew@mesf.my' },
-    { id: 'eugene', name: 'Eugene', title: 'Committee', contact: 'eugene@mesf.my' },
-    { id: 'husyin', name: 'Husyin', title: 'Committee', contact: 'husyin@mesf.my' },
-    { id: 'joker', name: 'Joker', title: 'Committee', contact: 'jokerlai@mesf.my' },
-    { id: 'kymie', name: 'Kymie', title: 'Committee', contact: 'kymie@mesf.my' },
-    { id: 'luqman', name: 'Luqman', title: 'Committee', contact: 'luqman@mesf.my' },
-    { id: 'razak', name: 'Razak', title: 'Committee', contact: 'razak@mesf.my' },
-    { id: 'shahril', name: 'Shahril', title: 'Committee', contact: 'shahril@mesf.my' },
-    { id: 'syahrul', name: 'Syahrul', title: 'Committee', contact: 'syahrul@mesf.my' },
-    { id: 'thariq', name: 'Thariq', title: 'Committee', contact: 'thariq@mesf.my' }
-];
-
-const DEFAULT_ABOUT_STORY = `<p>Malaysia Esports Federation or MESF is a national-level sports association registered with the Malaysian Sports Commissioner under the Sports Development Act 1997 with registration number 7402/2014 and is an affiliate of the International Esports Federation (IeSF) &amp; the Asian Electronic Sports Federation (AESF).</p><p>MESF had its registration confirmed on 4th December 2014 to respond to the government’s call through the Ministry of Youth and Sports (KBS) to make sports a catalyst for the development of human capital and industry that can generate the nation’s economic growth.</p><p>MESF acts as the custodian of all esports related activities in Malaysia with the aim of developing, encouraging and promoting esports to all levels as well as planning the development of athletes, officials, coaches and unearthing new talents to represent Malaysia in any esports competition at the international level.</p>`;
+};
 
 // Helper to get initials for badge avatars
 const getMemberInitials = (name) => {
@@ -162,7 +69,7 @@ const getMemberInitials = (name) => {
 };
 
 // Helper to parse JSON settings
-const parseJsonSetting = (raw, fallback) => {
+const parseJsonSetting = (raw, fallback = []) => {
     if (!raw) return fallback;
     if (Array.isArray(raw)) return raw;
     if (typeof raw === 'object') return Object.values(raw);
@@ -183,25 +90,39 @@ export default function About() {
     const orgName = settings?.orgName || 'Malaysia Esports Federation'; // properties
     const orgAcronym = settings?.orgAcronym || 'MESF'; // properties
     const rosNumber = settings?.rosNumber || '7402/2014'; // properties
+    const phone = settings?.phone || ''; // properties
+    const officialEmail = settings?.replyEmail || settings?.supportEmail || 'contact@mesf.my'; // properties
     const aboutHeroSubtitle = settings?.aboutHeroSubtitle || 'Official national governing body registered under the Sports Development Act 1997, overseeing electronic sports across Malaysia.'; // properties
-    const aboutStoryHtml = settings?.aboutStoryHtml || (settings?.aboutStoryP1 ? `<p>${settings.aboutStoryP1}</p><p>${settings.aboutStoryP2 || ''}</p><p>${settings.aboutStoryP3 || ''}</p>` : DEFAULT_ABOUT_STORY); // properties
+    const aboutStoryHtml = settings?.aboutStoryHtml || (settings?.aboutStoryP1 ? `<p>${settings.aboutStoryP1}</p><p>${settings.aboutStoryP2 || ''}</p><p>${settings.aboutStoryP3 || ''}</p>` : ''); // properties
 
     const executiveSections = useMemo(() => {
-        const raw = parseJsonSetting(settings?.executiveSections, EXECUTIVE_SECTIONS);
-        if (!Array.isArray(raw)) return EXECUTIVE_SECTIONS;
-        return raw.map((section, idx) => ({
-            ...(EXECUTIVE_SECTIONS[idx] || {}),
-            ...(section || {}),
-            members: Array.isArray(section?.members)
-                ? section.members
-                : (EXECUTIVE_SECTIONS[idx]?.members || [])
-        }));
+        const raw = parseJsonSetting(settings?.executiveSections, []);
+        if (!Array.isArray(raw)) return [];
+        return raw.map((section) => ({
+            ...section,
+            gridCols: SECTION_STYLES[section.id]?.gridCols || 'grid-cols-1 md:grid-cols-2 gap-5',
+            cardBg: SECTION_STYLES[section.id]?.cardBg || 'bg-[#161D2A]',
+            borderColor: SECTION_STYLES[section.id]?.borderColor || 'border-slate-700/40',
+            badgeClass: SECTION_STYLES[section.id]?.badgeClass || 'bg-slate-700/50 border-slate-600/50 text-slate-200 font-medium',
+            members: Array.isArray(section?.members) ? section.members : []
+        })).filter((section) => section.members && section.members.length > 0);
     }, [settings?.executiveSections]);
 
     const generalCommittee = useMemo(() => {
-        const raw = parseJsonSetting(settings?.generalCommittee, GENERAL_COMMITTEE_MEMBERS);
-        return Array.isArray(raw) ? raw : GENERAL_COMMITTEE_MEMBERS;
+        const raw = parseJsonSetting(settings?.generalCommittee, []);
+        return Array.isArray(raw) ? raw : [];
     }, [settings?.generalCommittee]);
+
+    const socialChannels = useMemo(() => {
+        const channels = [];
+        if (settings?.instagram) channels.push({ name: 'Instagram', handle: '@mesfmy', href: settings.instagram });
+        if (settings?.tiktok) channels.push({ name: 'TikTok', handle: '@mesfmy', href: settings.tiktok });
+        if (settings?.youtube) channels.push({ name: 'YouTube', handle: '@mesfmy', href: settings.youtube });
+        if (settings?.xUrl || settings?.twitter) channels.push({ name: 'X / Twitter', handle: '@mesfmy', href: settings.xUrl || settings.twitter });
+        if (settings?.facebook) channels.push({ name: 'Facebook', handle: 'MESF Facebook', href: settings.facebook });
+        if (settings?.discord) channels.push({ name: 'Discord', handle: 'MESF Discord', href: settings.discord });
+        return channels;
+    }, [settings]);
 
     // --4. actions--
     const [memberSearch, setMemberSearch] = useState(''); // state
@@ -769,35 +690,39 @@ export default function About() {
 
                             {/* Contact Badges */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                                <a
-                                    href="mailto:contact@mesf.my"
-                                    className="p-4 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/50 hover:bg-white/[0.08] transition-all flex items-center gap-3.5 group cursor-pointer"
-                                >
-                                    <div className="h-10 w-10 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <span className="text-[11px] text-neutral-400 uppercase tracking-wider block">Official Email</span>
-                                        <span className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">contact@mesf.my</span>
-                                    </div>
-                                </a>
+                                {officialEmail && (
+                                    <a
+                                        href={`mailto:${officialEmail}`}
+                                        className="p-4 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/50 hover:bg-white/[0.08] transition-all flex items-center gap-3.5 group cursor-pointer"
+                                    >
+                                        <div className="h-10 w-10 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span className="text-[11px] text-neutral-400 uppercase tracking-wider block">Official Email</span>
+                                            <span className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors font-mono">{officialEmail}</span>
+                                        </div>
+                                    </a>
+                                )}
 
-                                <a
-                                    href="tel:+60380525278"
-                                    className="p-4 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/50 hover:bg-white/[0.08] transition-all flex items-center gap-3.5 group cursor-pointer"
-                                >
-                                    <div className="h-10 w-10 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
-                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                                        </svg>
-                                    </div>
-                                    <div>
-                                        <span className="text-[11px] text-neutral-400 uppercase tracking-wider block">Hotline / Phone</span>
-                                        <span className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors">+603-8052 5278</span>
-                                    </div>
-                                </a>
+                                {phone && (
+                                    <a
+                                        href={`tel:${phone.replace(/\s+/g, '')}`}
+                                        className="p-4 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/50 hover:bg-white/[0.08] transition-all flex items-center gap-3.5 group cursor-pointer"
+                                    >
+                                        <div className="h-10 w-10 rounded-lg bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <span className="text-[11px] text-neutral-400 uppercase tracking-wider block">Hotline / Phone</span>
+                                            <span className="text-sm font-semibold text-white group-hover:text-amber-300 transition-colors font-mono">{phone}</span>
+                                        </div>
+                                    </a>
+                                )}
                             </div>
                         </div>
 
@@ -806,38 +731,35 @@ export default function About() {
                             <div>
                                 <h3 className="text-base font-bold text-white">Registration Details</h3>
                                 <p className="text-xs text-neutral-400 mt-1">
-                                    Sports Development Act 1997 • Reg No. 7402/2014
+                                    Sports Development Act 1997 &bull; Reg No. {rosNumber || '7402/2014'}
                                 </p>
                             </div>
 
-                            <div className="space-y-3 pt-2 border-t border-white/10">
-                                <span className="text-xs font-semibold text-neutral-300 block uppercase tracking-wider">
-                                    Official Channels
-                                </span>
-                                <div className="grid grid-cols-2 gap-2.5">
-                                    {[
-                                        { name: 'Instagram', handle: '@mesfmy', href: 'https://www.instagram.com/mesfmy' },
-                                        { name: 'TikTok', handle: '@mesfmy', href: 'https://www.tiktok.com/@mesfmy' },
-                                        { name: 'YouTube', handle: '@mesfmy', href: 'https://www.youtube.com/@mesfmy' },
-                                        { name: 'X / Twitter', handle: '@mesfmy', href: 'https://twitter.com/mesfmy' }
-                                    ].map((channel) => (
-                                        <a
-                                            key={channel.name}
-                                            href={channel.href}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-3.5 py-2.5 rounded-xl bg-white/[0.03] hover:bg-amber-400/10 border border-white/5 hover:border-amber-400/30 transition-all text-left group"
-                                        >
-                                            <span className="text-[11px] text-neutral-400 group-hover:text-amber-300 block font-medium">
-                                                {channel.name}
-                                            </span>
-                                            <span className="text-xs font-bold text-white">
-                                                {channel.handle}
-                                            </span>
-                                        </a>
-                                    ))}
+                            {socialChannels.length > 0 && (
+                                <div className="space-y-3 pt-2 border-t border-white/10">
+                                    <span className="text-xs font-semibold text-neutral-300 block uppercase tracking-wider">
+                                        Official Channels
+                                    </span>
+                                    <div className="grid grid-cols-2 gap-2.5">
+                                        {socialChannels.map((channel) => (
+                                            <a
+                                                key={channel.name}
+                                                href={channel.href}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="px-3.5 py-2.5 rounded-xl bg-white/[0.03] hover:bg-amber-400/10 border border-white/5 hover:border-amber-400/30 transition-all text-left group"
+                                            >
+                                                <span className="text-[11px] text-neutral-400 group-hover:text-amber-300 block font-medium">
+                                                    {channel.name}
+                                                </span>
+                                                <span className="text-xs font-bold text-white font-mono">
+                                                    {channel.handle}
+                                                </span>
+                                            </a>
+                                        ))}
+                                    </div>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </section>

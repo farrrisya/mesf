@@ -1,5 +1,5 @@
 // --1. imports--
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import PublicNavbar from '@/Components/PublicNavbar';
 import Footer from '@/Components/Footer';
 import {
@@ -69,6 +69,10 @@ const INQUIRY_OPTIONS = [
 
 // --3. main component--
 export default function GetInvolved() {
+    const { settings } = usePage().props; // properties
+    const officialEmail = settings?.replyEmail || settings?.supportEmail || 'contact@mesf.my'; // properties
+    const phone = settings?.phone || '+603-8052 5278'; // properties
+
     // --4. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
@@ -197,12 +201,13 @@ export default function GetInvolved() {
                                 Have a Custom or General Inquiry?
                             </h3>
                             <p className="text-xs text-neutral-400">
-                                Reach our secretary desk directly at <span className="text-amber-400 font-mono">contact@mesf.my</span> or hotline <span className="text-amber-400 font-mono">+603-8052 5278</span>.
+                                Reach our secretary desk directly at <span className="text-amber-400 font-mono">{officialEmail}</span>
+                                {phone && <> or hotline <span className="text-amber-400 font-mono">{phone}</span></>}.
                             </p>
                         </div>
                     </div>
                     <a
-                        href="mailto:contact@mesf.my" // link
+                        href={`mailto:${officialEmail}`} // link
                         className="px-6 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:text-white transition-all shrink-0 cursor-pointer"
                     >
                         Email Secretary
