@@ -13,7 +13,8 @@ import {
     CheckCircle2,
     XCircle,
     AlertTriangle,
-    X
+    X,
+    LogIn
 } from 'lucide-react';
 
 // --2. properties--
@@ -51,6 +52,13 @@ export default function Index({ users = [] }) {
         const matchesRole = roleFilter === 'all' || u.role === roleFilter; // check
         return matchesQuery && matchesRole;
     });
+
+    const handleSwitchTo = (targetUser) => { // trigger
+        if (targetUser.role === 'admin') return; // check
+        if (window.confirm(`Adakah anda pasti mahu menukar sesi akaun kepada ${targetUser.name} (${targetUser.role})?`)) { // check
+            router.post(route('admin.users.switch-to', targetUser.id)); // redirect
+        }
+    };
 
     const handleDelete = (userToDelete) => { // trigger
         setConfirmModal({
@@ -212,6 +220,22 @@ export default function Index({ users = [] }) {
 
                                                 <td className="py-4 px-5 text-right">
                                                     <div className="inline-flex items-center gap-2">
+                                                        {auth?.user?.role === 'admin' && !isCurrentUser && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => handleSwitchTo(u)} // trigger
+                                                                disabled={u.role === 'admin'} // check
+                                                                className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                                                                    u.role === 'admin'
+                                                                        ? 'bg-white/[0.02] border-white/5 text-slate-600 cursor-not-allowed opacity-30'
+                                                                        : 'bg-amber-400/10 hover:bg-amber-400/20 text-amber-300 hover:text-amber-200 border-amber-400/30 shadow-sm'
+                                                                }`}
+                                                                title={u.role === 'admin' ? 'Cannot switch into another Admin account' : `Switch to ${u.name}'s account`}
+                                                            >
+                                                                <LogIn className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        )}
+
                                                         <Link
                                                             href={route('admin.users.edit', u.id)} // redirect
                                                             className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-amber-300 border border-white/10 transition-all cursor-pointer"

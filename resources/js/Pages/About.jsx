@@ -316,6 +316,8 @@ export default function About() {
         })).filter((section) => section.members.length > 0);
     }, [memberSearch, executiveSections]);
 
+    const filteredExecSections = filteredExecutiveSections; // alias
+
     // Filter general committee members based on search
     const filteredGeneralCommittee = useMemo(() => {
         if (!memberSearch.trim()) return generalCommittee;
@@ -594,7 +596,7 @@ export default function About() {
                                 onMouseEnter={() => setIsAutoScrollPaused(true)}
                                 onMouseLeave={() => {
                                     setIsAutoScrollPaused(false);
-                                    handleMouseLeaveOrUp();
+                                    handleMouseUp();
                                 }}
                             >
                                 {/* Carousel Header with Navigation Controls */}
@@ -623,7 +625,7 @@ export default function About() {
 
                                         <button
                                             type="button"
-                                            onClick={() => handleCarouselScroll('left')}
+                                            onClick={() => scrollCarousel('left')}
                                             disabled={!canScrollLeft}
                                             className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                                                 canScrollLeft
@@ -638,7 +640,7 @@ export default function About() {
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => handleCarouselScroll('right')}
+                                            onClick={() => scrollCarousel('right')}
                                             disabled={!canScrollRight}
                                             className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                                                 canScrollRight
@@ -675,7 +677,7 @@ export default function About() {
                                         ref={carouselRef}
                                         onScroll={updateCarouselScrollStatus}
                                         onMouseDown={handleMouseDown}
-                                        onMouseUp={handleMouseLeaveOrUp}
+                                        onMouseUp={handleMouseUp}
                                         onMouseMove={handleMouseMove}
                                         className={`flex gap-4 overflow-x-auto pb-3 pt-2 touch-pan-x overscroll-x-contain select-none will-change-scroll ${
                                             isDragging ? 'cursor-grabbing scroll-auto' : 'cursor-grab scroll-smooth snap-x snap-mandatory'

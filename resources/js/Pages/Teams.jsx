@@ -5,12 +5,13 @@ import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
-const NATIONAL_TEAMS = [
+const PRO_TEAMS = [
     { id: 1, name: 'Team Name', tag: 'TAG', logo: null, region: 'Location', rosters: ['Tag'], status: 'Status' },
     { id: 2, name: 'Team Name', tag: 'TAG', logo: null, region: 'Location', rosters: ['Tag'], status: 'Status' },
     { id: 3, name: 'Team Name', tag: 'TAG', logo: null, region: 'Location', rosters: ['Tag'], status: 'Status' },
     { id: 4, name: 'Team Name', tag: 'TAG', logo: null, region: 'Location', rosters: ['Tag'], status: 'Status' }
 ];
+const NATIONAL_TEAMS = PRO_TEAMS;
 
 const STATE_AFFILIATES = [
     { id: 'johor', name: 'Johor', title: 'Persatuan Sukan Elektronik Negeri Johor', region: 'Peninsular', image: '/images/states/johor_transparent.png' },

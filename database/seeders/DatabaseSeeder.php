@@ -38,9 +38,9 @@ class DatabaseSeeder extends Seeder
         );
 
         User::updateOrCreate(
-            ['email' => 'secretariat@mesf.my'],
+            ['email' => 'secretary@mesf.my'],
             [
-                'name' => 'MESF Secretariat',
+                'name' => 'MESF Secretary',
                 'password' => Hash::make('mesfmy'),
                 'role' => 'secretariat',
             ]

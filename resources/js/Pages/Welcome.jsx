@@ -354,16 +354,14 @@ export default function Welcome() {
 
                             {/* interactive cta buttons with matching balanced sizes */}
                             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-1">
-                                <button
-                                    type="button"
-                                    onClick={() => handleNavClick('about')}
+                                <Link
+                                    href="/about"
                                     className="w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-[#070B14] font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.45)] hover:scale-105 transition-transform duration-200 cursor-pointer"
                                 >
                                     Learn More
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => handleNavClick('leagues')}
+                                </Link>
+                                <Link
+                                    href="/leagues"
                                     className="relative overflow-hidden w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs sm:text-sm tracking-wider uppercase border border-white/20 hover:border-amber-400/50 shadow-[0_4px_25px_rgba(0,0,0,0.4)] hover:scale-105 transition-[transform,background-color,border-color] duration-200 cursor-pointer group"
                                 >
                                     {/* inner grain texture */}
@@ -374,7 +372,7 @@ export default function Welcome() {
                                         }}
                                     />
                                     <span className="relative z-10">Explore Leagues</span>
-                                </button>
+                                </Link>
                             </div>
                         </div>
 

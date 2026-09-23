@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -129,5 +130,83 @@ class UserManagementController extends Controller
         $user->delete(); // save
 
         return redirect()->route('admin.users.index')->with('success', 'Staff account deleted successfully.'); // redirect
+    }
+
+    // --7. switch to--
+    public function switchTo(User $user)
+    {
+        $admin = Auth::user(); // state
+
+        // safeguard 1: cannot impersonate another admin
+        if ($user->role === 'admin') { // check
+            return back()->withErrors(['error' => 'Cannot impersonate another Admin account.']); // error
+        }
+
+        // safeguard 2: cannot impersonate self
+        if ($user->id === $admin->id) { // check
+            return back()->withErrors(['error' => 'Cannot impersonate your own account.']); // error
+        }
+
+        // store impersonator id in session
+        session(['impersonator_id' => $admin->id]); // save
+
+        // log to ActivityLog
+        ActivityLog::create([ // save
+            'user_id' => $admin->id,
+            'action' => 'impersonation_start',
+            'description' => "Admin {$admin->name} switched into account {$user->name} ({$user->role})",
+            'model_type' => User::class,
+            'model_id' => $user->id,
+            'properties' => [
+                'admin_id' => $admin->id,
+                'admin_email' => $admin->email,
+                'target_id' => $user->id,
+                'target_email' => $user->email,
+                'target_role' => $user->role,
+            ],
+        ]);
+
+        Auth::login($user); // save
+
+        if ($user->role === 'editor') { // check
+            return redirect()->route('editor.dashboard')->with('success', "Now viewing as {$user->name} ({$user->role})."); // redirect
+        }
+
+        if ($user->role === 'secretariat') { // check
+            return redirect()->route('secretariat.dashboard')->with('success', "Now viewing as {$user->name} ({$user->role})."); // redirect
+        }
+
+        return redirect()->route('dashboard'); // redirect
+    }
+
+    // --8. switch back--
+    public function switchBack(Request $request)
+    {
+        $impersonatorId = session('impersonator_id'); // state
+
+        if (!$impersonatorId) { // check
+            return redirect()->route('dashboard'); // redirect
+        }
+
+        $currentUser = Auth::user(); // state
+        $admin = User::findOrFail($impersonatorId); // state
+
+        // log to ActivityLog
+        ActivityLog::create([ // save
+            'user_id' => $admin->id,
+            'action' => 'impersonation_end',
+            'description' => "Admin {$admin->name} returned to Admin account from {$currentUser->name} ({$currentUser->role})",
+            'model_type' => User::class,
+            'model_id' => $currentUser->id,
+            'properties' => [
+                'admin_id' => $admin->id,
+                'target_id' => $currentUser->id,
+            ],
+        ]);
+
+        session()->forget('impersonator_id'); // save
+        Auth::login($admin); // save
+
+        return redirect()->route('admin.dashboard')->with('success', 'Returned to Admin account.'); // redirect
     }
 }

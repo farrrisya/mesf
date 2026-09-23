@@ -11,6 +11,8 @@ use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\EditorController;
 use App\Http\Controllers\SecretariatController;
+use App\Http\Controllers\InquiryController;
+use App\Http\Controllers\Admin\InquiryManagementController;
 use App\Models\Gallery;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -163,11 +165,34 @@ Route::get('/penerbitan/{penerbitan}', function (\App\Models\Penerbitan $penerbi
     ]);
 })->name('penerbitan.show');
 
+Route::get('/get-involved', function () {
+    return Inertia::render('Public/GetInvolved'); // screen
+})->name('get-involved');
+
+Route::get('/sertai-kami', function () {
+    return redirect()->route('get-involved'); // redirect
+})->name('sertai-kami');
+
+Route::get('/join-tournament', function () {
+    return Inertia::render('Public/JoinTournament'); // screen
+})->name('join-tournament');
+
+Route::get('/partnership', function () {
+    return Inertia::render('Public/Partnership'); // screen
+})->name('partnership');
+
+Route::get('/host-tournament', function () {
+    return Inertia::render('Public/HostTournament'); // screen
+})->name('host-tournament');
+
+Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.store'); // save
+
 // --3. auth routes--
 Route::middleware('auth')->group(function () { // check
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/switch-back', [UserManagementController::class, 'switchBack'])->name('admin.users.switch-back'); // redirect
 });
 
 // --4. member portal / generic dashboard redirection--
@@ -234,9 +259,8 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
 
     // Inquiries management (Secretariat, Admin)
     Route::middleware('role:secretariat,admin')->group(function () { // check
-        Route::get('/inquiries', function () {
-            return Inertia::render('Admin/Inquiries'); // screen
-        })->name('inquiries');
+        Route::get('/inquiries', [InquiryManagementController::class, 'index'])->name('inquiries'); // screen
+        Route::put('/inquiries/{inquiry}', [InquiryManagementController::class, 'update'])->name('inquiries.update'); // save
     });
 
     // Admin top-level routes
@@ -249,6 +273,7 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/users/{user}/edit', [UserManagementController::class, 'edit'])->name('users.edit'); // screen
         Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update'); // save
         Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy'); // save
+        Route::post('/users/{user}/switch-to', [UserManagementController::class, 'switchTo'])->name('users.switch-to'); // redirect
 
         Route::get('/settings', [SettingController::class, 'index'])->name('settings'); // screen
         Route::post('/settings', [SettingController::class, 'update'])->name('settings.update'); // save

@@ -15,7 +15,8 @@ import {
     Activity,
     LogOut,
     Menu,
-    X
+    X,
+    ArrowRight
 } from 'lucide-react';
 
 // --2. properties--
@@ -23,56 +24,62 @@ const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // clock
 const WARNING_DURATION_MS = 60 * 1000; // clock
 const WARNING_THRESHOLD_MS = IDLE_TIMEOUT_MS - WARNING_DURATION_MS; // clock
 
-// admin menu (full menu)
-const ADMIN_MENU_ITEMS = [
-    { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
-    { label: 'News', href: '/admin/news', icon: Newspaper },
-    { label: 'Leagues', href: '/admin/leagues', icon: Trophy },
-    { label: 'Teams', href: '/admin/teams', icon: Users },
-    { label: 'Matches', href: '/admin/matches', icon: Calendar },
-    { label: 'Library', href: '/admin/library', icon: Image },
-    { label: 'Documents', href: '/admin/documents', icon: FileText },
-    { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
-    { label: 'Activity Logs', href: '/admin/activity-logs', icon: Activity },
-    { label: 'Manage Roles', href: '/admin/users', icon: UserCheck },
-    { label: 'Settings', href: '/admin/settings', icon: SettingsIcon },
+const NAV_CATEGORIES = [
+    {
+        category: 'Content',
+        items: [
+            { label: 'News', href: '/admin/news', icon: Newspaper, roles: ['admin', 'editor'] },
+            { label: 'Leagues', href: '/admin/leagues', icon: Trophy, roles: ['admin', 'editor'] },
+            { label: 'Teams', href: '/admin/teams', icon: Users, roles: ['admin', 'editor'] },
+            { label: 'Matches', href: '/admin/matches', icon: Calendar, roles: ['admin', 'editor'] },
+            { label: 'Library', href: '/admin/library', icon: Image, roles: ['admin', 'editor'] },
+            { label: 'Documents', href: '/admin/documents', icon: FileText, roles: ['admin'] },
+        ],
+    },
+    {
+        category: 'Operations',
+        items: [
+            { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare, roles: ['admin', 'secretariat'] },
+        ],
+    },
+    {
+        category: 'System',
+        items: [
+            { label: 'Activity Logs', href: '/admin/activity-logs', icon: Activity, roles: ['admin'] },
+            { label: 'Manage Roles', href: '/admin/users', icon: UserCheck, roles: ['admin'] },
+            { label: 'Settings', href: '/admin/settings', icon: SettingsIcon, roles: ['admin'] },
+        ],
+    },
 ];
 
-// editor: News, Leagues, Teams, Matches, Library only
-const EDITOR_MENU_ITEMS = [
-    { label: 'Dashboard', href: '/editor/dashboard', icon: LayoutDashboard },
-    { label: 'News', href: '/admin/news', icon: Newspaper },
-    { label: 'Leagues', href: '/admin/leagues', icon: Trophy },
-    { label: 'Teams', href: '/admin/teams', icon: Users },
-    { label: 'Matches', href: '/admin/matches', icon: Calendar },
-    { label: 'Library', href: '/admin/library', icon: Image },
-];
-
-// secretariat: Inquiries only
-const SECRETARIAT_MENU_ITEMS = [
-    { label: 'Dashboard', href: '/secretariat/dashboard', icon: LayoutDashboard },
-    { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare },
-];
+const ROLE_STYLES = {
+    admin: {
+        label: 'Admin',
+        badge: 'bg-amber-400/20 text-amber-300 border-amber-400/30',
+        avatarBg: 'bg-amber-400/15 text-amber-300 border-amber-400/30',
+    },
+    editor: {
+        label: 'Editor',
+        badge: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+        avatarBg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    },
+    secretariat: {
+        label: 'Secretariat',
+        badge: 'bg-sky-400/20 text-sky-300 border-sky-400/30',
+        avatarBg: 'bg-sky-400/15 text-sky-300 border-sky-400/30',
+    },
+};
 
 // --3. main component--
-export default function AdminLayout({ title = 'Admin - MESF', role = null, portalTitle = null, menuItems = null, children }) {
+export default function AdminLayout({ title = 'Admin - MESF', role = null, portalTitle = null, children }) {
     const { url, props } = usePage(); // properties
     const [sidebarOpen, setSidebarOpen] = useState(false); // state
     const [showIdleModal, setShowIdleModal] = useState(false); // state
     const [countdownSeconds, setCountdownSeconds] = useState(60); // state
 
-    const userRole = role || props?.auth?.user?.role || 'admin'; // state
-
-    let displayMenuItems = menuItems;
-    if (!displayMenuItems) {
-        if (userRole === 'editor') {
-            displayMenuItems = EDITOR_MENU_ITEMS;
-        } else if (userRole === 'secretariat') {
-            displayMenuItems = SECRETARIAT_MENU_ITEMS;
-        } else {
-            displayMenuItems = ADMIN_MENU_ITEMS;
-        }
-    }
+    const currentUser = props?.auth?.user; // state
+    const userRole = role || currentUser?.role || 'admin'; // state
+    const isImpersonating = Boolean(props?.auth?.is_impersonating); // state
 
     const logoUrl = props?.settings?.logoUrl || '/images/mesf_logo.png'; // properties
     const bannerUrl = props?.settings?.bannerUrl || '/images/mesf_bg_v2.jpg'; // properties
@@ -85,6 +92,21 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
             : `${orgAcronym} ADMIN`;
 
     const displayPortalTitle = portalTitle || defaultPortalLabel;
+
+    const dashboardHref = userRole === 'editor'
+        ? '/editor/dashboard'
+        : userRole === 'secretariat'
+            ? '/secretariat/dashboard'
+            : '/admin/dashboard';
+
+    // filter categories and items based on role
+    const visibleCategories = NAV_CATEGORIES.map((cat) => ({
+        category: cat.category,
+        items: cat.items.filter((item) => item.roles.includes(userRole)),
+    })).filter((cat) => cat.items.length > 0);
+
+    const roleStyle = ROLE_STYLES[userRole] || ROLE_STYLES.admin;
+    const userInitial = currentUser?.name ? currentUser.name.charAt(0).toUpperCase() : 'U';
 
     const warningTimerRef = useRef(null); // properties
     const logoutTimerRef = useRef(null); // properties
@@ -155,6 +177,29 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white overflow-x-hidden flex flex-col">
             <Head title={title} />
+
+            {/* Impersonation Banner */}
+            {isImpersonating && (
+                <div className="sticky top-0 z-50 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black px-4 sm:px-8 py-2.5 shadow-2xl flex flex-col sm:flex-row items-center justify-between gap-3 text-xs sm:text-sm font-semibold animate-fadeIn">
+                    <div className="flex items-center gap-2.5">
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-black text-amber-300 text-xs font-black shrink-0">
+                            !
+                        </span>
+                        <span>
+                            Viewing as <strong className="font-black underline">{currentUser?.name}</strong> ({roleStyle.label}) — You are currently in staff impersonation mode.
+                        </span>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => router.post(route('admin.users.switch-back'))} // redirect
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-black hover:bg-neutral-900 text-amber-300 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md shrink-0"
+                    >
+                        <span>Return to your account</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                </div>
+            )}
 
             {/* texture effect */}
             <div
@@ -233,7 +278,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
 
             {/* sidebar */}
             <aside
-                className={`fixed top-4 left-4 bottom-4 w-64 z-50 flex flex-col rounded-3xl bg-[#090D18]/80 backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'
+                className={`fixed top-4 left-4 bottom-4 w-64 z-40 flex flex-col rounded-3xl bg-[#090D18]/85 backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'
                     }`}
             >
                 {/* inner grain texture */}
@@ -245,7 +290,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                 />
 
                 {/* logo banner */}
-                <div className="relative z-10 flex items-center justify-center gap-3.5 px-4 py-6 border-b border-white/10">
+                <div className="relative z-10 flex items-center justify-center gap-3.5 px-4 py-5 border-b border-white/10">
                     <img
                         src={logoUrl}
                         alt="Logo"
@@ -260,54 +305,117 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                     </span>
                 </div>
 
-                {/* nav menu */}
-                <nav className="relative z-10 flex-1 overflow-y-auto px-4 py-5 space-y-3.5">
-                    {displayMenuItems.map((item) => {
-                        const isActive = url === item.href || url.startsWith(`${item.href}/`);
+                {/* nav menu scrollable container */}
+                <nav className="relative z-10 flex-1 overflow-y-auto px-3.5 py-4 space-y-4">
+                    {/* Top Standalone Dashboard Item */}
+                    {(() => {
+                        const isDashboardActive = url === dashboardHref || url === '/admin' || url === '/editor' || url === '/secretariat';
 
                         return (
                             <Link
-                                key={item.href}
-                                href={item.href} // redirect
+                                href={dashboardHref} // redirect
                                 onClick={() => setSidebarOpen(false)} // toggle
-                                className={`group relative flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm tracking-wide border transition-all duration-300 ease-out ${isActive
-                                    ? 'border-transparent bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-semibold shadow-[0_4px_20px_rgba(251,191,36,0.4),inset_0_1px_1.5px_rgba(255,255,255,0.6)]'
-                                    : 'border-transparent text-slate-300 font-normal hover:text-amber-300 hover:bg-amber-400/10 hover:border-amber-400/20'
-                                    }`}
+                                className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium tracking-wide transition-all duration-200 ${
+                                    isDashboardActive
+                                        ? 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-bold shadow-[0_4px_16px_rgba(251,191,36,0.35)]'
+                                        : 'text-slate-300 hover:text-white hover:bg-white/5'
+                                }`}
                             >
-                                <item.icon
-                                    className={`w-5 h-5 flex-shrink-0 transition-transform duration-300 ease-out ${isActive
-                                        ? 'text-black'
-                                        : 'text-slate-400 group-hover:text-amber-300 group-hover:scale-110'
-                                        }`}
+                                <LayoutDashboard
+                                    className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${
+                                        isDashboardActive
+                                            ? 'text-black'
+                                            : 'text-slate-400 group-hover:text-amber-300 group-hover:scale-105'
+                                    }`}
                                 />
-                                <span className="tracking-wider">{item.label}</span>
+                                <span>Dashboard</span>
                             </Link>
                         );
-                    })}
-                </nav>
+                    })()}
 
-                {/* logout button */}
-                <div className="relative z-10 p-4 border-t border-white/10 bg-white/[0.01] mt-auto">
-                    <Link
-                        href={route('logout')} // redirect
-                        method="post"
-                        as="button"
-                        className="flex items-center justify-center gap-2.5 w-full px-4 py-3 rounded-2xl text-sm font-bold uppercase tracking-wider text-amber-300 bg-amber-400/10 border border-amber-400/20 hover:bg-gradient-to-r hover:from-amber-400 hover:to-amber-500 hover:text-black hover:border-transparent hover:shadow-[0_4px_20px_rgba(251,191,36,0.35)] transition-all duration-300 cursor-pointer"
-                        onClick={(e) => { // trigger
-                            if (!window.confirm("Adakah anda pasti mahu log keluar daripada akaun?")) { // check
-                                e.preventDefault();
-                            }
-                        }}
-                    >
-                        <LogOut className="w-5 h-5" />
-                        LOG OUT
-                    </Link>
-                </div>
+                    {/* Categorized Nav Groups */}
+                    {visibleCategories.map((cat) => (
+                        <div key={cat.category} className="space-y-1">
+                            {/* Category Label Header */}
+                            <div className="px-3 pt-2 pb-1 text-[10px] font-mono font-bold tracking-wider text-slate-500 uppercase select-none">
+                                {cat.category}
+                            </div>
+
+                            {/* Group Items */}
+                            <div className="space-y-1">
+                                {cat.items.map((item) => {
+                                    const isActive = url === item.href || url.startsWith(`${item.href}/`);
+
+                                    return (
+                                        <Link
+                                            key={item.href}
+                                            href={item.href} // redirect
+                                            onClick={() => setSidebarOpen(false)} // toggle
+                                            className={`group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium tracking-wide transition-all duration-200 ${
+                                                isActive
+                                                    ? 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-bold shadow-[0_4px_16px_rgba(251,191,36,0.35)]'
+                                                    : 'text-slate-300 hover:text-white hover:bg-white/5'
+                                            }`}
+                                        >
+                                            <item.icon
+                                                className={`w-4 h-4 flex-shrink-0 transition-transform duration-200 ${
+                                                    isActive
+                                                        ? 'text-black'
+                                                        : 'text-slate-400 group-hover:text-amber-300 group-hover:scale-105'
+                                                }`}
+                                            />
+                                            <span>{item.label}</span>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ))}
+                </nav>
             </aside>
 
             {/* content wrapper */}
             <main className="flex-1 flex flex-col md:pl-72 min-w-0">
+                {/* top header bar with profile and logout on top right side */}
+                <header className="relative z-20 flex items-center justify-end px-6 sm:px-10 py-3.5 border-b border-white/10 bg-[#090D18]/60 backdrop-blur-xl">
+                    <div className="flex items-center gap-3">
+                        {/* User Profile Card */}
+                        <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.04] border border-white/10 shadow-sm">
+                            <div className={`w-7 h-7 rounded-xl border flex items-center justify-center font-black text-xs flex-shrink-0 ${roleStyle.avatarBg}`}>
+                                {userInitial}
+                            </div>
+                            <div className="hidden sm:flex flex-col text-left">
+                                <span className="text-xs font-bold text-white leading-tight">
+                                    {currentUser?.name || 'Staff User'}
+                                </span>
+                                <span className="text-[10px] text-slate-400 font-mono leading-tight">
+                                    {currentUser?.email || ''}
+                                </span>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border flex-shrink-0 ${roleStyle.badge}`}>
+                                {roleStyle.label}
+                            </span>
+                        </div>
+
+                        {/* Logout Button */}
+                        <Link
+                            href={route('logout')} // redirect
+                            method="post"
+                            as="button"
+                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-300 bg-white/5 border border-white/10 hover:bg-rose-500/20 hover:text-rose-300 hover:border-rose-500/30 transition-all duration-200 cursor-pointer shadow-sm"
+                            onClick={(e) => { // trigger
+                                if (!window.confirm("Adakah anda pasti mahu log keluar daripada akaun?")) { // check
+                                    e.preventDefault();
+                                }
+                            }}
+                            title="Log Out"
+                        >
+                            <LogOut className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Log Out</span>
+                        </Link>
+                    </div>
+                </header>
+
                 <div className="p-6 sm:p-10 flex-1 flex flex-col min-w-0">
                     {children}
                 </div>

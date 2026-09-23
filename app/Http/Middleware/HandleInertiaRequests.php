@@ -33,6 +33,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(), // properties
+                'is_impersonating' => $request->session()->has('impersonator_id'), // state
+                'impersonator_id' => $request->session()->get('impersonator_id'), // state
             ],
             'settings' => function () {
                 if (!\Illuminate\Support\Facades\Schema::hasTable('settings')) {
