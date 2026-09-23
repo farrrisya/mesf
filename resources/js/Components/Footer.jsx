@@ -10,9 +10,14 @@ export default function Footer({ showCta = true }) {
     const orgSlogan = settings?.orgSlogan || 'Bersama Memacu Esports Malaysia'; // properties
     const replyEmail = settings?.replyEmail || settings?.supportEmail || 'contact@mesf.my'; // properties
     const phone = settings?.phone || '+603-8052 5278'; // properties
-    const address = settings?.streetAddress
-        ? `${settings.streetAddress}${settings?.city ? `, ${settings.city}` : ''}${settings?.state ? `, ${settings.state}` : ''}`
-        : 'National Esports Secretariat, Kuala Lumpur, Malaysia'; // properties
+    const streetAddress = settings?.streetAddress || ''; // properties
+    const postalCode = settings?.postalCode || ''; // properties
+    const city = settings?.city || ''; // properties
+    const state = settings?.state || ''; // properties
+    const country = settings?.country || 'Malaysia'; // properties
+    const address = streetAddress
+        ? `${streetAddress}, ${postalCode ? `${postalCode} ` : ''}${city ? `${city}, ` : ''}${state ? `${state}, ` : ''}${country}`
+        : 'Spacerubix, Jalan TPP 1/7, Taman Perindustrian Puchong, 47100 Puchong, Selangor, Malaysia'; // properties
 
     // --4. UI--
     return (
