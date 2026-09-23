@@ -3,6 +3,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import PublicNavbar from '@/Components/PublicNavbar';
 import Footer from '@/Components/Footer';
+import BackButton from '@/Components/BackButton';
 import {
     Users,
     Handshake,
@@ -141,17 +142,9 @@ export default function GetInvolved() {
 
             {/* 2. Main Content Container */}
             <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-36 sm:pt-40 pb-36 text-left">
-                {/* Standard Back Button matching StateDetails & TeamDetails */}
+                {/* Standard Back Button */}
                 <div className="mb-10 sm:mb-12">
-                    <Link
-                        href="/" // redirect
-                        className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-wider text-neutral-300 hover:text-white transition-all duration-200 cursor-pointer group"
-                    >
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                        </svg>
-                        <span>Back to Home</span>
-                    </Link>
+                    <BackButton href="/" label="Back to Home" />
                 </div>
 
                 {/* Hero Header Section */}

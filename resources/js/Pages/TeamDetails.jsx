@@ -1,8 +1,9 @@
 // --1. imports--
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import BackButton from '@/Components/BackButton';
 
 // --2. properties--
 const TEAMS_DATABASE = {
@@ -65,21 +66,15 @@ export default function TeamDetails({ teamSlug = 'default' }) {
             />
 
             {/* Floating Glass Navbar */}
-            <PublicNavbar activeTab="teams" />
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                <PublicNavbar activeTab="teams" />
+            </div>
 
             {/* Main Content Area */}
             <main className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-24 text-left">
                 {/* Top Navigation Breadcrumb */}
                 <div className="mb-8">
-                    <Link
-                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-wider text-neutral-300 hover:text-white transition-all duration-200"
-                        href="/teams"
-                    >
-                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                        </svg>
-                        <span>Back to Directory</span>
-                    </Link>
+                    <BackButton href="/teams" label="Back to Directory" />
                 </div>
 
                 {/* Team Hero Profile Box */}

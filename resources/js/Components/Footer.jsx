@@ -55,7 +55,7 @@ export default function Footer({ showCta = true }) {
                             href="/get-involved"
                             className="relative overflow-hidden px-8 py-3.5 rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-bold text-xs sm:text-sm tracking-widest uppercase border border-white/20 hover:border-amber-400/60 shadow-[0_0_25px_rgba(0,0,0,0.5)] hover:shadow-[0_0_30px_rgba(251,191,36,0.35)] hover:scale-105 active:scale-95 transition-all duration-300 cursor-pointer group shrink-0 inline-flex items-center justify-center select-none"
                         >
-                            <span className="relative z-10">GET STARTED</span>
+                            <span className="relative z-10">GET INVOLVED</span>
                         </Link>
                     </div>
                 )}

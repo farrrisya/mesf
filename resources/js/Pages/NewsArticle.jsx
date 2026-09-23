@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import BackButton from '@/Components/BackButton';
 
 // --2. main component--
 export default function NewsArticle() {
@@ -59,7 +60,9 @@ export default function NewsArticle() {
             />
 
             {/* 1. floating glass navbar */}
-            <PublicNavbar activeTab="news" />
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                <PublicNavbar activeTab="news" />
+            </div>
 
             {/* 2. full-screen hero cover */}
             <section className="relative w-full h-screen flex flex-col justify-end overflow-hidden">
@@ -83,15 +86,7 @@ export default function NewsArticle() {
                 <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-16 md:pb-20 text-left relative z-10">
                     <div className="max-w-3xl">
                         <div className="mb-6">
-                            <Link
-                                href="/news"
-                                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-wider text-neutral-300 hover:text-white transition-all duration-200 cursor-pointer group"
-                            >
-                                <svg className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                                </svg>
-                                <span>Back to News</span>
-                            </Link>
+                            <BackButton href="/news" label="Back to News" />
                         </div>
 
                         <div className="mb-3">

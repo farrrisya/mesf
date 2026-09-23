@@ -1,8 +1,9 @@
 // --1. imports--
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import BackButton from '@/Components/BackButton';
 
 // --2. properties--
 const STATE_TEMPLATE_DATA = {
@@ -69,21 +70,15 @@ export default function StateDetails() {
             />
 
             {/* 1. floating glass navbar */}
-            <PublicNavbar activeTab="teams" />
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
+                <PublicNavbar activeTab="teams" />
+            </div>
 
             {/* Main Content */}
             <main className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 pt-28 md:pt-36 pb-28 text-left">
                 {/* Back Link */}
                 <div className="mb-8">
-                    <Link
-                        href="/teams"
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-wider text-neutral-300 hover:text-white transition-all duration-200 cursor-pointer group"
-                    >
-                        <svg className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
-                        </svg>
-                        <span>Back to Directory</span>
-                    </Link>
+                    <BackButton href="/teams" label="Back to Directory" />
                 </div>
 
                 {/* State Profile Header */}

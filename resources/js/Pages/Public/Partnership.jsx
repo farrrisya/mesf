@@ -2,6 +2,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import PublicNavbar from '@/Components/PublicNavbar';
 import Footer from '@/Components/Footer';
+import BackButton from '@/Components/BackButton';
 import { useState } from 'react';
 import {
     Handshake,
@@ -91,13 +92,7 @@ export default function Partnership() {
             <header className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 pt-32 pb-8">
                 {/* Back Link */}
                 <div className="mb-6">
-                    <Link
-                        href="/get-involved" // redirect
-                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-wider text-neutral-300 hover:text-white transition-all duration-200 cursor-pointer group"
-                    >
-                        <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
-                        <span>Back to Inquiries</span>
-                    </Link>
+                    <BackButton href="/get-involved" label="Back to Inquiries" />
                 </div>
 
                 <div className="pb-6 border-b border-white/10 space-y-4">
