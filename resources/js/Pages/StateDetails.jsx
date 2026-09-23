@@ -196,12 +196,12 @@ export default function StateDetails() {
                         </section>
                     </div>
 
-                    {/* Right Column: Secretariat & Contact Sheet */}
+                    {/* Right Column: Secretary & Contact Sheet */}
                     <aside className="lg:col-span-4 space-y-6">
-                        {/* Secretariat Contact Box */}
+                        {/* Secretary Contact Box */}
                         <div className="p-6 rounded-2xl border border-white/10 bg-[#0A0F1D]/80 space-y-4">
                             <h3 className="text-xs font-bold tracking-widest text-amber-400 uppercase pb-2 border-b border-white/10">
-                                Official Secretariat
+                                Official Secretary
                             </h3>
 
                             <div className="space-y-3 text-xs">

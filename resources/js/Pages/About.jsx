@@ -98,7 +98,7 @@ const EXECUTIVE_SECTIONS = [
     },
     {
         id: 'secretariat',
-        sectionTitle: 'Secretariat & Administration',
+        sectionTitle: 'Secretary & Administration',
         gridCols: 'grid-cols-1 md:grid-cols-2 gap-5',
         cardBg: 'bg-[#161D2A]',
         borderColor: 'border-slate-700/40',
@@ -759,12 +759,12 @@ export default function About() {
                     </div>
                 </section>
 
-                {/* Section 5: Official Secretariat & Contact Channels */}
+                {/* Section 5: Official Secretary & Contact Channels */}
                 <section className="relative rounded-3xl p-6 sm:p-10 lg:p-12 bg-white/[0.025] border border-white/10 shadow-2xl backdrop-blur-xl">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
                         <div className="lg:col-span-7 space-y-5">
                             <div className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-amber-400">
-                                Secretariat
+                                Secretary
                             </div>
                             <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
                                 Contact & Inquiries

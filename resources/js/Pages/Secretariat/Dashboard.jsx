@@ -19,8 +19,8 @@ export default function Dashboard() {
 
     // --5. UI--
     return (
-        <AdminLayout title="Secretariat Dashboard - MESF" role="secretariat">
-            <Head title="Secretariat Dashboard" />
+        <AdminLayout title="Secretary Dashboard - MESF" role="secretariat">
+            <Head title="Secretary Dashboard" />
 
             <div className="space-y-8 max-w-7xl">
                 {/* search bar */}
@@ -46,10 +46,10 @@ export default function Dashboard() {
 
                         <div className="space-y-1.5 max-w-md mx-auto">
                             <h3 className="text-lg font-bold text-white tracking-wide">
-                                Secretariat Dashboard
+                                Secretary Dashboard
                             </h3>
                             <p className="text-xs text-slate-400 leading-relaxed font-normal">
-                                Welcome, {user?.name || 'Secretariat Officer'}. This workspace is ready for your secretariat widgets and inquiries management design.
+                                Welcome, {user?.name || 'Secretary Officer'}. This workspace is ready for your secretary widgets and inquiries management design.
                             </p>
                         </div>
                     </div>

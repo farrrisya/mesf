@@ -85,7 +85,7 @@ const DEFAULT_EXECUTIVE_SECTIONS = [
     },
     {
         id: 'secretariat',
-        sectionTitle: 'Secretariat & Administration',
+        sectionTitle: 'Secretary & Administration',
         members: [
             { id: 'syed', name: 'Syed Fakrurrozi', title: 'Secretary General', contact: 'syed@mesf.my' },
             { id: 'hakimi', name: 'Alif Hakimi', title: 'Asst. Secretary General', contact: 'hakimi@mesf.my' },
@@ -1152,7 +1152,7 @@ export default function Settings({ settings = {}, sliders = [] }) {
                         </div>
                     )}
 
-                    {/* Executive Leadership & Secretariat Sections */}
+                    {/* Executive Leadership & Secretary Sections */}
                     {(activeTab === 'all' || activeTab === 'about') && (
                         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start pb-8 border-b border-white/10">
                             <div className="md:col-span-4 space-y-1">
@@ -1163,7 +1163,7 @@ export default function Settings({ settings = {}, sliders = [] }) {
                                     </label>
                                 </div>
                                 <p className="text-xs text-slate-400 leading-relaxed">
-                                    Manage President, Vice Presidents, Secretariat, and principal office bearers.
+                                    Manage President, Vice Presidents, Secretary, and principal office bearers.
                                 </p>
                             </div>
 

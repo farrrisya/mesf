@@ -186,7 +186,7 @@ export default function GetInvolved() {
                     })}
                 </div>
 
-                {/* Direct Secretariat Contact Row */}
+                {/* Direct Secretary Contact Row */}
                 <div className="mt-12 p-6 sm:p-8 rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
@@ -197,7 +197,7 @@ export default function GetInvolved() {
                                 Have a Custom or General Inquiry?
                             </h3>
                             <p className="text-xs text-neutral-400">
-                                Reach our secretariat desk directly at <span className="text-amber-400 font-mono">contact@mesf.my</span> or hotline <span className="text-amber-400 font-mono">+603-8052 5278</span>.
+                                Reach our secretary desk directly at <span className="text-amber-400 font-mono">contact@mesf.my</span> or hotline <span className="text-amber-400 font-mono">+603-8052 5278</span>.
                             </p>
                         </div>
                     </div>
@@ -205,7 +205,7 @@ export default function GetInvolved() {
                         href="mailto:contact@mesf.my" // link
                         className="px-6 py-2.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 text-xs font-bold uppercase tracking-wider text-neutral-300 hover:text-white transition-all shrink-0 cursor-pointer"
                     >
-                        Email Secretariat
+                        Email Secretary
                     </a>
                 </div>
             </main>

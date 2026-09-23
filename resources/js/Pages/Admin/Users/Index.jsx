@@ -28,7 +28,7 @@ const ROLE_BADGES = {
         badge: 'bg-emerald-400/20 text-emerald-300 border-emerald-400/30'
     },
     secretariat: {
-        label: 'Secretariat',
+        label: 'Secretary',
         badge: 'bg-indigo-400/20 text-indigo-300 border-indigo-400/30'
     }
 };
@@ -140,7 +140,7 @@ export default function Index({ users = [] }) {
                             <option value="all">All Roles</option>
                             <option value="admin">Admin</option>
                             <option value="editor">Editor</option>
-                            <option value="secretariat">Secretariat</option>
+                            <option value="secretariat">Secretary</option>
                         </select>
                     </div>
                 </div>

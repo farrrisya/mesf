@@ -14,7 +14,7 @@ import {
 const ROLES = [
     { value: 'admin', label: 'Admin', desc: 'Full administration, system settings, activity logs & role management.' },
     { value: 'editor', label: 'Editor', desc: 'Manage editorial content, news, leagues, matches, teams, and library.' },
-    { value: 'secretariat', label: 'Secretariat', desc: 'Manage official inquiries, incoming correspondence, and secretariat desk.' }
+    { value: 'secretariat', label: 'Secretary', desc: 'Manage official inquiries, incoming correspondence, and secretary desk.' }
 ];
 
 // --3. main component--

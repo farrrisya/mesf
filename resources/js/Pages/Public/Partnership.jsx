@@ -134,7 +134,7 @@ export default function Partnership() {
                         <div className="space-y-1 text-left">
                             <h3 className="text-base font-bold text-white">Proposal Received Successfully!</h3>
                             <p className="text-xs text-neutral-300 leading-relaxed">
-                                {flash?.success || 'Thank you, your partnership inquiry has been received. Our partnerships secretariat will review the proposal and reach out.'}
+                                {flash?.success || 'Thank you, your partnership inquiry has been received. Our partnerships secretary will review the proposal and reach out.'}
                             </p>
                         </div>
                     </div>

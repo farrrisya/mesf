@@ -64,7 +64,7 @@ const ROLE_STYLES = {
         avatarBg: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     },
     secretariat: {
-        label: 'Secretariat',
+        label: 'Secretary',
         badge: 'bg-sky-400/20 text-sky-300 border-sky-400/30',
         avatarBg: 'bg-sky-400/15 text-sky-300 border-sky-400/30',
     },
