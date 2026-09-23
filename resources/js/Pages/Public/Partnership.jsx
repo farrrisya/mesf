@@ -86,11 +86,6 @@ export default function Partnership() {
                 </div>
 
                 <div className="pb-6 border-b border-white/10 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-semibold tracking-wider uppercase">
-                        <Handshake className="w-3.5 h-3.5 text-emerald-400" />
-                        <span>Official Strategic Collaborations</span>
-                    </div>
-
                     <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight uppercase text-white leading-tight">
                         Partner With MESF
                     </h1>

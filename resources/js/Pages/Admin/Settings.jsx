@@ -212,11 +212,17 @@ export default function Settings({ settings = {}, sliders = [] }) {
         googleMapEmbed: settings?.googleMapEmbed || settings?.contact_map_url || '',
         websiteUrl: settings?.websiteUrl || '',
         facebook: settings?.facebook || '',
+        facebookHandle: settings?.facebookHandle || '',
         instagram: settings?.instagram || '',
+        instagramHandle: settings?.instagramHandle || '',
         tiktok: settings?.tiktok || '',
+        tiktokHandle: settings?.tiktokHandle || '',
         youtube: settings?.youtube || '',
-        discord: settings?.discord || '',
+        youtubeHandle: settings?.youtubeHandle || '',
+        iesfUrl: settings?.iesfUrl || '',
+        iesfHandle: settings?.iesfHandle || '',
         xUrl: settings?.xUrl || settings?.twitter || '',
+        xHandle: settings?.xHandle || settings?.twitterHandle || '',
         logoUrl: getSafeImageUrl(settings?.logoUrl, '/images/mesf_logo.png'),
         bannerUrl: getSafeImageUrl(settings?.bannerUrl, '/images/mesf_bg_v2.jpg'),
         aboutHeroSubtitle: settings?.aboutHeroSubtitle || 'Official national governing body registered under the Sports Development Act 1997, overseeing electronic sports across Malaysia.',
@@ -334,7 +340,8 @@ export default function Settings({ settings = {}, sliders = [] }) {
                 id: `exec_${Date.now()}`,
                 name: 'New Member',
                 title: 'Executive Officer',
-                contact: 'member@mesf.my'
+                contact: 'member@mesf.my',
+                phone: ''
             };
             updated[secIdx] = {
                 ...updated[secIdx],
@@ -380,7 +387,8 @@ export default function Settings({ settings = {}, sliders = [] }) {
                 id: `gen_${Date.now()}`,
                 name: 'New Committee Member',
                 title: 'Committee',
-                contact: 'committee@mesf.my'
+                contact: 'committee@mesf.my',
+                phone: ''
             };
             return {
                 ...prev,
@@ -1229,26 +1237,40 @@ export default function Settings({ settings = {}, sliders = [] }) {
                                                             />
                                                         </div>
 
+                                                        <div>
+                                                            <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                                Role / Title
+                                                            </label>
+                                                            <input
+                                                                type="text"
+                                                                value={member.title || ''} // state
+                                                                onChange={(e) => handleUpdateExecMember(secIdx, memIdx, 'title', e.target.value)} // trigger
+                                                                className="w-full px-3 py-1.5 rounded-xl bg-[#070B14] border border-white/10 focus:border-amber-400 text-amber-300 text-xs outline-none transition-all font-medium"
+                                                            />
+                                                        </div>
+
                                                         <div className="grid grid-cols-2 gap-2">
-                                                            <div>
-                                                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
-                                                                    Role / Title
-                                                                </label>
-                                                                <input
-                                                                    type="text"
-                                                                    value={member.title || ''} // state
-                                                                    onChange={(e) => handleUpdateExecMember(secIdx, memIdx, 'title', e.target.value)} // trigger
-                                                                    className="w-full px-3 py-1.5 rounded-xl bg-[#070B14] border border-white/10 focus:border-amber-400 text-amber-300 text-xs outline-none transition-all font-medium"
-                                                                />
-                                                            </div>
                                                             <div>
                                                                 <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
                                                                     Contact Email
                                                                 </label>
                                                                 <input
                                                                     type="email"
+                                                                    placeholder="name@mesf.my"
                                                                     value={member.contact || ''} // state
                                                                     onChange={(e) => handleUpdateExecMember(secIdx, memIdx, 'contact', e.target.value)} // trigger
+                                                                    className="w-full px-3 py-1.5 rounded-xl bg-[#070B14] border border-white/10 focus:border-amber-400 text-slate-300 text-xs outline-none transition-all font-mono"
+                                                                />
+                                                            </div>
+                                                            <div>
+                                                                <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                                    Phone Number
+                                                                </label>
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="+60 12-345 6789"
+                                                                    value={member.phone || ''} // state
+                                                                    onChange={(e) => handleUpdateExecMember(secIdx, memIdx, 'phone', e.target.value)} // trigger
                                                                     className="w-full px-3 py-1.5 rounded-xl bg-[#070B14] border border-white/10 focus:border-amber-400 text-slate-300 text-xs outline-none transition-all font-mono"
                                                                 />
                                                             </div>
@@ -1345,19 +1367,28 @@ export default function Settings({ settings = {}, sliders = [] }) {
                                                         className="w-full px-2.5 py-1 rounded-lg bg-[#090D18] border border-white/10 focus:border-amber-400 text-white text-xs outline-none transition-all font-medium"
                                                     />
                                                 </div>
-                                                <div className="grid grid-cols-2 gap-1.5">
+                                                <div>
                                                     <input
                                                         type="text"
-                                                        placeholder="Role"
+                                                        placeholder="Role / Title"
                                                         value={member.title || ''} // state
                                                         onChange={(e) => handleUpdateGenMember(memIdx, 'title', e.target.value)} // trigger
                                                         className="w-full px-2.5 py-1 rounded-lg bg-[#090D18] border border-white/10 focus:border-amber-400 text-amber-300 text-[11px] outline-none transition-all font-medium"
                                                     />
+                                                </div>
+                                                <div className="grid grid-cols-2 gap-1.5">
                                                     <input
                                                         type="email"
                                                         placeholder="Email"
                                                         value={member.contact || ''} // state
                                                         onChange={(e) => handleUpdateGenMember(memIdx, 'contact', e.target.value)} // trigger
+                                                        className="w-full px-2.5 py-1 rounded-lg bg-[#090D18] border border-white/10 focus:border-amber-400 text-slate-300 text-[11px] outline-none transition-all font-mono"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        placeholder="Phone"
+                                                        value={member.phone || ''} // state
+                                                        onChange={(e) => handleUpdateGenMember(memIdx, 'phone', e.target.value)} // trigger
                                                         className="w-full px-2.5 py-1 rounded-lg bg-[#090D18] border border-white/10 focus:border-amber-400 text-slate-300 text-[11px] outline-none transition-all font-mono"
                                                     />
                                                 </div>
@@ -1432,7 +1463,7 @@ export default function Settings({ settings = {}, sliders = [] }) {
                             <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="phone" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        Phone Number
+                                        Phone / Hotline Number
                                     </label>
                                     <div className="relative">
                                         <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -1441,7 +1472,8 @@ export default function Settings({ settings = {}, sliders = [] }) {
                                             type="text"
                                             value={formData.phone} // state
                                             onChange={(e) => handleInputChange('phone', e.target.value)} // trigger
-                                            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
+                                            placeholder="+60 3-8000 8000"
+                                            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-slate-600"
                                         />
                                     </div>
                                 </div>
@@ -1457,7 +1489,8 @@ export default function Settings({ settings = {}, sliders = [] }) {
                                             type="url"
                                             value={formData.websiteUrl} // state
                                             onChange={(e) => handleInputChange('websiteUrl', e.target.value)} // trigger
-                                            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
+                                            placeholder="https://mesf.my"
+                                            className="w-full pl-10 pr-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-slate-600"
                                         />
                                     </div>
                                 </div>
@@ -1618,89 +1651,191 @@ export default function Settings({ settings = {}, sliders = [] }) {
                                 </p>
                             </div>
 
-                            <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                <div>
-                                    <label htmlFor="facebook" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        Facebook Page URL
-                                    </label>
-                                    <input
-                                        id="facebook"
-                                        type="url"
-                                        value={formData.facebook} // state
-                                        onChange={(e) => handleInputChange('facebook', e.target.value)} // trigger
-                                        placeholder="https://facebook.com/mesf.my"
-                                        className="w-full px-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
-                                    />
+                            <div className="md:col-span-8 space-y-4">
+                                {/* Instagram */}
+                                <div className="p-4 rounded-2xl bg-[#090D1A] border border-white/10 space-y-3">
+                                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Instagram</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label htmlFor="instagram" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Profile URL
+                                            </label>
+                                            <input
+                                                id="instagram"
+                                                type="url"
+                                                value={formData.instagram} // state
+                                                onChange={(e) => handleInputChange('instagram', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="instagramHandle" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Display Handle / Username
+                                            </label>
+                                            <input
+                                                id="instagramHandle"
+                                                type="text"
+                                                value={formData.instagramHandle} // state
+                                                onChange={(e) => handleInputChange('instagramHandle', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="instagram" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        Instagram Profile URL
-                                    </label>
-                                    <input
-                                        id="instagram"
-                                        type="url"
-                                        value={formData.instagram} // state
-                                        onChange={(e) => handleInputChange('instagram', e.target.value)} // trigger
-                                        placeholder="https://instagram.com/mesf.my"
-                                        className="w-full px-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
-                                    />
+                                {/* TikTok */}
+                                <div className="p-4 rounded-2xl bg-[#090D1A] border border-white/10 space-y-3">
+                                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">TikTok</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label htmlFor="tiktok" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Profile URL
+                                            </label>
+                                            <input
+                                                id="tiktok"
+                                                type="url"
+                                                value={formData.tiktok} // state
+                                                onChange={(e) => handleInputChange('tiktok', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="tiktokHandle" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Display Handle / Username
+                                            </label>
+                                            <input
+                                                id="tiktokHandle"
+                                                type="text"
+                                                value={formData.tiktokHandle} // state
+                                                onChange={(e) => handleInputChange('tiktokHandle', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="tiktok" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        TikTok Profile URL
-                                    </label>
-                                    <input
-                                        id="tiktok"
-                                        type="url"
-                                        value={formData.tiktok} // state
-                                        onChange={(e) => handleInputChange('tiktok', e.target.value)} // trigger
-                                        placeholder="https://tiktok.com/@mesf.my"
-                                        className="w-full px-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
-                                    />
+                                {/* Facebook */}
+                                <div className="p-4 rounded-2xl bg-[#090D1A] border border-white/10 space-y-3">
+                                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">Facebook</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label htmlFor="facebook" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Page URL
+                                            </label>
+                                            <input
+                                                id="facebook"
+                                                type="url"
+                                                value={formData.facebook} // state
+                                                onChange={(e) => handleInputChange('facebook', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="facebookHandle" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Display Name / Handle
+                                            </label>
+                                            <input
+                                                id="facebookHandle"
+                                                type="text"
+                                                value={formData.facebookHandle} // state
+                                                onChange={(e) => handleInputChange('facebookHandle', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="youtube" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        YouTube Channel URL
-                                    </label>
-                                    <input
-                                        id="youtube"
-                                        type="url"
-                                        value={formData.youtube} // state
-                                        onChange={(e) => handleInputChange('youtube', e.target.value)} // trigger
-                                        placeholder="https://youtube.com/@mesf"
-                                        className="w-full px-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
-                                    />
+                                {/* YouTube */}
+                                <div className="p-4 rounded-2xl bg-[#090D1A] border border-white/10 space-y-3">
+                                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">YouTube</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label htmlFor="youtube" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Channel URL
+                                            </label>
+                                            <input
+                                                id="youtube"
+                                                type="url"
+                                                value={formData.youtube} // state
+                                                onChange={(e) => handleInputChange('youtube', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="youtubeHandle" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Display Handle / Channel Name
+                                            </label>
+                                            <input
+                                                id="youtubeHandle"
+                                                type="text"
+                                                value={formData.youtubeHandle} // state
+                                                onChange={(e) => handleInputChange('youtubeHandle', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="discord" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        Discord Server URL
-                                    </label>
-                                    <input
-                                        id="discord"
-                                        type="url"
-                                        value={formData.discord} // state
-                                        onChange={(e) => handleInputChange('discord', e.target.value)} // trigger
-                                        placeholder="https://discord.gg/mesf"
-                                        className="w-full px-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
-                                    />
+                                {/* X / Twitter */}
+                                <div className="p-4 rounded-2xl bg-[#090D1A] border border-white/10 space-y-3">
+                                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">X / Twitter</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label htmlFor="xUrl" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Profile URL
+                                            </label>
+                                            <input
+                                                id="xUrl"
+                                                type="url"
+                                                value={formData.xUrl} // state
+                                                onChange={(e) => handleInputChange('xUrl', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="xHandle" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Display Handle / Username
+                                            </label>
+                                            <input
+                                                id="xHandle"
+                                                type="text"
+                                                value={formData.xHandle} // state
+                                                onChange={(e) => handleInputChange('xHandle', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div>
-                                    <label htmlFor="xUrl" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
-                                        X (Twitter) Profile URL
-                                    </label>
-                                    <input
-                                        id="xUrl"
-                                        type="url"
-                                        value={formData.xUrl} // state
-                                        onChange={(e) => handleInputChange('xUrl', e.target.value)} // trigger
-                                        placeholder="https://x.com/mesf_my"
-                                        className="w-full px-4 py-2.5 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
-                                    />
+                                {/* IeSF Member Portal */}
+                                <div className="p-4 rounded-2xl bg-[#090D1A] border border-white/10 space-y-3">
+                                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider block">IeSF Member Portal</span>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <div>
+                                            <label htmlFor="iesfUrl" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Member Profile URL
+                                            </label>
+                                            <input
+                                                id="iesfUrl"
+                                                type="url"
+                                                value={formData.iesfUrl} // state
+                                                onChange={(e) => handleInputChange('iesfUrl', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="iesfHandle" className="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">
+                                                Display Label
+                                            </label>
+                                            <input
+                                                id="iesfHandle"
+                                                type="text"
+                                                value={formData.iesfHandle} // state
+                                                onChange={(e) => handleInputChange('iesfHandle', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

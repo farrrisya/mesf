@@ -77,11 +77,6 @@ export default function HostTournament() {
                 </div>
 
                 <div className="pb-6 border-b border-white/10 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-300 text-xs font-semibold tracking-wider uppercase">
-                        <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                        <span>Official Federation Sanctioning Desk</span>
-                    </div>
-
                     <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight uppercase text-white leading-tight">
                         Host &amp; Sanction A Tournament
                     </h1>
@@ -315,7 +310,7 @@ export default function HostTournament() {
                                 disabled={processing}
                                 className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.35)] hover:scale-105 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {processing ? 'Submitting Application...' : 'Submit Sanctioning Request'}
+                                {processing ? 'Submitting...' : 'Submit Request'}
                             </button>
                         </div>
                     </form>

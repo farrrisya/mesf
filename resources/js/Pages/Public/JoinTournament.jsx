@@ -34,16 +34,19 @@ const MALAYSIA_STATES = [
     'Sarawak',
     'WP Kuala Lumpur',
     'WP Labuan',
-    'WP Putrajaya'
+    'WP Putrajaya',
+    'Other / International'
 ];
 
 // --3. main component--
 export default function JoinTournament() {
     const { flash = {} } = usePage().props; // properties
     const [submitted, setSubmitted] = useState(false); // state
+    const [customGameTitle, setCustomGameTitle] = useState(''); // state
+    const [customState, setCustomState] = useState(''); // state
 
     // form state
-    const { data, setData, post, processing, errors, reset } = useForm({
+    const { data, setData, post, processing, errors, reset, transform } = useForm({
         type: 'join_tournament', // state
         name: '', // state
         email: '', // state
@@ -56,12 +59,24 @@ export default function JoinTournament() {
         message: '', // state
     });
 
+    transform((formData) => ({
+        ...formData,
+        game_title: formData.game_title === 'Other / Open Title' && customGameTitle.trim()
+            ? `Other (${customGameTitle.trim()})`
+            : formData.game_title,
+        state: formData.state === 'Other / International' && customState.trim()
+            ? `Other (${customState.trim()})`
+            : formData.state,
+    }));
+
     // --4. actions--
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // trigger
         post('/inquiries', {
             onSuccess: () => {
                 reset(); // state
+                setCustomGameTitle(''); // state
+                setCustomState(''); // state
                 setSubmitted(true); // state
             }
         }); // save
@@ -107,11 +122,6 @@ export default function JoinTournament() {
                 </div>
 
                 <div className="pb-6 border-b border-white/10 space-y-4">
-                    <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-purple-500/10 border border-purple-500/25 text-purple-300 text-xs font-semibold tracking-wider uppercase">
-                        <Trophy className="w-3.5 h-3.5 text-purple-400" />
-                        <span>Official National Tournament Portal</span>
-                    </div>
-
                     <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight uppercase text-white leading-tight">
                         Join A Tournament
                     </h1>
@@ -197,7 +207,12 @@ export default function JoinTournament() {
                                     <select
                                         required
                                         value={data.game_title} // state
-                                        onChange={(e) => setData('game_title', e.target.value)} // trigger
+                                        onChange={(e) => {
+                                            setData('game_title', e.target.value); // trigger
+                                            if (e.target.value !== 'Other / Open Title') {
+                                                setCustomGameTitle(''); // state
+                                            }
+                                        }}
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
                                     >
                                         <option value="" disabled className="bg-[#090D18] text-neutral-400">Select game title</option>
@@ -206,6 +221,22 @@ export default function JoinTournament() {
                                         ))}
                                     </select>
                                     {errors.game_title && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.game_title}</p>}
+
+                                    {data.game_title === 'Other / Open Title' && (
+                                        <div className="mt-3">
+                                            <label className="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">
+                                                Please Specify Game Title <span className="text-amber-400">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={customGameTitle} // state
+                                                onChange={(e) => setCustomGameTitle(e.target.value)} // trigger
+                                                placeholder="e.g. Apex Legends / Street Fighter 6 / Free Fire"
+                                                className="w-full px-4 py-3 rounded-xl bg-black/60 border border-amber-400/50 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
 
                                 <div>
@@ -231,7 +262,12 @@ export default function JoinTournament() {
                                     <select
                                         required
                                         value={data.state} // state
-                                        onChange={(e) => setData('state', e.target.value)} // trigger
+                                        onChange={(e) => {
+                                            setData('state', e.target.value); // trigger
+                                            if (e.target.value !== 'Other / International') {
+                                                setCustomState(''); // state
+                                            }
+                                        }}
                                         className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
                                     >
                                         <option value="" disabled className="bg-[#090D18] text-neutral-400">Select state</option>
@@ -240,6 +276,22 @@ export default function JoinTournament() {
                                         ))}
                                     </select>
                                     {errors.state && <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1"><AlertCircle className="w-3.5 h-3.5" />{errors.state}</p>}
+
+                                    {data.state === 'Other / International' && (
+                                        <div className="mt-3">
+                                            <label className="block text-xs font-bold text-amber-400 uppercase tracking-wider mb-1.5">
+                                                Please Specify Region / Country <span className="text-amber-400">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={customState} // state
+                                                onChange={(e) => setCustomState(e.target.value)} // trigger
+                                                placeholder="e.g. Singapore / Indonesia / Brunei"
+                                                className="w-full px-4 py-3 rounded-xl bg-black/60 border border-amber-400/50 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-600"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
