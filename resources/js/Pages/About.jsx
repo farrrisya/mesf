@@ -437,50 +437,53 @@ export default function About() {
                                                 <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors leading-snug truncate" title={member.name}>
                                                     {member.name}
                                                 </h3>
-                                                {(member.contact || member.phone) && (
-                                                    <div className="flex flex-col gap-1 text-xs text-neutral-400 font-mono pt-1">
-                                                        {member.phone && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                                title="Click to copy phone number"
-                                                                className="truncate flex items-center gap-1.5 hover:text-amber-300 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-phone` ? (
-                                                                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Phone className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                        {member.contact && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                                title="Click to copy email"
-                                                                className="truncate flex items-center gap-1.5 hover:text-amber-300 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-email` ? (
-                                                                    <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Mail className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                <div className="flex flex-col gap-1 text-xs text-neutral-400 font-mono pt-1">
+                                                    {member.phone ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
+                                                            title="Click to copy phone number"
+                                                            className="truncate flex items-center gap-1.5 hover:text-amber-300 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-phone` ? (
+                                                                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Phone className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
+                                                            </span>
+                                                        </button>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1.5 text-neutral-600 select-none">
+                                                            <Phone className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
+                                                            <span>—</span>
+                                                        </div>
+                                                    )}
+                                                    {member.contact && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
+                                                            title="Click to copy email"
+                                                            className="truncate flex items-center gap-1.5 hover:text-amber-300 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-email` ? (
+                                                                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Mail className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Direct Email & Phone Copy Action Buttons (Vertical Stack) */}
                                         <div className="flex flex-col gap-1.5 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone && (
+                                            {member.phone ? (
                                                 <button
                                                     type="button"
                                                     onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
@@ -498,6 +501,13 @@ export default function About() {
                                                         <Phone className="w-3.5 h-3.5" />
                                                     )}
                                                 </button>
+                                            ) : (
+                                                <div
+                                                    className="w-8 h-8 rounded-lg border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
+                                                    title="Phone number pending update"
+                                                >
+                                                    <Phone className="w-3.5 h-3.5" />
+                                                </div>
                                             )}
                                             {member.contact && (
                                                 <button
@@ -552,50 +562,53 @@ export default function About() {
                                                 <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors leading-tight truncate" title={member.name}>
                                                     {member.name}
                                                 </h4>
-                                                {(member.contact || member.phone) && (
-                                                    <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
-                                                        {member.phone && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                                title="Click to copy phone number"
-                                                                className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-phone` ? (
-                                                                    <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                        {member.contact && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                                title="Click to copy email"
-                                                                className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-email` ? (
-                                                                    <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
+                                                    {member.phone ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
+                                                            title="Click to copy phone number"
+                                                            className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-phone` ? (
+                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
+                                                            </span>
+                                                        </button>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1 text-neutral-600 select-none">
+                                                            <Phone className="w-2.5 h-2.5 text-neutral-600 shrink-0" />
+                                                            <span>—</span>
+                                                        </div>
+                                                    )}
+                                                    {member.contact && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
+                                                            title="Click to copy email"
+                                                            className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-email` ? (
+                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Direct Copy Action Buttons (Vertical Stack) */}
                                         <div className="flex flex-col gap-1 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone && (
+                                            {member.phone ? (
                                                 <button
                                                     type="button"
                                                     onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
@@ -613,6 +626,13 @@ export default function About() {
                                                         <Phone className="w-3 h-3" />
                                                     )}
                                                 </button>
+                                            ) : (
+                                                <div
+                                                    className="w-7 h-7 rounded-lg border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
+                                                    title="Phone number pending update"
+                                                >
+                                                    <Phone className="w-3 h-3" />
+                                                </div>
                                             )}
                                             {member.contact && (
                                                 <button
@@ -667,50 +687,53 @@ export default function About() {
                                                 <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors leading-tight truncate" title={member.name}>
                                                     {member.name}
                                                 </h4>
-                                                {(member.contact || member.phone) && (
-                                                    <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
-                                                        {member.phone && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                                title="Click to copy phone number"
-                                                                className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-phone` ? (
-                                                                    <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                        {member.contact && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                                title="Click to copy email"
-                                                                className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-email` ? (
-                                                                    <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
+                                                    {member.phone ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
+                                                            title="Click to copy phone number"
+                                                            className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-phone` ? (
+                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
+                                                            </span>
+                                                        </button>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1 text-neutral-600 select-none">
+                                                            <Phone className="w-2.5 h-2.5 text-neutral-600 shrink-0" />
+                                                            <span>—</span>
+                                                        </div>
+                                                    )}
+                                                    {member.contact && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
+                                                            title="Click to copy email"
+                                                            className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-email` ? (
+                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Direct Copy Action Buttons (Vertical Stack) */}
                                         <div className="flex flex-col gap-1 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone && (
+                                            {member.phone ? (
                                                 <button
                                                     type="button"
                                                     onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
@@ -728,6 +751,13 @@ export default function About() {
                                                         <Phone className="w-3 h-3" />
                                                     )}
                                                 </button>
+                                            ) : (
+                                                <div
+                                                    className="w-7 h-7 rounded-lg border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
+                                                    title="Phone number pending update"
+                                                >
+                                                    <Phone className="w-3 h-3" />
+                                                </div>
                                             )}
                                             {member.contact && (
                                                 <button
@@ -795,50 +825,53 @@ export default function About() {
                                                 <div className="text-[10px] font-semibold text-amber-400/90 uppercase tracking-wide truncate" title={member.title || 'Committee'}>
                                                     {member.title || 'Committee'}
                                                 </div>
-                                                {(member.contact || member.phone) && (
-                                                    <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
-                                                        {member.phone && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                                title="Click to copy phone number"
-                                                                className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-phone` ? (
-                                                                    <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                        {member.contact && (
-                                                            <button
-                                                                type="button"
-                                                                onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                                title="Click to copy email"
-                                                                className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                            >
-                                                                {copiedKey === `${member.id}-email` ? (
-                                                                    <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                                ) : (
-                                                                    <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                                )}
-                                                                <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                    {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                                </span>
-                                                            </button>
-                                                        )}
-                                                    </div>
-                                                )}
+                                                <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
+                                                    {member.phone ? (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
+                                                            title="Click to copy phone number"
+                                                            className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-phone` ? (
+                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
+                                                            </span>
+                                                        </button>
+                                                    ) : (
+                                                        <div className="flex items-center gap-1 text-neutral-600 select-none">
+                                                            <Phone className="w-2.5 h-2.5 text-neutral-600 shrink-0" />
+                                                            <span>—</span>
+                                                        </div>
+                                                    )}
+                                                    {member.contact && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
+                                                            title="Click to copy email"
+                                                            className="truncate hover:text-amber-300 flex items-center gap-1 transition-colors cursor-pointer text-left"
+                                                        >
+                                                            {copiedKey === `${member.id}-email` ? (
+                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
+                                                            ) : (
+                                                                <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
+                                                            )}
+                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
+                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
+                                                            </span>
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
 
                                         {/* Direct Action Buttons (Vertical Stack) */}
                                         <div className="flex flex-col gap-1 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone && (
+                                            {member.phone ? (
                                                 <button
                                                     type="button"
                                                     onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
@@ -856,6 +889,13 @@ export default function About() {
                                                         <Phone className="w-2.5 h-2.5" />
                                                     )}
                                                 </button>
+                                            ) : (
+                                                <div
+                                                    className="w-6 h-6 rounded-md border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
+                                                    title="Phone number pending update"
+                                                >
+                                                    <Phone className="w-2.5 h-2.5" />
+                                                </div>
                                             )}
                                             {member.contact && (
                                                 <button
