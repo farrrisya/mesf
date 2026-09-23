@@ -1,4 +1,5 @@
 // --1. imports--
+import { useState } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 
 // --2. main component--
@@ -19,7 +20,19 @@ export default function Footer({ showCta = true }) {
         ? `${streetAddress}, ${postalCode ? `${postalCode} ` : ''}${city ? `${city}, ` : ''}${state ? `${state}, ` : ''}${country}`
         : 'Spacerubix, Jalan TPP 1/7, Taman Perindustrian Puchong, 47100 Puchong, Selangor, Malaysia'; // properties
 
-    // --4. UI--
+    // --4. state--
+    const [newsletterEmail, setNewsletterEmail] = useState(''); // state
+    const [isSubscribed, setIsSubscribed] = useState(false); // state
+
+    // --5. actions--
+    const handleSubscribe = (e) => { // trigger
+        e.preventDefault(); // trigger
+        if (!newsletterEmail.trim()) return; // check
+        setIsSubscribed(true); // save
+        setNewsletterEmail(''); // state
+    };
+
+    // --6. UI--
     return (
         <footer className="relative w-full bg-[#030508] border-t border-white/5 overflow-hidden">
             {/* subtle glowing top edge gradient line */}
@@ -60,10 +73,10 @@ export default function Footer({ showCta = true }) {
                     </div>
                 )}
 
-                {/* the footer content (brand) */}
-                <div className={`flex flex-col md:flex-row items-start justify-between gap-12 ${showCta ? 'pt-12' : 'pt-0'}`}>
+                {/* the footer content (brand, secretariat, newsletter) */}
+                <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 items-start ${showCta ? 'pt-12' : 'pt-0'}`}>
                     {/* the brand */}
-                    <div className="space-y-6 text-left max-w-md">
+                    <div className="space-y-6 text-left md:col-span-2 lg:col-span-5 max-w-md">
                         <img
                             src={logoUrl}
                             alt="MESF Logo"
@@ -137,7 +150,7 @@ export default function Footer({ showCta = true }) {
                     </div>
 
                     {/* the secretariat desk */}
-                    <div className="w-full max-w-sm lg:max-w-md space-y-3 text-left">
+                    <div className="w-full space-y-3 text-left md:col-span-1 lg:col-span-4">
                         <span className="text-[11px] font-bold tracking-widest uppercase text-white/50 block">
                             Official Secretariat Desk
                         </span>
@@ -170,6 +183,57 @@ export default function Footer({ showCta = true }) {
                                 <span className="leading-relaxed">{address}</span>
                             </div>
                         </div>
+                    </div>
+
+                    {/* the newsletter / circulars subscription */}
+                    <div className="w-full space-y-3 text-left md:col-span-1 lg:col-span-3">
+                        <span className="text-[11px] font-bold tracking-widest uppercase text-white/50 block">
+                            Official Circulars &amp; Dispatch
+                        </span>
+                        <p className="text-xs text-neutral-400 leading-relaxed font-normal">
+                            Receive verified tournament bulletins, sanctioning notices, and national athlete updates.
+                        </p>
+                        <form onSubmit={handleSubscribe} className="space-y-2 pt-1">
+                            <div className="relative">
+                                <input
+                                    type="email"
+                                    value={newsletterEmail}
+                                    onChange={(e) => setNewsletterEmail(e.target.value)} // input
+                                    placeholder="e.g. contact@example.com"
+                                    required
+                                    className="w-full h-9.5 px-3.5 rounded-xl bg-white/[0.04] border border-white/10 text-white placeholder-neutral-500 text-xs focus:outline-none focus:border-amber-400/60 focus:bg-white/[0.07] focus:ring-1 focus:ring-amber-400/30 transition-all duration-300"
+                                />
+                            </div>
+                            <button
+                                type="submit"
+                                disabled={isSubscribed}
+                                className={`w-full h-9 rounded-xl font-bold text-xs tracking-wider uppercase transition-all duration-300 flex items-center justify-center gap-1.5 cursor-pointer select-none ${
+                                    isSubscribed
+                                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 cursor-default'
+                                        : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black hover:shadow-[0_0_18px_rgba(251,191,36,0.35)] active:scale-[0.98]'
+                                }`}
+                            >
+                                {isSubscribed ? (
+                                    <>
+                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span>Subscribed</span>
+                                    </>
+                                ) : (
+                                    <span>Subscribe to Circulars</span>
+                                )}
+                            </button>
+                        </form>
+                        {isSubscribed ? (
+                            <p className="text-[11px] text-emerald-400/90 font-medium">
+                                Thank you! You will receive verified MESF announcements.
+                            </p>
+                        ) : (
+                            <p className="text-[10px] text-neutral-500">
+                                Verified federation circulars only. Unsubscribe at any time.
+                            </p>
+                        )}
                     </div>
                 </div>
 
