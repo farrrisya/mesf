@@ -1,8 +1,9 @@
 // --1. imports--
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState, useRef, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import { Mail, Users, Search } from 'lucide-react';
 
 // --2. properties--
 const AFFILIATED_PARTNERS = [
@@ -38,27 +39,56 @@ const AFFILIATED_PARTNERS = [
     }
 ];
 
-// Styling templates for executive sections
-const SECTION_STYLES = {
-    leadership: {
-        gridCols: 'grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto',
-        cardBg: 'bg-[#222A3A]',
-        borderColor: 'border-slate-600/50',
-        badgeClass: 'bg-amber-400/20 border-amber-400/40 text-amber-300 font-bold',
+// Default Committee Roster matching exact official structure
+const DEFAULT_EXECUTIVE_SECTIONS = [
+    {
+        id: 'leadership',
+        sectionTitle: 'Executive Leadership',
+        members: [
+            { id: 'naim', name: 'Muhammad Naim Al-Amin', title: 'President', contact: 'naim@mesf.my' },
+            { id: 'afiq', name: 'Afiq Fadhli', title: 'Deputy President', contact: 'afiq@mesf.my' }
+        ]
     },
-    vice_presidents: {
-        gridCols: 'grid-cols-1 md:grid-cols-2 gap-5',
-        cardBg: 'bg-[#1C2332]',
-        borderColor: 'border-slate-700/50',
-        badgeClass: 'bg-amber-400/10 border-amber-400/25 text-amber-300 font-semibold',
+    {
+        id: 'vice_presidents',
+        sectionTitle: 'Vice Presidents',
+        members: [
+            { id: 'khir', name: 'Mohamad Khir', title: 'Vice President 1', contact: 'khir@mesf.my' },
+            { id: 'faries', name: 'Faries Faizal', title: 'Vice President 2', contact: 'faries@mesf.my' },
+            { id: 'zatul', name: 'Dr. Zatul Iffah', title: 'Vice President Women', contact: 'drzatul@mesf.my' },
+            { id: 'muzakkir', name: 'Muzakkir', title: 'Vice President Youth', contact: 'muzakkir@mesf.my' }
+        ]
     },
-    secretariat: {
-        gridCols: 'grid-cols-1 md:grid-cols-2 gap-5',
-        cardBg: 'bg-[#161D2A]',
-        borderColor: 'border-slate-700/40',
-        badgeClass: 'bg-slate-700/50 border-slate-600/50 text-slate-200 font-medium',
+    {
+        id: 'secretariat',
+        sectionTitle: 'Secretary & Administration',
+        members: [
+            { id: 'syed', name: 'Syed Fakrurrozi', title: 'Secretary General', contact: 'syed@mesf.my' },
+            { id: 'hakimi', name: 'Alif Hakimi', title: 'Assistant Secretary General', contact: 'hakimi@mesf.my' },
+            { id: 'shahrul', name: 'Shahrul Nizam', title: 'Treasurer', contact: 'shahrul@mesf.my' },
+            { id: 'azrai', name: 'Azrai Abdul Aziz', title: 'Chief Communication', contact: 'azrai@mesf.my' }
+        ]
     }
-};
+];
+
+const DEFAULT_GENERAL_COMMITTEE = [
+    { id: 'adib', name: 'Adib', title: 'Committee Member', contact: 'adib@mesf.my' },
+    { id: 'akbar', name: 'Akbar', title: 'Committee Member', contact: 'akbar@mesf.my' },
+    { id: 'akif', name: 'Akif', title: 'Committee Member', contact: 'contact@mesf.my' },
+    { id: 'alex', name: 'Alex', title: 'Committee Member', contact: 'alex@mesf.my' },
+    { id: 'azza', name: 'Azza', title: 'Committee Member', contact: 'azzarizal@mesf.my' },
+    { id: 'chucky', name: 'Chucky', title: 'Committee Member', contact: 'cheoh@mesf.my' },
+    { id: 'dr-yew', name: 'Dr. Yew', title: 'Committee Member', contact: 'dryew@mesf.my' },
+    { id: 'eugene', name: 'Eugene', title: 'Committee Member', contact: 'eugene@mesf.my' },
+    { id: 'husyin', name: 'Husyin', title: 'Committee Member', contact: 'husyin@mesf.my' },
+    { id: 'joker', name: 'Joker', title: 'Committee Member', contact: 'jokerlai@mesf.my' },
+    { id: 'kymie', name: 'Kymie', title: 'Committee Member', contact: 'kymie@mesf.my' },
+    { id: 'luqman', name: 'Luqman', title: 'Committee Member', contact: 'luqman@mesf.my' },
+    { id: 'razak', name: 'Razak', title: 'Committee Member', contact: 'razak@mesf.my' },
+    { id: 'shahril', name: 'Shahril', title: 'Committee Member', contact: 'shahril@mesf.my' },
+    { id: 'syahrul', name: 'Syahrul', title: 'Committee Member', contact: 'syahrul@mesf.my' },
+    { id: 'thariq', name: 'Thariq', title: 'Committee Member', contact: 'thariq@mesf.my' }
+];
 
 // Helper to get initials for badge avatars
 const getMemberInitials = (name) => {
@@ -96,21 +126,17 @@ export default function About() {
     const aboutStoryHtml = settings?.aboutStoryHtml || (settings?.aboutStoryP1 ? `<p>${settings.aboutStoryP1}</p><p>${settings.aboutStoryP2 || ''}</p><p>${settings.aboutStoryP3 || ''}</p>` : ''); // properties
 
     const executiveSections = useMemo(() => {
-        const raw = parseJsonSetting(settings?.executiveSections, []);
-        if (!Array.isArray(raw)) return [];
+        const raw = parseJsonSetting(settings?.executiveSections, DEFAULT_EXECUTIVE_SECTIONS);
+        if (!Array.isArray(raw)) return DEFAULT_EXECUTIVE_SECTIONS;
         return raw.map((section) => ({
             ...section,
-            gridCols: SECTION_STYLES[section.id]?.gridCols || 'grid-cols-1 md:grid-cols-2 gap-5',
-            cardBg: SECTION_STYLES[section.id]?.cardBg || 'bg-[#161D2A]',
-            borderColor: SECTION_STYLES[section.id]?.borderColor || 'border-slate-700/40',
-            badgeClass: SECTION_STYLES[section.id]?.badgeClass || 'bg-slate-700/50 border-slate-600/50 text-slate-200 font-medium',
             members: Array.isArray(section?.members) ? section.members : []
         })).filter((section) => section.members && section.members.length > 0);
     }, [settings?.executiveSections]);
 
     const generalCommittee = useMemo(() => {
-        const raw = parseJsonSetting(settings?.generalCommittee, []);
-        return Array.isArray(raw) ? raw : [];
+        const raw = parseJsonSetting(settings?.generalCommittee, DEFAULT_GENERAL_COMMITTEE);
+        return Array.isArray(raw) ? raw : DEFAULT_GENERAL_COMMITTEE;
     }, [settings?.generalCommittee]);
 
     const socialChannels = useMemo(() => {
@@ -126,102 +152,6 @@ export default function About() {
 
     // --4. actions--
     const [memberSearch, setMemberSearch] = useState(''); // state
-    const [scrollProgress, setScrollProgress] = useState(0); // progress
-    const [canScrollLeft, setCanScrollLeft] = useState(false); // state
-    const [canScrollRight, setCanScrollRight] = useState(true); // state
-    const [isAutoScrollPaused, setIsAutoScrollPaused] = useState(false); // state
-    const [isDragging, setIsDragging] = useState(false); // state
-    const [dragStartX, setDragStartX] = useState(0); // state
-    const [dragScrollLeft, setDragScrollLeft] = useState(0); // state
-    const carouselRef = useRef(null); // ref
-
-    const updateCarouselScrollStatus = () => {
-        if (!carouselRef.current) return;
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        const maxScroll = scrollWidth - clientWidth;
-        setCanScrollLeft(scrollLeft > 10); // check
-        setCanScrollRight(scrollLeft < maxScroll - 10); // check
-        if (maxScroll > 0) {
-            setScrollProgress(Math.min(1, Math.max(0, scrollLeft / maxScroll))); // progress
-        }
-    };
-
-    const scrollCarousel = (direction) => {
-        if (!carouselRef.current) return;
-        const scrollAmount = direction === 'left' ? -300 : 300;
-        carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' }); // scroll
-    };
-
-    // Auto scroll functionality with gentle, continuous advancement
-    useEffect(() => {
-        if (isAutoScrollPaused || memberSearch.trim() !== '') return;
-
-        const autoScrollInterval = setInterval(() => {
-            if (!carouselRef.current) return;
-            const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-            const maxScroll = scrollWidth - clientWidth;
-            if (scrollLeft >= maxScroll - 10) {
-                carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' }); // scroll
-            } else {
-                carouselRef.current.scrollBy({ left: 280, behavior: 'smooth' }); // scroll
-            }
-        }, 3600);
-
-        return () => clearInterval(autoScrollInterval);
-    }, [isAutoScrollPaused, memberSearch]);
-
-    // Mouse drag scrolling handlers
-    const handleMouseDown = (e) => {
-        if (!carouselRef.current) return;
-        setIsDragging(true); // state
-        setIsAutoScrollPaused(true); // state
-        setDragStartX(e.pageX - carouselRef.current.offsetLeft); // state
-        setDragScrollLeft(carouselRef.current.scrollLeft); // state
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false); // state
-        updateCarouselScrollStatus(); // trigger
-    };
-
-    const handleMouseMove = (e) => {
-        if (!isDragging || !carouselRef.current) return;
-        e.preventDefault();
-        const x = e.pageX - carouselRef.current.offsetLeft;
-        const walk = (x - dragStartX) * 1.2;
-        carouselRef.current.scrollLeft = dragScrollLeft - walk; // scroll
-        updateCarouselScrollStatus(); // trigger
-    };
-
-    // Attach global mouseup to safely release drag outside container
-    useEffect(() => {
-        const handleGlobalMouseUp = () => {
-            if (isDragging) {
-                setIsDragging(false); // state
-                updateCarouselScrollStatus(); // trigger
-            }
-        };
-
-        const handleGlobalMouseMove = (e) => {
-            if (isDragging && carouselRef.current) {
-                e.preventDefault();
-                const x = e.pageX - carouselRef.current.offsetLeft;
-                const walk = (x - dragStartX) * 1.2;
-                carouselRef.current.scrollLeft = dragScrollLeft - walk; // scroll
-                updateCarouselScrollStatus(); // trigger
-            }
-        };
-
-        if (isDragging) {
-            window.addEventListener('mouseup', handleGlobalMouseUp);
-            window.addEventListener('mousemove', handleGlobalMouseMove);
-        }
-
-        return () => {
-            window.removeEventListener('mouseup', handleGlobalMouseUp);
-            window.removeEventListener('mousemove', handleGlobalMouseMove);
-        };
-    }, [isDragging, dragStartX, dragScrollLeft]);
 
     // Filter executive sections and members based on search
     const filteredExecutiveSections = useMemo(() => {
@@ -237,8 +167,6 @@ export default function About() {
         })).filter((section) => section.members.length > 0);
     }, [memberSearch, executiveSections]);
 
-    const filteredExecSections = filteredExecutiveSections; // alias
-
     // Filter general committee members based on search
     const filteredGeneralCommittee = useMemo(() => {
         if (!memberSearch.trim()) return generalCommittee;
@@ -250,6 +178,16 @@ export default function About() {
         );
     }, [memberSearch, generalCommittee]);
 
+    // Grouping for Executive Leadership vs Executive Council
+    const leadershipMembers = useMemo(() => {
+        const leadershipSec = filteredExecutiveSections.find((s) => s.id === 'leadership');
+        return leadershipSec?.members || [];
+    }, [filteredExecutiveSections]);
+
+    const councilMembers = useMemo(() => {
+        const councilSecs = filteredExecutiveSections.filter((s) => s.id !== 'leadership');
+        return councilSecs.flatMap((s) => s.members || []);
+    }, [filteredExecutiveSections]);
     // --5. UI--
     return (
         <div className="relative min-h-screen bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased">
@@ -263,17 +201,6 @@ export default function About() {
                 }
                 .pulse-glow {
                     animation: pulseGlow 7s ease-in-out infinite;
-                }
-                .hide-scrollbar::-webkit-scrollbar {
-                    display: none;
-                }
-                .hide-scrollbar {
-                    -ms-overflow-style: none;
-                    scrollbar-width: none;
-                }
-                .active-drag {
-                    cursor: grabbing !important;
-                    user-select: none;
                 }
             `}</style>
 
@@ -391,21 +318,19 @@ export default function About() {
                     </div>
                 </section>
 
-                {/* Section 4: Committee Members 2024 - 2027 (Approach 4: Executives + Swipeable Carousel for Committee) */}
-                <section id="committee" className="space-y-10 scroll-mt-32">
-                    {/* Section 4: Header & Search (High Contrast & Ambient Glow) */}
+                {/* Section 4: Committee Members 2024 - 2027 */}
+                <section id="committee" className="space-y-8 scroll-mt-32">
+                    {/* Header & Search */}
                     <div className="relative pb-6 border-b border-white/10">
                         {/* Soft Ambient Radial Backlight */}
                         <div className="pointer-events-none absolute -top-10 -left-10 h-44 w-72 rounded-full bg-amber-400/[0.08] blur-[80px]" />
 
                         <div className="relative z-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                             <div className="space-y-2">
-                                {/* Section Eyebrow Label */}
                                 <div className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-amber-400">
                                     Council Session &bull; 2024 – 2027
                                 </div>
 
-                                {/* Main Title with Dual-Tone Gradient */}
                                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
                                     Committee Members{' '}
                                     <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent font-mono">
@@ -418,7 +343,7 @@ export default function About() {
                                 </p>
                             </div>
 
-                            {/* Crisp Search Input */}
+                            {/* Search Input */}
                             <div className="relative shrink-0">
                                 <input
                                     type="text"
@@ -427,251 +352,223 @@ export default function About() {
                                     placeholder="Search member, title or email..."
                                     className="w-full sm:w-72 px-4 py-2.5 pl-10 rounded-full text-xs font-medium bg-[#0B111D] border border-white/15 text-white placeholder-neutral-500 focus:outline-none focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/40 shadow-inner transition-all"
                                 />
-                                <svg
-                                    className="w-4 h-4 text-neutral-400 absolute left-3.5 top-3"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                                <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-3 pointer-events-none" />
                             </div>
                         </div>
                     </div>
 
-                    {/* Executive Council Rows */}
-                    <div className="space-y-10">
-                        {filteredExecSections.map((section) => (
-                            <div key={section.id} className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                    <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-300">
-                                        {section.sectionTitle}
-                                    </h3>
-                                    <div className="h-[1px] flex-1 bg-white/5" />
+                    {/* 1. EXECUTIVE LEADERSHIP */}
+                    {leadershipMembers.length > 0 && (
+                        <div className="space-y-4">
+                            {/* Section Divider with Centered Title */}
+                            <div className="relative flex items-center justify-center pt-2 pb-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-amber-400/20" />
                                 </div>
-
-                                <div className={`grid ${section.gridCols}`}>
-                                    {section.members.map((member) => (
-                                        <div
-                                            key={member.id}
-                                            className="group relative rounded-2xl p-5 sm:p-6 border border-slate-700/60 bg-[#0E1524] hover:border-amber-400/50 hover:bg-[#131D31] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-200 flex items-center justify-between gap-5"
-                                        >
-                                            <div className="flex items-center gap-4 sm:gap-5 min-w-0 flex-1">
-                                                {/* High-Contrast Monogram Box */}
-                                                <div className={`rounded-xl flex items-center justify-center shrink-0 shadow-inner transition-colors bg-[#080D18] border border-amber-400/40 text-amber-300 group-hover:border-amber-400 ${section.id === 'leadership'
-                                                        ? 'h-16 w-16 sm:h-20 sm:w-20 text-xl sm:text-2xl font-black'
-                                                        : 'h-14 w-14 sm:h-16 sm:w-16 text-base sm:text-lg font-bold'
-                                                    }`}>
-                                                    {getMemberInitials(member.name)}
-                                                </div>
-
-                                                {/* Member Details */}
-                                                <div className="space-y-1.5 min-w-0 flex-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-400/15 text-amber-300 border border-amber-400/30">
-                                                            {member.title}
-                                                        </span>
-                                                    </div>
-
-                                                    <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
-                                                        {member.name}
-                                                    </h4>
-
-                                                    <div className="pt-0.5">
-                                                        {member.contact ? (
-                                                            <a
-                                                                href={`mailto:${member.contact}`}
-                                                                className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors"
-                                                                aria-label={`Email ${member.name}`}
-                                                                title={member.contact}
-                                                            >
-                                                                <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                                </svg>
-                                                                <span>{member.contact}</span>
-                                                            </a>
-                                                        ) : (
-                                                            <span className="text-xs text-neutral-500 font-mono">mesf.my</span>
-                                                        )}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Right Status Capsule */}
-                                            <div className="hidden sm:flex flex-col items-end justify-center shrink-0 pl-2">
-                                                <span className="text-[10px] font-mono text-neutral-400 font-medium px-2.5 py-1 rounded-md bg-white/[0.03] border border-white/10">
-                                                    2024–2027
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                <div className="relative bg-[#070B14] px-5 text-xs font-mono font-bold tracking-[0.25em] text-amber-400 uppercase">
+                                    EXECUTIVE LEADERSHIP
                                 </div>
                             </div>
-                        ))}
 
-                        {/* Approach 4: Animated Horizontal Scrollable Showcase for Committee Members */}
-                        {filteredGeneralCommittee.length > 0 && (
-                            <div
-                                className="space-y-4 pt-2"
-                                onMouseEnter={() => setIsAutoScrollPaused(true)}
-                                onMouseLeave={() => {
-                                    setIsAutoScrollPaused(false);
-                                    handleMouseUp();
-                                }}
-                            >
-                                {/* Carousel Header with Navigation Controls */}
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                                    <div className="flex items-center gap-3 flex-1">
-                                        <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-neutral-300">
-                                            Committee Members ({filteredGeneralCommittee.length})
-                                        </h3>
-                                        <div className="h-[1px] flex-1 bg-white/5" />
-                                    </div>
-
-                                    {/* Arrow buttons & quick controls */}
-                                    <div className="flex items-center gap-2">
-                                        <div className="hidden sm:flex items-center gap-1.5 text-[11px] text-neutral-400 font-mono mr-2">
-                                            <span>Swipe</span>
-                                            <svg
-                                                className="w-4 h-4 text-amber-400"
-                                                style={{ animation: 'swipeHorizontal 1.4s ease-in-out infinite' }}
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                                            </svg>
-                                        </div>
-
-                                        <button
-                                            type="button"
-                                            onClick={() => scrollCarousel('left')}
-                                            disabled={!canScrollLeft}
-                                            className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${canScrollLeft
-                                                    ? 'bg-slate-800/80 hover:bg-amber-400/20 border-slate-700/60 hover:border-amber-400/50 text-white hover:text-amber-300 shadow-sm'
-                                                    : 'bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed opacity-40'
-                                                }`}
-                                            aria-label="Previous members"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => scrollCarousel('right')}
-                                            disabled={!canScrollRight}
-                                            className={`h-8 w-8 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${canScrollRight
-                                                    ? 'bg-slate-800/80 hover:bg-amber-400/20 border-slate-700/60 hover:border-amber-400/50 text-white hover:text-amber-300 shadow-sm'
-                                                    : 'bg-slate-900/40 border-slate-800 text-slate-600 cursor-not-allowed opacity-40'
-                                                }`}
-                                            aria-label="Next members"
-                                        >
-                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {/* Carousel Wrapper with Dynamic Edge Fading Masks */}
-                                <div className="relative group">
-                                    {/* Left subtle fade gradient indicator */}
+                            {/* 2 Prominent Side-by-Side Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
+                                {leadershipMembers.map((member) => (
                                     <div
-                                        className={`pointer-events-none absolute left-0 top-0 bottom-0 w-12 z-20 bg-gradient-to-r from-[#070B14] to-transparent transition-opacity duration-300 ${canScrollLeft ? 'opacity-100' : 'opacity-0'
-                                            }`}
-                                    />
-
-                                    {/* Right subtle fade gradient indicator */}
-                                    <div
-                                        className={`pointer-events-none absolute right-0 top-0 bottom-0 w-12 z-20 bg-gradient-to-l from-[#070B14] to-transparent transition-opacity duration-300 ${canScrollRight ? 'opacity-100' : 'opacity-0'
-                                            }`}
-                                    />
-
-                                    {/* Smooth Horizontal Scrolling Container */}
-                                    <div
-                                        ref={carouselRef}
-                                        onScroll={updateCarouselScrollStatus}
-                                        onMouseDown={handleMouseDown}
-                                        onMouseUp={handleMouseUp}
-                                        onMouseMove={handleMouseMove}
-                                        className={`flex gap-4 overflow-x-auto pb-3 pt-2 touch-pan-x overscroll-x-contain select-none will-change-scroll ${isDragging ? 'cursor-grabbing scroll-auto' : 'cursor-grab scroll-smooth snap-x snap-mandatory'
-                                            }`}
-                                        style={{
-                                            WebkitOverflowScrolling: 'touch',
-                                            scrollbarWidth: 'none',
-                                            msOverflowStyle: 'none'
-                                        }}
+                                        key={member.id}
+                                        className="group relative rounded-2xl p-5 sm:p-6 bg-[#0B101D]/90 border border-white/10 hover:border-amber-400/50 shadow-xl transition-all duration-300 flex items-center justify-between gap-4"
                                     >
-                                        {filteredGeneralCommittee.map((member) => (
-                                            <div
-                                                key={member.id}
-                                                className="min-w-[280px] sm:min-w-[300px] max-w-[340px] snap-start shrink-0 rounded-2xl p-4 sm:p-5 border border-slate-700/60 bg-[#0E1524] hover:border-amber-400/50 hover:bg-[#131D31] shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_10px_30px_rgba(0,0,0,0.5)] transition-all duration-200 flex items-center gap-4 group"
-                                            >
-                                                {/* Monogram Box */}
-                                                <div className="h-14 w-14 rounded-xl bg-[#080D18] border border-amber-400/40 text-amber-300 group-hover:border-amber-400 font-bold text-sm flex items-center justify-center shrink-0 shadow-inner transition-colors">
-                                                    {getMemberInitials(member.name)}
-                                                </div>
-
-                                                {/* Details Stack */}
-                                                <div className="flex-1 min-w-0 space-y-1">
-                                                    <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider bg-amber-400/15 text-amber-300 border border-amber-400/30">
-                                                        {member.title}
-                                                    </span>
-
-                                                    <h4 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors truncate">
-                                                        {member.name}
-                                                    </h4>
-
-                                                    <div className="pt-0.5">
-                                                        {member.contact ? (
-                                                            <a
-                                                                href={`mailto:${member.contact}`}
-                                                                onClick={(e) => {
-                                                                    if (isDragging) e.preventDefault();
-                                                                }}
-                                                                className="inline-flex items-center gap-1.5 text-xs font-mono text-neutral-400 hover:text-white transition-colors truncate max-w-full"
-                                                                aria-label={`Email ${member.name}`}
-                                                                title={member.contact}
-                                                            >
-                                                                <svg className="w-3.5 h-3.5 text-amber-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                                                                </svg>
-                                                                <span className="truncate">{member.contact}</span>
-                                                            </a>
-                                                        ) : (
-                                                            <span className="text-xs text-neutral-500 font-mono">mesf.my</span>
-                                                        )}
-                                                    </div>
-                                                </div>
+                                        <div className="flex items-center gap-4 sm:gap-5 min-w-0 flex-1">
+                                            {/* Gold Monogram Badge */}
+                                            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-amber-400 text-slate-950 font-black text-lg sm:text-xl flex items-center justify-center shrink-0 shadow-lg shadow-amber-400/10">
+                                                {getMemberInitials(member.name)}
                                             </div>
-                                        ))}
+
+                                            {/* Details Stack */}
+                                            <div className="space-y-1 min-w-0 flex-1">
+                                                <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
+                                                    {member.name}
+                                                </h4>
+                                                <div className="text-xs font-mono font-bold text-amber-400 tracking-wider uppercase">
+                                                    {member.title}
+                                                </div>
+                                                {member.contact && (
+                                                    <div className="pt-0.5">
+                                                        <a
+                                                            href={`mailto:${member.contact}`}
+                                                            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white font-mono transition-colors truncate max-w-full"
+                                                            title={member.contact}
+                                                        >
+                                                            <Mail className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
+                                                            <span className="truncate">{member.contact}</span>
+                                                        </a>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Right Mail Action Button */}
+                                        {member.contact && (
+                                            <a
+                                                href={`mailto:${member.contact}`}
+                                                aria-label={`Email ${member.name}`}
+                                                className="w-9 h-9 rounded-xl bg-white/[0.04] border border-white/10 hover:border-amber-400/50 hover:bg-amber-400/10 text-slate-400 hover:text-amber-300 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                                            >
+                                                <Mail className="w-4 h-4" />
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 2. EXECUTIVE COUNCIL */}
+                    {councilMembers.length > 0 && (
+                        <div className="space-y-4 pt-4">
+                            {/* Section Divider with Centered Title */}
+                            <div className="relative flex items-center justify-center pt-4 pb-4">
+                                <div className="absolute inset-0 flex items-center">
+                                    <div className="w-full border-t border-white/10" />
+                                </div>
+                                <div className="relative bg-[#070B14] px-5 text-xs font-mono font-bold tracking-[0.25em] text-slate-300 uppercase">
+                                    EXECUTIVE COUNCIL
+                                </div>
+                            </div>
+
+                            {/* 4-column Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {councilMembers.map((member) => (
+                                    <div
+                                        key={member.id}
+                                        className="group relative rounded-2xl p-4 sm:p-5 bg-[#0B101D]/80 border border-white/10 hover:border-amber-400/40 shadow-lg transition-all duration-300 flex items-center justify-between gap-3"
+                                    >
+                                        <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                                            {/* Slate Monogram Badge */}
+                                            <div className="w-12 h-12 rounded-xl bg-[#141C2E] border border-white/10 text-slate-200 font-bold text-sm sm:text-base flex items-center justify-center shrink-0">
+                                                {getMemberInitials(member.name)}
+                                            </div>
+
+                                            {/* Details Stack */}
+                                            <div className="space-y-0.5 min-w-0 flex-1">
+                                                <h4 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors leading-tight truncate" title={member.name}>
+                                                    {member.name}
+                                                </h4>
+                                                <div className="text-[10px] sm:text-[11px] font-mono font-semibold text-amber-400/90 tracking-wider uppercase truncate" title={member.title}>
+                                                    {member.title}
+                                                </div>
+                                                {member.contact && (
+                                                    <div className="pt-0.5">
+                                                        <a
+                                                            href={`mailto:${member.contact}`}
+                                                            className="inline-flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-white font-mono transition-colors truncate max-w-full"
+                                                            title={member.contact}
+                                                        >
+                                                            <Mail className="w-3 h-3 text-amber-400/70 shrink-0" />
+                                                            <span className="truncate">{member.contact}</span>
+                                                        </a>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Right Mail Action Button */}
+                                        {member.contact && (
+                                            <a
+                                                href={`mailto:${member.contact}`}
+                                                aria-label={`Email ${member.name}`}
+                                                className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/10 hover:border-amber-400/40 hover:bg-amber-400/10 text-slate-400 hover:text-amber-300 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                                            >
+                                                <Mail className="w-3.5 h-3.5" />
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 3. GENERAL COMMITTEE */}
+                    {filteredGeneralCommittee.length > 0 && (
+                        <div className="rounded-3xl p-6 sm:p-8 bg-[#090E1A]/80 border border-white/10 shadow-2xl backdrop-blur-xl mt-12 space-y-6">
+                            {/* Inner Header with User Group Icon and Member Count */}
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-white/10">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
+                                        <Users className="w-5 h-5" />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-base sm:text-lg font-bold text-white">
+                                            General committee
+                                        </h3>
+                                        <p className="text-xs text-slate-400 mt-0.5">
+                                            Supporting the federation across the country
+                                        </p>
                                     </div>
                                 </div>
 
-                                {/* Clean, Minimalist Thin Amber Progress Track */}
-                                <div className="flex items-center justify-between gap-4 pt-1 px-1">
-                                    <div className="flex-1 h-[2px] bg-white/10 rounded-full overflow-hidden relative">
-                                        <div
-                                            className="h-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 rounded-full transition-all duration-150"
-                                            style={{
-                                                width: `${Math.max(8, Math.round(scrollProgress * 100))}%`
-                                            }}
-                                        />
-                                    </div>
-                                    <div className="text-[11px] font-mono text-neutral-400 shrink-0">
-                                        <span>{filteredGeneralCommittee.length} Members</span>
-                                    </div>
+                                <div className="px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono text-slate-300 self-start sm:self-auto">
+                                    {filteredGeneralCommittee.length} members
                                 </div>
                             </div>
-                        )}
 
-                        {filteredExecSections.length === 0 && filteredGeneralCommittee.length === 0 && (
-                            <div className="text-center py-12 rounded-2xl bg-white/[0.02] border border-white/10 text-neutral-400 text-sm">
-                                No committee members match &ldquo;{memberSearch}&rdquo;.
+                            {/* 4-column Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {filteredGeneralCommittee.map((member) => (
+                                    <div
+                                        key={member.id}
+                                        className="group relative rounded-2xl p-4 bg-[#0D1424]/90 border border-white/10 hover:border-amber-400/40 shadow-md transition-all duration-300 flex items-center justify-between gap-3"
+                                    >
+                                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                                            {/* Monogram Box */}
+                                            <div className="w-11 h-11 rounded-xl bg-[#172138] border border-white/10 text-slate-200 font-bold text-xs sm:text-sm flex items-center justify-center shrink-0">
+                                                {getMemberInitials(member.name)}
+                                            </div>
+
+                                            {/* Details Stack */}
+                                            <div className="space-y-0.5 min-w-0 flex-1">
+                                                <h4 className="text-sm font-bold text-white group-hover:text-amber-300 transition-colors leading-tight truncate" title={member.name}>
+                                                    {member.name}
+                                                </h4>
+                                                <div className="text-[10px] font-mono font-semibold text-amber-400/90 tracking-wider uppercase truncate" title={member.title || 'COMMITTEE'}>
+                                                    {member.title || 'COMMITTEE'}
+                                                </div>
+                                                {member.contact && (
+                                                    <div className="pt-0.5">
+                                                        <a
+                                                            href={`mailto:${member.contact}`}
+                                                            className="inline-flex items-center gap-1.5 text-[10px] text-slate-400 hover:text-white font-mono transition-colors truncate max-w-full"
+                                                            title={member.contact}
+                                                        >
+                                                            <Mail className="w-3 h-3 text-amber-400/60 shrink-0" />
+                                                            <span className="truncate">{member.contact}</span>
+                                                        </a>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Right Mail Action Button */}
+                                        {member.contact && (
+                                            <a
+                                                href={`mailto:${member.contact}`}
+                                                aria-label={`Email ${member.name}`}
+                                                className="w-8 h-8 rounded-lg bg-white/[0.03] border border-white/10 hover:border-amber-400/40 text-slate-400 hover:text-amber-300 flex items-center justify-center transition-all shrink-0 cursor-pointer"
+                                            >
+                                                <Mail className="w-3.5 h-3.5" />
+                                            </a>
+                                        )}
+                                    </div>
+                                ))}
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
+
+                    {/* Empty search results message */}
+                    {leadershipMembers.length === 0 && councilMembers.length === 0 && filteredGeneralCommittee.length === 0 && (
+                        <div className="text-center py-12 rounded-2xl bg-white/[0.02] border border-white/10 text-neutral-400 text-sm">
+                            No committee members match &ldquo;{memberSearch}&rdquo;.
+                        </div>
+                    )}
                 </section>
 
                 {/* Section 5: Official Secretary & Contact Channels */}
