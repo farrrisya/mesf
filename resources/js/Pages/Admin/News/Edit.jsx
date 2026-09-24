@@ -114,25 +114,16 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         >
             <Head title={`Edit News: ${article.title || ''} - Admin`} />
 
-            <div className="space-y-6 w-full max-w-6xl pb-16">
-                {/* page header */}
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href={route('admin.news')} // redirect
-                            className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-all cursor-pointer"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                        </Link>
-                        <div>
-                            <h2 className="text-lg sm:text-2xl font-bold text-white tracking-tight leading-snug">
-                                Edit News Article
-                            </h2>
-                            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                                Update story narrative, media assets, category, and publication status.
-                            </p>
-                        </div>
-                    </div>
+            <div className="space-y-4 w-full max-w-6xl pb-16">
+                {/* back button */}
+                <div>
+                    <Link
+                        href={route('admin.news')} // redirect
+                        className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer group"
+                    >
+                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                        <span>Back to News</span>
+                    </Link>
                 </div>
 
                 {/* main form */}
