@@ -290,7 +290,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                 />
 
                 {/* logo banner */}
-                <div className="relative z-10 flex items-center justify-center gap-3.5 px-4 py-5 border-b border-white/10">
+                <div className="relative z-10 h-20 flex items-center justify-center gap-3.5 px-4 border-b border-white/10 shrink-0">
                     <img
                         src={logoUrl}
                         alt="Logo"
@@ -376,33 +376,46 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
 
             {/* content wrapper */}
             <main className="flex-1 flex flex-col md:pl-72 min-w-0">
-                {/* top header bar with profile and logout on top right side */}
-                <header className={`sticky ${isImpersonating ? 'top-10 sm:top-11' : 'top-0'} z-30 flex items-center justify-end px-6 sm:px-10 py-3.5 border-b border-white/10 bg-[#090D18]/90 backdrop-blur-xl transition-all shadow-sm`}>
+                {/* top header bar aligned with sidebar logo banner */}
+                <header className={`relative md:fixed ${isImpersonating ? 'md:top-10 sm:md:top-11' : 'md:top-0'} md:left-72 md:right-0 h-16 md:h-24 z-30 flex items-center justify-between px-6 sm:px-10 border-b border-white/10 bg-[#070B14]/85 backdrop-blur-2xl transition-all shadow-sm`}>
                     <div className="flex items-center gap-3">
-                        {/* User Profile Card */}
-                        <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.04] border border-white/10 shadow-sm">
-                            <div className={`w-7 h-7 rounded-xl border flex items-center justify-center font-black text-xs flex-shrink-0 ${roleStyle.avatarBg}`}>
+                        <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400 uppercase">
+                            <span className="text-slate-500">{orgAcronym}</span>
+                            <span className="text-slate-600">/</span>
+                            <span className="text-white font-bold">{title.replace(' - MESF Admin', '').replace(' - Admin', '').replace(' - MESF', '')}</span>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-4">
+                        {/* User Profile Info (clean, unboxed) */}
+                        <div className="flex items-center gap-2.5">
+                            <div className={`w-8 h-8 rounded-xl border flex items-center justify-center font-black text-xs flex-shrink-0 ${roleStyle.avatarBg}`}>
                                 {userInitial}
                             </div>
                             <div className="hidden sm:flex flex-col text-left">
-                                <span className="text-xs font-bold text-white leading-tight">
-                                    {currentUser?.name || 'Staff User'}
-                                </span>
-                                <span className="text-[10px] text-slate-400 font-mono leading-tight">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-white leading-tight">
+                                        {currentUser?.name || 'Staff User'}
+                                    </span>
+                                    <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border ${roleStyle.badge}`}>
+                                        {roleStyle.label}
+                                    </span>
+                                </div>
+                                <span className="text-[10px] text-slate-400 font-mono leading-tight mt-0.5">
                                     {currentUser?.email || ''}
                                 </span>
                             </div>
-                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-mono font-bold border flex-shrink-0 ${roleStyle.badge}`}>
-                                {roleStyle.label}
-                            </span>
                         </div>
 
-                        {/* Logout Button */}
+                        {/* subtle vertical divider */}
+                        <div className="hidden sm:block h-6 w-px bg-white/10" />
+
+                        {/* Logout Button (clean, unboxed) */}
                         <Link
                             href={route('logout')} // redirect
                             method="post"
                             as="button"
-                            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-slate-300 bg-white/5 border border-white/10 hover:bg-rose-500/20 hover:text-rose-300 hover:border-rose-500/30 transition-all duration-200 cursor-pointer shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
                             onClick={(e) => { // trigger
                                 if (!window.confirm("Adakah anda pasti mahu log keluar daripada akaun?")) { // check
                                     e.preventDefault();
@@ -410,11 +423,14 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                             }}
                             title="Log Out"
                         >
-                            <LogOut className="w-3.5 h-3.5" />
+                            <LogOut className="w-4 h-4" />
                             <span className="hidden sm:inline">Log Out</span>
                         </Link>
                     </div>
                 </header>
+
+                {/* spacer on desktop for fixed header */}
+                <div className="hidden md:block h-24 shrink-0" />
 
                 <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'p-6 sm:p-10'}`}>
                     {children}
