@@ -71,7 +71,7 @@ const ROLE_STYLES = {
 };
 
 // --3. main component--
-export default function AdminLayout({ title = 'Admin - MESF', role = null, portalTitle = null, children }) {
+export default function AdminLayout({ title = 'Admin - MESF', role = null, portalTitle = null, contentClassName = '', children }) {
     const { url, props } = usePage(); // properties
     const [sidebarOpen, setSidebarOpen] = useState(false); // state
     const [showIdleModal, setShowIdleModal] = useState(false); // state
@@ -377,7 +377,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
             {/* content wrapper */}
             <main className="flex-1 flex flex-col md:pl-72 min-w-0">
                 {/* top header bar with profile and logout on top right side */}
-                <header className="relative z-20 flex items-center justify-end px-6 sm:px-10 py-3.5 border-b border-white/10 bg-[#090D18]/60 backdrop-blur-xl">
+                <header className={`sticky ${isImpersonating ? 'top-10 sm:top-11' : 'top-0'} z-30 flex items-center justify-end px-6 sm:px-10 py-3.5 border-b border-white/10 bg-[#090D18]/90 backdrop-blur-xl transition-all shadow-sm`}>
                     <div className="flex items-center gap-3">
                         {/* User Profile Card */}
                         <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-white/[0.04] border border-white/10 shadow-sm">
@@ -416,7 +416,7 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                     </div>
                 </header>
 
-                <div className="p-6 sm:p-10 flex-1 flex flex-col min-w-0">
+                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'p-6 sm:p-10'}`}>
                     {children}
                 </div>
             </main>

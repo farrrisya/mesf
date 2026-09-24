@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Album;
+use App\Models\News;
 use App\Models\Notice;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,8 +19,8 @@ class EditorController extends Controller
     {
         return Inertia::render('Editor/Dashboard', [ // screen
             'stats' => [
-                'newsCount' => Notice::count(),
-                'albumsCount' => Album::count(),
+                'newsCount' => News::count(), // state
+                'albumsCount' => Album::count(), // state
             ]
         ]);
     }

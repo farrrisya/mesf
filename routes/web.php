@@ -13,6 +13,8 @@ use App\Http\Controllers\EditorController;
 use App\Http\Controllers\SecretaryController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Admin\InquiryManagementController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\PublicNewsController;
 use App\Models\Gallery;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -28,13 +30,12 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-Route::get('/news', function () {
-    return Inertia::render('News');
-})->name('news');
-
+Route::get('/news', [PublicNewsController::class, 'index'])->name('news'); // screen
 Route::get('/news/article', function () {
-    return Inertia::render('NewsArticle');
+    $first = \App\Models\News::published()->latest('published_at')->first(); // state
+    return $first ? redirect()->route('news.show', $first->slug) : redirect()->route('news'); // redirect
 })->name('news.article');
+Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show'); // screen
 
 Route::get('/leagues', function () {
     return Inertia::render('Leagues');
@@ -229,9 +230,15 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
 
     // Content management (Admin, Editor)
     Route::middleware('role:admin,editor')->group(function () {
-        Route::get('/news', function () {
-            return Inertia::render('Admin/News'); // screen
-        })->name('news');
+        Route::get('/news', [AdminNewsController::class, 'index'])->name('news'); // screen
+        Route::get('/news/create', [AdminNewsController::class, 'create'])->name('news.create'); // screen
+        Route::post('/news', [AdminNewsController::class, 'store'])->name('news.store'); // save
+        Route::get('/news/{news}/edit', [AdminNewsController::class, 'edit'])->name('news.edit'); // screen
+        Route::put('/news/{news}', [AdminNewsController::class, 'update'])->name('news.update'); // save
+        Route::post('/news/{news}', [AdminNewsController::class, 'update'])->name('news.update-post'); // save
+        Route::delete('/news/{news}', [AdminNewsController::class, 'destroy'])->name('news.destroy'); // save
+        Route::patch('/news/{news}/toggle-status', [AdminNewsController::class, 'toggleStatus'])->name('news.toggle-status'); // toggle
+        Route::patch('/news/{news}/toggle-featured', [AdminNewsController::class, 'toggleFeatured'])->name('news.toggle-featured'); // toggle
 
         Route::get('/leagues', function () {
             return Inertia::render('Admin/Leagues'); // screen

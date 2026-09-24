@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 import BackButton from '@/Components/BackButton';
+import { Calendar, MapPin, User, Eye, Newspaper } from 'lucide-react';
 
 // --2. main component--
-export default function NewsArticle() {
+export default function NewsArticle({ article = {}, latestFeed = [] }) {
     // --3. actions--
     const [scrollProgress, setScrollProgress] = useState(0); // state
     const [scrollY, setScrollY] = useState(0); // state
@@ -14,10 +15,10 @@ export default function NewsArticle() {
     // track scroll progress and parallax position
     useEffect(() => {
         const handleScroll = () => {
-            const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const currentScroll = window.scrollY;
-            setScrollY(currentScroll); // scroll
-            if (totalHeight > 0) {
+            const totalHeight = document.documentElement.scrollHeight - window.innerHeight; // convert
+            const currentScroll = window.scrollY; // state
+            setScrollY(currentScroll); // state
+            if (totalHeight > 0) { // check
                 setScrollProgress(Math.min(Math.max((currentScroll / totalHeight) * 100, 0), 100)); // state
             }
         };
@@ -25,10 +26,15 @@ export default function NewsArticle() {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // parse content into readable paragraphs
+    const paragraphs = article?.content
+        ? article.content.split(/\n\s*\n/).filter(Boolean)
+        : []; // convert
+
     // --4. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
-            <Head title="Headline Title - MESF" />
+            <Head title={`${article?.title || 'News Article'} - MESF`} />
 
             {/* custom animation for moving footer beam */}
             <style>{`
@@ -47,7 +53,7 @@ export default function NewsArticle() {
 
             {/* reading progress bar in natural grey/silver */}
             <div
-                className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-neutral-600 via-neutral-300 to-neutral-500 z-[60] transition-all duration-75 shadow-[0_0_8px_rgba(255,255,255,0.25)]"
+                className="fixed top-0 left-0 h-[2px] bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 z-[60] transition-all duration-75 shadow-[0_0_8px_rgba(251,191,36,0.4)]"
                 style={{ width: `${scrollProgress}%` }}
             />
 
@@ -65,44 +71,73 @@ export default function NewsArticle() {
             </div>
 
             {/* 2. full-screen hero cover */}
-            <section className="relative w-full h-screen flex flex-col justify-end overflow-hidden">
-                <img
-                    src="/images/news/featured.jpg"
-                    alt="Article Cover"
-                    onError={(e) => {
-                        e.target.style.opacity = '0';
-                    }}
-                    className="absolute inset-0 w-full h-[115%] object-cover object-center will-change-transform opacity-70"
-                    style={{
-                        transform: `translateY(${scrollY * 0.2}px)`
-                    }}
-                />
+            <section className="relative w-full min-h-[70vh] md:min-h-[80vh] flex flex-col justify-end overflow-hidden pt-28">
+                {article?.image ? (
+                    <img
+                        src={article.image}
+                        alt={article.title || 'Article Cover'}
+                        className="absolute inset-0 w-full h-[115%] object-cover object-center will-change-transform opacity-60"
+                        style={{
+                            transform: `translateY(${scrollY * 0.2}px)`
+                        }}
+                    />
+                ) : (
+                    <div className="absolute inset-0 bg-[#0A0F1E] -z-10" />
+                )}
 
-                <div className="absolute inset-0 bg-[#070B14]/40" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/75 to-transparent" />
+                <div className="absolute inset-0 bg-[#070B14]/50" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/85 to-transparent" />
                 <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 bg-amber-400/10 rounded-full blur-3xl" />
 
                 {/* hero text */}
-                <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-16 md:pb-20 text-left relative z-10">
-                    <div className="max-w-3xl">
-                        <div className="mb-6">
+                <div className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-12 md:pb-16 text-left relative z-10">
+                    <div className="max-w-4xl space-y-4">
+                        <div>
                             <BackButton href="/news" label="Back to News" />
                         </div>
 
-                        <div className="mb-3">
+                        <div>
                             <span className="text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                [ Category / Tag ]
+                                {article?.tag || `[ ${article?.category || 'NEWS'} ]`}
                             </span>
                         </div>
 
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
-                            Headline Title
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-white leading-tight">
+                            {article?.title}
                         </h1>
 
-                        <div className="flex items-center gap-2 text-xs sm:text-sm text-neutral-400 font-medium">
-                            <span>Date</span>
-                            <span>•</span>
-                            <span>Location</span>
+                        <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-neutral-400 font-medium pt-2">
+                            <span className="flex items-center gap-1.5 text-neutral-300">
+                                <Calendar className="w-4 h-4 text-amber-400" />
+                                <span>{article?.date}</span>
+                            </span>
+                            {article?.location && (
+                                <>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-1.5">
+                                        <MapPin className="w-4 h-4 text-neutral-500" />
+                                        <span>{article.location}</span>
+                                    </span>
+                                </>
+                            )}
+                            {article?.author && (
+                                <>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-1.5">
+                                        <User className="w-4 h-4 text-neutral-500" />
+                                        <span>By {article.author}</span>
+                                    </span>
+                                </>
+                            )}
+                            {article?.views_count > 0 && (
+                                <>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-1.5">
+                                        <Eye className="w-4 h-4 text-neutral-500" />
+                                        <span>{article.views_count} reads</span>
+                                    </span>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -112,32 +147,36 @@ export default function NewsArticle() {
             <main className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 py-12 md:py-20 text-left">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-14 items-start">
                     {/* left column: story narrative (8 of 12 columns) */}
-                    <article className="lg:col-span-8 space-y-7 text-base sm:text-lg text-neutral-300/90 leading-relaxed font-normal">
-                        <p className="text-xl sm:text-2xl text-neutral-100 font-normal leading-relaxed">
-                            Introductory paragraph placeholder text outlining the primary announcement, event details, and official federation statement.
-                        </p>
-
-                        <p>
-                            Detailed paragraph placeholder text elaborating on the program schedule, participating athletes, match outcomes, and operational highlights across national esports initiatives.
-                        </p>
-
-                        <blockquote className="my-8 pl-5 border-l-2 border-amber-400/80 bg-transparent">
-                            <p className="text-lg sm:text-xl italic font-medium text-neutral-200 leading-normal">
-                                &ldquo;Quote placeholder text representing official statements from federation leadership, tournament organizers, or team captains.&rdquo;
+                    <article className="lg:col-span-8 space-y-7 text-base sm:text-lg text-neutral-300 leading-relaxed font-normal">
+                        {article?.excerpt && (
+                            <p className="text-xl sm:text-2xl text-neutral-100 font-normal leading-relaxed border-b border-white/10 pb-6">
+                                {article.excerpt}
                             </p>
-                        </blockquote>
+                        )}
 
-                        <p>
-                            Additional narrative placeholder text covering key milestones, community feedback, strategic objectives, and athlete development pathways under the federation's roadmap.
-                        </p>
-
-                        <div className="w-full aspect-[21/9] min-h-[260px] rounded-xl border border-white/10 bg-white/[0.02] flex items-center justify-center my-8">
-                            <span className="text-xs font-semibold tracking-widest text-neutral-500 uppercase">Image</span>
-                        </div>
-
-                        <p>
-                            Concluding remarks placeholder text providing closing acknowledgments, next steps, and upcoming tournament schedules for the season.
-                        </p>
+                        {paragraphs.length > 0 ? (
+                            paragraphs.map((p, idx) => {
+                                // check if paragraph looks like a quote
+                                if (p.startsWith('"') || p.startsWith('“')) {
+                                    return (
+                                        <blockquote key={idx} className="my-8 pl-5 border-l-2 border-amber-400 bg-transparent">
+                                            <p className="text-lg sm:text-xl italic font-medium text-neutral-200 leading-normal">
+                                                {p}
+                                            </p>
+                                        </blockquote>
+                                    );
+                                }
+                                return (
+                                    <p key={idx} className="whitespace-pre-line">
+                                        {p}
+                                    </p>
+                                );
+                            })
+                        ) : (
+                            <p className="whitespace-pre-line text-neutral-300">
+                                {article?.content || 'No detailed content available for this article.'}
+                            </p>
+                        )}
 
                         {/* share & tags */}
                         <div className="border-t border-white/10 pt-6 mt-12 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -148,6 +187,7 @@ export default function NewsArticle() {
                                 <button
                                     type="button"
                                     aria-label="Share on X"
+                                    onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(article?.title || '')}&url=${encodeURIComponent(window.location.href)}`, '_blank')} // trigger
                                     className="h-8 w-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer"
                                 >
                                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -157,6 +197,7 @@ export default function NewsArticle() {
                                 <button
                                     type="button"
                                     aria-label="Share on Facebook"
+                                    onClick={() => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank')} // trigger
                                     className="h-8 w-8 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center text-neutral-300 hover:text-white transition-colors cursor-pointer"
                                 >
                                     <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
@@ -167,7 +208,7 @@ export default function NewsArticle() {
 
                             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
                                 <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-neutral-400">#MESF</span>
-                                <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-neutral-400">#TEAMMYS</span>
+                                <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-neutral-400">#MALAYSIA</span>
                                 <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[11px] text-neutral-400">#ESPORTS</span>
                             </div>
                         </div>
@@ -194,34 +235,44 @@ export default function NewsArticle() {
 
                         {/* vertical card list with clean compact media rows */}
                         <div className="space-y-3.5">
-                            {[
-                                { id: 1, tag: 'TOURNAMENTS', title: 'Title', date: 'Date', excerpt: 'Description' },
-                                { id: 2, tag: 'NATIONAL CIRCUIT', title: 'Title', date: 'Date', excerpt: 'Description' },
-                                { id: 3, tag: 'PARTNERSHIP', title: 'Title', date: 'Date', excerpt: 'Description' }
-                            ].map((item) => (
-                                <Link
-                                    key={item.id}
-                                    href="/news/article"
-                                    className="group flex gap-3.5 p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-amber-400/30 transition-all duration-200"
-                                >
-                                    <div className="w-20 aspect-square rounded-lg bg-[#0A0F1D] border border-white/10 shrink-0 flex items-center justify-center">
-                                        <span className="text-[9px] font-semibold text-neutral-600 uppercase">Image</span>
-                                    </div>
-                                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                                        <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1">
-                                            <span className="text-amber-400 font-bold">{item.tag}</span>
-                                            <span>•</span>
-                                            <span>{item.date}</span>
+                            {latestFeed.length === 0 ? (
+                                <p className="text-xs text-neutral-500">No other articles in feed.</p>
+                            ) : (
+                                latestFeed.map((item) => (
+                                    <Link
+                                        key={item.id}
+                                        href={`/news/${item.slug}`}
+                                        className="group flex gap-3.5 p-3 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-amber-400/30 transition-all duration-200"
+                                    >
+                                        <div className="w-20 aspect-square rounded-lg bg-[#0A0F1D] border border-white/10 shrink-0 overflow-hidden flex items-center justify-center">
+                                            {item.image ? (
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
+                                                />
+                                            ) : (
+                                                <Newspaper className="w-5 h-5 text-neutral-600" />
+                                            )}
                                         </div>
-                                        <h3 className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate">
-                                            {item.title}
-                                        </h3>
-                                        <p className="text-xs text-neutral-400 line-clamp-1 mt-0.5">
-                                            {item.excerpt}
-                                        </p>
-                                    </div>
-                                </Link>
-                            ))}
+                                        <div className="flex-1 min-w-0 flex flex-col justify-center">
+                                            <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-400 uppercase tracking-wider mb-1">
+                                                <span className="text-amber-400 font-bold">{item.tag || item.category}</span>
+                                                <span>•</span>
+                                                <span>{item.date}</span>
+                                            </div>
+                                            <h3 className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                {item.title}
+                                            </h3>
+                                            {item.excerpt && (
+                                                <p className="text-xs text-neutral-400 line-clamp-1 mt-0.5">
+                                                    {item.excerpt}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </Link>
+                                ))
+                            )}
                         </div>
                     </aside>
                 </div>
