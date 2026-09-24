@@ -77,8 +77,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
     return (
         <AdminLayout
             title="Create News Article - MESF Admin"
-            backHref={route('admin.news')}
-            backLabel="Back to News"
             contentClassName="p-6 sm:p-8"
         >
             <Head title="Create News Article - Admin" />

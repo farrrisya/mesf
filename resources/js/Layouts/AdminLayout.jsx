@@ -77,8 +77,6 @@ export default function AdminLayout({
     role = null,
     portalTitle = null,
     contentClassName = '',
-    backHref = null,
-    backLabel = 'Back',
     children
 }) {
     const { url, props } = usePage(); // properties
@@ -384,25 +382,15 @@ export default function AdminLayout({
             </aside>
 
             {/* content wrapper */}
-            <main className="flex-1 flex flex-col md:pl-72 min-w-0">
+            <main className="flex-1 flex flex-col md:pl-72 min-w-0 pt-0 md:pt-24">
                 {/* top header bar aligned with sidebar logo banner */}
                 <header className={`relative md:fixed ${isImpersonating ? 'md:top-10 sm:md:top-11' : 'md:top-0'} md:left-72 md:right-0 h-16 md:h-24 z-30 flex items-center justify-between px-6 sm:px-10 border-b border-white/10 bg-[#070B14]/85 backdrop-blur-2xl transition-all shadow-sm`}>
                     <div className="flex items-center gap-3">
-                        {backHref ? (
-                            <Link
-                                href={backHref} // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer shadow-sm group"
-                            >
-                                <ArrowLeft className="w-4 h-4 text-amber-400 transition-transform group-hover:-translate-x-1" />
-                                <span>{backLabel}</span>
-                            </Link>
-                        ) : (
-                            <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400 uppercase">
-                                <span className="text-slate-500">{orgAcronym}</span>
-                                <span className="text-slate-600">/</span>
-                                <span className="text-white font-bold">{title.replace(' - MESF Admin', '').replace(' - Admin', '').replace(' - MESF', '')}</span>
-                            </div>
-                        )}
+                        <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400 uppercase">
+                            <span className="text-slate-500">{orgAcronym}</span>
+                            <span className="text-slate-600">/</span>
+                            <span className="text-white font-bold">{title.replace(' - MESF Admin', '').replace(' - Admin', '').replace(' - MESF', '')}</span>
+                        </div>
                     </div>
 
                     <div className="flex items-center gap-4">
@@ -447,9 +435,6 @@ export default function AdminLayout({
                         </Link>
                     </div>
                 </header>
-
-                {/* spacer on desktop for fixed header */}
-                <div className="hidden md:block h-24 shrink-0" />
 
                 <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'p-6 sm:p-10'}`}>
                     {children}

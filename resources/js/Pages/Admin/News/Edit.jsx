@@ -110,8 +110,6 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
     return (
         <AdminLayout
             title={`Edit: ${article.title || 'Article'} - MESF Admin`}
-            backHref={route('admin.news')}
-            backLabel="Back to News"
             contentClassName="p-6 sm:p-8"
         >
             <Head title={`Edit News: ${article.title || ''} - Admin`} />
