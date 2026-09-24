@@ -16,7 +16,8 @@ import {
     LogOut,
     Menu,
     X,
-    ArrowRight
+    ArrowRight,
+    ArrowLeft
 } from 'lucide-react';
 
 // --2. properties--
@@ -71,7 +72,15 @@ const ROLE_STYLES = {
 };
 
 // --3. main component--
-export default function AdminLayout({ title = 'Admin - MESF', role = null, portalTitle = null, contentClassName = '', children }) {
+export default function AdminLayout({
+    title = 'Admin - MESF',
+    role = null,
+    portalTitle = null,
+    contentClassName = '',
+    backHref = null,
+    backLabel = 'Back',
+    children
+}) {
     const { url, props } = usePage(); // properties
     const [sidebarOpen, setSidebarOpen] = useState(false); // state
     const [showIdleModal, setShowIdleModal] = useState(false); // state
@@ -379,11 +388,21 @@ export default function AdminLayout({ title = 'Admin - MESF', role = null, porta
                 {/* top header bar aligned with sidebar logo banner */}
                 <header className={`relative md:fixed ${isImpersonating ? 'md:top-10 sm:md:top-11' : 'md:top-0'} md:left-72 md:right-0 h-16 md:h-24 z-30 flex items-center justify-between px-6 sm:px-10 border-b border-white/10 bg-[#070B14]/85 backdrop-blur-2xl transition-all shadow-sm`}>
                     <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400 uppercase">
-                            <span className="text-slate-500">{orgAcronym}</span>
-                            <span className="text-slate-600">/</span>
-                            <span className="text-white font-bold">{title.replace(' - MESF Admin', '').replace(' - Admin', '').replace(' - MESF', '')}</span>
-                        </div>
+                        {backHref ? (
+                            <Link
+                                href={backHref} // redirect
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer shadow-sm group"
+                            >
+                                <ArrowLeft className="w-4 h-4 text-amber-400 transition-transform group-hover:-translate-x-1" />
+                                <span>{backLabel}</span>
+                            </Link>
+                        ) : (
+                            <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400 uppercase">
+                                <span className="text-slate-500">{orgAcronym}</span>
+                                <span className="text-slate-600">/</span>
+                                <span className="text-white font-bold">{title.replace(' - MESF Admin', '').replace(' - Admin', '').replace(' - MESF', '')}</span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex items-center gap-4">

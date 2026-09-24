@@ -77,6 +77,8 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
     return (
         <AdminLayout
             title="Create News Article - MESF Admin"
+            backHref={route('admin.news')}
+            backLabel="Back to News"
             contentClassName="p-6 sm:p-8"
         >
             <Head title="Create News Article - Admin" />
@@ -86,9 +88,9 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                 <div>
                     <Link
                         href={route('admin.news')} // redirect
-                        className="inline-flex items-center gap-2 text-xs font-semibold text-slate-400 hover:text-white transition-colors cursor-pointer group"
+                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-200 hover:text-white transition-all cursor-pointer shadow-sm group"
                     >
-                        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+                        <ArrowLeft className="w-4 h-4 text-amber-400 transition-transform group-hover:-translate-x-1" />
                         <span>Back to News</span>
                     </Link>
                 </div>
