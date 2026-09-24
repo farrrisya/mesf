@@ -119,7 +119,7 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                 <div>
                     <Link
                         href={route('admin.news')} // redirect
-                        className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-200 hover:text-white transition-all cursor-pointer shadow-sm group"
+                        className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#131b2e] hover:bg-[#1a2540] border border-white/20 hover:border-amber-400 text-xs font-bold text-white transition-all cursor-pointer shadow-md group"
                     >
                         <ArrowLeft className="w-4 h-4 text-amber-400 transition-transform group-hover:-translate-x-1" />
                         <span>Back to News</span>
