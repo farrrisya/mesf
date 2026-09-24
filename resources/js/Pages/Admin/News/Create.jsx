@@ -83,12 +83,12 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
 
             <div className="space-y-4 w-full max-w-6xl pb-16">
                 {/* back button */}
-                <div>
+                <div className="flex items-center">
                     <Link
                         href={route('admin.news')} // redirect
-                        className="inline-flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-[#131b2e] hover:bg-[#1a2540] border border-white/20 hover:border-amber-400 text-xs font-bold text-white transition-all cursor-pointer shadow-md group"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs shadow-[0_0_15px_rgba(251,191,36,0.25)] transition-all cursor-pointer"
                     >
-                        <ArrowLeft className="w-4 h-4 text-amber-400 transition-transform group-hover:-translate-x-1" />
+                        <ArrowLeft className="w-4 h-4 text-black stroke-[2.5]" />
                         <span>Back to News</span>
                     </Link>
                 </div>
