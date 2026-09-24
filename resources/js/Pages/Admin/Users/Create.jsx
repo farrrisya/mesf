@@ -1,10 +1,10 @@
 // --1. imports--
 import { Head, Link, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import BackButton from '@/Components/BackButton';
 import {
     UserPlus,
     Shield,
-    ArrowLeft,
     Check,
     AlertCircle
 } from 'lucide-react';
@@ -21,7 +21,7 @@ export default function Create() {
     const { data, setData, post, processing, errors } = useForm({ // state
         name: '',
         email: '',
-        role: 'editor',
+        role: '',
         password: '',
         password_confirmation: '',
     });
@@ -37,25 +37,20 @@ export default function Create() {
         <AdminLayout title="Add Staff Account - MESF Admin">
             <Head title="Create Staff User - Admin" />
 
-            <div className="space-y-6 max-w-3xl pb-16">
+            <div className="w-full max-w-3xl pb-16">
+                {/* back button */}
+                <div className="mb-6 sm:mb-8 flex items-center">
+                    <BackButton href={route('admin.users.index')} label="Back to Staff Users" />
+                </div>
+
                 {/* Header title */}
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href={route('admin.users.index')} // redirect
-                            className="p-2 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-all cursor-pointer"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                        </Link>
-                        <div>
-                            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
-                                Add Staff Account
-                            </h2>
-                            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                                Create an official federation administrator or management staff profile.
-                            </p>
-                        </div>
-                    </div>
+                <div className="mb-6 space-y-1">
+                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
+                        Add Staff Account
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                        Create an official federation administrator or management staff profile.
+                    </p>
                 </div>
 
                 {/* Form Card */}
@@ -80,7 +75,6 @@ export default function Create() {
                             type="text"
                             value={data.name} // input
                             onChange={(e) => setData('name', e.target.value)} // trigger
-                            placeholder="e.g. Ahmad Razak bin Zainal"
                             className="w-full px-4 py-3 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all"
                             required
                         />
@@ -98,7 +92,6 @@ export default function Create() {
                             type="email"
                             value={data.email} // input
                             onChange={(e) => setData('email', e.target.value)} // trigger
-                            placeholder="staff@mesf.my"
                             className="w-full px-4 py-3 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
                             required
                         />
@@ -158,7 +151,6 @@ export default function Create() {
                                 type="password"
                                 value={data.password} // input
                                 onChange={(e) => setData('password', e.target.value)} // trigger
-                                placeholder="Minimum 8 characters"
                                 className="w-full px-4 py-3 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
                                 required
                             />
@@ -175,7 +167,6 @@ export default function Create() {
                                 type="password"
                                 value={data.password_confirmation} // input
                                 onChange={(e) => setData('password_confirmation', e.target.value)} // trigger
-                                placeholder="Repeat password"
                                 className="w-full px-4 py-3 rounded-2xl bg-[#070B14] border border-white/15 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all font-mono"
                                 required
                             />

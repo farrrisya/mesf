@@ -2,8 +2,8 @@
 import { useState, useRef } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import BackButton from '@/Components/BackButton';
 import {
-    ArrowLeft,
     UploadCloud,
     X,
     AlertCircle,
@@ -30,11 +30,11 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
     const { data, setData, post, processing, errors } = useForm({ // state
         title: '',
         slug: '',
-        category: 'ACHIEVEMENTS',
-        tag: '[ ACHIEVEMENTS ]',
+        category: '',
+        tag: '',
         excerpt: '',
         content: '',
-        location: 'Kuala Lumpur',
+        location: '',
         status: 'published',
         is_featured: false,
         published_at: new Date().toISOString().split('T')[0],
@@ -81,16 +81,10 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
         >
             <Head title="Create News Article - Admin" />
 
-            <div className="space-y-4 w-full max-w-6xl pb-16">
+            <div className="w-full max-w-6xl pb-16">
                 {/* back button */}
-                <div className="flex items-center">
-                    <Link
-                        href={route('admin.news')} // redirect
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs shadow-[0_0_15px_rgba(251,191,36,0.25)] transition-all cursor-pointer"
-                    >
-                        <ArrowLeft className="w-4 h-4 text-black stroke-[2.5]" />
-                        <span>Back to News</span>
-                    </Link>
+                <div className="mb-6 sm:mb-8 flex items-center">
+                    <BackButton href={route('admin.news')} label="Back to News" />
                 </div>
 
                 {/* main form */}
@@ -321,6 +315,7 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         onChange={(e) => handleCategoryChange(e.target.value)} // trigger
                                         className="w-full px-3.5 py-2.5 rounded-xl bg-[#090D18] border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none cursor-pointer"
                                     >
+                                        <option value="">Choose Category</option>
                                         {categories.map((cat) => (
                                             <option key={cat} value={cat}>
                                                 {cat}
@@ -355,7 +350,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         type="text"
                                         value={data.location} // state
                                         onChange={(e) => setData('location', e.target.value)} // trigger
-                                        placeholder="e.g. Kuala Lumpur"
                                         className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none"
                                     />
                                 </div>
@@ -370,7 +364,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         type="text"
                                         value={data.slug} // state
                                         onChange={(e) => setData('slug', e.target.value)} // trigger
-                                        placeholder="Auto-generated from title if blank"
                                         className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-slate-300 text-xs font-mono outline-none"
                                     />
                                 </div>

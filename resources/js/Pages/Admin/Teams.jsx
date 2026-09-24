@@ -1,6 +1,6 @@
 // --1. imports--
 import { useState, useRef, useEffect } from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 import {
     Flag,
@@ -114,13 +114,13 @@ export default function Teams() {
                             </div>
 
                             <div className="pt-2">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer"
+                                <Link
+                                    href={route('admin.teams.create')} // redirect
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-bold transition-all shadow-[0_4px_16px_rgba(251,191,36,0.25)] cursor-pointer"
                                 >
-                                    <Plus className="w-4 h-4 text-amber-400" />
+                                    <Plus className="w-4 h-4 text-black stroke-[2.5]" />
                                     <span>Create First National Team</span>
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -141,13 +141,13 @@ export default function Teams() {
                             </div>
 
                             <div className="pt-2">
-                                <button
-                                    type="button"
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer"
+                                <Link
+                                    href={route('admin.teams.create')} // redirect
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-bold transition-all shadow-[0_4px_16px_rgba(251,191,36,0.25)] cursor-pointer"
                                 >
-                                    <Plus className="w-4 h-4 text-amber-400" />
+                                    <Plus className="w-4 h-4 text-black stroke-[2.5]" />
                                     <span>Create First State Affiliate</span>
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>

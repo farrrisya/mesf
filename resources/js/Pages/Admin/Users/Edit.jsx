@@ -1,9 +1,9 @@
 // --1. imports--
 import { Head, Link, useForm } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import BackButton from '@/Components/BackButton';
 import {
     Save,
-    ArrowLeft,
     Shield,
     Check,
     AlertCircle,
@@ -35,25 +35,20 @@ export default function Edit({ staffUser = {} }) {
         <AdminLayout title={`Edit Staff User - ${staffUser.name}`}>
             <Head title={`Edit Role - ${staffUser.name}`} />
 
-            <div className="space-y-6 max-w-3xl pb-16">
+            <div className="w-full max-w-3xl pb-16">
+                {/* back button */}
+                <div className="mb-6 sm:mb-8 flex items-center">
+                    <BackButton href={route('admin.users.index')} label="Back to Staff Users" />
+                </div>
+
                 {/* Header title */}
-                <div className="flex items-center justify-between gap-4">
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href={route('admin.users.index')} // redirect
-                            className="p-2 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 transition-all cursor-pointer"
-                        >
-                            <ArrowLeft className="w-4 h-4" />
-                        </Link>
-                        <div>
-                            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
-                                Edit Staff Role & Status
-                            </h2>
-                            <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                                Modify administrative privilege tier or toggle account active status.
-                            </p>
-                        </div>
-                    </div>
+                <div className="mb-6 space-y-1">
+                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
+                        Edit Staff Role & Status
+                    </h2>
+                    <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
+                        Modify administrative privilege tier or toggle account active status.
+                    </p>
                 </div>
 
                 {/* Form Card */}

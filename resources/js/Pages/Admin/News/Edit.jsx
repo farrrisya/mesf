@@ -2,8 +2,8 @@
 import { useState, useRef } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
+import BackButton from '@/Components/BackButton';
 import {
-    ArrowLeft,
     UploadCloud,
     X,
     AlertCircle,
@@ -114,16 +114,10 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         >
             <Head title={`Edit News: ${article.title || ''} - Admin`} />
 
-            <div className="space-y-4 w-full max-w-6xl pb-16">
+            <div className="w-full max-w-6xl pb-16">
                 {/* back button */}
-                <div className="flex items-center">
-                    <Link
-                        href={route('admin.news')} // redirect
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs shadow-[0_0_15px_rgba(251,191,36,0.25)] transition-all cursor-pointer"
-                    >
-                        <ArrowLeft className="w-4 h-4 text-black stroke-[2.5]" />
-                        <span>Back to News</span>
-                    </Link>
+                <div className="mb-6 sm:mb-8 flex items-center">
+                    <BackButton href={route('admin.news')} label="Back to News" />
                 </div>
 
                 {/* main form */}

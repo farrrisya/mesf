@@ -243,14 +243,23 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/leagues', function () {
             return Inertia::render('Admin/Leagues'); // screen
         })->name('leagues');
+        Route::get('/leagues/create', function () {
+            return Inertia::render('Admin/Leagues/Create'); // screen
+        })->name('leagues.create');
 
         Route::get('/matches', function () {
             return Inertia::render('Admin/Matches'); // screen
         })->name('matches');
+        Route::get('/matches/create', function () {
+            return Inertia::render('Admin/Matches/Create'); // screen
+        })->name('matches.create');
 
         Route::get('/teams', function () {
             return Inertia::render('Admin/Teams'); // screen
         })->name('teams');
+        Route::get('/teams/create', function () {
+            return Inertia::render('Admin/Teams/Create'); // screen
+        })->name('teams.create');
 
         Route::get('/library', function () {
             return Inertia::render('Admin/Library'); // screen
@@ -262,6 +271,9 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/documents', function () {
             return Inertia::render('Admin/Documents'); // screen
         })->name('documents');
+        Route::get('/documents/create', function () {
+            return Inertia::render('Admin/Documents/Create'); // screen
+        })->name('documents.create');
     });
 
     // Inquiries management (Secretariat, Admin)
