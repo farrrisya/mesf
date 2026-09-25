@@ -548,7 +548,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                             );
                         })()}
 
-                        {/* 2. ACHIEVEMENTS (secondary box top-right: spans 2 cols on lg, 1 col on md, 1 row) */}
+                        {/* 2. ACHIEVEMENTS (tall portrait showcase box: spans 1 col, 2 rows) */}
                         {(() => {
                             const cat = 'ACHIEVEMENTS'; // state
                             const article = latestByCategory?.[cat]; // state
@@ -558,14 +558,14 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                     <Link
                                         key={cat}
                                         href={`/news/${article.slug}`} // redirect
-                                        className="md:col-span-1 lg:col-span-2 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                        className="col-span-1 row-span-2 md:col-span-1 md:row-span-2 lg:col-span-1 lg:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
                                     >
                                         {article.image && (
                                             <>
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover object-top opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
                                                 <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                             </>
@@ -589,12 +589,12 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-                                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1 leading-snug drop-shadow-md">
+                                        <div className="relative z-10 space-y-1.5 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+                                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
                                                 {article.title}
                                             </h3>
                                             {article.excerpt && (
-                                                <p className="text-xs text-neutral-200 line-clamp-1 font-normal leading-relaxed drop-shadow">
+                                                <p className="text-xs text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow">
                                                     {article.excerpt}
                                                 </p>
                                             )}
@@ -604,7 +604,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                             }
 
                             return (
-                                <div key={cat} className="md:col-span-1 lg:col-span-2 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                <div key={cat} className="col-span-1 row-span-2 md:col-span-1 md:row-span-2 lg:col-span-1 lg:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
                                     <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
                                     <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
                                         [ {cat} ]
@@ -613,7 +613,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                             );
                         })()}
 
-                        {/* 3. ANNOUNCEMENTS (medium box: 1 col, 1 row) */}
+                        {/* 3. ANNOUNCEMENTS (compact box: 1 col, 1 row) */}
                         {(() => {
                             const cat = 'ANNOUNCEMENTS'; // state
                             const article = latestByCategory?.[cat]; // state
@@ -623,7 +623,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                     <Link
                                         key={cat}
                                         href={`/news/${article.slug}`} // redirect
-                                        className="md:col-span-1 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                        className="col-span-1 row-span-1 md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
                                     >
                                         {article.image && (
                                             <>
@@ -657,7 +657,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                             }
 
                             return (
-                                <div key={cat} className="md:col-span-1 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                <div key={cat} className="col-span-1 row-span-1 md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
                                     <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
                                     <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
                                         [ {cat} ]
@@ -666,7 +666,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                             );
                         })()}
 
-                        {/* 4. PARTNERSHIPS (box: 1 col on lg, 3 cols on md banner, 1 row) */}
+                        {/* 4. PARTNERSHIPS (box: 1 col on lg, 2 cols on md, 1 row) */}
                         {(() => {
                             const cat = 'PARTNERSHIPS'; // state
                             const article = latestByCategory?.[cat]; // state
@@ -676,7 +676,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                     <Link
                                         key={cat}
                                         href={`/news/${article.slug}`} // redirect
-                                        className="md:col-span-3 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                        className="col-span-1 row-span-1 md:col-span-2 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
                                     >
                                         {article.image && (
                                             <>
@@ -710,7 +710,7 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                             }
 
                             return (
-                                <div key={cat} className="md:col-span-3 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                <div key={cat} className="col-span-1 row-span-1 md:col-span-2 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
                                     <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
                                     <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
                                         [ {cat} ]
