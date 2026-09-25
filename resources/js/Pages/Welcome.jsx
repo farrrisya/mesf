@@ -3,7 +3,17 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
-import { Play } from 'lucide-react';
+import {
+    Play,
+    Trophy,
+    Calendar,
+    Clock,
+    Users,
+    Coins,
+    MapPin,
+    Layers,
+    ArrowRight
+} from 'lucide-react';
 
 // --2. main component--
 export default function Welcome({ latestByCategory = {}, latestUpdates = [], featuredArticle = null, leagues = [] }) {
@@ -593,78 +603,365 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                     {/* 3-column clean grid - uploaded leagues or clean empty glass cards with status badges */}
                     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
                         {leagues && leagues.length > 0 ? (
-                            leagues.slice(0, 3).map((league) => (
-                                <Link
-                                    key={league.id}
-                                    href={league.slug ? `/leagues/${league.slug}` : '/leagues'}
-                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px] flex flex-col justify-between block"
-                                >
-                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    
-                                    <div>
-                                        <div className="flex items-center justify-between gap-2 mb-4">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-400 text-xs font-semibold tracking-wider uppercase">
-                                                <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-                                                {league.registration_status || 'UPCOMING'}
+                            leagues.slice(0, 3).map((league) => {
+                                const shouldShow = (key, val) => {
+                                    if (!val || val === 'TBA') return false;
+                                    if (Array.isArray(league.display_options) && league.display_options.length > 0) {
+                                        return league.display_options.includes(key);
+                                    }
+                                    return true;
+                                };
+
+                                const statusStr = (league.registration_status || 'UPCOMING').toUpperCase();
+                                const isRegistrationOpen = statusStr.includes('OPEN');
+                                const isLive = statusStr.includes('LIVE');
+                                const statusClass = isRegistrationOpen
+                                    ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400'
+                                    : isLive
+                                    ? 'bg-rose-500/10 border-rose-500/25 text-rose-400'
+                                    : 'bg-amber-400/10 border-amber-400/25 text-amber-400';
+                                const dotClass = isRegistrationOpen
+                                    ? 'bg-emerald-400'
+                                    : isLive
+                                    ? 'bg-rose-500'
+                                    : 'bg-amber-400';
+
+                                return (
+                                    <Link
+                                        key={league.id}
+                                        href={league.slug ? `/leagues/${league.slug}` : '/leagues'}
+                                        className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between block"
+                                    >
+                                        <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                        
+                                        <div className="space-y-4">
+                                            {/* card header: status & game title */}
+                                            <div className="flex items-center justify-between gap-2">
+                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold tracking-wider uppercase ${statusClass}`}>
+                                                    <span className={`h-2 w-2 rounded-full ${dotClass} ${isRegistrationOpen || isLive ? 'animate-pulse' : ''}`} />
+                                                    {league.registration_status || 'UPCOMING'}
+                                                </div>
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
+                                                    {league.game_title}
+                                                </span>
                                             </div>
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/60 bg-white/5 border border-white/10 px-2 py-0.5 rounded-md">
-                                                {league.game_title}
-                                            </span>
+
+                                            {/* banner artwork */}
+                                            {league.banner_url ? (
+                                                <div className="w-full aspect-[16/9] rounded-2xl overflow-hidden border border-white/10 bg-black/40 relative">
+                                                    <img
+                                                        src={league.banner_url}
+                                                        alt={league.name}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500 relative overflow-hidden">
+                                                    <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
+                                                </div>
+                                            )}
+
+                                            {/* league title & overview */}
+                                            <div>
+                                                <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-2">
+                                                    {league.name}
+                                                </h3>
+
+                                                {league.description && (
+                                                    <p className="text-xs text-neutral-400 mt-1.5 line-clamp-2 leading-relaxed">
+                                                        {league.description}
+                                                    </p>
+                                                )}
+                                            </div>
+
+                                            {/* tournament-specific info badges grid */}
+                                            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
+                                                {/* prize pool */}
+                                                {shouldShow('prize_pool', league.prize_pool) && (
+                                                    <div className="p-2 rounded-xl bg-amber-400/[0.08] border border-amber-400/20 text-amber-300 flex items-center gap-2">
+                                                        <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-amber-400/75 font-semibold">Prize Pool</span>
+                                                            <span className="font-bold font-mono text-[11px] truncate block text-white">{league.prize_pool}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* registration deadline */}
+                                                {shouldShow('closing_date', league.registration_deadline) && (
+                                                    <div className="p-2 rounded-xl bg-rose-500/[0.08] border border-rose-500/20 text-rose-300 flex items-center gap-2">
+                                                        <Clock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-rose-400/75 font-semibold">Closing Date</span>
+                                                            <span className="font-bold text-[11px] truncate block text-white">{league.registration_deadline}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* event dates */}
+                                                {shouldShow('dates', league.date_range) && (
+                                                    <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                        <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Held Date</span>
+                                                            <span className="font-medium text-[11px] truncate block text-slate-200">{league.date_range}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* team slots */}
+                                                {shouldShow('slots', league.slots) && (
+                                                    <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                        <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Slots</span>
+                                                            <span className="font-medium text-[11px] truncate block text-slate-200">
+                                                                {league.slots}{String(league.slots).toLowerCase().includes('slot') || String(league.slots).toLowerCase().includes('team') ? '' : ' Teams'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* entry fee */}
+                                                {shouldShow('fee', league.entry_fee) && (
+                                                    <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                        <Coins className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Entry Fee</span>
+                                                            <span className="font-medium text-[11px] truncate block text-slate-200">{league.entry_fee}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* format */}
+                                                {shouldShow('format', league.format) && (
+                                                    <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                        <Layers className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Format</span>
+                                                            <span className="font-medium text-[11px] truncate block text-slate-200">{league.format}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+
+                                                {/* venue / location */}
+                                                {shouldShow('location', league.location) && (
+                                                    <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                        <div className="min-w-0">
+                                                            <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Location</span>
+                                                            <span className="font-medium text-[11px] truncate block text-slate-200">{league.location}</span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
 
-                                        {league.banner_url && (
-                                            <div className="w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
-                                                <img
-                                                    src={league.banner_url}
-                                                    alt={league.name}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                                />
-                                            </div>
-                                        )}
-
-                                        <h3 className="text-xl font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-2">
-                                            {league.name}
-                                        </h3>
-
-                                        <p className="text-xs text-neutral-400 mt-2 line-clamp-2">
-                                            {league.description || `${league.game_title} official sanctioned circuit organized under MESF.`}
-                                        </p>
-                                    </div>
-
-                                    <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
-                                        <span>{league.start_date}</span>
-                                        <span className="text-amber-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                                            Details &rarr;
-                                        </span>
-                                    </div>
-                                </Link>
-                            ))
+                                        {/* card footer */}
+                                        <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
+                                            <span className="text-[11px] text-slate-400">
+                                                {league.tier ? league.tier.split('-')[0].trim() : 'Official Circuit'}
+                                            </span>
+                                            <span className="text-amber-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 text-[11px]">
+                                                <span>Tournament Details</span>
+                                                <ArrowRight className="w-3.5 h-3.5" />
+                                            </span>
+                                        </div>
+                                    </Link>
+                                );
+                            })
                         ) : (
                             <>
-                                {/* circuit card 1 */}
-                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
+                                {/* circuit card 1 fallback */}
+                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
                                     <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold tracking-wider uppercase">
-                                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                                        REGISTRATION OPEN
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold tracking-wider uppercase">
+                                                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                                                REGISTRATION OPEN
+                                            </div>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
+                                                MLBB
+                                            </span>
+                                        </div>
+                                        <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500">
+                                            <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
+                                                MESF National Championship 2026
+                                            </h3>
+                                            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
+                                                Official nationwide championship circuit open for registered state esports teams.
+                                            </p>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
+                                            <div className="p-2 rounded-xl bg-amber-400/[0.08] border border-amber-400/20 text-amber-300 flex items-center gap-2">
+                                                <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-amber-400/75 font-semibold">Prize Pool</span>
+                                                    <span className="font-bold font-mono text-[11px] truncate block text-white">RM 50,000</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-rose-500/[0.08] border border-rose-500/20 text-rose-300 flex items-center gap-2">
+                                                <Clock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-rose-400/75 font-semibold">Closing Date</span>
+                                                    <span className="font-bold text-[11px] truncate block text-white">31 Oct 2026</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Slots</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">64 Teams</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Coins className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Entry Fee</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">Free Entry</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
+                                        <span className="text-[11px] text-slate-400">Tier 1 Championship</span>
+                                        <span className="text-amber-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 text-[11px]">
+                                            <span>Details</span>
+                                            <ArrowRight className="w-3.5 h-3.5" />
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* circuit card 2 */}
-                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
+                                {/* circuit card 2 fallback */}
+                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
                                     <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold tracking-wider uppercase">
-                                        <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-                                        LIVE SEASON
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold tracking-wider uppercase">
+                                                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                                                LIVE SEASON
+                                            </div>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
+                                                PUBG MOBILE
+                                            </span>
+                                        </div>
+                                        <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500">
+                                            <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
+                                                State Circuit Season 4
+                                            </h3>
+                                            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
+                                                Battle royale premier state circuit streaming live on official channels.
+                                            </p>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
+                                            <div className="p-2 rounded-xl bg-amber-400/[0.08] border border-amber-400/20 text-amber-300 flex items-center gap-2">
+                                                <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-amber-400/75 font-semibold">Prize Pool</span>
+                                                    <span className="font-bold font-mono text-[11px] truncate block text-white">RM 25,000</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Held Date</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">10 Nov - 05 Dec</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Slots</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">32 Squads</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Venue</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">Online LAN Finals</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
+                                        <span className="text-[11px] text-slate-400">Tier 2 State Circuit</span>
+                                        <span className="text-amber-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 text-[11px]">
+                                            <span>Details</span>
+                                            <ArrowRight className="w-3.5 h-3.5" />
+                                        </span>
                                     </div>
                                 </div>
 
-                                {/* circuit card 3 */}
-                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
+                                {/* circuit card 3 fallback */}
+                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
                                     <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-400/10 border border-neutral-400/25 text-neutral-300 text-xs font-semibold tracking-wider uppercase">
-                                        <span className="h-2 w-2 rounded-full bg-neutral-300" />
-                                        OFF-SEASON
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-400/10 border border-neutral-400/25 text-neutral-300 text-xs font-semibold tracking-wider uppercase">
+                                                <span className="h-2 w-2 rounded-full bg-neutral-300" />
+                                                OFF-SEASON
+                                            </div>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
+                                                VALORANT
+                                            </span>
+                                        </div>
+                                        <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500">
+                                            <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
+                                        </div>
+                                        <div>
+                                            <h3 className="text-lg md:text-xl font-bold text-white group-hover:text-amber-300 transition-colors">
+                                                Grassroots Community Cup
+                                            </h3>
+                                            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
+                                                Open amateur series fostering emerging tactical shooter talent across Malaysia.
+                                            </p>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10">
+                                            <div className="p-2 rounded-xl bg-amber-400/[0.08] border border-amber-400/20 text-amber-300 flex items-center gap-2">
+                                                <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-amber-400/75 font-semibold">Prize Pool</span>
+                                                    <span className="font-bold font-mono text-[11px] truncate block text-white">RM 10,000</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Layers className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Format</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">Double Elim</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Slots</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">16 Teams</span>
+                                                </div>
+                                            </div>
+                                            <div className="p-2 rounded-xl bg-white/[0.03] border border-white/10 text-slate-300 flex items-center gap-2">
+                                                <Coins className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                                <div className="min-w-0">
+                                                    <span className="block text-[8px] uppercase tracking-wider text-slate-500 font-semibold">Entry Fee</span>
+                                                    <span className="font-medium text-[11px] truncate block text-slate-200">Free Entry</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="pt-4 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
+                                        <span className="text-[11px] text-slate-400">Grassroots Cup</span>
+                                        <span className="text-amber-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1.5 text-[11px]">
+                                            <span>Details</span>
+                                            <ArrowRight className="w-3.5 h-3.5" />
+                                        </span>
                                     </div>
                                 </div>
                             </>

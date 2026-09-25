@@ -20,11 +20,14 @@ class League extends Model
         'prize_pool',
         'start_date',
         'end_date',
+        'registration_deadline',
         'slots',
+        'entry_fee',
         'registration_status',
         'banner_path',
         'description',
         'location',
+        'display_options',
         'is_active',
     ];
 
@@ -32,5 +35,7 @@ class League extends Model
         'is_active' => 'boolean',
         'start_date' => 'date',
         'end_date' => 'date',
+        'registration_deadline' => 'date',
+        'display_options' => 'array',
     ];
 }

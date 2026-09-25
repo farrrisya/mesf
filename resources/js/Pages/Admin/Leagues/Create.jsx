@@ -11,7 +11,12 @@ import {
     Sparkles,
     Shield,
     Check,
-    Coins
+    Coins,
+    Clock,
+    Users,
+    MapPin,
+    Layers,
+    Info
 } from 'lucide-react';
 
 // --2. properties--
@@ -41,6 +46,16 @@ const TOURNAMENT_FORMATS = [
     'Swiss Stage + Finals'
 ];
 
+const DISPLAY_OPTIONS_CONFIG = [
+    { id: 'prize_pool', label: 'Prize Pool', icon: Trophy, desc: 'Display total prize bounty' },
+    { id: 'dates', label: 'Tournament Dates', icon: Calendar, desc: 'Display event date schedule' },
+    { id: 'closing_date', label: 'Closing Date', icon: Clock, desc: 'Display registration deadline' },
+    { id: 'slots', label: 'Team Slots', icon: Users, desc: 'Display maximum team capacity' },
+    { id: 'fee', label: 'Entry Fee', icon: Coins, desc: 'Display participation price' },
+    { id: 'format', label: 'Format / Structure', icon: Layers, desc: 'Display tournament bracket format' },
+    { id: 'location', label: 'Venue / Location', icon: MapPin, desc: 'Display physical or online venue' }
+];
+
 // --3. main component--
 export default function Create() {
     const fileInputRef = useRef(null); // properties
@@ -56,8 +71,12 @@ export default function Create() {
         prize_pool: '',
         start_date: new Date().toISOString().split('T')[0],
         end_date: '',
+        registration_deadline: '',
         slots: '',
+        entry_fee: 'Free Entry',
+        location: 'Malaysia',
         registration_status: 'REGISTRATION OPEN',
+        display_options: ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'format', 'location'],
         banner: null
     });
 
@@ -77,6 +96,15 @@ export default function Create() {
         setBannerPreview(null); // state
         if (fileInputRef.current) { // check
             fileInputRef.current.value = ''; // state
+        }
+    };
+
+    const toggleDisplayOption = (optionId) => { // trigger
+        const current = data.display_options || []; // state
+        if (current.includes(optionId)) { // check
+            setData('display_options', current.filter((id) => id !== optionId)); // state
+        } else {
+            setData('display_options', [...current, optionId]); // state
         }
     };
 
@@ -215,14 +243,15 @@ export default function Create() {
                                         <input
                                             type="text"
                                             value={data.prize_pool} // state
+                                            placeholder="e.g. RM 50,000"
                                             onChange={(e) => setData('prize_pool', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm font-semibold outline-none transition-all font-sans"
                                         />
                                     </div>
                                 </div>
 
-                                {/* dates */}
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {/* dates & deadlines */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
                                             Start Date
@@ -247,6 +276,123 @@ export default function Create() {
                                             className="w-full px-4 py-2.5 rounded-2xl bg-[#0d1424] border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
                                         />
                                     </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Registration Closing Date
+                                        </label>
+                                        <input
+                                            type="date"
+                                            value={data.registration_deadline} // state
+                                            onChange={(e) => setData('registration_deadline', e.target.value)} // trigger
+                                            className="w-full px-4 py-2.5 rounded-2xl bg-[#0d1424] border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* entry fee & venue/location */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Entry Fee / Price
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.entry_fee} // state
+                                            placeholder="e.g. Free Entry, RM 50/team"
+                                            onChange={(e) => setData('entry_fee', e.target.value)} // trigger
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Venue / Location
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.location} // state
+                                            placeholder="e.g. Online Qualifier / Kuala Lumpur LAN"
+                                            onChange={(e) => setData('location', e.target.value)} // trigger
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* description */}
+                                <div className="space-y-1.5">
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                        Tournament Description / Overview
+                                    </label>
+                                    <textarea
+                                        rows={3}
+                                        value={data.description || ''} // state
+                                        placeholder="Brief overview of the league format, eligibility, or qualifier stages..."
+                                        onChange={(e) => setData('description', e.target.value)} // trigger
+                                        className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans resize-none"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* homepage display options card */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
+                                <div>
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                                        Homepage Card Display Options
+                                    </h3>
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Choose which tournament details to display as info badges on the homepage circuit cards. Checked items will be shown when they have data.
+                                    </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                    {DISPLAY_OPTIONS_CONFIG.map((opt) => {
+                                        const IconComp = opt.icon;
+                                        const isSelected = (data.display_options || []).includes(opt.id);
+
+                                        return (
+                                            <button
+                                                type="button"
+                                                key={opt.id}
+                                                onClick={() => toggleDisplayOption(opt.id)} // trigger
+                                                className={`p-3.5 rounded-2xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                                                    isSelected
+                                                        ? 'bg-amber-400/10 border-amber-400/40 text-white shadow-sm'
+                                                        : 'bg-white/[0.02] border-white/10 text-slate-400 hover:border-white/20 hover:text-slate-300'
+                                                }`}
+                                            >
+                                                <div
+                                                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                                                        isSelected
+                                                            ? 'bg-amber-400/20 text-amber-300'
+                                                            : 'bg-white/5 text-slate-500'
+                                                    }`}
+                                                >
+                                                    <IconComp className="w-4 h-4" />
+                                                </div>
+
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xs font-bold tracking-wide">
+                                                            {opt.label}
+                                                        </span>
+                                                        <span
+                                                            className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] ${
+                                                                isSelected
+                                                                    ? 'bg-amber-400 border-amber-400 text-black font-extrabold'
+                                                                    : 'border-white/20 bg-transparent'
+                                                            }`}
+                                                        >
+                                                            {isSelected && '✓'}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-[10px] text-slate-400 mt-0.5 truncate">
+                                                        {opt.desc}
+                                                    </p>
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         </div>
