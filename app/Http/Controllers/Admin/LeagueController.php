@@ -110,6 +110,84 @@ class LeagueController extends Controller
         return redirect()->route('admin.leagues')->with('success', 'League created successfully.'); // redirect
     }
 
+    public function edit(League $league)
+    {
+        return Inertia::render('Admin/Leagues/Edit', [ // screen
+            'league' => [
+                'id' => $league->id,
+                'name' => $league->name,
+                'slug' => $league->slug,
+                'season' => $league->season,
+                'game_title' => $league->game_title,
+                'tier' => $league->tier,
+                'format' => $league->format,
+                'prize_pool' => $league->prize_pool,
+                'start_date' => $league->start_date ? $league->start_date->format('Y-m-d') : '',
+                'end_date' => $league->end_date ? $league->end_date->format('Y-m-d') : '',
+                'registration_deadline' => $league->registration_deadline ? $league->registration_deadline->format('Y-m-d') : '',
+                'entry_fee' => $league->entry_fee ?: 'Free Entry',
+                'display_options' => $league->display_options ?: ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'format', 'location'],
+                'slots' => $league->slots,
+                'registration_status' => $league->registration_status ?: 'REGISTRATION OPEN',
+                'banner_url' => $league->banner_path ? Storage::url($league->banner_path) : null,
+                'description' => $league->description,
+                'location' => $league->location ?: 'Malaysia',
+            ]
+        ]);
+    }
+
+    public function update(Request $request, League $league)
+    {
+        $request->validate([ // validate
+            'name' => 'required|string|max:255',
+            'game_title' => 'required|string|max:255',
+            'season' => 'nullable|string|max:255',
+            'tier' => 'nullable|string|max:255',
+            'format' => 'nullable|string|max:255',
+            'prize_pool' => 'nullable|string|max:255',
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+            'registration_deadline' => 'nullable|date',
+            'entry_fee' => 'nullable|string|max:255',
+            'display_options' => 'nullable|array',
+            'display_options.*' => 'string',
+            'slots' => 'nullable|string|max:255',
+            'registration_status' => 'nullable|string|max:255',
+            'banner' => 'nullable|image|max:10240', // 10MB
+            'description' => 'nullable|string',
+            'location' => 'nullable|string|max:255',
+        ]);
+
+        $bannerPath = $league->banner_path; // state
+        if ($request->hasFile('banner')) { // check
+            if ($bannerPath && Storage::disk('public')->exists($bannerPath)) { // check
+                Storage::disk('public')->delete($bannerPath); // save
+            }
+            $bannerPath = $request->file('banner')->store('leagues', 'public'); // save
+        }
+
+        $league->update([ // save
+            'name' => $request->name,
+            'season' => $request->season,
+            'game_title' => $request->game_title,
+            'tier' => $request->tier,
+            'format' => $request->format,
+            'prize_pool' => $request->prize_pool,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+            'registration_deadline' => $request->registration_deadline,
+            'entry_fee' => $request->entry_fee,
+            'display_options' => $request->display_options,
+            'slots' => $request->slots,
+            'registration_status' => $request->registration_status ?: 'REGISTRATION OPEN',
+            'banner_path' => $bannerPath,
+            'description' => $request->description,
+            'location' => $request->location ?: 'Malaysia',
+        ]);
+
+        return redirect()->route('admin.leagues')->with('success', 'League updated successfully.'); // redirect
+    }
+
     public function destroy(League $league)
     {
         if ($league->banner_path && Storage::disk('public')->exists($league->banner_path)) { // check

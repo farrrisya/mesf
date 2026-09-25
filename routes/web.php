@@ -438,6 +438,9 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/leagues', [AdminLeagueController::class, 'index'])->name('leagues'); // screen
         Route::get('/leagues/create', [AdminLeagueController::class, 'create'])->name('leagues.create'); // screen
         Route::post('/leagues', [AdminLeagueController::class, 'store'])->name('leagues.store'); // save
+        Route::get('/leagues/{league}/edit', [AdminLeagueController::class, 'edit'])->name('leagues.edit'); // screen
+        Route::put('/leagues/{league}', [AdminLeagueController::class, 'update'])->name('leagues.update'); // save
+        Route::post('/leagues/{league}', [AdminLeagueController::class, 'update'])->name('leagues.update-post'); // save
         Route::delete('/leagues/{league}', [AdminLeagueController::class, 'destroy'])->name('leagues.destroy'); // save
 
         Route::get('/matches', [AdminMatchController::class, 'index'])->name('matches'); // screen

@@ -39,38 +39,32 @@ export default function Matches({ matches = [] }) {
         <AdminLayout title="Matches Management - MESF Admin">
             <Head title="Matches Management - Admin" />
 
-            <div className="space-y-8 max-w-7xl">
-                {/* header action */}
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                        <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight">
-                            Match Fixtures & Live Broadcasting
-                        </h2>
-                        <p className="text-xs text-slate-400 mt-1">
-                            Schedule competitive tournament fixtures, live streams, and verified match results.
-                        </p>
-                    </div>
+            <div className="space-y-6 max-w-7xl">
+                {/* search & action bar */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl space-y-4">
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                        {/* search input */}
+                        <div className="relative flex-1">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={searchQuery} // state
+                                onChange={(e) => setSearchQuery(e.target.value)} // trigger
+                                placeholder="Search matches, tournaments, teams, game disciplines..."
+                                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
+                            />
+                        </div>
 
-                    <Link
-                        href={route('admin.matches.create')} // redirect
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-bold transition-all shadow-[0_4px_16px_rgba(251,191,36,0.25)] cursor-pointer"
-                    >
-                        <Plus className="w-4 h-4 text-black stroke-[2.5]" />
-                        <span>Schedule Match</span>
-                    </Link>
-                </div>
-
-                {/* search bar */}
-                <div className="p-4 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl">
-                    <div className="relative">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                        <input
-                            type="text"
-                            value={searchQuery} // state
-                            onChange={(e) => setSearchQuery(e.target.value)} // trigger
-                            placeholder="Search matches, tournaments, teams, game disciplines..."
-                            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
-                        />
+                        {/* action controls */}
+                        <div className="flex items-center gap-3">
+                            <Link
+                                href={route('admin.matches.create')} // redirect
+                                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                            >
+                                <Plus className="w-4 h-4" />
+                                <span>Schedule Match</span>
+                            </Link>
+                        </div>
                     </div>
                 </div>
 
