@@ -513,7 +513,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                         <Link
                                             key={item.id || cat}
                                             href={`/news/${item.slug}`} // redirect
-                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4 px-4 sm:px-5 pb-5 md:pt-4.5 md:px-6 md:pb-6' : 'pt-3.5 px-4 sm:px-4.5 pb-4.5 sm:pb-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
+                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'p-5 sm:p-6' : 'p-4.5 sm:p-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
                                         >
                                             {item.image && (
                                                 <>
@@ -563,7 +563,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 return (
                                     <div
                                         key={cat || index}
-                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4 px-4 sm:px-5 pb-5 md:pt-4.5 md:px-6 md:pb-6' : 'pt-3.5 px-4 sm:px-4.5 pb-4.5 sm:pb-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
+                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'p-5 sm:p-6' : 'p-4.5 sm:p-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
                                     >
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/5 rounded-full blur-3xl transition-all duration-500" />
                                         <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
