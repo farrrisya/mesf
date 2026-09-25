@@ -31,16 +31,34 @@ const STATE_AFFILIATES = [
 ];
 
 // --3. main component--
-export default function Teams() {
+export default function Teams({ uploadedTeams = [] }) {
     // --4. actions--
     const [stateRegionFilter, setStateRegionFilter] = useState('All'); // state
 
+    const nationalTeams = useMemo(() => { // check
+        const uploaded = uploadedTeams.filter(t => t.type === 'national' || t.type === 'pro');
+        return uploaded.length > 0 ? uploaded : PRO_TEAMS;
+    }, [uploadedTeams]);
+
+    const allStateAffiliates = useMemo(() => { // check
+        const uploadedStates = uploadedTeams.filter(t => t.type === 'state').map(t => ({
+            id: t.slug || t.id,
+            name: t.name,
+            title: t.motto || `Persatuan Sukan Elektronik ${t.name}`,
+            region: t.region && t.region.toLowerCase().includes('east') || ['sabah', 'sarawak', 'labuan'].some(s => (t.name || '').toLowerCase().includes(s)) ? 'East Malaysia' : 'Peninsular',
+            image: t.logo || '/images/states/johor_transparent.png',
+        }));
+        return uploadedStates.length > 0
+            ? [...uploadedStates, ...STATE_AFFILIATES.filter(s => !uploadedStates.some(u => (u.name || '').toLowerCase() === s.name.toLowerCase()))]
+            : STATE_AFFILIATES;
+    }, [uploadedTeams]);
+
     // Filtered state affiliates by Peninsular / East Malaysia
     const filteredStates = useMemo(() => {
-        return STATE_AFFILIATES.filter((s) => {
+        return allStateAffiliates.filter((s) => {
             return stateRegionFilter === 'All' || s.region === stateRegionFilter;
         });
-    }, [stateRegionFilter]);
+    }, [allStateAffiliates, stateRegionFilter]);
 
     // --5. UI--
     return (
@@ -109,7 +127,7 @@ export default function Teams() {
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                        {PRO_TEAMS.map((team) => (
+                        {nationalTeams.map((team) => (
                             <div
                                 key={team.id}
                                 className="group p-7 sm:p-8 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl hover:border-amber-400/40 hover:bg-white/[0.04] transition-all duration-300 flex items-center justify-between gap-6"

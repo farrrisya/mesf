@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 import BackButton from '@/Components/BackButton';
+import NewsVideoPlayer from '@/Components/NewsVideoPlayer';
 import { Calendar, MapPin, User, Eye, Newspaper } from 'lucide-react';
 
 // --2. main component--
@@ -152,6 +153,13 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                             <p className="text-xl sm:text-2xl text-neutral-100 font-normal leading-relaxed border-b border-white/10 pb-6">
                                 {article.excerpt}
                             </p>
+                        )}
+
+                        {article?.video_url && (
+                            <NewsVideoPlayer
+                                url={article.video_url} // state
+                                title={article.title} // state
+                            />
                         )}
 
                         {paragraphs.length > 0 ? (

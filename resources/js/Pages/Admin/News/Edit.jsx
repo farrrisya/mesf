@@ -11,8 +11,10 @@ import {
     Calendar,
     MapPin,
     Tag,
-    Globe
+    Globe,
+    Video
 } from 'lucide-react';
+import NewsVideoPlayer, { parseVideoInfo } from '@/Components/NewsVideoPlayer';
 
 // --2. properties--
 const DEFAULT_CATEGORIES = [
@@ -40,6 +42,7 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         status: article.status || 'published',
         is_featured: Boolean(article.is_featured),
         published_at: article.published_at || '',
+        video_url: article.video_url || '',
         image: null,
         remove_image: false,
     }); // state
@@ -87,6 +90,7 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         submission.append('content', formData.content || ''); // state
         submission.append('location', formData.location || ''); // state
         submission.append('published_at', formData.published_at || ''); // state
+        submission.append('video_url', formData.video_url || ''); // state
 
         if (formData.remove_image) { // check
             submission.append('remove_image', '1'); // state
@@ -122,21 +126,6 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
 
                 {/* main form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* error notice */}
-                    {Object.keys(errors).length > 0 && (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-1">
-                            <div className="flex items-center gap-2 font-bold">
-                                <AlertCircle className="w-4 h-4 text-rose-400" />
-                                <span>Please review the form errors:</span>
-                            </div>
-                            <ul className="list-disc list-inside space-y-0.5 pl-1">
-                                {Object.entries(errors).map(([field, err]) => (
-                                    <li key={field}>{err}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                         {/* left column: story narrative (8 cols) */}
                         <div className="lg:col-span-8 space-y-6">
@@ -234,6 +223,55 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                         <p className="text-xs text-rose-400 font-medium">{errors.image}</p>
                                     )}
                                 </div>
+
+                                {/* video media link */}
+                                <div className="space-y-3 pt-6 border-t border-white/10">
+                                    <div className="flex items-center justify-between">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                            <Video className="w-4 h-4 text-amber-400" />
+                                            <span>Video Link (YouTube, Facebook, Vimeo)</span>
+                                        </label>
+                                        <span className="text-[10px] text-slate-400">Optional</span>
+                                    </div>
+
+                                    <div className="relative">
+                                        <input
+                                            type="url"
+                                            value={formData.video_url} // state
+                                            onChange={(e) => setFormData((prev) => ({ ...prev, video_url: e.target.value }))} // trigger
+                                            placeholder="https://www.youtube.com/watch?v=... or Facebook video link"
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm outline-none transition-all font-sans pr-10"
+                                        />
+                                        {formData.video_url && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setFormData((prev) => ({ ...prev, video_url: '' }))} // trigger
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                    {errors.video_url && (
+                                        <p className="text-xs text-rose-400 font-medium">{errors.video_url}</p>
+                                    )}
+
+                                    <p className="text-[11px] text-slate-400 leading-normal">
+                                        Supports YouTube videos, YouTube Shorts, Vimeo, and Public Facebook video posts. Visitors will be able to play the video directly on the article page.
+                                    </p>
+
+                                    {/* live video preview in admin */}
+                                    {formData.video_url && parseVideoInfo(formData.video_url) && (
+                                        <div className="mt-3 p-3.5 rounded-2xl bg-white/[0.02] border border-amber-400/20">
+                                            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                                                    Live Player Preview
+                                                </span>
+                                            </div>
+                                            <NewsVideoPlayer url={formData.video_url} title="Video Preview" className="!my-0" />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -311,8 +349,15 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                     />
                                 </div>
 
-                                {/* action buttons */}
-                                <div className="pt-4 border-t border-white/10 space-y-2">
+                                {/* action buttons & inline notice */}
+                                <div className="pt-4 border-t border-white/10 space-y-3">
+                                    {Object.keys(errors).length > 0 && (
+                                        <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                                            <span>Please check required fields marked above.</span>
+                                        </div>
+                                    )}
+
                                     <button
                                         type="submit"
                                         disabled={processing} // check

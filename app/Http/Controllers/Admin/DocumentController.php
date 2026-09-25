@@ -1,5 +1,6 @@
 <?php
 
+// --1. imports--
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -8,166 +9,95 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
+// --2. main controller--
 class DocumentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $documents = Document::orderBy('created_at', 'desc')->get();
+        $documents = Document::orderBy('created_at', 'desc')->get()->map(function ($doc) { // state
+            return [ // convert
+                'id' => $doc->id,
+                'title' => $doc->title,
+                'category' => $doc->category,
+                'version_ref' => $doc->version_ref,
+                'media_type' => $doc->media_type,
+                'file_size' => $doc->file_size,
+                'file_url' => $doc->file_path ? Storage::url($doc->file_path) : $doc->url_link,
+                'url_link' => $doc->url_link,
+                'description' => $doc->description,
+                'is_active' => (bool)$doc->is_active,
+                'created_at' => $doc->created_at ? $doc->created_at->format('d M Y') : null,
+            ];
+        });
 
-        return Inertia::render('Admin/MuatTurun/Index', [
+        return Inertia::render('Admin/Documents', [ // screen
             'documents' => $documents
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        return Inertia::render('Admin/MuatTurun/Create');
+        return Inertia::render('Admin/Documents/Create'); // screen
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
+        $request->validate([ // validate
             'title' => 'required|string|max:255',
-            'category' => 'required|string',
-            'media_type' => 'required|string|in:file,url,media',
+            'category' => 'required|string|max:255',
+            'media_type' => 'required|string|in:file,link,url',
+            'url_link' => 'nullable|string|max:2000',
+            'version_ref' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'file' => 'nullable|file|max:51200', // 50MB max
         ]);
 
-        $data = $request->only([
-            'title', 'category', 'sub_category', 'media_type', 'url_link'
-        ]);
+        $mediaType = $request->input('media_type') === 'link' ? 'url' : $request->input('media_type'); // state
+        $filePath = null; // state
+        $fileSize = 'N/A'; // state
 
-        if ($request->media_type === 'file' && $request->hasFile('file')) {
-            $file = $request->file('file');
-            $path = $file->store('documents', 'public');
-            $data['file_path'] = $path;
-            
-            // Format file size
-            $bytes = $file->getSize();
-            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-            $bytes = max($bytes, 0);
-            $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-            $pow = min($pow, count($units) - 1);
-            $bytes /= (1 << (10 * $pow));
-            $data['file_size'] = round($bytes, 2) . ' ' . $units[$pow];
-        } elseif ($request->media_type === 'media') {
-            $data['file_path'] = $request->file_path;
-            if ($request->file_path && Storage::disk('public')->exists($request->file_path)) {
-                $bytes = Storage::disk('public')->size($request->file_path);
-                $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                $bytes = max($bytes, 0);
-                $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-                $pow = min($pow, count($units) - 1);
-                $bytes /= (1 << (10 * $pow));
-                $data['file_size'] = round($bytes, 2) . ' ' . $units[$pow];
-            } else {
-                $data['file_size'] = 'N/A';
-            }
-        } elseif ($request->media_type === 'url') {
-            $data['file_size'] = 'Pautan URL';
+        if ($request->hasFile('file')) { // check
+            $file = $request->file('file'); // state
+            $filePath = $file->store('documents', 'public'); // save
+            $bytes = $file->getSize(); // convert
+            $fileSize = round($bytes / (1024 * 1024), 2) . ' MB'; // convert
+        } elseif ($mediaType === 'url') { // check
+            $fileSize = 'External Link'; // state
         }
 
-        Document::create($data);
-
-        return redirect()->route('admin.muat-turun.index')->with('success', 'Muat turun berjaya ditambah.');
-    }
-
-    public function edit(Document $document)
-    {
-        return Inertia::render('Admin/MuatTurun/Edit', [
-            'document' => $document
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Document $document)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'category' => 'required|string',
-            'media_type' => 'required|string|in:file,url,media',
+        Document::create([ // save
+            'title' => $request->input('title'),
+            'category' => $request->input('category'),
+            'sub_category' => $request->input('category'),
+            'version_ref' => $request->input('version_ref'),
+            'media_type' => $mediaType,
+            'url_link' => $request->input('url_link'),
+            'file_size' => $fileSize,
+            'file_path' => $filePath,
+            'description' => $request->input('description'),
+            'is_active' => true,
         ]);
 
-        $data = $request->only([
-            'title', 'category', 'sub_category', 'media_type', 'url_link'
-        ]);
-
-        if ($request->media_type === 'file' && $request->hasFile('file')) {
-            // Delete old file if exists
-            if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-                Storage::disk('public')->delete($document->file_path);
-            }
-
-            $file = $request->file('file');
-            $path = $file->store('documents', 'public');
-            $data['file_path'] = $path;
-            
-            // Format file size
-            $bytes = $file->getSize();
-            $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-            $bytes = max($bytes, 0);
-            $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-            $pow = min($pow, count($units) - 1);
-            $bytes /= (1 << (10 * $pow));
-            $data['file_size'] = round($bytes, 2) . ' ' . $units[$pow];
-        } elseif ($request->media_type === 'media') {
-            $data['file_path'] = $request->file_path;
-            if ($request->file_path && Storage::disk('public')->exists($request->file_path)) {
-                $bytes = Storage::disk('public')->size($request->file_path);
-                $units = ['B', 'KB', 'MB', 'GB', 'TB'];
-                $bytes = max($bytes, 0);
-                $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-                $pow = min($pow, count($units) - 1);
-                $bytes /= (1 << (10 * $pow));
-                $data['file_size'] = round($bytes, 2) . ' ' . $units[$pow];
-            } else {
-                $data['file_size'] = 'N/A';
-            }
-        } elseif ($request->media_type === 'url') {
-            $data['file_path'] = null;
-            $data['file_size'] = 'Pautan URL';
-        }
-
-        $document->update($data);
-
-        return back()->with('success', 'Muat turun berjaya dikemaskini.');
+        return redirect()->route('admin.documents')->with('success', 'Document registered successfully.'); // redirect
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Document $document)
     {
-        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) {
-            Storage::disk('public')->delete($document->file_path);
+        if ($document->file_path && Storage::disk('public')->exists($document->file_path)) { // check
+            Storage::disk('public')->delete($document->file_path); // save
         }
 
-        $document->delete();
+        $document->delete(); // save
 
-        return back()->with('success', 'Muat turun berjaya dipadam.');
+        return back()->with('success', 'Document deleted successfully.'); // redirect
     }
 
-    /**
-     * Update the active status of the specified resource.
-     */
-    public function updateStatus(Request $request, Document $document)
+    public function toggleStatus(Document $document)
     {
-        $validated = $request->validate([ // validate
-            'is_active' => ['required', 'boolean'],
+        $document->update([ // save
+            'is_active' => !$document->is_active
         ]);
 
-        $document->update(['is_active' => $validated['is_active']]); // save
-
-        return redirect()->back()->with('success', 'Status muat turun berjaya dikemaskini.'); // redirect
+        return back()->with('success', 'Status updated successfully.'); // redirect
     }
 }

@@ -29,17 +29,16 @@ const DOCUMENT_CATEGORIES = [
 export default function Create() {
     const fileInputRef = useRef(null); // properties
     const [fileInfo, setFileInfo] = useState(null); // state
-    const [isSubmitting, setIsSubmitting] = useState(false); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
 
-    const { data, setData } = useForm({ // state
+    const { data, setData, post, processing, errors } = useForm({ // state
         title: '',
         category: '',
         media_type: 'file', // 'file' | 'link'
         url_link: '',
         version_ref: '',
         description: '',
-        is_active: '',
+        is_active: '1',
         file: null
     });
 
@@ -67,14 +66,15 @@ export default function Create() {
 
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // check
-        setIsSubmitting(true); // state
-        setTimeout(() => { // clock
-            setIsSubmitting(false); // state
-            setShowSuccess(true); // state
-            setTimeout(() => { // clock
-                router.visit(route('admin.documents')); // redirect
-            }, 1200);
-        }, 600);
+        post(route('admin.documents.store'), { // save
+            forceFormData: true,
+            onSuccess: () => { // trigger
+                setShowSuccess(true); // state
+                setTimeout(() => { // clock
+                    router.visit(route('admin.documents')); // redirect
+                }, 800);
+            },
+        });
     };
 
     // --5. UI--
@@ -307,10 +307,10 @@ export default function Create() {
                                 <div className="pt-2 border-t border-white/10 space-y-2.5">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting} // check
+                                        disabled={processing} // check
                                         className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
                                     >
-                                        {isSubmitting ? 'Uploading...' : 'Publish Document'}
+                                        {processing ? 'Uploading...' : 'Publish Document'}
                                     </button>
 
                                     <Link

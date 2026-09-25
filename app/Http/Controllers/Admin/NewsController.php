@@ -50,6 +50,7 @@ class NewsController extends Controller
                 'content' => $item->content, // state
                 'image_path' => $item->image_path ? Storage::url($item->image_path) : null, // state
                 'raw_image_path' => $item->image_path, // state
+                'video_url' => $item->video_url, // state
                 'location' => $item->location, // state
                 'status' => $item->status, // state
                 'is_featured' => (bool) $item->is_featured, // state
@@ -108,24 +109,26 @@ class NewsController extends Controller
         $validated = $request->validate([ // validate
             'title' => 'required|string|max:255', // validate
             'slug' => 'nullable|string|max:255', // validate
-            'category' => 'required|string|max:100', // validate
+            'category' => 'nullable|string|max:100', // validate
             'tag' => 'nullable|string|max:100', // validate
             'excerpt' => 'nullable|string|max:1000', // validate
             'content' => 'nullable|string', // validate
             'location' => 'nullable|string|max:255', // validate
             'status' => 'required|in:published,draft', // validate
-            'is_featured' => 'boolean', // validate
-            'published_at' => 'nullable|date', // validate
+            'is_featured' => 'nullable', // validate
+            'published_at' => 'nullable', // validate
             'image' => 'nullable|image|max:10240', // validate
+            'video_url' => 'nullable|string|max:500', // validate
         ]);
 
+        $category = !empty($validated['category']) ? $validated['category'] : ($request->input('category') ?: 'TOURNAMENTS'); // state
         $slugInput = $validated['slug'] ?? $request->input('slug'); // state
         $slug = News::generateUniqueSlug(!empty($slugInput) ? $slugInput : $validated['title']); // convert
 
         $tagInput = $validated['tag'] ?? $request->input('tag'); // state
         $tag = !empty($tagInput) // check
             ? $tagInput // state
-            : "[ " . strtoupper($validated['category']) . " ]"; // convert
+            : "[ " . strtoupper($category) . " ]"; // convert
 
         $imagePath = null; // state
         if ($request->hasFile('image')) { // check
@@ -145,12 +148,13 @@ class NewsController extends Controller
         $news = News::create([ // save
             'title' => $validated['title'], // state
             'slug' => $slug, // state
-            'category' => $validated['category'], // state
+            'category' => $category, // state
             'tag' => $tag, // state
             'author_id' => $request->user()?->id, // state
             'excerpt' => $validated['excerpt'] ?? $request->input('excerpt'), // state
             'content' => $validated['content'] ?? $request->input('content'), // state
             'image_path' => $imagePath, // state
+            'video_url' => $validated['video_url'] ?? $request->input('video_url'), // state
             'location' => $validated['location'] ?? $request->input('location'), // state
             'status' => $validated['status'], // state
             'is_featured' => $isFeatured, // state
@@ -194,6 +198,7 @@ class NewsController extends Controller
                 'excerpt' => $news->excerpt, // state
                 'content' => $news->content, // state
                 'image_path' => $news->image_path ? Storage::url($news->image_path) : null, // state
+                'video_url' => $news->video_url ?? '', // state
                 'location' => $news->location, // state
                 'status' => $news->status, // state
                 'is_featured' => (bool) $news->is_featured, // state
@@ -209,18 +214,20 @@ class NewsController extends Controller
         $validated = $request->validate([ // validate
             'title' => 'required|string|max:255', // validate
             'slug' => 'nullable|string|max:255', // validate
-            'category' => 'required|string|max:100', // validate
+            'category' => 'nullable|string|max:100', // validate
             'tag' => 'nullable|string|max:100', // validate
             'excerpt' => 'nullable|string|max:1000', // validate
             'content' => 'nullable|string', // validate
             'location' => 'nullable|string|max:255', // validate
             'status' => 'required|in:published,draft', // validate
-            'is_featured' => 'boolean', // validate
-            'published_at' => 'nullable|date', // validate
+            'is_featured' => 'nullable', // validate
+            'published_at' => 'nullable', // validate
             'image' => 'nullable|image|max:10240', // validate
             'remove_image' => 'nullable|boolean', // validate
+            'video_url' => 'nullable|string|max:500', // validate
         ]);
 
+        $category = !empty($validated['category']) ? $validated['category'] : ($request->input('category') ?: $news->category ?: 'TOURNAMENTS'); // state
         $slug = $news->slug; // state
         if (!empty($validated['slug']) && $validated['slug'] !== $news->slug) { // check
             $slug = News::generateUniqueSlug($validated['slug'], $news->id); // convert
@@ -256,16 +263,17 @@ class NewsController extends Controller
         $tagInput = $validated['tag'] ?? $request->input('tag'); // state
         $tag = !empty($tagInput) // check
             ? $tagInput // state
-            : "[ " . strtoupper($validated['category']) . " ]"; // convert
+            : "[ " . strtoupper($category) . " ]"; // convert
 
         $news->update([ // save
             'title' => $validated['title'], // state
             'slug' => $slug, // state
-            'category' => $validated['category'], // state
+            'category' => $category, // state
             'tag' => $tag, // state
             'excerpt' => $validated['excerpt'] ?? $request->input('excerpt'), // state
             'content' => $validated['content'] ?? $request->input('content'), // state
             'image_path' => $imagePath, // state
+            'video_url' => $validated['video_url'] ?? $request->input('video_url'), // state
             'location' => $validated['location'] ?? $request->input('location'), // state
             'status' => $validated['status'], // state
             'is_featured' => $isFeatured, // state

@@ -16,6 +16,7 @@ class Document extends Model
         'sub_category',
         'media_type',
         'url_link',
+        'version_ref',
         'file_size',
         'file_path',
         'description',

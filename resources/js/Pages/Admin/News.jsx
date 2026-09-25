@@ -16,7 +16,8 @@ import {
     Eye,
     X,
     AlertCircle,
-    Flame
+    Flame,
+    Video
 } from 'lucide-react';
 
 // --2. properties--
@@ -263,6 +264,12 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                                 <span className="px-2.5 py-0.5 rounded-md text-[10px] font-semibold text-slate-400 bg-white/5">
                                                     {article.category}
                                                 </span>
+                                                {article.video_url && (
+                                                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold text-amber-300 bg-amber-400/10 border border-amber-400/30">
+                                                        <Video className="w-3 h-3 text-amber-400" />
+                                                        <span>Video</span>
+                                                    </span>
+                                                )}
                                                 {article.location && (
                                                     <span className="flex items-center gap-1 text-[11px] text-slate-400">
                                                         <MapPin className="w-3 h-3 text-slate-500" />

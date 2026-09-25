@@ -1,6 +1,6 @@
 // --1. imports--
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
@@ -62,26 +62,40 @@ const MATCH_GROUPS = [
     }
 ];
 
-const STATUS_FILTERS = ['All Matches', 'Status'];
-const GAME_FILTERS = ['All Games', 'Tag'];
+const DEFAULT_STATUS_FILTERS = ['All Matches', 'Live', 'Upcoming', 'Results'];
 
 // --3. main component--
-export default function Matches() {
+export default function Matches({ matchGroups = [] }) {
     // --4. actions--
+    const hasUploads = matchGroups && matchGroups.length > 0; // check
+    const baseGroups = hasUploads ? matchGroups : MATCH_GROUPS; // state
+
+    const availableStatusFilters = hasUploads ? DEFAULT_STATUS_FILTERS : ['All Matches', 'Status']; // state
+
+    const availableGames = useMemo(() => { // check
+        if (!hasUploads) return ['All Games', 'Tag'];
+        const games = new Set();
+        matchGroups.forEach(g => g.matches.forEach(m => {
+            if (m.game) games.add(m.game);
+        }));
+        return ['All Games', ...Array.from(games)];
+    }, [matchGroups, hasUploads]);
+
     const [statusFilter, setStatusFilter] = useState('All Matches'); // state
     const [gameFilter, setGameFilter] = useState('All Games'); // state
 
     // filter match groups and their nested matches
-    const filteredGroups = MATCH_GROUPS.map((group) => {
+    const filteredGroups = baseGroups.map((group) => { // check
         const matches = group.matches.filter((m) => {
             // filter by status
-            if (statusFilter === 'Live' && m.status !== 'LIVE') return false; // check
-            if (statusFilter === 'Upcoming' && m.status !== 'UPCOMING') return false; // check
-            if (statusFilter === 'Results' && m.status !== 'RESULTS' && m.status !== 'COMPLETED') return false; // check
+            const s = (m.status || '').toUpperCase();
+            if (statusFilter === 'Live' && !s.includes('LIVE')) return false; // check
+            if (statusFilter === 'Upcoming' && !s.includes('UPCOMING')) return false; // check
+            if (statusFilter === 'Results' && !s.includes('COMPLETED') && !s.includes('RESULT')) return false; // check
 
             // filter by game
             if (gameFilter !== 'All Games') {
-                if (m.game && m.game !== gameFilter && m.game !== 'All Games') return false; // check
+                if (m.game && m.game !== gameFilter) return false; // check
             }
 
             return true;
@@ -149,7 +163,7 @@ export default function Matches() {
                             <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1 hidden sm:inline-block">
                                 Status:
                             </span>
-                            {STATUS_FILTERS.map((filter) => {
+                            {availableStatusFilters.map((filter) => {
                                 const isActive = statusFilter === filter;
                                 return (
                                     <button
@@ -173,7 +187,7 @@ export default function Matches() {
                             <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1 hidden sm:inline-block">
                                 Game:
                             </span>
-                            {GAME_FILTERS.map((game) => {
+                            {availableGames.map((game) => {
                                 const isActive = gameFilter === game;
                                 return (
                                     <button

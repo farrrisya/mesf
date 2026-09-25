@@ -23,6 +23,7 @@ class News extends Model
         'excerpt',
         'content',
         'image_path',
+        'video_url',
         'location',
         'status',
         'is_featured',

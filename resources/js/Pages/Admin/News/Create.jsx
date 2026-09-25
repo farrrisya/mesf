@@ -11,8 +11,10 @@ import {
     Calendar,
     MapPin,
     Tag,
-    Globe
+    Globe,
+    Video
 } from 'lucide-react';
+import NewsVideoPlayer, { parseVideoInfo } from '@/Components/NewsVideoPlayer';
 
 // --2. properties--
 const DEFAULT_CATEGORIES = [
@@ -26,12 +28,13 @@ const DEFAULT_CATEGORIES = [
 export default function Create({ categories = DEFAULT_CATEGORIES }) {
     const fileInputRef = useRef(null); // properties
     const [imagePreview, setImagePreview] = useState(null); // state
+    const initialCategory = categories[0] || 'TOURNAMENTS'; // state
 
-    const { data, setData, post, processing, errors } = useForm({ // state
+    const { data, setData, post, processing, errors, transform } = useForm({ // state
         title: '',
         slug: '',
-        category: '',
-        tag: '',
+        category: initialCategory,
+        tag: `[ ${initialCategory} ]`,
         excerpt: '',
         content: '',
         location: '',
@@ -39,6 +42,7 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
         is_featured: false,
         published_at: new Date().toISOString().split('T')[0],
         image: null,
+        video_url: '',
     });
 
     // --4. actions--
@@ -70,6 +74,11 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
 
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // check
+        transform((raw) => ({
+            ...raw,
+            is_featured: raw.is_featured ? 1 : 0,
+            category: raw.category || initialCategory,
+        }));
         post(route('admin.news.store'), { forceFormData: true }); // save
     };
 
@@ -89,21 +98,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
 
                 {/* main form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
-                    {/* error notice */}
-                    {Object.keys(errors).length > 0 && (
-                        <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs space-y-1">
-                            <div className="flex items-center gap-2 font-bold">
-                                <AlertCircle className="w-4 h-4 text-rose-400" />
-                                <span>Please review the form errors:</span>
-                            </div>
-                            <ul className="list-disc list-inside space-y-0.5 pl-1">
-                                {Object.entries(errors).map(([field, err]) => (
-                                    <li key={field}>{err}</li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
-
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                         {/* left column: story narrative (8 cols) */}
                         <div className="lg:col-span-8 space-y-6">
@@ -201,6 +195,55 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         <p className="text-xs text-rose-400 font-medium">{errors.image}</p>
                                     )}
                                 </div>
+
+                                {/* video media link */}
+                                <div className="space-y-3 pt-6 border-t border-white/10">
+                                    <div className="flex items-center justify-between">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                            <Video className="w-4 h-4 text-amber-400" />
+                                            <span>Video Link (YouTube, Facebook, Vimeo)</span>
+                                        </label>
+                                        <span className="text-[10px] text-slate-400">Optional</span>
+                                    </div>
+
+                                    <div className="relative">
+                                        <input
+                                            type="url"
+                                            value={data.video_url} // state
+                                            onChange={(e) => setData('video_url', e.target.value)} // trigger
+                                            placeholder="https://www.youtube.com/watch?v=... or Facebook video link"
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm outline-none transition-all font-sans pr-10"
+                                        />
+                                        {data.video_url && (
+                                            <button
+                                                type="button"
+                                                onClick={() => setData('video_url', '')} // trigger
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
+                                            >
+                                                <X className="w-4 h-4" />
+                                            </button>
+                                        )}
+                                    </div>
+                                    {errors.video_url && (
+                                        <p className="text-xs text-rose-400 font-medium">{errors.video_url}</p>
+                                    )}
+
+                                    <p className="text-[11px] text-slate-400 leading-normal">
+                                        Supports YouTube videos, YouTube Shorts, Vimeo, and Public Facebook video posts. Visitors will be able to play the video directly on the article page.
+                                    </p>
+
+                                    {/* live video preview in admin */}
+                                    {data.video_url && parseVideoInfo(data.video_url) && (
+                                        <div className="mt-3 p-3.5 rounded-2xl bg-white/[0.02] border border-amber-400/20">
+                                            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
+                                                    Live Player Preview
+                                                </span>
+                                            </div>
+                                            <NewsVideoPlayer url={data.video_url} title="Video Preview" className="!my-0" />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
 
@@ -278,15 +321,22 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                     />
                                 </div>
 
-                                {/* action buttons */}
-                                <div className="pt-4 border-t border-white/10 space-y-2">
+                                {/* action buttons & inline notice */}
+                                <div className="pt-4 border-t border-white/10 space-y-3">
+                                    {Object.keys(errors).length > 0 && (
+                                        <div className="p-3 rounded-2xl bg-rose-500/10 border border-rose-500/25 text-rose-300 text-xs flex items-center gap-2">
+                                            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
+                                            <span>Please check required fields marked above.</span>
+                                        </div>
+                                    )}
+
                                     <button
                                         type="submit"
                                         disabled={processing} // check
                                         className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
                                         {processing && <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />}
-                                        <span>Publish Article</span>
+                                        <span>{data.status === 'draft' ? 'Save as Draft' : 'Publish Article'}</span>
                                     </button>
 
                                     <Link
@@ -315,13 +365,15 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         onChange={(e) => handleCategoryChange(e.target.value)} // trigger
                                         className="w-full px-3.5 py-2.5 rounded-xl bg-[#090D18] border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none cursor-pointer"
                                     >
-                                        <option value="">Choose Category</option>
                                         {categories.map((cat) => (
                                             <option key={cat} value={cat}>
                                                 {cat}
                                             </option>
                                         ))}
                                     </select>
+                                    {errors.category && (
+                                        <p className="text-xs text-rose-400 font-medium">{errors.category}</p>
+                                    )}
                                 </div>
 
                                 {/* tag badge */}

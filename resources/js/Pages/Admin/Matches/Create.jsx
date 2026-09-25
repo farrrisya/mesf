@@ -45,36 +45,35 @@ const MATCH_ROUNDS = [
 
 // --3. main component--
 export default function Create() {
-    const [isSubmitting, setIsSubmitting] = useState(false); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
 
-    const { data, setData } = useForm({ // state
+    const { data, setData, post, processing, errors } = useForm({ // state
         tournament_name: '',
         game_title: '',
         round: '',
-        format: '',
+        format: 'BO3',
         team_a_name: '',
         team_a_tag: '',
         team_b_name: '',
         team_b_tag: '',
         scheduled_date: new Date().toISOString().split('T')[0],
         scheduled_time: '',
-        venue: '',
+        venue: 'Online Arena',
         stream_url: '',
-        status: ''
+        status: 'UPCOMING'
     });
 
     // --4. actions--
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // check
-        setIsSubmitting(true); // state
-        setTimeout(() => { // clock
-            setIsSubmitting(false); // state
-            setShowSuccess(true); // state
-            setTimeout(() => { // clock
-                router.visit(route('admin.matches')); // redirect
-            }, 1200);
-        }, 600);
+        post(route('admin.matches.store'), { // save
+            onSuccess: () => { // trigger
+                setShowSuccess(true); // state
+                setTimeout(() => { // clock
+                    router.visit(route('admin.matches')); // redirect
+                }, 800);
+            },
+        });
     };
 
     // --5. UI--
@@ -314,10 +313,10 @@ export default function Create() {
                                 <div className="pt-2 border-t border-white/10 space-y-2.5">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting} // check
+                                        disabled={processing} // check
                                         className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
                                     >
-                                        {isSubmitting ? 'Scheduling...' : 'Schedule Fixture'}
+                                        {processing ? 'Scheduling...' : 'Schedule Fixture'}
                                     </button>
 
                                     <Link

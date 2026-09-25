@@ -3,9 +3,10 @@ import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useState, useEffect, useRef } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import { Play } from 'lucide-react';
 
 // --2. main component--
-export default function Welcome() {
+export default function Welcome({ latestByCategory = {}, featuredArticle = null, leagues = [] }) {
     // --3. properties--
     const { settings } = usePage().props; // properties
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
@@ -480,47 +481,243 @@ export default function Welcome() {
                         </Link>
                     </div>
 
-                    {/* the bento grid - clean empty glass boxes with amber category tags */}
+                    {/* the bento grid - up-to-date categories: TOURNAMENTS, ACHIEVEMENTS, ANNOUNCEMENTS, PARTNERSHIPS */}
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 auto-rows-[220px] md:auto-rows-[250px]">
-                        {/* 1. featured primary box (spans 2 cols, 2 rows) */}
-                        <div className="md:col-span-2 md:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                [ PRESS RELEASE ]
-                            </span>
-                        </div>
+                        {/* 1. TOURNAMENTS (featured primary box: spans 2 cols, 2 rows) */}
+                        {(() => {
+                            const cat = 'TOURNAMENTS'; // state
+                            const article = (featuredArticle && featuredArticle.category === cat ? featuredArticle : null) || latestByCategory?.[cat] || featuredArticle; // state
 
-                        {/* 2. secondary box top-right (spans 2 cols on lg, 1 col on md, 1 row) */}
-                        <div className="md:col-span-1 lg:col-span-2 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                [ TOURNAMENT ]
-                            </span>
-                        </div>
+                            if (article) { // check
+                                return (
+                                    <Link
+                                        key={cat}
+                                        href={`/news/${article.slug}`} // redirect
+                                        className="md:col-span-2 md:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                    >
+                                        {article.image && (
+                                            <>
+                                                <img
+                                                    src={article.image}
+                                                    alt={article.title}
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                            </>
+                                        )}
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
+                                        <div className="relative z-10 flex items-center justify-between gap-2">
+                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
+                                                {article.tag || `[ ${cat} ]`}
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {article.video_url && (
+                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
+                                                        <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                                        <span>Video</span>
+                                                    </span>
+                                                )}
+                                                {article.date && (
+                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-400">
+                                                        {article.date}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="relative z-10 space-y-1.5 mt-auto pt-6 text-left">
+                                            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                                                {article.title}
+                                            </h3>
+                                            {article.excerpt && (
+                                                <p className="text-xs sm:text-sm text-neutral-300 line-clamp-2 font-normal leading-relaxed">
+                                                    {article.excerpt}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </Link>
+                                );
+                            }
 
-                        {/* 3. medium box (1 col, 1 row) */}
-                        <div className="md:col-span-1 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                [ ANNOUNCEMENT ]
-                            </span>
-                        </div>
+                            return (
+                                <div key={cat} className="md:col-span-2 md:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
+                                        [ {cat} ]
+                                    </span>
+                                </div>
+                            );
+                        })()}
 
-                        {/* 4. medium box (1 col, 1 row) */}
-                        <div className="md:col-span-1 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                [ NATIONAL CIRCUIT ]
-                            </span>
-                        </div>
+                        {/* 2. ACHIEVEMENTS (secondary box top-right: spans 2 cols on lg, 1 col on md, 1 row) */}
+                        {(() => {
+                            const cat = 'ACHIEVEMENTS'; // state
+                            const article = latestByCategory?.[cat]; // state
 
-                        {/* 5. bottom wide box (spans full 4 cols on lg, 3 cols on md) */}
-                        <div className="md:col-span-3 lg:col-span-4 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                [ PARTNERSHIP ]
-                            </span>
-                        </div>
+                            if (article) { // check
+                                return (
+                                    <Link
+                                        key={cat}
+                                        href={`/news/${article.slug}`} // redirect
+                                        className="md:col-span-1 lg:col-span-2 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                    >
+                                        {article.image && (
+                                            <>
+                                                <img
+                                                    src={article.image}
+                                                    alt={article.title}
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                            </>
+                                        )}
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
+                                        <div className="relative z-10 flex items-center justify-between gap-2">
+                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
+                                                {article.tag || `[ ${cat} ]`}
+                                            </span>
+                                            <div className="flex items-center gap-2">
+                                                {article.video_url && (
+                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
+                                                        <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                                        <span>Video</span>
+                                                    </span>
+                                                )}
+                                                {article.date && (
+                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-400">
+                                                        {article.date}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left">
+                                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1 leading-snug">
+                                                {article.title}
+                                            </h3>
+                                            {article.excerpt && (
+                                                <p className="text-xs text-neutral-300 line-clamp-1 font-normal leading-relaxed">
+                                                    {article.excerpt}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </Link>
+                                );
+                            }
+
+                            return (
+                                <div key={cat} className="md:col-span-1 lg:col-span-2 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
+                                        [ {cat} ]
+                                    </span>
+                                </div>
+                            );
+                        })()}
+
+                        {/* 3. ANNOUNCEMENTS (medium box: 1 col, 1 row) */}
+                        {(() => {
+                            const cat = 'ANNOUNCEMENTS'; // state
+                            const article = latestByCategory?.[cat]; // state
+
+                            if (article) { // check
+                                return (
+                                    <Link
+                                        key={cat}
+                                        href={`/news/${article.slug}`} // redirect
+                                        className="md:col-span-1 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                    >
+                                        {article.image && (
+                                            <>
+                                                <img
+                                                    src={article.image}
+                                                    alt={article.title}
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                            </>
+                                        )}
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
+                                        <div className="relative z-10 flex items-center justify-between gap-2">
+                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
+                                                {article.tag || `[ ${cat} ]`}
+                                            </span>
+                                            {article.video_url && (
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
+                                                    <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                                    <span>Video</span>
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left">
+                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                                                {article.title}
+                                            </h3>
+                                        </div>
+                                    </Link>
+                                );
+                            }
+
+                            return (
+                                <div key={cat} className="md:col-span-1 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
+                                        [ {cat} ]
+                                    </span>
+                                </div>
+                            );
+                        })()}
+
+                        {/* 4. PARTNERSHIPS (box: 1 col on lg, 3 cols on md banner, 1 row) */}
+                        {(() => {
+                            const cat = 'PARTNERSHIPS'; // state
+                            const article = latestByCategory?.[cat]; // state
+
+                            if (article) { // check
+                                return (
+                                    <Link
+                                        key={cat}
+                                        href={`/news/${article.slug}`} // redirect
+                                        className="md:col-span-3 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                    >
+                                        {article.image && (
+                                            <>
+                                                <img
+                                                    src={article.image}
+                                                    alt={article.title}
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                            </>
+                                        )}
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
+                                        <div className="relative z-10 flex items-center justify-between gap-2">
+                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
+                                                {article.tag || `[ ${cat} ]`}
+                                            </span>
+                                            {article.video_url && (
+                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
+                                                    <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                                    <span>Video</span>
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left">
+                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                                                {article.title}
+                                            </h3>
+                                        </div>
+                                    </Link>
+                                );
+                            }
+
+                            return (
+                                <div key={cat} className="md:col-span-3 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
+                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
+                                        [ {cat} ]
+                                    </span>
+                                </div>
+                            );
+                        })()}
                     </div>
                 </section>
 
@@ -536,34 +733,85 @@ export default function Welcome() {
                         </h2>
                     </div>
 
-                    {/* 3-column clean grid - clean empty glass cards with status badges */}
+                    {/* 3-column clean grid - uploaded leagues or clean empty glass cards with status badges */}
                     <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-                        {/* circuit card 1 */}
-                        <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
-                            <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold tracking-wider uppercase">
-                                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                                REGISTRATION OPEN
-                            </div>
-                        </div>
+                        {leagues && leagues.length > 0 ? (
+                            leagues.slice(0, 3).map((league) => (
+                                <Link
+                                    key={league.id}
+                                    href={league.slug ? `/leagues/${league.slug}` : '/leagues'}
+                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px] flex flex-col justify-between block"
+                                >
+                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    
+                                    <div>
+                                        <div className="flex items-center justify-between gap-2 mb-4">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-400/10 border border-amber-400/25 text-amber-400 text-xs font-semibold tracking-wider uppercase">
+                                                <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
+                                                {league.registration_status || 'UPCOMING'}
+                                            </div>
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/60 bg-white/5 border border-white/10 px-2 py-0.5 rounded-md">
+                                                {league.game_title}
+                                            </span>
+                                        </div>
 
-                        {/* circuit card 2 */}
-                        <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
-                            <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold tracking-wider uppercase">
-                                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-                                LIVE SEASON
-                            </div>
-                        </div>
+                                        {league.banner_url && (
+                                            <div className="w-full aspect-[16/9] rounded-xl overflow-hidden mb-4 border border-white/10 bg-black/40">
+                                                <img
+                                                    src={league.banner_url}
+                                                    alt={league.name}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                />
+                                            </div>
+                                        )}
 
-                        {/* circuit card 3 */}
-                        <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
-                            <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-400/10 border border-neutral-400/25 text-neutral-300 text-xs font-semibold tracking-wider uppercase">
-                                <span className="h-2 w-2 rounded-full bg-neutral-300" />
-                                OFF-SEASON
-                            </div>
-                        </div>
+                                        <h3 className="text-xl font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-2">
+                                            {league.name}
+                                        </h3>
+
+                                        <p className="text-xs text-neutral-400 mt-2 line-clamp-2">
+                                            {league.description || `${league.game_title} official sanctioned circuit organized under MESF.`}
+                                        </p>
+                                    </div>
+
+                                    <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
+                                        <span>{league.start_date}</span>
+                                        <span className="text-amber-400 font-bold uppercase tracking-wider group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                                            Details &rarr;
+                                        </span>
+                                    </div>
+                                </Link>
+                            ))
+                        ) : (
+                            <>
+                                {/* circuit card 1 */}
+                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
+                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold tracking-wider uppercase">
+                                        <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                                        REGISTRATION OPEN
+                                    </div>
+                                </div>
+
+                                {/* circuit card 2 */}
+                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
+                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold tracking-wider uppercase">
+                                        <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                                        LIVE SEASON
+                                    </div>
+                                </div>
+
+                                {/* circuit card 3 */}
+                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] min-h-[380px] md:min-h-[420px]">
+                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-400/10 border border-neutral-400/25 text-neutral-300 text-xs font-semibold tracking-wider uppercase">
+                                        <span className="h-2 w-2 rounded-full bg-neutral-300" />
+                                        OFF-SEASON
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </section>
 

@@ -71,15 +71,19 @@ const TOURNAMENTS = [
 const STATUS_FILTERS = ['All Events', 'Live', 'Upcoming', 'Completed'];
 
 // --3. main component--
-export default function Leagues() {
+export default function Leagues({ leagues = [] }) {
     // --4. actions--
     const [activeFilter, setActiveFilter] = useState('All Events'); // state
 
-    const filteredTournaments = TOURNAMENTS.filter((item) => {
+    const hasUploads = leagues && leagues.length > 0; // check
+    const items = hasUploads ? leagues : TOURNAMENTS; // state
+
+    const filteredTournaments = items.filter((item) => { // check
         if (activeFilter === 'All Events') return true; // check
-        if (activeFilter === 'Live') return item.status === 'LIVE'; // check
-        if (activeFilter === 'Upcoming') return item.status === 'UPCOMING'; // check
-        if (activeFilter === 'Completed') return item.status === 'COMPLETED'; // check
+        const s = (item.status || '').toUpperCase();
+        if (activeFilter === 'Live') return s.includes('LIVE'); // check
+        if (activeFilter === 'Upcoming') return s.includes('UPCOMING') || s.includes('REGISTRATION') || s === 'STATUS'; // check
+        if (activeFilter === 'Completed') return s.includes('COMPLETED') || s.includes('OFF-SEASON'); // check
         return true; // filter
     });
 
@@ -180,13 +184,21 @@ export default function Leagues() {
                                 <div className="aspect-[21/9] w-full overflow-hidden relative bg-[#0A0F1D] flex items-center justify-center border-b border-white/5">
                                     <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-blue-600/5 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
 
-                                    {/* Placeholder media center */}
-                                    <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 group-hover:text-neutral-500 transition-colors z-10">
-                                        <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                        </svg>
-                                        <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-500">Image</span>
-                                    </div>
+                                    {/* banner image or fallback */}
+                                    {tournament.banner ? (
+                                        <img
+                                            src={tournament.banner}
+                                            alt={tournament.title}
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-10"
+                                        />
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 group-hover:text-neutral-500 transition-colors z-10">
+                                            <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                            </svg>
+                                            <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-500">Image</span>
+                                        </div>
+                                    )}
 
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/40 to-transparent pointer-events-none" />
 

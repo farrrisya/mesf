@@ -60,20 +60,19 @@ const GAME_DISCIPLINES = [
 export default function Create() {
     const fileInputRef = useRef(null); // properties
     const [logoPreview, setLogoPreview] = useState(null); // state
-    const [isSubmitting, setIsSubmitting] = useState(false); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
 
-    const { data, setData, errors } = useForm({ // state
+    const { data, setData, post, processing, errors } = useForm({ // state
         name: '',
         tag: '',
-        type: '',
-        region: '',
+        type: 'national',
+        region: 'National / All Malaysia',
         game_title: '',
         manager_name: '',
         contact_email: '',
         motto: '',
         roster_size: 5,
-        status: '',
+        status: 'ACTIVE',
         logo: null
     });
 
@@ -98,14 +97,15 @@ export default function Create() {
 
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // check
-        setIsSubmitting(true); // state
-        setTimeout(() => { // clock
-            setIsSubmitting(false); // state
-            setShowSuccess(true); // state
-            setTimeout(() => { // clock
-                router.visit(route('admin.teams')); // redirect
-            }, 1200);
-        }, 600);
+        post(route('admin.teams.store'), { // save
+            forceFormData: true,
+            onSuccess: () => { // trigger
+                setShowSuccess(true); // state
+                setTimeout(() => { // clock
+                    router.visit(route('admin.teams')); // redirect
+                }, 800);
+            },
+        });
     };
 
     // --5. UI--
@@ -367,10 +367,10 @@ export default function Create() {
                                 <div className="pt-2 border-t border-white/10 space-y-2.5">
                                     <button
                                         type="submit"
-                                        disabled={isSubmitting} // check
+                                        disabled={processing} // check
                                         className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
                                     >
-                                        {isSubmitting ? 'Registering Team...' : 'Create Team Profile'}
+                                        {processing ? 'Registering Team...' : 'Create Team Profile'}
                                     </button>
 
                                     <Link

@@ -3,6 +3,7 @@ import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import { Play } from 'lucide-react';
 
 // --2. properties--
 const DEFAULT_CATEGORIES = ['ALL', 'TOURNAMENTS', 'ACHIEVEMENTS', 'PARTNERSHIPS', 'ANNOUNCEMENTS'];
@@ -82,11 +83,17 @@ export default function News({
 
                         {/* hero story content */}
                         <div className="relative z-10 h-full w-full p-6 sm:p-10 md:p-14 flex flex-col justify-end text-left max-w-4xl">
-                            {/* category tag */}
-                            <div className="mb-3">
+                            {/* category tag & video badge */}
+                            <div className="mb-3 flex items-center gap-2">
                                 <span className="text-xs sm:text-sm font-bold tracking-widest text-amber-400 uppercase drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]">
                                     {displayHero.tag || `[ ${displayHero.category} ]`}
                                 </span>
+                                {displayHero.video_url && (
+                                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
+                                        <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                        <span>Video Included</span>
+                                    </span>
+                                )}
                             </div>
 
                             {/* massive headline */}
@@ -197,6 +204,16 @@ export default function News({
                                                 {article.tag || `[ ${article.category} ]`}
                                             </span>
                                         </div>
+
+                                        {/* Video badge if article has video */}
+                                        {article.video_url && (
+                                            <div className="absolute top-4 right-4">
+                                                <span className="px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase bg-black/75 backdrop-blur-md border border-amber-400/40 text-amber-300 flex items-center gap-1 shadow-lg">
+                                                    <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                                    <span>Video</span>
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
 
                                     {/* Unified Content Section (Inside the card with generous padding) */}

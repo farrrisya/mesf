@@ -55,6 +55,7 @@ class PublicNewsController extends Controller
                     'tag' => $item->tag ?: "[ {$item->category} ]", // state
                     'excerpt' => $item->excerpt, // state
                     'image' => $item->image_path ? Storage::url($item->image_path) : null, // state
+                    'video_url' => $item->video_url, // state
                     'date' => $item->published_at ? $item->published_at->format('d M Y') : $item->created_at->format('d M Y'), // clock
                     'detail' => $item->location ?: 'OFFICIAL', // state
                 ];
@@ -68,6 +69,7 @@ class PublicNewsController extends Controller
             'tag' => $featuredArticle->tag ?: "[ {$featuredArticle->category} ]", // state
             'excerpt' => $featuredArticle->excerpt, // state
             'image' => $featuredArticle->image_path ? Storage::url($featuredArticle->image_path) : null, // state
+            'video_url' => $featuredArticle->video_url, // state
             'date' => $featuredArticle->published_at ? $featuredArticle->published_at->format('d M Y') : $featuredArticle->created_at->format('d M Y'), // clock
             'detail' => $featuredArticle->location ?: 'OFFICIAL', // state
         ] : null;
@@ -134,6 +136,7 @@ class PublicNewsController extends Controller
                 'excerpt' => $article->excerpt, // state
                 'content' => $article->content, // state
                 'image' => $article->image_path ? Storage::url($article->image_path) : null, // state
+                'video_url' => $article->video_url, // state
                 'location' => $article->location ?: 'MALAYSIA', // state
                 'status' => $article->status, // state
                 'date' => $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y'), // clock

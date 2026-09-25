@@ -14,19 +14,99 @@ use App\Http\Controllers\SecretaryController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Admin\InquiryManagementController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
+use App\Http\Controllers\Admin\LeagueController as AdminLeagueController;
+use App\Http\Controllers\Admin\TeamController as AdminTeamController;
+use App\Http\Controllers\Admin\MatchController as AdminMatchController;
 use App\Http\Controllers\PublicNewsController;
 use App\Models\Gallery;
+use App\Models\League;
+use App\Models\Team;
+use App\Models\EsportMatch;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // --2. public routes--
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    $categories = [ // state
+        'TOURNAMENTS',
+        'ACHIEVEMENTS',
+        'ANNOUNCEMENTS',
+        'PARTNERSHIPS',
+    ];
+
+    $latestByCategory = []; // state
+    foreach ($categories as $cat) { // loop
+        $article = \App\Models\News::published() // check
+            ->where('category', $cat)
+            ->orderBy('is_featured', 'desc')
+            ->orderBy('published_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $latestByCategory[$cat] = $article ? [ // state
+            'id' => $article->id,
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'category' => $article->category,
+            'tag' => $article->tag ?: "[ {$article->category} ]",
+            'excerpt' => $article->excerpt,
+            'image' => $article->image_path ? \Illuminate\Support\Facades\Storage::url($article->image_path) : null,
+            'video_url' => $article->video_url,
+            'date' => $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y'),
+            'location' => $article->location ?: 'OFFICIAL',
+        ] : null;
+    }
+
+    $featuredArticle = \App\Models\News::published() // check
+        ->where('is_featured', true)
+        ->orderBy('published_at', 'desc')
+        ->first();
+
+    $featuredData = $featuredArticle ? [ // state
+        'id' => $featuredArticle->id,
+        'title' => $featuredArticle->title,
+        'slug' => $featuredArticle->slug,
+        'category' => $featuredArticle->category,
+        'tag' => $featuredArticle->tag ?: "[ {$featuredArticle->category} ]",
+        'excerpt' => $featuredArticle->excerpt,
+        'image' => $featuredArticle->image_path ? \Illuminate\Support\Facades\Storage::url($featuredArticle->image_path) : null,
+        'video_url' => $featuredArticle->video_url,
+        'date' => $featuredArticle->published_at ? $featuredArticle->published_at->format('d M Y') : $featuredArticle->created_at->format('d M Y'),
+        'location' => $featuredArticle->location ?: 'OFFICIAL',
+    ] : null;
+
+    $leagues = League::where('is_active', true) // state
+        ->orderBy('created_at', 'desc')
+        ->limit(6)
+        ->get()
+        ->map(function ($l) {
+            return [ // convert
+                'id' => $l->id,
+                'name' => $l->name,
+                'slug' => $l->slug,
+                'season' => $l->season,
+                'game_title' => $l->game_title,
+                'tier' => $l->tier,
+                'format' => $l->format,
+                'prize_pool' => $l->prize_pool,
+                'start_date' => $l->start_date ? $l->start_date->format('d M Y') : 'TBA',
+                'registration_status' => $l->registration_status ?: 'REGISTRATION OPEN',
+                'banner_url' => $l->banner_path ? \Illuminate\Support\Facades\Storage::url($l->banner_path) : null,
+                'description' => $l->description,
+                'location' => $l->location ?: 'Malaysia',
+            ];
+        });
+
+    return Inertia::render('Welcome', [ // screen
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
+        'latestByCategory' => $latestByCategory,
+        'featuredArticle' => $featuredData,
+        'leagues' => $leagues,
     ]);
 })->name('home');
 
@@ -38,7 +118,29 @@ Route::get('/news/article', function () {
 Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show'); // screen
 
 Route::get('/leagues', function () {
-    return Inertia::render('Leagues');
+    $leagues = League::where('is_active', true) // state
+        ->orderBy('start_date', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->map(function ($l) {
+            return [ // convert
+                'id' => $l->id,
+                'title' => $l->name,
+                'slug' => $l->slug,
+                'game' => $l->game_title,
+                'status' => $l->registration_status ?: 'UPCOMING',
+                'date' => $l->start_date ? $l->start_date->format('d M Y') . ($l->end_date ? ' - ' . $l->end_date->format('d M Y') : '') : 'TBA',
+                'location' => $l->location ?: 'Malaysia',
+                'description' => $l->description ?: 'Official sanctioned esports tournament circuit organized by Malaysian Electronic Sports Federation.',
+                'banner' => $l->banner_path ? \Illuminate\Support\Facades\Storage::url($l->banner_path) : null,
+                'tier' => $l->tier,
+                'prize_pool' => $l->prize_pool,
+            ];
+        });
+
+    return Inertia::render('Leagues', [ // screen
+        'leagues' => $leagues
+    ]);
 })->name('leagues');
 
 Route::get('/leagues/details', function () {
@@ -52,7 +154,45 @@ Route::get('/leagues/{slug}', function ($slug) {
 })->name('leagues.show');
 
 Route::get('/matches', function () {
-    return Inertia::render('Matches');
+    $rawMatches = EsportMatch::where('is_active', true) // state
+        ->orderBy('scheduled_date', 'asc')
+        ->orderBy('scheduled_time', 'asc')
+        ->get();
+
+    $groups = $rawMatches->groupBy(function ($m) { // loop
+        return $m->scheduled_date ? $m->scheduled_date->format('d M Y') : 'TBA';
+    })->map(function ($items, $date) {
+        return [ // convert
+            'date' => $date,
+            'matches' => $items->map(function ($m) {
+                return [
+                    'id' => $m->id,
+                    'tournament' => $m->tournament_name,
+                    'stage' => $m->round ?: 'Match Fixture',
+                    'game' => $m->game_title,
+                    'format' => $m->format ?: 'BO3',
+                    'time' => $m->scheduled_time ?: 'TBA',
+                    'status' => $m->status ?: 'UPCOMING',
+                    'venue' => $m->venue,
+                    'stream_url' => $m->stream_url,
+                    'teamA' => [
+                        'name' => $m->team_a_name,
+                        'tag' => $m->team_a_tag ?: strtoupper(substr($m->team_a_name, 0, 3)),
+                        'score' => $m->team_a_score,
+                    ],
+                    'teamB' => [
+                        'name' => $m->team_b_name,
+                        'tag' => $m->team_b_tag ?: strtoupper(substr($m->team_b_name, 0, 3)),
+                        'score' => $m->team_b_score,
+                    ],
+                ];
+            })->values(),
+        ];
+    })->values();
+
+    return Inertia::render('Matches', [ // screen
+        'matchGroups' => $groups
+    ]);
 })->name('matches');
 
 Route::get('/matches/details', function () {
@@ -66,7 +206,29 @@ Route::get('/matches/{id}', function ($id) {
 })->name('matches.show');
 
 Route::get('/teams', function () {
-    return Inertia::render('Teams');
+    $teams = Team::where('is_active', true) // state
+        ->orderBy('name', 'asc')
+        ->get()
+        ->map(function ($t) {
+            return [ // convert
+                'id' => $t->id,
+                'name' => $t->name,
+                'slug' => $t->slug,
+                'tag' => $t->tag ?: strtoupper(substr($t->name, 0, 3)),
+                'type' => $t->type,
+                'region' => $t->region ?: 'National',
+                'game' => $t->game_title,
+                'status' => $t->status ?: 'ACTIVE',
+                'logo' => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
+                'manager' => $t->manager_name,
+                'motto' => $t->motto,
+                'rosters' => [$t->game_title ?: 'National Squad'],
+            ];
+        });
+
+    return Inertia::render('Teams', [ // screen
+        'uploadedTeams' => $teams
+    ]);
 })->name('teams');
 
 Route::get('/about', function () {
@@ -94,9 +256,7 @@ Route::get('/teams/{slug}', function ($slug) {
 })->name('teams.show');
 
 Route::get('/dokumen', function () {
-    return Inertia::render('Public/Dokumen', [ // screen
-        'documents' => \App\Models\Document::where('is_active', true)->orderBy('category', 'asc')->orderBy('created_at', 'asc')->get() // state
-    ]);
+    return redirect()->route('home'); // redirect
 })->name('dokumen');
 
 Route::get('/profil', function () {
@@ -240,26 +400,20 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::patch('/news/{news}/toggle-status', [AdminNewsController::class, 'toggleStatus'])->name('news.toggle-status'); // toggle
         Route::patch('/news/{news}/toggle-featured', [AdminNewsController::class, 'toggleFeatured'])->name('news.toggle-featured'); // toggle
 
-        Route::get('/leagues', function () {
-            return Inertia::render('Admin/Leagues'); // screen
-        })->name('leagues');
-        Route::get('/leagues/create', function () {
-            return Inertia::render('Admin/Leagues/Create'); // screen
-        })->name('leagues.create');
+        Route::get('/leagues', [AdminLeagueController::class, 'index'])->name('leagues'); // screen
+        Route::get('/leagues/create', [AdminLeagueController::class, 'create'])->name('leagues.create'); // screen
+        Route::post('/leagues', [AdminLeagueController::class, 'store'])->name('leagues.store'); // save
+        Route::delete('/leagues/{league}', [AdminLeagueController::class, 'destroy'])->name('leagues.destroy'); // save
 
-        Route::get('/matches', function () {
-            return Inertia::render('Admin/Matches'); // screen
-        })->name('matches');
-        Route::get('/matches/create', function () {
-            return Inertia::render('Admin/Matches/Create'); // screen
-        })->name('matches.create');
+        Route::get('/matches', [AdminMatchController::class, 'index'])->name('matches'); // screen
+        Route::get('/matches/create', [AdminMatchController::class, 'create'])->name('matches.create'); // screen
+        Route::post('/matches', [AdminMatchController::class, 'store'])->name('matches.store'); // save
+        Route::delete('/matches/{match}', [AdminMatchController::class, 'destroy'])->name('matches.destroy'); // save
 
-        Route::get('/teams', function () {
-            return Inertia::render('Admin/Teams'); // screen
-        })->name('teams');
-        Route::get('/teams/create', function () {
-            return Inertia::render('Admin/Teams/Create'); // screen
-        })->name('teams.create');
+        Route::get('/teams', [AdminTeamController::class, 'index'])->name('teams'); // screen
+        Route::get('/teams/create', [AdminTeamController::class, 'create'])->name('teams.create'); // screen
+        Route::post('/teams', [AdminTeamController::class, 'store'])->name('teams.store'); // save
+        Route::delete('/teams/{team}', [AdminTeamController::class, 'destroy'])->name('teams.destroy'); // save
 
         Route::get('/library', function () {
             return Inertia::render('Admin/Library'); // screen
@@ -268,12 +422,10 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
 
     // Documents management (Admin only)
     Route::middleware('role:admin')->group(function () { // check
-        Route::get('/documents', function () {
-            return Inertia::render('Admin/Documents'); // screen
-        })->name('documents');
-        Route::get('/documents/create', function () {
-            return Inertia::render('Admin/Documents/Create'); // screen
-        })->name('documents.create');
+        Route::get('/documents', [AdminDocumentController::class, 'index'])->name('documents'); // screen
+        Route::get('/documents/create', [AdminDocumentController::class, 'create'])->name('documents.create'); // screen
+        Route::post('/documents', [AdminDocumentController::class, 'store'])->name('documents.store'); // save
+        Route::delete('/documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy'); // save
     });
 
     // Inquiries management (Secretariat, Admin)
