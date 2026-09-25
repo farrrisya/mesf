@@ -513,7 +513,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                         <Link
                                             key={item.id || cat}
                                             href={`/news/${item.slug}`} // redirect
-                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 ${isHero ? 'p-6 md:p-8' : 'p-6'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
+                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4.5 px-6 pb-6 md:pt-5 md:px-8 md:pb-8' : 'pt-4 px-6 pb-6'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
                                         >
                                             {item.image && (
                                                 <>
@@ -525,10 +525,10 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                                     <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                                 </>
                                             )}
-                                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
+                                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
                                             
                                             <div className="relative z-10 flex items-center justify-between gap-2 flex-wrap">
-                                                <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)] group-hover:border-white/40 transition-colors duration-300">
+                                                <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
                                                     <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-100 uppercase font-mono">
                                                         {cleanTag}
                                                     </span>
@@ -549,11 +549,11 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                             </div>
 
                                             <div className={`relative z-10 space-y-1.5 mt-auto ${isHero ? 'pt-6' : 'pt-4'} text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
-                                                <h3 className={`${isHero ? 'text-lg sm:text-xl lg:text-2xl' : isSecondary ? 'text-base sm:text-lg' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-amber-400 transition-colors ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} leading-snug drop-shadow-md`}>
+                                                <h3 className={`${isHero ? 'text-lg sm:text-xl lg:text-2xl' : isSecondary ? 'text-base sm:text-lg' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-white transition-colors ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} leading-snug drop-shadow-md`}>
                                                     {item.title}
                                                 </h3>
                                                 {item.excerpt && (
-                                                    <p className={`${isHero ? 'text-xs sm:text-sm' : 'text-xs'} text-neutral-200 ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} font-normal leading-relaxed drop-shadow`}>
+                                                    <p className={`${isHero ? 'text-xs sm:text-sm' : 'text-xs'} text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow`}>
                                                         {item.excerpt}
                                                     </p>
                                                 )}
@@ -565,9 +565,9 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 return (
                                     <div
                                         key={cat || index}
-                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-white/20 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
+                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4.5 px-6 pb-6 md:pt-5 md:px-8 md:pb-8' : 'pt-4 px-6 pb-6'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
                                     >
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all duration-500" />
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/5 rounded-full blur-3xl transition-all duration-500" />
                                         <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
                                             <span className="text-[11px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase font-mono">
                                                 {cleanTag}
