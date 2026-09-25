@@ -216,11 +216,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                     className="h-full w-full object-cover object-center"
                 />
 
-                {/* dark vignette overlays */}
-                <div className="absolute inset-0 bg-[#070B14]/40" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(7,11,20,0.25)_0%,rgba(7,11,20,0.75)_65%,rgba(7,11,20,0.96)_100%)]" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-transparent to-[#070B14]/60" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/70 via-transparent to-[#070B14]/70" />
+                {/* subtle vignette overlays so the background poster is clear and unobstructed */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/70 via-transparent to-[#070B14]/15 pointer-events-none" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(7,11,20,0.25)_75%,rgba(7,11,20,0.55)_100%)] pointer-events-none" />
             </div>
 
             {/* floating dynamic rounded pill nav bar - fades in on scroll */}
@@ -500,9 +498,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -565,9 +563,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -630,9 +628,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -683,9 +681,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:opacity-55 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -1044,8 +1042,8 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                         {/* fallback dark backdrop */}
                         <div className="absolute inset-0 bg-[#070B14]/40 -z-10" />
 
-                        {/* heavy dark gradient overlay for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                        {/* softened dark gradient overlay for text readability without blocking poster */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/95 via-[#070B14]/40 to-transparent pointer-events-none" />
 
                         {/* subtle amber corner glow */}
                         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
