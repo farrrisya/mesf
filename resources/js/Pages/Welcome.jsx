@@ -533,19 +533,12 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                                         {cleanTag}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-1.5 shrink-0">
-                                                    {item.video_url && (
-                                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1 shadow-sm backdrop-blur-md">
-                                                            <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
-                                                            <span>Video</span>
-                                                        </span>
-                                                    )}
-                                                    {item.date && (
-                                                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-300 bg-[#070B14]/75 px-2.5 py-1 rounded-full border border-white/10 backdrop-blur-md font-mono shadow-sm">
-                                                            {item.date}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                                {item.video_url && (
+                                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1 shadow-sm backdrop-blur-md shrink-0">
+                                                        <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
+                                                        <span>Video</span>
+                                                    </span>
+                                                )}
                                             </div>
 
                                             <div className={`relative z-10 w-full space-y-1.5 mt-auto ${isHero ? 'pt-6' : 'pt-4'} text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
@@ -556,6 +549,11 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                                     <p className={`${isHero ? 'text-xs sm:text-sm' : 'text-xs'} text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow`}>
                                                         {item.excerpt}
                                                     </p>
+                                                )}
+                                                {item.date && (
+                                                    <div className="text-[10px] sm:text-[11px] font-medium text-neutral-400/90 font-mono tracking-wide pt-0.5">
+                                                        {item.date}
+                                                    </div>
                                                 )}
                                             </div>
                                         </Link>
