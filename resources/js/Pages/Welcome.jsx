@@ -519,7 +519,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                                     <img
                                                         src={item.image}
                                                         alt={item.title}
-                                                        className="absolute inset-0 w-full h-full object-cover object-center opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                        className="absolute inset-0 w-full h-full object-cover object-center opacity-80 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none"
                                                     />
                                                     <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                                 </>
