@@ -216,9 +216,11 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                     className="h-full w-full object-cover object-center"
                 />
 
-                {/* subtle vignette overlays so the background poster is clear and unobstructed */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/70 via-transparent to-[#070B14]/15 pointer-events-none" />
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(7,11,20,0.25)_75%,rgba(7,11,20,0.55)_100%)] pointer-events-none" />
+                {/* dark vignette overlays */}
+                <div className="absolute inset-0 bg-[#070B14]/40" />
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(7,11,20,0.25)_0%,rgba(7,11,20,0.75)_65%,rgba(7,11,20,0.96)_100%)]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-transparent to-[#070B14]/60" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/70 via-transparent to-[#070B14]/70" />
             </div>
 
             {/* floating dynamic rounded pill nav bar - fades in on scroll */}
@@ -498,9 +500,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -516,18 +518,18 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                     </span>
                                                 )}
                                                 {article.date && (
-                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-400">
+                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-300 drop-shadow">
                                                         {article.date}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="relative z-10 space-y-1.5 mt-auto pt-6 text-left">
-                                            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                                        <div className="relative z-10 space-y-1.5 mt-auto pt-6 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+                                            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
                                                 {article.title}
                                             </h3>
                                             {article.excerpt && (
-                                                <p className="text-xs sm:text-sm text-neutral-300 line-clamp-2 font-normal leading-relaxed">
+                                                <p className="text-xs sm:text-sm text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow">
                                                     {article.excerpt}
                                                 </p>
                                             )}
@@ -563,9 +565,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -581,18 +583,18 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                     </span>
                                                 )}
                                                 {article.date && (
-                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-400">
+                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-300 drop-shadow">
                                                         {article.date}
                                                     </span>
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left">
-                                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1 leading-snug">
+                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+                                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1 leading-snug drop-shadow-md">
                                                 {article.title}
                                             </h3>
                                             {article.excerpt && (
-                                                <p className="text-xs text-neutral-300 line-clamp-1 font-normal leading-relaxed">
+                                                <p className="text-xs text-neutral-200 line-clamp-1 font-normal leading-relaxed drop-shadow">
                                                     {article.excerpt}
                                                 </p>
                                             )}
@@ -628,9 +630,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -645,8 +647,8 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left">
-                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
                                                 {article.title}
                                             </h3>
                                         </div>
@@ -681,9 +683,9 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 <img
                                                     src={article.image}
                                                     alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-85 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
                                                 />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-[#070B14]/30 to-transparent pointer-events-none" />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
                                             </>
                                         )}
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
@@ -698,8 +700,8 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left">
-                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug">
+                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
+                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
                                                 {article.title}
                                             </h3>
                                         </div>
@@ -1042,8 +1044,8 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                         {/* fallback dark backdrop */}
                         <div className="absolute inset-0 bg-[#070B14]/40 -z-10" />
 
-                        {/* softened dark gradient overlay for text readability without blocking poster */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/95 via-[#070B14]/40 to-transparent pointer-events-none" />
+                        {/* heavy dark gradient overlay for text readability */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
 
                         {/* subtle amber corner glow */}
                         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
