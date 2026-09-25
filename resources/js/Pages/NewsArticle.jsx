@@ -98,8 +98,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                         </div>
 
                         <div>
-                            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 backdrop-blur-md text-xs font-black tracking-wider text-white uppercase font-mono shadow-sm">
-                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+                            <span className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md text-xs font-black tracking-wider text-white uppercase font-mono shadow-sm">
                                 {(article?.tag || article?.category || 'NEWS').replace(/^\[\s*|\s*\]$/g, '').trim()}
                             </span>
                         </div>

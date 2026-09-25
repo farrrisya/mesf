@@ -85,14 +85,13 @@ export default function News({
                         <div className="relative z-10 h-full w-full p-6 sm:p-10 md:p-14 flex flex-col justify-end text-left max-w-4xl">
                             {/* category tag & video badge */}
                             <div className="mb-3 flex items-center gap-2">
-                                <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+                                <span className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
                                     <span className="text-xs sm:text-sm font-black tracking-wider text-slate-100 uppercase font-mono">
                                         {(displayHero.tag || displayHero.category || '').replace(/^\[\s*|\s*\]$/g, '').trim()}
                                     </span>
                                 </span>
                                 {displayHero.video_url && (
-                                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1.5 shadow-sm backdrop-blur-md">
+                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1.5 shadow-sm backdrop-blur-md">
                                         <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
                                         <span>Video Included</span>
                                     </span>
@@ -203,8 +202,7 @@ export default function News({
 
                                         {/* Category tag inside image */}
                                         <div className="absolute top-4 left-4">
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-extrabold tracking-wider uppercase bg-[#070B14]/85 backdrop-blur-md border border-white/20 text-white font-mono shadow-md">
-                                                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_6px_#22d3ee]" />
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-[#070B14]/85 backdrop-blur-md border border-white/20 text-white font-mono shadow-md">
                                                 {(article.tag || article.category || '').replace(/^\[\s*|\s*\]$/g, '').trim()}
                                             </span>
                                         </div>
@@ -212,7 +210,7 @@ export default function News({
                                         {/* Video badge if article has video */}
                                         {article.video_url && (
                                             <div className="absolute top-4 right-4">
-                                                <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold tracking-wider uppercase bg-red-500/20 backdrop-blur-md border border-red-500/40 text-red-300 flex items-center gap-1 shadow-md">
+                                                <span className="px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-red-500/20 backdrop-blur-md border border-red-500/40 text-red-300 flex items-center gap-1 shadow-md">
                                                     <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
                                                     <span>Video</span>
                                                 </span>

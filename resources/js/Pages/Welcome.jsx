@@ -528,21 +528,20 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                             <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
                                             
                                             <div className="relative z-10 flex items-center justify-between gap-2 flex-wrap">
-                                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)] group-hover:border-cyan-400/50 transition-colors duration-300">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]" />
+                                                <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)] group-hover:border-white/40 transition-colors duration-300">
                                                     <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-100 uppercase font-mono">
                                                         {cleanTag}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-2">
                                                     {item.video_url && (
-                                                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1.5 shadow-sm backdrop-blur-md">
+                                                        <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1.5 shadow-sm backdrop-blur-md">
                                                             <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
                                                             <span>Video</span>
                                                         </span>
                                                     )}
                                                     {item.date && (
-                                                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-300 bg-[#070B14]/75 px-2.5 py-1 rounded-lg border border-white/10 backdrop-blur-md font-mono shadow-sm">
+                                                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-300 bg-[#070B14]/75 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md font-mono shadow-sm">
                                                             {item.date}
                                                         </span>
                                                     )}
@@ -566,11 +565,10 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 return (
                                     <div
                                         key={cat || index}
-                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-cyan-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
+                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-white/20 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
                                     >
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-cyan-400/5 rounded-full blur-3xl group-hover:bg-cyan-400/15 transition-all duration-500" />
-                                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
-                                            <span className="w-1.5 h-1.5 rounded-full bg-slate-500/50" />
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/5 rounded-full blur-3xl group-hover:bg-white/10 transition-all duration-500" />
+                                        <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
                                             <span className="text-[11px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase font-mono">
                                                 {cleanTag}
                                             </span>
