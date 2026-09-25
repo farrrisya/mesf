@@ -6,7 +6,7 @@ import PublicNavbar from '@/Components/PublicNavbar';
 import { Play } from 'lucide-react';
 
 // --2. main component--
-export default function Welcome({ latestByCategory = {}, featuredArticle = null, leagues = [] }) {
+export default function Welcome({ latestByCategory = {}, latestUpdates = [], featuredArticle = null, leagues = [] }) {
     // --3. properties--
     const { settings } = usePage().props; // properties
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
@@ -481,242 +481,96 @@ export default function Welcome({ latestByCategory = {}, featuredArticle = null,
                         </Link>
                     </div>
 
-                    {/* the bento grid - up-to-date categories: TOURNAMENTS, ACHIEVEMENTS, ANNOUNCEMENTS, PARTNERSHIPS */}
+                    {/* the bento grid - dynamically sorted by recency across all 4 categories */}
                     <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 auto-rows-[220px] md:auto-rows-[250px]">
-                        {/* 1. TOURNAMENTS (featured primary box: spans 2 cols, 2 rows) */}
                         {(() => {
-                            const cat = 'TOURNAMENTS'; // state
-                            const article = (featuredArticle && featuredArticle.category === cat ? featuredArticle : null) || latestByCategory?.[cat] || featuredArticle; // state
+                            const spots = (latestUpdates && latestUpdates.length > 0) ? latestUpdates.slice(0, 4) : [ // state
+                                latestByCategory?.['TOURNAMENTS'] || { category: 'TOURNAMENTS', is_empty: true },
+                                latestByCategory?.['ACHIEVEMENTS'] || { category: 'ACHIEVEMENTS', is_empty: true },
+                                latestByCategory?.['ANNOUNCEMENTS'] || { category: 'ANNOUNCEMENTS', is_empty: true },
+                                latestByCategory?.['PARTNERSHIPS'] || { category: 'PARTNERSHIPS', is_empty: true },
+                            ];
 
-                            if (article) { // check
-                                return (
-                                    <Link
-                                        key={cat}
-                                        href={`/news/${article.slug}`} // redirect
-                                        className="md:col-span-2 md:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
-                                    >
-                                        {article.image && (
-                                            <>
-                                                <img
-                                                    src={article.image}
-                                                    alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
-                                            </>
-                                        )}
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
-                                        <div className="relative z-10 flex items-center justify-between gap-2">
-                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
-                                                {article.tag || `[ ${cat} ]`}
-                                            </span>
-                                            <div className="flex items-center gap-2">
-                                                {article.video_url && (
-                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
-                                                        <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                                        <span>Video</span>
-                                                    </span>
-                                                )}
-                                                {article.date && (
-                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-300 drop-shadow">
-                                                        {article.date}
-                                                    </span>
+                            return spots.map((item, index) => {
+                                const isHero = index === 0; // check
+                                const isSecondary = index === 1; // check
+
+                                // grid placement classes for responsive bento
+                                const gridClass = index === 0
+                                    ? "col-span-1 md:col-span-2 md:row-span-2"
+                                    : index === 1
+                                    ? "col-span-1 md:col-span-1 lg:col-span-2 md:row-span-1"
+                                    : index === 2
+                                    ? "col-span-1 md:col-span-1 lg:col-span-1 md:row-span-1"
+                                    : "col-span-1 md:col-span-2 lg:col-span-1 md:row-span-1";
+
+                                const cat = item.category; // state
+                                const hasArticle = !item.is_empty && item.slug; // check
+
+                                if (hasArticle) { // check
+                                    return (
+                                        <Link
+                                            key={item.id || cat}
+                                            href={`/news/${item.slug}`} // redirect
+                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 ${isHero ? 'p-6 md:p-8' : 'p-6'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
+                                        >
+                                            {item.image && (
+                                                <>
+                                                    <img
+                                                        src={item.image}
+                                                        alt={item.title}
+                                                        className="absolute inset-0 w-full h-full object-cover object-center opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
+                                                    />
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
+                                                </>
+                                            )}
+                                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
+                                            
+                                            <div className="relative z-10 flex items-center justify-between gap-2">
+                                                <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
+                                                    {item.tag || `[ ${cat} ]`}
+                                                </span>
+                                                <div className="flex items-center gap-2">
+                                                    {item.video_url && (
+                                                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
+                                                            <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
+                                                            <span>Video</span>
+                                                        </span>
+                                                    )}
+                                                    {item.date && (
+                                                        <span className="text-[10px] sm:text-[11px] font-medium text-neutral-300 drop-shadow">
+                                                            {item.date}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className={`relative z-10 space-y-1.5 mt-auto ${isHero ? 'pt-6' : 'pt-4'} text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
+                                                <h3 className={`${isHero ? 'text-lg sm:text-xl lg:text-2xl' : isSecondary ? 'text-base sm:text-lg' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-amber-400 transition-colors ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} leading-snug drop-shadow-md`}>
+                                                    {item.title}
+                                                </h3>
+                                                {item.excerpt && (
+                                                    <p className={`${isHero ? 'text-xs sm:text-sm' : 'text-xs'} text-neutral-200 ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} font-normal leading-relaxed drop-shadow`}>
+                                                        {item.excerpt}
+                                                    </p>
                                                 )}
                                             </div>
-                                        </div>
-                                        <div className="relative z-10 space-y-1.5 mt-auto pt-6 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-                                            <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
-                                                {article.title}
-                                            </h3>
-                                            {article.excerpt && (
-                                                <p className="text-xs sm:text-sm text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow">
-                                                    {article.excerpt}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </Link>
-                                );
-                            }
+                                        </Link>
+                                    );
+                                }
 
-                            return (
-                                <div key={cat} className="md:col-span-2 md:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                        [ {cat} ]
-                                    </span>
-                                </div>
-                            );
-                        })()}
-
-                        {/* 2. ACHIEVEMENTS (tall portrait showcase box: spans 1 col, 2 rows) */}
-                        {(() => {
-                            const cat = 'ACHIEVEMENTS'; // state
-                            const article = latestByCategory?.[cat]; // state
-
-                            if (article) { // check
                                 return (
-                                    <Link
-                                        key={cat}
-                                        href={`/news/${article.slug}`} // redirect
-                                        className="col-span-1 row-span-2 md:col-span-1 md:row-span-2 lg:col-span-1 lg:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
+                                    <div
+                                        key={cat || index}
+                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
                                     >
-                                        {article.image && (
-                                            <>
-                                                <img
-                                                    src={article.image}
-                                                    alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover object-top opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
-                                            </>
-                                        )}
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
-                                        <div className="relative z-10 flex items-center justify-between gap-2">
-                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
-                                                {article.tag || `[ ${cat} ]`}
-                                            </span>
-                                            <div className="flex items-center gap-2">
-                                                {article.video_url && (
-                                                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
-                                                        <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                                        <span>Video</span>
-                                                    </span>
-                                                )}
-                                                {article.date && (
-                                                    <span className="text-[10px] sm:text-[11px] font-medium text-neutral-300 drop-shadow">
-                                                        {article.date}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-                                        <div className="relative z-10 space-y-1.5 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-                                            <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
-                                                {article.title}
-                                            </h3>
-                                            {article.excerpt && (
-                                                <p className="text-xs text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow">
-                                                    {article.excerpt}
-                                                </p>
-                                            )}
-                                        </div>
-                                    </Link>
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                                        <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
+                                            [ {cat} ]
+                                        </span>
+                                    </div>
                                 );
-                            }
-
-                            return (
-                                <div key={cat} className="col-span-1 row-span-2 md:col-span-1 md:row-span-2 lg:col-span-1 lg:row-span-2 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
-                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                        [ {cat} ]
-                                    </span>
-                                </div>
-                            );
-                        })()}
-
-                        {/* 3. ANNOUNCEMENTS (compact box: 1 col, 1 row) */}
-                        {(() => {
-                            const cat = 'ANNOUNCEMENTS'; // state
-                            const article = latestByCategory?.[cat]; // state
-
-                            if (article) { // check
-                                return (
-                                    <Link
-                                        key={cat}
-                                        href={`/news/${article.slug}`} // redirect
-                                        className="col-span-1 row-span-1 md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
-                                    >
-                                        {article.image && (
-                                            <>
-                                                <img
-                                                    src={article.image}
-                                                    alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
-                                            </>
-                                        )}
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
-                                        <div className="relative z-10 flex items-center justify-between gap-2">
-                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
-                                                {article.tag || `[ ${cat} ]`}
-                                            </span>
-                                            {article.video_url && (
-                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
-                                                    <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                                    <span>Video</span>
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
-                                                {article.title}
-                                            </h3>
-                                        </div>
-                                    </Link>
-                                );
-                            }
-
-                            return (
-                                <div key={cat} className="col-span-1 row-span-1 md:col-span-1 md:row-span-1 lg:col-span-1 lg:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                        [ {cat} ]
-                                    </span>
-                                </div>
-                            );
-                        })()}
-
-                        {/* 4. PARTNERSHIPS (box: 1 col on lg, 2 cols on md, 1 row) */}
-                        {(() => {
-                            const cat = 'PARTNERSHIPS'; // state
-                            const article = latestByCategory?.[cat]; // state
-
-                            if (article) { // check
-                                return (
-                                    <Link
-                                        key={cat}
-                                        href={`/news/${article.slug}`} // redirect
-                                        className="col-span-1 row-span-1 md:col-span-2 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/50 hover:shadow-[0_0_30px_rgba(251,191,36,0.15)] transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer"
-                                    >
-                                        {article.image && (
-                                            <>
-                                                <img
-                                                    src={article.image}
-                                                    alt={article.title}
-                                                    className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-95 group-hover:scale-105 transition-all duration-700 pointer-events-none"
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
-                                            </>
-                                        )}
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/25 transition-all duration-500" />
-                                        <div className="relative z-10 flex items-center justify-between gap-2">
-                                            <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow">
-                                                {article.tag || `[ ${cat} ]`}
-                                            </span>
-                                            {article.video_url && (
-                                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-400/20 border border-amber-400/50 text-amber-300 flex items-center gap-1 shadow-sm">
-                                                    <Play className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
-                                                    <span>Video</span>
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="relative z-10 space-y-1 mt-auto pt-4 text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]">
-                                            <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-2 leading-snug drop-shadow-md">
-                                                {article.title}
-                                            </h3>
-                                        </div>
-                                    </Link>
-                                );
-                            }
-
-                            return (
-                                <div key={cat} className="col-span-1 row-span-1 md:col-span-2 lg:col-span-1 md:row-span-1 rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-amber-400/40 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)]">
-                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
-                                    <span className="text-[11px] sm:text-xs font-bold tracking-widest text-amber-400 uppercase">
-                                        [ {cat} ]
-                                    </span>
-                                </div>
-                            );
+                            });
                         })()}
                     </div>
                 </section>

@@ -37,6 +37,9 @@ Route::get('/', function () {
     ];
 
     $latestByCategory = []; // state
+    $filledUpdates = []; // state
+    $usedCategories = []; // state
+
     foreach ($categories as $cat) { // loop
         $article = \App\Models\News::published() // check
             ->where('category', $cat)
@@ -45,7 +48,7 @@ Route::get('/', function () {
             ->orderBy('created_at', 'desc')
             ->first();
 
-        $latestByCategory[$cat] = $article ? [ // state
+        $data = $article ? [ // state
             'id' => $article->id,
             'title' => $article->title,
             'slug' => $article->slug,
@@ -55,9 +58,34 @@ Route::get('/', function () {
             'image' => $article->image_path ? \Illuminate\Support\Facades\Storage::url($article->image_path) : null,
             'video_url' => $article->video_url,
             'date' => $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y'),
+            'timestamp' => $article->published_at ? $article->published_at->timestamp : $article->created_at->timestamp,
             'location' => $article->location ?: 'OFFICIAL',
+            'is_empty' => false, // check
         ] : null;
+
+        $latestByCategory[$cat] = $data; // save
+
+        if ($data) { // check
+            $filledUpdates[] = $data; // save
+            $usedCategories[] = $cat; // save
+        }
     }
+
+    // sort filled articles by latest published/created date descending
+    usort($filledUpdates, function ($a, $b) { // trigger
+        return $b['timestamp'] <=> $a['timestamp'];
+    });
+
+    // fill remaining spots with empty categories
+    $remainingCategories = array_values(array_diff($categories, $usedCategories)); // convert
+    $emptyUpdates = array_map(function ($cat) { // convert
+        return [
+            'category' => $cat,
+            'is_empty' => true,
+        ];
+    }, $remainingCategories);
+
+    $latestUpdates = array_merge($filledUpdates, $emptyUpdates); // convert
 
     $featuredArticle = \App\Models\News::published() // check
         ->where('is_featured', true)
@@ -105,6 +133,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
         'latestByCategory' => $latestByCategory,
+        'latestUpdates' => $latestUpdates,
         'featuredArticle' => $featuredData,
         'leagues' => $leagues,
     ]);
