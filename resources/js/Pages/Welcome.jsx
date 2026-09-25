@@ -513,7 +513,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                         <Link
                                             key={item.id || cat}
                                             href={`/news/${item.slug}`} // redirect
-                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4.5 px-6 pb-6 md:pt-5 md:px-8 md:pb-8' : 'pt-4 px-6 pb-6'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
+                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4 px-4 sm:px-5 pb-5 md:pt-4.5 md:px-6 md:pb-6' : 'pt-3.5 px-4 sm:px-4.5 pb-4.5 sm:pb-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
                                         >
                                             {item.image && (
                                                 <>
@@ -527,28 +527,28 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                             )}
                                             <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
                                             
-                                            <div className="relative z-10 flex items-center justify-between gap-2 flex-wrap">
-                                                <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)]">
+                                            <div className="relative z-10 w-full flex items-center justify-between gap-2">
+                                                <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)] shrink-0">
                                                     <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-100 uppercase font-mono">
                                                         {cleanTag}
                                                     </span>
                                                 </div>
-                                                <div className="flex items-center gap-2">
+                                                <div className="flex items-center gap-1.5 shrink-0">
                                                     {item.video_url && (
-                                                        <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1.5 shadow-sm backdrop-blur-md">
+                                                        <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1 shadow-sm backdrop-blur-md">
                                                             <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
                                                             <span>Video</span>
                                                         </span>
                                                     )}
                                                     {item.date && (
-                                                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-300 bg-[#070B14]/75 px-3 py-1 rounded-full border border-white/10 backdrop-blur-md font-mono shadow-sm">
+                                                        <span className="text-[10px] sm:text-[11px] font-semibold text-slate-300 bg-[#070B14]/75 px-2.5 py-1 rounded-full border border-white/10 backdrop-blur-md font-mono shadow-sm">
                                                             {item.date}
                                                         </span>
                                                     )}
                                                 </div>
                                             </div>
 
-                                            <div className={`relative z-10 space-y-1.5 mt-auto ${isHero ? 'pt-6' : 'pt-4'} text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
+                                            <div className={`relative z-10 w-full space-y-1.5 mt-auto ${isHero ? 'pt-6' : 'pt-4'} text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
                                                 <h3 className={`${isHero ? 'text-lg sm:text-xl lg:text-2xl' : isSecondary ? 'text-base sm:text-lg' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-white transition-colors ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} leading-snug drop-shadow-md`}>
                                                     {item.title}
                                                 </h3>
@@ -565,10 +565,10 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 return (
                                     <div
                                         key={cat || index}
-                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4.5 px-6 pb-6 md:pt-5 md:px-8 md:pb-8' : 'pt-4 px-6 pb-6'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
+                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'pt-4 px-4 sm:px-5 pb-5 md:pt-4.5 md:px-6 md:pb-6' : 'pt-3.5 px-4 sm:px-4.5 pb-4.5 sm:pb-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
                                     >
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/5 rounded-full blur-3xl transition-all duration-500" />
-                                        <div className="inline-flex items-center px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
+                                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
                                             <span className="text-[11px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase font-mono">
                                                 {cleanTag}
                                             </span>
