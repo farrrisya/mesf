@@ -223,33 +223,38 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                             return (
                                 <div
                                     key={article.id}
-                                    className={`group rounded-2xl border bg-[#090D18]/85 backdrop-blur-2xl p-4 sm:p-5 shadow-xl transition-all duration-300 hover:border-amber-400/40 ${
-                                        isFeatured ? 'border-amber-400/30 ring-1 ring-amber-400/20' : 'border-white/10'
+                                    className={`group relative overflow-hidden rounded-2xl border p-4 sm:p-5 transition-all duration-200 ${
+                                        isFeatured
+                                            ? 'bg-gradient-to-br from-[#121c33] via-[#0f172a] to-[#0a1020] border-amber-400/40 shadow-[0_14px_35px_rgba(0,0,0,0.7),0_0_20px_rgba(251,191,36,0.12)] ring-1 ring-amber-400/25'
+                                            : 'bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border-white/15 hover:border-white/35 hover:bg-[#121b30] shadow-[0_14px_32px_rgba(0,0,0,0.65)]'
                                     }`}
                                 >
-                                    <div className="flex flex-col lg:flex-row items-start lg:items-center gap-5">
-                                        {/* thumbnail image */}
-                                        <div className="relative w-full sm:w-48 h-28 rounded-xl overflow-hidden bg-[#050811] border border-white/10 shrink-0 flex items-center justify-center">
+                                    {/* top edge luminous highlight beam */}
+                                    <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:via-amber-400/40 opacity-70" />
+
+                                    <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center gap-5">
+                                        {/* thumbnail image (NO HOVER ZOOM) */}
+                                        <div className="relative w-full sm:w-48 h-28 rounded-xl overflow-hidden bg-black/70 border border-white/20 shrink-0 flex items-center justify-center shadow-inner">
                                             {article.image_path ? (
                                                 <img
                                                     src={article.image_path}
                                                     alt={article.title}
-                                                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
+                                                    className="w-full h-full object-cover transition-colors"
                                                     onError={(e) => {
                                                         e.target.style.display = 'none';
                                                     }}
                                                 />
                                             ) : (
-                                                <div className="flex flex-col items-center justify-center gap-1 text-slate-600">
-                                                    <Newspaper className="w-6 h-6" />
-                                                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">No Image</span>
+                                                <div className="flex flex-col items-center justify-center gap-1 text-slate-500">
+                                                    <Newspaper className="w-6 h-6 text-slate-400" />
+                                                    <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">No Image</span>
                                                 </div>
                                             )}
 
-                                            {/* featured badge indicator */}
+                                            {/* featured hero badge indicator */}
                                             {isFeatured && (
-                                                <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-400 text-black font-black text-[9px] uppercase tracking-wider shadow">
-                                                    <Flame className="w-3 h-3 fill-black" />
+                                                <div className="absolute top-2 left-2 flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-400 text-black font-black text-[10px] uppercase tracking-wider shadow-lg">
+                                                    <Flame className="w-3.5 h-3.5 fill-black" />
                                                     <span>Hero Story</span>
                                                 </div>
                                             )}
@@ -258,59 +263,59 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                         {/* main text & metadata */}
                                         <div className="flex-1 min-w-0 space-y-2">
                                             <div className="flex flex-wrap items-center gap-2">
-                                                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wider uppercase bg-white/5 border border-white/10 text-amber-400">
+                                                <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/30 text-amber-300">
                                                     {article.tag || `[ ${article.category} ]`}
                                                 </span>
-                                                <span className="px-2.5 py-0.5 rounded-md text-[10px] font-semibold text-slate-400 bg-white/5">
+                                                <span className="px-2.5 py-0.5 rounded-lg text-[10px] font-semibold text-slate-300 bg-white/10 border border-white/10">
                                                     {article.category}
                                                 </span>
                                                 {article.video_url && (
-                                                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold text-amber-300 bg-amber-400/10 border border-amber-400/30">
+                                                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-lg text-[10px] font-bold text-amber-300 bg-amber-400/15 border border-amber-400/40">
                                                         <Video className="w-3 h-3 text-amber-400" />
                                                         <span>Video</span>
                                                     </span>
                                                 )}
                                                 {article.location && (
-                                                    <span className="flex items-center gap-1 text-[11px] text-slate-400">
-                                                        <MapPin className="w-3 h-3 text-slate-500" />
+                                                    <span className="flex items-center gap-1 text-[11px] text-slate-300 font-medium">
+                                                        <MapPin className="w-3 h-3 text-amber-400" />
                                                         <span>{article.location}</span>
                                                     </span>
                                                 )}
                                             </div>
 
-                                            <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
+                                            <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
                                                 {article.title}
                                             </h4>
 
                                             {article.excerpt && (
-                                                <p className="text-xs sm:text-sm text-slate-400 line-clamp-2 leading-relaxed">
+                                                <p className="text-xs sm:text-sm text-slate-300 line-clamp-2 leading-relaxed font-normal">
                                                     {article.excerpt}
                                                 </p>
                                             )}
 
-                                            <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-500 font-medium pt-1">
-                                                <span className="flex items-center gap-1 text-slate-400">
-                                                    <Calendar className="w-3 h-3" />
+                                            <div className="flex flex-wrap items-center gap-4 text-[11px] text-slate-400 font-medium pt-1">
+                                                <span className="flex items-center gap-1 text-slate-300">
+                                                    <Calendar className="w-3 h-3 text-slate-400" />
                                                     <span>{article.published_at_formatted || article.created_at}</span>
                                                 </span>
                                                 <span>•</span>
-                                                <span>By {article.author}</span>
+                                                <span>By <strong className="text-slate-200">{article.author}</strong></span>
                                                 {article.views_count > 0 && (
                                                     <>
                                                         <span>•</span>
-                                                        <span className="flex items-center gap-1 text-slate-400">
-                                                            <Eye className="w-3 h-3" />
+                                                        <span className="flex items-center gap-1 text-slate-300">
+                                                            <Eye className="w-3 h-3 text-slate-400" />
                                                             <span>{article.views_count} views</span>
                                                         </span>
                                                     </>
                                                 )}
                                                 <span>•</span>
-                                                <span className="font-mono text-slate-500 text-[10px]">/{article.slug}</span>
+                                                <span className="font-mono text-slate-400 text-[10px]">/{article.slug}</span>
                                             </div>
                                         </div>
 
-                                        {/* right action buttons */}
-                                        <div className="flex items-center gap-2 w-full lg:w-auto justify-end border-t lg:border-t-0 border-white/5 pt-3 lg:pt-0 shrink-0">
+                                        {/* right action controls */}
+                                        <div className="flex items-center gap-2.5 w-full lg:w-auto justify-end border-t lg:border-t-0 border-white/10 pt-3 lg:pt-0 shrink-0">
                                             {/* status toggle pill */}
                                             <button
                                                 type="button"
@@ -318,11 +323,11 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                                 onClick={() => handleToggleStatus(article)} // trigger
                                                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                                                     isPublished
-                                                        ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25'
-                                                        : 'bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25'
+                                                        ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 shadow-[0_0_12px_rgba(16,185,129,0.15)]'
+                                                        : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30 shadow-[0_0_12px_rgba(245,158,11,0.15)]'
                                                 }`}
                                             >
-                                                <span className={`w-2 h-2 rounded-full ${isPublished ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                                                <span className={`w-2 h-2 rounded-full ${isPublished ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]' : 'bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.8)]'}`} />
                                                 <span className="capitalize">{article.status}</span>
                                             </button>
 
@@ -331,10 +336,10 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                                 type="button"
                                                 title={isFeatured ? 'Featured as Hero Story. Click to unfeature.' : 'Click to make this the main Hero Story.'}
                                                 onClick={() => handleToggleFeatured(article)} // trigger
-                                                className={`p-2 rounded-xl border transition-all cursor-pointer ${
+                                                className={`p-2.5 rounded-xl border transition-all cursor-pointer ${
                                                     isFeatured
-                                                        ? 'bg-amber-400 text-black border-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.4)]'
-                                                        : 'bg-white/5 text-slate-400 border-white/10 hover:text-amber-400 hover:border-amber-400/30'
+                                                        ? 'bg-amber-400 text-black border-amber-300 shadow-[0_0_14px_rgba(251,191,36,0.45)]'
+                                                        : 'bg-white/10 text-slate-300 border-white/15 hover:text-amber-400 hover:border-amber-400/40 hover:bg-white/15'
                                                 }`}
                                             >
                                                 <Star className={`w-4 h-4 ${isFeatured ? 'fill-black' : ''}`} />
@@ -346,7 +351,7 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                                 target="_blank"
                                                 rel="noreferrer"
                                                 title="View article on public website"
-                                                className="p-2 rounded-xl bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:border-white/20 transition-all cursor-pointer"
+                                                className="p-2.5 rounded-xl bg-white/10 text-slate-300 border border-white/15 hover:text-white hover:border-white/30 hover:bg-white/20 transition-all cursor-pointer"
                                             >
                                                 <ExternalLink className="w-4 h-4" />
                                             </a>
@@ -355,7 +360,7 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                             <Link
                                                 href={route('admin.news.edit', article.id)} // redirect
                                                 title="Edit article"
-                                                className="p-2 rounded-xl bg-white/5 text-slate-300 border border-white/10 hover:text-amber-400 hover:border-amber-400/40 transition-all cursor-pointer"
+                                                className="p-2.5 rounded-xl bg-white/10 text-slate-200 border border-white/15 hover:text-amber-300 hover:border-amber-400/40 hover:bg-amber-400/10 transition-all cursor-pointer"
                                             >
                                                 <Edit2 className="w-4 h-4" />
                                             </Link>
@@ -365,7 +370,7 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                                 type="button"
                                                 title="Delete article"
                                                 onClick={() => confirmDelete(article)} // trigger
-                                                className="p-2 rounded-xl bg-white/5 text-slate-400 border border-white/10 hover:text-rose-400 hover:border-rose-400/40 transition-all cursor-pointer"
+                                                className="p-2.5 rounded-xl bg-white/10 text-slate-300 border border-white/15 hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-all cursor-pointer"
                                             >
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
