@@ -143,17 +143,9 @@ export default function Matches({ matchGroups = [] }) {
                 <div className="flex flex-col gap-6 pb-6 border-b border-white/10">
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                         <div>
-                            <div className="mb-2">
-                                <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
-                                    [ National Esports Fixtures ]
-                                </span>
-                            </div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase text-white leading-tight">
-                                Match Schedule
+                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
+                                Matches
                             </h1>
-                            <p className="text-sm sm:text-base text-neutral-400 mt-2 max-w-2xl font-normal leading-relaxed">
-                                Official fixtures, live tournament series, and verified results across Malaysian esports circuits.
-                            </p>
                         </div>
 
                         {/* search bar */}

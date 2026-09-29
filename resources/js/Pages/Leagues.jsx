@@ -124,17 +124,9 @@ export default function Leagues({ leagues = [] }) {
             <header className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-8 text-left">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/10">
                     <div>
-                        <div className="mb-2">
-                            <span className="text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]">
-                                [ Sanctioned Esports Circuits ]
-                            </span>
-                        </div>
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase text-white leading-tight">
-                            Leagues & Circuits
+                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
+                            Leagues
                         </h1>
-                        <p className="text-sm sm:text-base text-neutral-400 mt-2 max-w-2xl font-normal leading-relaxed">
-                            Official championship leagues, state qualifying tournaments, and premier competitive stages across Malaysia.
-                        </p>
                     </div>
 
                     {/* status filter pills */}

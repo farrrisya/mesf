@@ -486,23 +486,6 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                         {currentMatch.venue}
                                     </p>
                                 </div>
-
-                                <div className="text-xs text-neutral-400 leading-relaxed">
-                                    Spectators are subject to official arena ticketing policies and standard tournament ground conduct regulations.
-                                </div>
-                            </div>
-
-                            {/* MESF sanctioning badge */}
-                            <div className="p-6 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-xl space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <Shield className="w-5 h-5 text-white" />
-                                    <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-                                        MESF Sanctioned Fixture
-                                    </h4>
-                                </div>
-                                <p className="text-xs text-neutral-400 leading-relaxed font-normal">
-                                    This fixture is conducted under the official competitive regulations and fair-play governance of the Malaysian Esports Federation (MESF).
-                                </p>
                             </div>
                         </div>
                     </div>

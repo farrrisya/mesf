@@ -87,33 +87,17 @@ export default function News({
             {/* main content area */}
             <div className="flex-1">
                 {/* 1. page header section */}
-                <header className="relative z-20 pt-32 pb-14 px-6 sm:px-10 md:px-14 max-w-7xl mx-auto text-left">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-10 border-b border-white/10">
-                        <div className="space-y-3">
-                            <span className="text-xs font-black tracking-widest text-neutral-400 uppercase">
-                                OFFICIAL PRESS & MEDIA DESK
-                            </span>
-                            <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-white uppercase">
-                                NEWS & ANNOUNCEMENTS
-                            </h1>
-                            <p className="text-sm text-neutral-400 max-w-2xl font-normal leading-relaxed">
-                                Stay informed with official tournament bulletins, federation press releases, sanction notices, and Malaysian esports updates.
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            <div className="px-4 py-2 rounded-xl bg-white/[0.04] border border-white/15 text-xs font-mono text-neutral-300 shadow-sm">
-                                {articles.length} {articles.length === 1 ? 'Article Published' : 'Articles Published'}
-                            </div>
-                        </div>
-                    </div>
+                <header className="relative z-20 pt-32 pb-8 px-6 sm:px-10 md:px-14 max-w-7xl mx-auto text-left">
+                    <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight">
+                        News
+                    </h1>
                 </header>
 
-                {/* 2. content wrapper with generous spacing */}
-                <main className="relative z-20 pb-28 px-6 sm:px-10 md:px-14 max-w-7xl mx-auto space-y-16 sm:space-y-20">
+                {/* 2. content wrapper with spacious layout */}
+                <main className="relative z-20 pb-28 px-6 sm:px-10 md:px-14 max-w-7xl mx-auto space-y-12 sm:space-y-16">
                     {/* editorial hero (featured story) */}
                     {displayHero && (
-                        <section className="relative w-full rounded-3xl overflow-hidden border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] group bg-[#0A0F1D] min-h-[440px] md:min-h-[520px] flex flex-col justify-end">
+                        <section className="relative w-full rounded-3xl overflow-hidden border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] group bg-[#0A0F1D] min-h-[380px] md:min-h-[440px] flex flex-col justify-end">
                             {/* top luminous highlight beam */}
                             <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70 z-20" />
 
@@ -129,71 +113,32 @@ export default function News({
                             )}
 
                             {/* gradient vignette */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/85 to-transparent pointer-events-none" />
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/90 via-[#070B14]/40 to-transparent pointer-events-none" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
 
                             {/* hero story content */}
-                            <div className="relative z-10 w-full p-8 sm:p-12 md:p-16 flex flex-col justify-end text-left max-w-4xl space-y-5">
-                                {/* badges row */}
-                                <div className="flex flex-wrap items-center gap-2.5">
-                                    <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-md shadow-sm">
-                                        <Sparkles className="w-3 h-3 text-neutral-300" />
-                                        <span className="text-[11px] font-mono font-bold tracking-wider text-neutral-200 uppercase">
-                                            FEATURED STORY
-                                        </span>
-                                    </span>
+                            <div className="relative z-10 w-full p-8 sm:p-12 flex flex-col justify-end text-left max-w-3xl space-y-4">
+                                <span className="inline-block px-3 py-1 rounded-lg text-xs font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 backdrop-blur-md w-fit">
+                                    {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
+                                </span>
 
-                                    <span className="px-3.5 py-1 rounded-full text-[11px] font-mono font-medium uppercase bg-[#070B14]/80 border border-white/15 text-neutral-300 backdrop-blur-md">
-                                        {(displayHero.tag || displayHero.category || '').replace(/^\[\s*|\s*\]$/g, '').trim()}
-                                    </span>
-
-                                    {displayHero.video_url && (
-                                        <span className="px-3.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase bg-rose-500/20 border border-rose-500/40 text-rose-300 flex items-center gap-1.5 backdrop-blur-md">
-                                            <Play className="w-2.5 h-2.5 fill-rose-400 text-rose-400" />
-                                            <span>Video Feature</span>
-                                        </span>
-                                    )}
-                                </div>
-
-                                {/* headline */}
-                                <h2 className="text-2xl sm:text-4xl md:text-5xl font-black text-white uppercase tracking-tight leading-tight drop-shadow-md">
+                                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight leading-tight">
                                     {displayHero.title}
                                 </h2>
 
-                                {/* excerpt */}
-                                {displayHero.excerpt && (
-                                    <p className="text-xs sm:text-sm md:text-base text-neutral-300 leading-relaxed max-w-2xl font-normal line-clamp-2">
-                                        {displayHero.excerpt}
-                                    </p>
-                                )}
-
-                                {/* metadata & cta button */}
-                                <div className="pt-2 flex flex-wrap items-center gap-4 sm:gap-6">
+                                <div className="pt-2 flex items-center gap-6">
                                     <Link
                                         href={displayHero.slug ? `/news/${displayHero.slug}` : '/news/article'}
-                                        className="group/btn inline-flex items-center gap-2 px-6 sm:px-7 py-3 rounded-xl bg-white hover:bg-neutral-200 text-black font-extrabold text-xs tracking-wider uppercase transition-colors duration-200 shadow-lg cursor-pointer"
+                                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-extrabold text-xs tracking-wider uppercase transition-colors shadow-md cursor-pointer"
                                     >
-                                        <span>READ FULL STORY</span>
-                                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform duration-200" />
+                                        <span>Read Story</span>
+                                        <ArrowRight className="w-3.5 h-3.5" />
                                     </Link>
 
-                                    <div className="flex items-center gap-3 text-xs font-mono text-neutral-400">
-                                        {displayHero.date && (
-                                            <span className="flex items-center gap-1.5">
-                                                <Calendar className="w-3.5 h-3.5 text-neutral-400" />
-                                                <span>{displayHero.date}</span>
-                                            </span>
-                                        )}
-                                        {displayHero.detail && (
-                                            <>
-                                                <span className="text-neutral-600">•</span>
-                                                <span className="flex items-center gap-1.5">
-                                                    <MapPin className="w-3.5 h-3.5 text-neutral-400" />
-                                                    <span>{displayHero.detail}</span>
-                                                </span>
-                                            </>
-                                        )}
-                                    </div>
+                                    {displayHero.date && (
+                                        <span className="text-xs text-neutral-400 font-mono">
+                                            {displayHero.date}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         </section>

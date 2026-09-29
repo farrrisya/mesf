@@ -133,17 +133,9 @@ export default function Teams({ uploadedTeams = [] }) {
                 <div className="flex flex-col gap-6 pb-6 border-b border-white/10">
                     <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                         <div>
-                            <div className="mb-2">
-                                <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
-                                    [ Federation Directory ]
-                                </span>
-                            </div>
-                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight uppercase text-white leading-tight">
-                                Teams & Associations
+                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
+                                Teams
                             </h1>
-                            <p className="text-sm sm:text-base text-neutral-400 mt-2 max-w-2xl font-normal leading-relaxed">
-                                Official registry of sanctioned national esports squads, verified pro organizations, and state affiliate bodies under MESF.
-                            </p>
                         </div>
 
                         {/* search bar */}
@@ -220,11 +212,8 @@ export default function Teams({ uploadedTeams = [] }) {
                         <div className="flex items-center justify-between border-b border-white/10 pb-4">
                             <div>
                                 <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                                    National & Pro Esports Organizations
+                                    National & Pro Teams
                                 </h2>
-                                <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-                                    Sanctioned national squad lineups and recognized Malaysian esports organizations.
-                                </p>
                             </div>
                             <span className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-wider hidden sm:block">
                                 [{filteredNationalTeams.length} {filteredNationalTeams.length === 1 ? 'Club' : 'Clubs'}]
@@ -339,11 +328,8 @@ export default function Teams({ uploadedTeams = [] }) {
                         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/10">
                             <div>
                                 <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                                    State Esports Associations
+                                    State Affiliates
                                 </h2>
-                                <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-                                    Official state and federal territory esports governing bodies recognized under MESF.
-                                </p>
                             </div>
 
                             {/* Region Filter: All (14), Peninsular Malaysia (11), East Malaysia (3) */}
