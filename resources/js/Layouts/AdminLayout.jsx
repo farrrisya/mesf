@@ -382,9 +382,9 @@ export default function AdminLayout({
             </aside>
 
             {/* content wrapper */}
-            <main className="flex-1 flex flex-col md:pl-72 min-w-0 pt-0 md:pt-24">
+            <main className="flex-1 flex flex-col md:pl-72 min-w-0 pt-0 md:pt-16">
                 {/* top header bar aligned with sidebar logo banner */}
-                <header className={`relative md:fixed ${isImpersonating ? 'md:top-10 sm:md:top-11' : 'md:top-0'} md:left-72 md:right-0 h-16 md:h-24 z-30 flex items-center justify-between px-6 sm:px-10 border-b border-white/10 bg-[#070B14]/85 backdrop-blur-2xl transition-all shadow-sm`}>
+                <header className={`relative md:fixed ${isImpersonating ? 'md:top-10 sm:md:top-11' : 'md:top-0'} md:left-72 md:right-0 h-16 z-30 flex items-center justify-between px-6 sm:px-10 border-b border-white/10 bg-[#070B14]/85 backdrop-blur-2xl transition-all shadow-sm`}>
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-slate-400 uppercase">
                             <span className="text-slate-500">{orgAcronym}</span>
@@ -436,7 +436,7 @@ export default function AdminLayout({
                     </div>
                 </header>
 
-                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'p-6 sm:p-10'}`}>
+                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'p-5 sm:px-8 sm:pt-6 sm:pb-10'}`}>
                     {children}
                 </div>
             </main>

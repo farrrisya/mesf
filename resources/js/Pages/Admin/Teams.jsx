@@ -23,7 +23,8 @@ const SECTIONS = [
 // --3. main component--
 export default function Teams({ teams = [] }) {
     // --4. actions--
-    const [activeSection, setActiveSection] = useState('national'); // state
+    const hasNational = teams.some((t) => t.type === 'national' || t.type === 'pro'); // check
+    const [activeSection, setActiveSection] = useState(hasNational ? 'national' : 'states'); // state
     const [hoveredSection, setHoveredSection] = useState(null); // state
     const [searchQuery, setSearchQuery] = useState(''); // state
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 }); // state
@@ -148,13 +149,13 @@ export default function Teams({ teams = [] }) {
                 {/* Empty State */}
                 {filteredTeams.length === 0 ? (
                     <div className="space-y-6 animate-fadeIn">
-                        <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 shadow-2xl text-center space-y-4">
-                            <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
-                                {activeSection === 'national' ? <Flag className="w-8 h-8" /> : <MapPin className="w-8 h-8" />}
+                        <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-2xl p-6 sm:p-8 shadow-xl text-center space-y-3">
+                            <div className="mx-auto w-12 h-12 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
+                                {activeSection === 'national' ? <Flag className="w-6 h-6" /> : <MapPin className="w-6 h-6" />}
                             </div>
 
-                            <div className="space-y-1.5 max-w-md mx-auto">
-                                <h3 className="text-lg font-bold text-white tracking-wide">
+                            <div className="space-y-1 max-w-md mx-auto">
+                                <h3 className="text-base font-bold text-white tracking-wide">
                                     {activeSection === 'national' ? 'National Teams Section' : 'State Affiliates Section'}
                                 </h3>
                                 <p className="text-xs text-slate-400 leading-relaxed font-normal">
@@ -164,10 +165,10 @@ export default function Teams({ teams = [] }) {
                                 </p>
                             </div>
 
-                            <div className="pt-2">
+                            <div className="pt-1">
                                 <Link
                                     href={route('admin.teams.create')} // redirect
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-bold transition-all shadow-[0_4px_16px_rgba(251,191,36,0.25)] cursor-pointer"
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-bold transition-all shadow-[0_4px_16px_rgba(251,191,36,0.25)] cursor-pointer"
                                 >
                                     <Plus className="w-4 h-4 text-black stroke-[2.5]" />
                                     <span>{activeSection === 'national' ? 'Create First National Team' : 'Create First State Affiliate'}</span>
