@@ -12,11 +12,12 @@ import {
     Coins,
     MapPin,
     Layers,
-    ArrowRight
+    ArrowRight,
+    Sparkles
 } from 'lucide-react';
 
 // --2. main component--
-export default function Welcome({ latestByCategory = {}, latestUpdates = [], featuredArticle = null, leagues = [] }) {
+export default function Welcome({ latestByCategory = {}, latestUpdates = [], allNews = [], featuredArticle = null, leagues = [], teams = [] }) {
     // --3. properties--
     const { settings } = usePage().props; // properties
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
@@ -156,7 +157,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
         { id: 'tekken', label: 'TEKKEN 8', format: 'Individual', image: '/images/squads/tekken.jpg', accolade: 'National Champion' }
     ];
 
-    const currentSquad = teamRoster.find((s) => s.id === activeSquad) || teamRoster[0];
+    const currentSquad = teamRoster.find((s) => s.id === activeSquad) || teamRoster[0]; // check
 
     // --5. UI--
     return (
@@ -304,7 +305,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                 {/* minimalist scroll arrow with smooth slow bounce */}
                 <button
                     onClick={scrollToNavbar}
-                    className="group cursor-pointer flex flex-col items-center justify-center pb-6 transition-transform hover:scale-110"
+                    className="group cursor-pointer flex flex-col items-center justify-center pb-6 transition-opacity hover:opacity-80"
                     aria-label="Scroll down"
                 >
                     <svg
@@ -367,13 +368,13 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-1">
                                 <Link
                                     href="/about"
-                                    className="w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-[#070B14] font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.45)] hover:scale-105 transition-transform duration-200 cursor-pointer"
+                                    className="w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-[#070B14] font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.45)] hover:brightness-110 transition-all duration-200 cursor-pointer"
                                 >
                                     Learn More
                                 </Link>
                                 <Link
                                     href="/leagues"
-                                    className="relative overflow-hidden w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs sm:text-sm tracking-wider uppercase border border-white/20 hover:border-amber-400/50 shadow-[0_4px_25px_rgba(0,0,0,0.4)] hover:scale-105 transition-[transform,background-color,border-color] duration-200 cursor-pointer group"
+                                    className="relative overflow-hidden w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs sm:text-sm tracking-wider uppercase border border-white/20 hover:border-amber-400/50 shadow-[0_4px_25px_rgba(0,0,0,0.4)] transition-[background-color,border-color] duration-200 cursor-pointer group"
                                 >
                                     {/* inner grain texture */}
                                     <span
@@ -469,123 +470,169 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                     id="news"
                     className="w-full pt-20 md:pt-24 pb-16 md:pb-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto"
                 >
-                    {/* title flex-between header */}
-                    <div className="w-full flex items-center justify-between gap-4 mb-8 md:mb-10">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white/95">
-                            LATEST UPDATES
-                        </h2>
+                    {/* section header: natural typography & minimalist action */}
+                    <div className="w-full flex items-end justify-between gap-4 mb-8 md:mb-10">
+                        <div>
+                            <p className="text-xs font-mono font-medium tracking-[0.2em] text-neutral-400 uppercase mb-2">
+                                OFFICIAL NEWSWIRE
+                            </p>
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">
+                                LATEST UPDATES
+                            </h2>
+                        </div>
                         <Link
                             href="/news"
-                            className="group inline-flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full bg-white/[0.03] hover:bg-amber-400/[0.08] border border-white/10 hover:border-amber-400/40 backdrop-blur-md text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-white/70 hover:text-amber-300 transition-all duration-300 shadow-[0_2px_8px_rgba(0,0,0,0.3)] hover:shadow-[0_0_16px_rgba(251,191,36,0.15)] select-none cursor-pointer"
+                            className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] hover:bg-white/[0.09] border border-white/10 hover:border-white/20 backdrop-blur-md text-xs font-medium tracking-wider uppercase text-neutral-300 hover:text-white transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.3)] select-none cursor-pointer"
                         >
                             <span>VIEW ALL NEWS</span>
-                            <svg
-                                className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-amber-400/80 group-hover:text-amber-300 transform group-hover:translate-x-0.5 transition-all duration-200"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                strokeWidth="2.5"
-                            >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                            </svg>
+                            <ArrowRight className="h-3.5 w-3.5 text-neutral-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
                         </Link>
                     </div>
 
-                    {/* the bento grid - dynamically sorted by recency across all 4 categories */}
-                    <div className="w-full grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 auto-rows-[220px] md:auto-rows-[250px]">
-                        {(() => {
-                            const spots = (latestUpdates && latestUpdates.length > 0) ? latestUpdates.slice(0, 4) : [ // state
-                                latestByCategory?.['TOURNAMENTS'] || { category: 'TOURNAMENTS', is_empty: true },
-                                latestByCategory?.['ACHIEVEMENTS'] || { category: 'ACHIEVEMENTS', is_empty: true },
-                                latestByCategory?.['ANNOUNCEMENTS'] || { category: 'ANNOUNCEMENTS', is_empty: true },
-                                latestByCategory?.['PARTNERSHIPS'] || { category: 'PARTNERSHIPS', is_empty: true },
-                            ];
+                    {/* the editorial news grid: 1 big frame + 4 small frames */}
+                    {(() => {
+                        const newsSource = (allNews && allNews.length > 0)
+                            ? allNews
+                            : (latestUpdates && latestUpdates.length > 0 ? latestUpdates : []); // state
 
-                            return spots.map((item, index) => {
-                                const isHero = index === 0; // check
-                                const isSecondary = index === 1; // check
+                        const fallbackCategories = ['TOURNAMENTS', 'ACHIEVEMENTS', 'ANNOUNCEMENTS', 'PARTNERSHIPS', 'COMMUNITY']; // state
 
-                                // grid placement classes for responsive bento
-                                const gridClass = index === 0
-                                    ? "col-span-1 md:col-span-2 md:row-span-2"
-                                    : index === 1
-                                    ? "col-span-1 md:col-span-1 lg:col-span-2 md:row-span-1"
-                                    : index === 2
-                                    ? "col-span-1 md:col-span-1 lg:col-span-1 md:row-span-1"
-                                    : "col-span-1 md:col-span-2 lg:col-span-1 md:row-span-1";
+                        // prioritize featured article for the big frame if available
+                        const heroArticle = featuredArticle || newsSource.find(item => item.is_featured && !item.is_empty) || newsSource[0] || { category: 'TOURNAMENTS', is_empty: true }; // state
 
-                                const cat = item.category; // state
-                                const hasArticle = !item.is_empty && item.slug; // check
-                                const cleanTag = (item.tag || item.category || cat || '').replace(/^\[\s*|\s*\]$/g, '').trim(); // convert
+                        // remaining items for the 4 small cards (prevent duplicate of hero)
+                        const remainingNews = newsSource.filter(item => item && !item.is_empty && (heroArticle.id ? item.id !== heroArticle.id : true)); // check
 
-                                if (hasArticle) { // check
-                                    return (
-                                        <Link
-                                            key={item.id || cat}
-                                            href={`/news/${item.slug}`} // redirect
-                                            className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.05] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'p-5 sm:p-6' : 'p-4.5 sm:p-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between cursor-pointer`}
-                                        >
-                                            {item.image && (
-                                                <>
-                                                    <img
-                                                        src={item.image}
-                                                        alt={item.title}
-                                                        className="absolute inset-0 w-full h-full object-cover object-center opacity-80 group-hover:opacity-95 transition-opacity duration-300 pointer-events-none"
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/80 via-[#070B14]/25 to-transparent pointer-events-none" />
-                                                </>
-                                            )}
-                                            <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
-                                            
-                                            <div className="relative z-10 w-full flex items-center justify-between gap-2">
-                                                <div className="inline-flex items-center px-3 py-1 rounded-full bg-[#070B14]/85 border border-white/20 backdrop-blur-md shadow-[0_4px_12px_rgba(0,0,0,0.6)] shrink-0">
-                                                    <span className="text-[11px] sm:text-xs font-black tracking-wider text-slate-100 uppercase font-mono">
-                                                        {cleanTag}
+                        const smallCards = []; // state
+                        for (let i = 0; i < 4; i++) { // loop
+                            if (remainingNews[i] && !remainingNews[i].is_empty) { // check
+                                smallCards.push(remainingNews[i]); // save
+                            } else {
+                                const cat = fallbackCategories[(i + 1) % fallbackCategories.length]; // convert
+                                smallCards.push(latestByCategory?.[cat] || { category: cat, is_empty: true }); // save
+                            }
+                        }
+
+                        const renderCardContent = (item, isBig = false) => {
+                            const cat = item.category; // state
+                            const hasArticle = !item.is_empty && item.slug; // check
+                            const cleanTag = (item.tag || item.category || cat || '').replace(/^\[\s*|\s*\]$/g, '').trim(); // convert
+
+                            if (hasArticle) { // check
+                                return (
+                                    <Link
+                                        key={item.id || `${cat}-${isBig ? 'hero' : 'sub'}`}
+                                        href={`/news/${item.slug}`} // redirect
+                                        className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/10 hover:border-white/25 bg-gradient-to-b from-[#0d1322]/80 to-[#070b14]/90 backdrop-blur-xl transition-colors duration-300 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.7)] flex flex-col justify-between cursor-pointer w-full h-full`}
+                                    >
+                                        {item.image && (
+                                            <>
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className={`absolute inset-0 w-full h-full object-cover object-center ${isBig ? 'opacity-70 group-hover:opacity-85' : 'opacity-65 group-hover:opacity-85'} transition-opacity duration-300 pointer-events-none`}
+                                                />
+                                                <div className={`absolute inset-0 bg-gradient-to-t ${isBig ? 'from-[#06080F]/95 via-[#06080F]/55 to-transparent' : 'from-[#06080F]/95 via-[#06080F]/65 to-black/20'} pointer-events-none`} />
+                                            </>
+                                        )}
+                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.03] group-hover:bg-white/[0.06] rounded-full blur-3xl transition-colors duration-500" />
+
+                                        {/* top metadata: clean badge & tags */}
+                                        <div className="relative z-10 w-full flex items-center justify-between gap-2">
+                                            <div className="inline-flex items-center px-3 py-1 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-sm shrink-0">
+                                                <span className={`${isBig ? 'text-[10px] sm:text-xs' : 'text-[10px] sm:text-[11px]'} font-mono font-medium tracking-wider text-neutral-200 uppercase`}>
+                                                    {cleanTag}
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-1.5">
+                                                {item.is_featured && (
+                                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 flex items-center gap-1 shadow-sm backdrop-blur-md shrink-0">
+                                                        <Sparkles className="w-2.5 h-2.5 text-neutral-300" />
+                                                        <span>Featured</span>
                                                     </span>
-                                                </div>
+                                                )}
                                                 {item.video_url && (
-                                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase bg-red-500/20 border border-red-500/40 text-red-300 flex items-center gap-1 shadow-sm backdrop-blur-md shrink-0">
-                                                        <Play className="w-2.5 h-2.5 fill-red-400 text-red-400" />
+                                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 flex items-center gap-1 shadow-sm backdrop-blur-md shrink-0">
+                                                        <Play className="w-2.5 h-2.5 fill-current text-neutral-300" />
                                                         <span>Video</span>
                                                     </span>
                                                 )}
                                             </div>
+                                        </div>
 
-                                            <div className={`relative z-10 w-full space-y-1.5 mt-auto ${isHero ? 'pt-6' : 'pt-4'} text-left drop-shadow-[0_2px_8px_rgba(0,0,0,0.85)]`}>
-                                                <h3 className={`${isHero ? 'text-lg sm:text-xl lg:text-2xl' : isSecondary ? 'text-base sm:text-lg' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-white transition-colors ${isSecondary ? 'line-clamp-1' : 'line-clamp-2'} leading-snug drop-shadow-md`}>
-                                                    {item.title}
-                                                </h3>
-                                                {item.excerpt && (
-                                                    <p className={`${isHero ? 'text-xs sm:text-sm' : 'text-xs'} text-neutral-200 line-clamp-2 font-normal leading-relaxed drop-shadow`}>
-                                                        {item.excerpt}
-                                                    </p>
-                                                )}
+                                        {/* bottom content: natural font colors & crisp readability */}
+                                        <div className={`relative z-10 w-full space-y-2 mt-auto ${isBig ? 'pt-8 space-y-2.5' : 'pt-3'} text-left`}>
+                                            <div className={`flex items-center gap-2.5 ${isBig ? 'text-[11px] sm:text-xs' : 'text-[10px] sm:text-[11px]'} font-mono font-normal text-neutral-400`}>
                                                 {item.date && (
-                                                    <div className="text-[10px] sm:text-[11px] font-medium text-neutral-400/90 font-mono tracking-wide pt-0.5">
+                                                    <span className="flex items-center gap-1.5">
+                                                        <Calendar className="w-3.5 h-3.5 text-neutral-400" />
                                                         {item.date}
-                                                    </div>
+                                                    </span>
+                                                )}
+                                                {item.location && item.location !== 'OFFICIAL' && (
+                                                    <span className="flex items-center gap-1.5">
+                                                        <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                                                        {item.location}
+                                                    </span>
                                                 )}
                                             </div>
-                                        </Link>
-                                    );
-                                }
 
-                                return (
-                                    <div
-                                        key={cat || index}
-                                        className={`${gridClass} rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl transition-all duration-300 ${isHero ? 'p-5 sm:p-6' : 'p-4.5 sm:p-5'} relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between`}
-                                    >
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/5 rounded-full blur-3xl transition-all duration-500" />
-                                        <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
-                                            <span className="text-[11px] sm:text-xs font-bold tracking-wider text-slate-400 uppercase font-mono">
-                                                {cleanTag}
-                                            </span>
+                                            <h3 className={`${isBig ? 'text-xl sm:text-2xl lg:text-3xl' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-white/90 transition-colors leading-snug drop-shadow-sm`}>
+                                                {item.title}
+                                            </h3>
+
+                                            {item.excerpt && isBig && (
+                                                <p className="text-xs sm:text-sm text-neutral-300 line-clamp-3 font-normal leading-relaxed">
+                                                    {item.excerpt}
+                                                </p>
+                                            )}
+
+                                            <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-300 group-hover:text-white pt-1 transition-colors duration-200">
+                                                <span>Read article</span>
+                                                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200 text-neutral-400 group-hover:text-white" />
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 );
-                            });
-                        })()}
-                    </div>
+                            }
+
+                            return (
+                                <div
+                                    key={cat || (isBig ? 'hero-empty' : 'empty')}
+                                    className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/10 bg-gradient-to-b from-white/[0.03] to-white/[0.01] backdrop-blur-xl relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between w-full h-full`}
+                                >
+                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.02] rounded-full blur-3xl" />
+                                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
+                                        <span className="text-[11px] sm:text-xs font-mono font-medium tracking-wider text-neutral-400 uppercase">
+                                            {cleanTag}
+                                        </span>
+                                    </div>
+                                    <div className="space-y-1 mt-auto text-left">
+                                        <h4 className="text-sm sm:text-base font-semibold text-neutral-300">Official Update</h4>
+                                        <p className="text-xs text-neutral-500">Upcoming releases in this category will be published here.</p>
+                                    </div>
+                                </div>
+                            );
+                        };
+
+                        return (
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
+                                {/* Left: 1 Big Frame */}
+                                <div className="lg:col-span-5 xl:col-span-5 flex flex-col">
+                                    {renderCardContent(heroArticle, true)}
+                                </div>
+
+                                {/* Right: 4 Small Frames (2x2 grid) */}
+                                <div className="lg:col-span-7 xl:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                    {smallCards.map((card, idx) => (
+                                        <div key={card.id || `small-${idx}`} className="flex flex-col">
+                                            {renderCardContent(card, false)}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })()}
                 </section>
 
                 {/* 3. active leagues & tournaments (the circuit) */}
@@ -884,7 +931,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                             {/* set 1 */}
                             <div className="flex items-center gap-14 sm:gap-20 md:gap-24 shrink-0">
                                 {/* MLBB */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Mobile Legends: Bang Bang">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Mobile Legends: Bang Bang">
                                     <svg viewBox="0 0 250 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M22 8 L36 25 L22 42 L8 25 Z" fill="#F59E0B" />
                                         <path d="M22 14 L31 25 L22 36 L13 25 Z" fill="#FBBF24" />
@@ -895,7 +942,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* PUBG MOBILE */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="PUBG Mobile">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="PUBG Mobile">
                                     <svg viewBox="0 0 195 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <rect x="6" y="9" width="34" height="34" rx="6" fill="#F59E0B" />
                                         <path d="M14 17 h18 v18 h-18 Z" fill="#070B14" />
@@ -906,7 +953,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* VALORANT */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(255,70,85,0.6)]" title="Valorant">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(255,70,85,0.6)]" title="Valorant">
                                     <svg viewBox="0 0 205 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M8 12 L22 38 L28 38 L42 12 H33.5 L25 29 L16.5 12 Z" fill="#FF4655" />
                                         <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="4" fontFamily="sans-serif">VALORANT</text>
@@ -914,7 +961,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* TEKKEN 8 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" title="Tekken 8">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" title="Tekken 8">
                                     <svg viewBox="0 0 185 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M10 10 L30 10 L22 23 L34 40 L15 40 L22 29 L10 29 Z" fill="#EF4444" />
                                         <text x="42" y="31" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="2" fontStyle="italic" fontFamily="sans-serif">TEKKEN</text>
@@ -923,7 +970,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* eFootball */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(2,132,199,0.6)]" title="eFootball">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(2,132,199,0.6)]" title="eFootball">
                                     <svg viewBox="0 0 190 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <circle cx="22" cy="25" r="15" fill="none" stroke="#0284C7" strokeWidth="4" />
                                         <circle cx="22" cy="25" r="7.5" fill="#F59E0B" />
@@ -934,7 +981,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* DOTA 2 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" title="Dota 2">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" title="Dota 2">
                                     <svg viewBox="0 0 165 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <rect x="6" y="8" width="34" height="34" rx="6" fill="#DC2626" />
                                         <path d="M10 36 L36 10" stroke="#070B14" strokeWidth="4.5" />
@@ -945,7 +992,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* HONOR OF KINGS */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Honor of Kings">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Honor of Kings">
                                     <svg viewBox="0 0 235 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M8 34 L14 15 L22 26 L30 15 L36 34 Z" fill="#F59E0B" />
                                         <circle cx="22" cy="13" r="2.5" fill="#FBBF24" />
@@ -960,7 +1007,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                             {/* set 2 (identical duplicate for seamless 30s infinite loop) */}
                             <div className="flex items-center gap-14 sm:gap-20 md:gap-24 shrink-0">
                                 {/* MLBB */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Mobile Legends: Bang Bang">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Mobile Legends: Bang Bang">
                                     <svg viewBox="0 0 250 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M22 8 L36 25 L22 42 L8 25 Z" fill="#F59E0B" />
                                         <path d="M22 14 L31 25 L22 36 L13 25 Z" fill="#FBBF24" />
@@ -971,7 +1018,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* PUBG MOBILE */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="PUBG Mobile">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="PUBG Mobile">
                                     <svg viewBox="0 0 195 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <rect x="6" y="9" width="34" height="34" rx="6" fill="#F59E0B" />
                                         <path d="M14 17 h18 v18 h-18 Z" fill="#070B14" />
@@ -982,7 +1029,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* VALORANT */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(255,70,85,0.6)]" title="Valorant">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(255,70,85,0.6)]" title="Valorant">
                                     <svg viewBox="0 0 205 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M8 12 L22 38 L28 38 L42 12 H33.5 L25 29 L16.5 12 Z" fill="#FF4655" />
                                         <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="4" fontFamily="sans-serif">VALORANT</text>
@@ -990,7 +1037,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* TEKKEN 8 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" title="Tekken 8">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" title="Tekken 8">
                                     <svg viewBox="0 0 185 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M10 10 L30 10 L22 23 L34 40 L15 40 L22 29 L10 29 Z" fill="#EF4444" />
                                         <text x="42" y="31" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="2" fontStyle="italic" fontFamily="sans-serif">TEKKEN</text>
@@ -999,7 +1046,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* eFootball */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(2,132,199,0.6)]" title="eFootball">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(2,132,199,0.6)]" title="eFootball">
                                     <svg viewBox="0 0 190 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <circle cx="22" cy="25" r="15" fill="none" stroke="#0284C7" strokeWidth="4" />
                                         <circle cx="22" cy="25" r="7.5" fill="#F59E0B" />
@@ -1010,7 +1057,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* DOTA 2 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" title="Dota 2">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" title="Dota 2">
                                     <svg viewBox="0 0 165 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <rect x="6" y="8" width="34" height="34" rx="6" fill="#DC2626" />
                                         <path d="M10 36 L36 10" stroke="#070B14" strokeWidth="4.5" />
@@ -1021,7 +1068,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 </div>
 
                                 {/* HONOR OF KINGS */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 hover:scale-105 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Honor of Kings">
+                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Honor of Kings">
                                     <svg viewBox="0 0 235 50" className="h-10 sm:h-11 md:h-12 w-auto">
                                         <path d="M8 34 L14 15 L22 26 L30 15 L36 34 Z" fill="#F59E0B" />
                                         <circle cx="22" cy="13" r="2.5" fill="#FBBF24" />
@@ -1054,7 +1101,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                     {/* tabs navigation */}
                     <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-8 sm:mb-10 max-w-5xl mx-auto">
                         {teamRoster.map((squad) => {
-                            const isActive = activeSquad === squad.id;
+                            const isActive = activeSquad === squad.id; // check
                             return (
                                 <button
                                     key={squad.id}
@@ -1062,7 +1109,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                     onClick={() => setActiveSquad(squad.id)} // state
                                     className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
                                         isActive
-                                            ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-black font-bold border-transparent shadow-[0_0_20px_rgba(251,191,36,0.4)] scale-105'
+                                            ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-black font-bold border-transparent shadow-[0_0_20px_rgba(251,191,36,0.4)]'
                                             : 'border border-white/10 backdrop-blur-md bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25 hover:bg-white/[0.06]'
                                     }`}
                                 >
@@ -1080,9 +1127,9 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                             src={currentSquad.image}
                             alt={currentSquad.label}
                             onError={(e) => {
-                                e.target.style.opacity = '0';
+                                e.target.style.opacity = '0'; // fallback
                             }}
-                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out scale-100 group-hover:scale-105 opacity-90"
+                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out opacity-90"
                         />
 
                         {/* fallback dark backdrop */}
@@ -1092,7 +1139,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                         <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
 
                         {/* subtle amber corner glow */}
-                        <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 bg-amber-400/10 rounded-full blur-3xl group-hover:bg-amber-400/20 transition-all duration-500" />
+                        <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 bg-amber-400/10 rounded-full blur-3xl transition-all duration-500" />
 
                         {/* content container */}
                         <div className="relative z-10 h-full w-full p-6 sm:p-8 md:p-12 flex flex-col justify-end">
@@ -1147,7 +1194,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], fea
                                 className="group relative flex flex-col items-center justify-center cursor-pointer select-none"
                             >
                                 {/* raw floating logo/crest: zero background colors, zero borders, grayscale and opacity-60 by default */}
-                                <div className="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300">
+                                <div className="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
                                     <img
                                         src={item.image}
                                         alt={item.name}

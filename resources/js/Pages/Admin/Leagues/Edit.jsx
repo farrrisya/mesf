@@ -16,8 +16,10 @@ import {
     Users,
     MapPin,
     Layers,
-    Info
+    Info,
+    Move
 } from 'lucide-react';
+import ImagePositionerModal from '@/Components/ImagePositionerModal';
 
 // --2. properties--
 const LEAGUE_TIERS = [
@@ -61,6 +63,9 @@ export default function Edit({ league }) {
     const fileInputRef = useRef(null); // properties
     const [bannerPreview, setBannerPreview] = useState(league?.banner_url || null); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
+    const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
+    const [positionerSource, setPositionerSource] = useState(null); // state
+    const [rawFileName, setRawFileName] = useState('banner.jpg'); // state
 
     const { data, setData, post, processing, errors } = useForm({ // state
         name: league?.name || '',
@@ -86,16 +91,26 @@ export default function Edit({ league }) {
     const handleBannerChange = (e) => { // trigger
         const file = e.target.files?.[0]; // state
         if (file) { // check
-            setData('banner', file); // state
+            setRawFileName(file.name); // state
+            setPositionerSource(file); // state
+            setIsPositionerOpen(true); // state
             const reader = new FileReader(); // convert
             reader.onloadend = () => setBannerPreview(reader.result); // state
             reader.readAsDataURL(file); // convert
+            setData('banner', file); // state
         }
+    };
+
+    const handlePositionerComplete = (croppedFile, previewUrl) => { // save
+        setData('banner', croppedFile); // state
+        setBannerPreview(previewUrl); // state
+        setPositionerSource(croppedFile); // state
     };
 
     const handleRemoveBanner = () => { // trigger
         setData('banner', null); // state
         setBannerPreview(null); // state
+        setPositionerSource(null); // state
         if (fileInputRef.current) { // check
             fileInputRef.current.value = ''; // state
         }
@@ -419,13 +434,33 @@ export default function Edit({ league }) {
                                             alt="League Banner Preview"
                                             className="w-full h-full object-cover"
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={handleRemoveBanner} // trigger
-                                            className="absolute top-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-rose-600 text-white transition-all cursor-pointer shadow-lg"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setPositionerSource(bannerPreview); // state
+                                                    setIsPositionerOpen(true); // trigger
+                                                }}
+                                                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                            >
+                                                <Move className="w-3.5 h-3.5" />
+                                                <span>Reposition</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()} // trigger
+                                                className="px-3 py-1.5 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                            >
+                                                Change
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveBanner} // trigger
+                                                className="px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div
@@ -506,6 +541,18 @@ export default function Edit({ league }) {
                     </div>
                 </form>
             </div>
+
+            {/* banner repositioner modal */}
+            <ImagePositionerModal
+                isOpen={isPositionerOpen}
+                onClose={() => setIsPositionerOpen(false)}
+                imageSource={positionerSource}
+                fileName={rawFileName}
+                aspectRatio={16 / 9}
+                aspectRatioLabel="16:9 Banner"
+                title="Reposition Tournament Banner"
+                onComplete={handlePositionerComplete}
+            />
         </AdminLayout>
     );
 }

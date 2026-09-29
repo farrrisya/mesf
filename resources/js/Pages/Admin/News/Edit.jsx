@@ -12,9 +12,11 @@ import {
     MapPin,
     Tag,
     Globe,
-    Video
+    Video,
+    Move
 } from 'lucide-react';
 import NewsVideoPlayer, { parseVideoInfo } from '@/Components/NewsVideoPlayer';
+import ImagePositionerModal from '@/Components/ImagePositionerModal';
 
 // --2. properties--
 const DEFAULT_CATEGORIES = [
@@ -28,6 +30,9 @@ const DEFAULT_CATEGORIES = [
 export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) {
     const fileInputRef = useRef(null); // properties
     const [imagePreview, setImagePreview] = useState(article.image_path || null); // state
+    const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
+    const [positionerSource, setPositionerSource] = useState(null); // state
+    const [rawFileName, setRawFileName] = useState('cover.jpg'); // state
     const [processing, setProcessing] = useState(false); // state
     const [errors, setErrors] = useState({}); // state
 
@@ -59,6 +64,9 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
     const handleImageChange = (e) => { // trigger
         const file = e.target.files?.[0]; // state
         if (file) { // check
+            setRawFileName(file.name); // state
+            setPositionerSource(file); // state
+            setIsPositionerOpen(true); // state
             setFormData((prev) => ({ ...prev, image: file, remove_image: false })); // state
             const reader = new FileReader(); // convert
             reader.onloadend = () => setImagePreview(reader.result); // state
@@ -66,9 +74,16 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         }
     };
 
+    const handlePositionerComplete = (croppedFile, previewUrl) => { // save
+        setFormData((prev) => ({ ...prev, image: croppedFile, remove_image: false })); // state
+        setImagePreview(previewUrl); // state
+        setPositionerSource(croppedFile); // state
+    };
+
     const handleRemoveImage = () => { // trigger
         setFormData((prev) => ({ ...prev, image: null, remove_image: true })); // state
         setImagePreview(null); // state
+        setPositionerSource(null); // state
         if (fileInputRef.current) { // check
             fileInputRef.current.value = ''; // state
         }
@@ -185,18 +200,29 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                                 alt="Preview"
                                                 className="w-full h-full object-cover"
                                             />
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setPositionerSource(imagePreview); // state
+                                                        setIsPositionerOpen(true); // trigger
+                                                    }}
+                                                    className="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                                >
+                                                    <Move className="w-3.5 h-3.5" />
+                                                    <span>Reposition</span>
+                                                </button>
                                                 <button
                                                     type="button"
                                                     onClick={() => fileInputRef.current?.click()} // trigger
-                                                    className="px-4 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                                    className="px-3.5 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
                                                 >
                                                     Change Image
                                                 </button>
                                                 <button
                                                     type="button"
                                                     onClick={handleRemoveImage} // trigger
-                                                    className="px-4 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                                    className="px-3.5 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
                                                 >
                                                     Remove
                                                 </button>
@@ -450,6 +476,18 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                     </div>
                 </form>
             </div>
+
+            {/* image repositioner modal */}
+            <ImagePositionerModal
+                isOpen={isPositionerOpen}
+                onClose={() => setIsPositionerOpen(false)}
+                imageSource={positionerSource}
+                fileName={rawFileName}
+                aspectRatio={16 / 9}
+                aspectRatioLabel="16:9 Landscape Cover"
+                title="Reposition Cover Image"
+                onComplete={handlePositionerComplete}
+            />
         </AdminLayout>
     );
 }

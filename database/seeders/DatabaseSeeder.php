@@ -57,6 +57,9 @@ class DatabaseSeeder extends Seeder
                 $notice
             );
         }
+
+        // 3. Seed State Affiliates
+        $this->call(StateAffiliatesSeeder::class);
     }
 }
 

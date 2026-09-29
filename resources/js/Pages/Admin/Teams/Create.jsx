@@ -13,8 +13,10 @@ import {
     Gamepad2,
     Shield,
     Sparkles,
-    Check
+    Check,
+    Move
 } from 'lucide-react';
+import ImagePositionerModal from '@/Components/ImagePositionerModal';
 
 // --2. properties--
 const TEAM_TYPES = [
@@ -61,6 +63,9 @@ export default function Create() {
     const fileInputRef = useRef(null); // properties
     const [logoPreview, setLogoPreview] = useState(null); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
+    const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
+    const [positionerSource, setPositionerSource] = useState(null); // state
+    const [rawFileName, setRawFileName] = useState('logo.jpg'); // state
 
     const { data, setData, post, processing, errors } = useForm({ // state
         name: '',
@@ -80,16 +85,26 @@ export default function Create() {
     const handleLogoChange = (e) => { // trigger
         const file = e.target.files?.[0]; // state
         if (file) { // check
-            setData('logo', file); // state
+            setRawFileName(file.name); // state
+            setPositionerSource(file); // state
+            setIsPositionerOpen(true); // state
             const reader = new FileReader(); // convert
             reader.onloadend = () => setLogoPreview(reader.result); // state
             reader.readAsDataURL(file); // convert
+            setData('logo', file); // state
         }
+    };
+
+    const handlePositionerComplete = (croppedFile, previewUrl) => { // save
+        setData('logo', croppedFile); // state
+        setLogoPreview(previewUrl); // state
+        setPositionerSource(croppedFile); // state
     };
 
     const handleRemoveLogo = () => { // trigger
         setData('logo', null); // state
         setLogoPreview(null); // state
+        setPositionerSource(null); // state
         if (fileInputRef.current) { // check
             fileInputRef.current.value = ''; // state
         }
@@ -298,13 +313,33 @@ export default function Create() {
                                             alt="Team Logo Preview"
                                             className="w-32 h-32 object-contain"
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={handleRemoveLogo} // trigger
-                                            className="absolute top-3 right-3 p-2 rounded-xl bg-black/70 hover:bg-rose-600 text-white transition-all cursor-pointer shadow-lg"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
+                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    setPositionerSource(logoPreview); // state
+                                                    setIsPositionerOpen(true); // trigger
+                                                }}
+                                                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                            >
+                                                <Move className="w-3.5 h-3.5" />
+                                                <span>Reposition</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()} // trigger
+                                                className="px-3 py-1.5 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                            >
+                                                Change
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveLogo} // trigger
+                                                className="px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                            >
+                                                Remove
+                                            </button>
+                                        </div>
                                     </div>
                                 ) : (
                                     <div
@@ -385,6 +420,19 @@ export default function Create() {
                     </div>
                 </form>
             </div>
+
+            {/* logo repositioner modal */}
+            <ImagePositionerModal
+                isOpen={isPositionerOpen}
+                onClose={() => setIsPositionerOpen(false)}
+                imageSource={positionerSource}
+                fileName={rawFileName}
+                aspectRatio={1 / 1}
+                aspectRatioLabel="1:1 Square Logo"
+                title="Reposition Team Logo"
+                outputWidth={800}
+                onComplete={handlePositionerComplete}
+            />
         </AdminLayout>
     );
 }

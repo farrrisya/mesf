@@ -8,10 +8,10 @@ import {
     Plus,
     Search,
     Trash2,
+    Edit2,
     Users,
     Mail,
-    Gamepad2,
-    ExternalLink
+    Gamepad2
 } from 'lucide-react';
 
 // --2. properties--
@@ -119,6 +119,13 @@ export default function Teams({ teams = [] }) {
                                 >
                                     <IconComponent className={`w-4 h-4 ${isSelected ? 'text-amber-400' : 'text-slate-400'}`} />
                                     <span>{section.label}</span>
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
+                                        isSelected
+                                            ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40'
+                                            : 'bg-white/10 text-slate-400'
+                                    }`}>
+                                        {teams.filter((t) => section.id === 'national' ? (t.type === 'national' || t.type === 'pro') : (t.type === 'state')).length}
+                                    </span>
                                 </button>
                             );
                         })}
@@ -198,17 +205,32 @@ export default function Teams({ teams = [] }) {
                                                 <h3 className="text-base font-bold text-white group-hover:text-amber-300 transition-colors mt-1 line-clamp-1">
                                                     {team.name}
                                                 </h3>
+                                                {team.motto && (
+                                                    <p className="text-[11px] text-slate-400 italic line-clamp-1 mt-0.5">
+                                                        "{team.motto}"
+                                                    </p>
+                                                )}
                                             </div>
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDelete(team.id, team.name)} // trigger
-                                            className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0"
-                                            title="Delete Team"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <Link
+                                                href={route('admin.teams.edit', team.id)} // redirect
+                                                className="p-2 rounded-xl text-slate-400 hover:text-amber-300 hover:bg-amber-400/10 transition-colors cursor-pointer"
+                                                title="Edit Team"
+                                            >
+                                                <Edit2 className="w-4 h-4" />
+                                            </Link>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDelete(team.id, team.name)} // trigger
+                                                className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                                                title="Delete Team"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <div className="space-y-1.5 text-xs text-slate-400 border-t border-white/5 pt-3">
@@ -243,15 +265,13 @@ export default function Teams({ teams = [] }) {
                                     <span className="text-[11px] font-mono">
                                         Roster: {team.roster_size || 5} Players
                                     </span>
-                                    <a
-                                        href={team.slug ? `/teams/${team.slug}` : '/teams'} // redirect
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                                    <Link
+                                        href={route('admin.teams.edit', team.id)} // redirect
                                         className="inline-flex items-center gap-1 text-slate-400 hover:text-amber-300 transition-colors"
                                     >
-                                        <ExternalLink className="w-3.5 h-3.5" />
-                                        <span>Public View</span>
-                                    </a>
+                                        <Edit2 className="w-3.5 h-3.5" />
+                                        <span>Edit</span>
+                                    </Link>
                                 </div>
                             </div>
                         ))}

@@ -189,7 +189,7 @@ export default function Leagues({ leagues = [] }) {
                                         <img
                                             src={tournament.banner}
                                             alt={tournament.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 z-10"
+                                            className="w-full h-full object-cover transition-opacity duration-300 z-10"
                                         />
                                     ) : (
                                         <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 group-hover:text-neutral-500 transition-colors z-10">

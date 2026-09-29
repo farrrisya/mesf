@@ -1,62 +1,55 @@
 // --1. imports--
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
+import { Calendar, Clock, MapPin, Search, ArrowRight, Tv, Shield, Trophy, Sparkles } from 'lucide-react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
 const MATCH_GROUPS = [
     {
-        date: 'Date',
+        date: '05 Oct 2026',
         matches: [
             {
                 id: 1,
-                tournament: 'Title',
-                stage: 'Stage',
-                game: 'Tag',
-                format: 'Format',
-                time: 'Time',
-                status: 'Status',
-                teamA: { name: 'Team A', logo: null, score: null },
-                teamB: { name: 'Team B', logo: null, score: null }
+                tournament: 'Liga Esports Malaysia (LEM) 2026',
+                stage: 'Grand Finals',
+                game: 'Mobile Legends: Bang Bang',
+                format: 'BO5',
+                time: '20:00',
+                status: 'LIVE',
+                venue: 'Axiata Arena, Bukit Jalil',
+                teamA: { name: 'Harimau MY Esports', tag: 'HMY', logo: null, score: 2 },
+                teamB: { name: 'Selangor Red Giants', tag: 'SRG', logo: null, score: 1 }
             },
             {
                 id: 2,
-                tournament: 'Title',
-                stage: 'Stage',
-                game: 'Tag',
-                format: 'Format',
-                time: 'Time',
-                status: 'Status',
-                teamA: { name: 'Team A', logo: null, score: null },
-                teamB: { name: 'Team B', logo: null, score: null }
+                tournament: 'Malaysia Cyber Games Championship',
+                stage: 'Semifinals - Match 1',
+                game: 'PUBG Mobile',
+                format: 'BO3',
+                time: '22:30',
+                status: 'UPCOMING',
+                venue: 'Mid Valley Exhibition Centre',
+                teamA: { name: 'HomeBois', tag: 'HB', logo: null, score: null },
+                teamB: { name: 'Geek Fam MY', tag: 'GF', logo: null, score: null }
             }
         ]
     },
     {
-        date: 'Date',
+        date: '08 Oct 2026',
         matches: [
             {
                 id: 3,
-                tournament: 'Title',
-                stage: 'Stage',
-                game: 'Tag',
-                format: 'Format',
-                time: 'Time',
-                status: 'Status',
-                teamA: { name: 'Team A', logo: null, score: null },
-                teamB: { name: 'Team B', logo: null, score: null }
-            },
-            {
-                id: 4,
-                tournament: 'Title',
-                stage: 'Stage',
-                game: 'Tag',
-                format: 'Format',
-                time: 'Time',
-                status: 'Status',
-                teamA: { name: 'Team A', logo: null, score: null },
-                teamB: { name: 'Team B', logo: null, score: null }
+                tournament: 'National Collegiate Esports League',
+                stage: 'Quarterfinals',
+                game: 'Valorant',
+                format: 'BO3',
+                time: '18:00',
+                status: 'UPCOMING',
+                venue: 'Sunway Pyramid Convention Centre',
+                teamA: { name: 'Team Secret Academy', tag: 'TSA', logo: null, score: null },
+                teamB: { name: 'Todak Gaming', tag: 'TDK', logo: null, score: null }
             }
         ]
     }
@@ -64,45 +57,96 @@ const MATCH_GROUPS = [
 
 const DEFAULT_STATUS_FILTERS = ['All Matches', 'Live', 'Upcoming', 'Results'];
 
+// helper to get team initials if logo is absent
+function getTeamInitials(name = '', tag = '') { // convert
+    if (tag && tag.length <= 4) return tag;
+    const words = name.trim().split(/\s+/);
+    if (words.length >= 2) {
+        return (words[0][0] + words[1][0]).toUpperCase();
+    }
+    return (name.slice(0, 3) || 'T').toUpperCase();
+}
+
 // --3. main component--
 export default function Matches({ matchGroups = [] }) {
     // --4. actions--
     const hasUploads = matchGroups && matchGroups.length > 0; // check
     const baseGroups = hasUploads ? matchGroups : MATCH_GROUPS; // state
 
-    const availableStatusFilters = hasUploads ? DEFAULT_STATUS_FILTERS : ['All Matches', 'Status']; // state
-
-    const availableGames = useMemo(() => { // check
-        if (!hasUploads) return ['All Games', 'Tag'];
-        const games = new Set();
-        matchGroups.forEach(g => g.matches.forEach(m => {
-            if (m.game) games.add(m.game);
-        }));
-        return ['All Games', ...Array.from(games)];
-    }, [matchGroups, hasUploads]);
-
     const [statusFilter, setStatusFilter] = useState('All Matches'); // state
     const [gameFilter, setGameFilter] = useState('All Games'); // state
+    const [searchQuery, setSearchQuery] = useState(''); // state
 
-    // filter match groups and their nested matches
-    const filteredGroups = baseGroups.map((group) => { // check
-        const matches = group.matches.filter((m) => {
-            // filter by status
-            const s = (m.status || '').toUpperCase();
-            if (statusFilter === 'Live' && !s.includes('LIVE')) return false; // check
-            if (statusFilter === 'Upcoming' && !s.includes('UPCOMING')) return false; // check
-            if (statusFilter === 'Results' && !s.includes('COMPLETED') && !s.includes('RESULT')) return false; // check
+    // extract unique game categories
+    const availableGames = useMemo(() => { // check
+        const games = new Set();
+        baseGroups.forEach((g) => {
+            g.matches.forEach((m) => {
+                if (m.game) games.add(m.game);
+            });
+        });
+        return ['All Games', ...Array.from(games)];
+    }, [baseGroups]);
 
-            // filter by game
-            if (gameFilter !== 'All Games') {
-                if (m.game && m.game !== gameFilter) return false; // check
-            }
+    // total match count stats
+    const stats = useMemo(() => { // check
+        let total = 0;
+        let live = 0;
+        let upcoming = 0;
+        let results = 0;
 
-            return true;
+        baseGroups.forEach((g) => {
+            g.matches.forEach((m) => {
+                total++;
+                const s = (m.status || '').toUpperCase();
+                if (s.includes('LIVE')) live++;
+                else if (s.includes('COMPLETED') || s.includes('RESULT') || m.teamA?.score !== null) results++;
+                else upcoming++;
+            });
         });
 
-        return { ...group, matches };
-    }).filter((group) => group.matches.length > 0);
+        return { total, live, upcoming, results };
+    }, [baseGroups]);
+
+    // filter match groups and their nested matches
+    const filteredGroups = useMemo(() => { // filter
+        const query = searchQuery.trim().toLowerCase();
+
+        return baseGroups
+            .map((group) => {
+                const matches = group.matches.filter((m) => {
+                    // status filter
+                    const s = (m.status || '').toUpperCase();
+                    const isMatchLive = s.includes('LIVE');
+                    const isMatchCompleted = s.includes('COMPLETED') || s.includes('RESULT') || (m.teamA?.score !== null && m.teamB?.score !== null && !isMatchLive);
+                    const isMatchUpcoming = !isMatchLive && !isMatchCompleted;
+
+                    if (statusFilter === 'Live' && !isMatchLive) return false; // check
+                    if (statusFilter === 'Upcoming' && !isMatchUpcoming) return false; // check
+                    if (statusFilter === 'Results' && !isMatchCompleted) return false; // check
+
+                    // game filter
+                    if (gameFilter !== 'All Games' && m.game !== gameFilter) return false; // check
+
+                    // text search query
+                    if (query) {
+                        const tournamentMatch = (m.tournament || '').toLowerCase().includes(query);
+                        const gameMatch = (m.game || '').toLowerCase().includes(query);
+                        const teamAMatch = (m.teamA?.name || '').toLowerCase().includes(query) || (m.teamA?.tag || '').toLowerCase().includes(query);
+                        const teamBMatch = (m.teamB?.name || '').toLowerCase().includes(query) || (m.teamB?.tag || '').toLowerCase().includes(query);
+                        const venueMatch = (m.venue || '').toLowerCase().includes(query);
+                        if (!tournamentMatch && !gameMatch && !teamAMatch && !teamBMatch && !venueMatch) {
+                            return false; // check
+                        }
+                    }
+
+                    return true;
+                });
+
+                return { ...group, matches };
+            })
+            .filter((group) => group.matches.length > 0);
+    }, [baseGroups, statusFilter, gameFilter, searchQuery]);
 
     // --5. UI--
     return (
@@ -124,9 +168,16 @@ export default function Matches({ matchGroups = [] }) {
                 }
             `}</style>
 
+            {/* ambient background glows to add atmospheric depth */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+                <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-blue-600/10 blur-[130px]" />
+                <div className="absolute top-1/2 -right-48 w-96 h-96 rounded-full bg-indigo-600/10 blur-[140px]" />
+                <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[160px]" />
+            </div>
+
             {/* background SVG grain texture */}
             <div
-                className="pointer-events-none fixed inset-0 opacity-[0.04] mix-blend-overlay z-10"
+                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
                 style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
                 }}
@@ -140,10 +191,10 @@ export default function Matches({ matchGroups = [] }) {
             {/* 2. hero & filter bar */}
             <header className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-8 text-left">
                 <div className="flex flex-col gap-6 pb-6 border-b border-white/10">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
                         <div>
                             <div className="mb-2">
-                                <span className="text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]">
+                                <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
                                     [ National Esports Fixtures ]
                                 </span>
                             </div>
@@ -154,37 +205,69 @@ export default function Matches({ matchGroups = [] }) {
                                 Official fixtures, live tournament series, and verified results across Malaysian esports circuits.
                             </p>
                         </div>
+
+                        {/* search bar */}
+                        <div className="w-full lg:w-80 shrink-0">
+                            <div className="relative">
+                                <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)} // input
+                                    placeholder="Search team, game, or event..."
+                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/15 focus:border-white/40 focus:outline-none text-xs text-white placeholder-neutral-500 transition-colors shadow-inner"
+                                />
+                                {searchQuery && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setSearchQuery('')} // trigger
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-bold"
+                                    >
+                                        ✕
+                                    </button>
+                                )}
+                            </div>
+                        </div>
                     </div>
 
                     {/* dual filter bar: status pills & game category pills */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/5">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-4 border-t border-white/5">
                         {/* status pills */}
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1 hidden sm:inline-block">
-                                Status:
-                            </span>
-                            {availableStatusFilters.map((filter) => {
+                            {DEFAULT_STATUS_FILTERS.map((filter) => {
                                 const isActive = statusFilter === filter;
+                                const isLiveTab = filter === 'Live';
                                 return (
                                     <button
                                         key={filter}
                                         type="button"
                                         onClick={() => setStatusFilter(filter)} // filter
-                                        className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer select-none ${
+                                        className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none inline-flex items-center gap-2 ${
                                             isActive
-                                                ? 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-bold shadow-[0_0_15px_rgba(251,191,36,0.35)]'
-                                                : 'border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25 hover:bg-white/[0.06]'
+                                                ? 'bg-white text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)] border border-white'
+                                                : 'border border-white/15 bg-[#0e1628]/90 text-neutral-300 hover:text-white hover:border-white/30 hover:bg-[#131d33]'
                                         }`}
                                     >
-                                        {filter}
+                                        {isLiveTab && stats.live > 0 && (
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                                            </span>
+                                        )}
+                                        <span>{filter}</span>
+                                        {filter === 'Live' && stats.live > 0 && (
+                                            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${isActive ? 'bg-black text-emerald-400' : 'bg-emerald-500/20 text-emerald-400'}`}>
+                                                {stats.live}
+                                            </span>
+                                        )}
                                     </button>
                                 );
                             })}
                         </div>
 
                         {/* game category pills */}
-                        <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-[11px] font-bold text-neutral-500 uppercase tracking-wider mr-1 hidden sm:inline-block">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mr-1 hidden sm:inline-block">
                                 Game:
                             </span>
                             {availableGames.map((game) => {
@@ -194,10 +277,10 @@ export default function Matches({ matchGroups = [] }) {
                                         key={game}
                                         type="button"
                                         onClick={() => setGameFilter(game)} // filter
-                                        className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer select-none ${
+                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer select-none ${
                                             isActive
-                                                ? 'border border-amber-400/80 bg-amber-400/15 text-amber-300 font-bold shadow-[0_0_10px_rgba(251,191,36,0.2)]'
-                                                : 'border border-white/10 bg-white/[0.02] text-neutral-400 hover:text-white hover:border-white/20'
+                                                ? 'bg-[#1e293b] border border-white/40 text-white font-bold shadow-sm'
+                                                : 'border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25'
                                         }`}
                                     >
                                         {game}
@@ -212,17 +295,24 @@ export default function Matches({ matchGroups = [] }) {
             {/* 3. horizontal match schedule section */}
             <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-24 text-left">
                 {filteredGroups.length === 0 ? (
-                    <div className="py-20 text-center rounded-2xl border border-dashed border-white/10 bg-white/[0.01]">
-                        <p className="text-neutral-400 text-sm">No matches found for the selected filters.</p>
+                    <div className="py-20 text-center rounded-2xl border border-white/15 bg-[#0e1628]/80 backdrop-blur-xl shadow-xl">
+                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-neutral-400">
+                            <Shield className="w-6 h-6" />
+                        </div>
+                        <p className="text-white font-bold text-base">No matches found</p>
+                        <p className="text-neutral-400 text-xs mt-1 max-w-sm mx-auto">
+                            No fixtures currently match your selected filters. Try choosing a different status or resetting filters.
+                        </p>
                         <button
                             type="button"
                             onClick={() => {
                                 setStatusFilter('All Matches'); // state
                                 setGameFilter('All Games'); // state
+                                setSearchQuery(''); // state
                             }}
-                            className="mt-4 px-4 py-2 rounded-full border border-white/15 text-xs text-amber-400 hover:bg-white/5 transition-colors cursor-pointer"
+                            className="mt-5 px-5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-xs font-bold text-white hover:bg-white hover:text-black transition-all cursor-pointer"
                         >
-                            Reset Filters
+                            Reset All Filters
                         </button>
                     </div>
                 ) : (
@@ -231,69 +321,115 @@ export default function Matches({ matchGroups = [] }) {
                             <section key={groupIdx} className="space-y-4">
                                 {/* date section header */}
                                 <div className="flex items-center gap-3">
-                                    <div className="h-2 w-2 rounded-full bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
-                                    <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-widest text-neutral-300">
-                                        {group.date}
-                                    </h2>
-                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/10 to-transparent" />
+                                    <div className="px-3.5 py-1.5 rounded-xl bg-[#0e1628] border border-white/15 text-xs font-extrabold uppercase tracking-widest text-neutral-200 shadow-sm flex items-center gap-2">
+                                        <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                                        <span>{group.date}</span>
+                                    </div>
+                                    <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
+                                        • {group.matches.length} {group.matches.length === 1 ? 'Fixture' : 'Fixtures'}
+                                    </span>
+                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/15 via-white/5 to-transparent" />
                                 </div>
 
-                                {/* match rows list */}
+                                {/* match cards list */}
                                 <div className="space-y-4">
                                     {group.matches.map((match) => {
-                                        const isLive = match.status === 'LIVE';
+                                        const isLive = (match.status || '').toUpperCase().includes('LIVE');
+                                        const hasScores = match.teamA?.score !== null && match.teamB?.score !== null;
+                                        const isCompleted = !isLive && (hasScores || (match.status || '').toUpperCase().includes('COMPLETED') || (match.status || '').toUpperCase().includes('RESULT'));
+
+                                        const scoreA = Number(match.teamA?.score ?? 0);
+                                        const scoreB = Number(match.teamB?.score ?? 0);
+                                        const isTeamAWinner = hasScores && scoreA > scoreB;
+                                        const isTeamBWinner = hasScores && scoreB > scoreA;
+
                                         return (
                                             <div
                                                 key={match.id}
-                                                className={`group relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 sm:p-7 md:p-8 rounded-2xl border backdrop-blur-xl transition-all duration-300 ${
+                                                className={`group relative flex flex-col lg:flex-row lg:items-center justify-between gap-6 p-6 sm:p-7 rounded-2xl border backdrop-blur-xl transition-all duration-300 overflow-hidden ${
                                                     isLive
-                                                        ? 'border-emerald-500/30 bg-emerald-950/[0.08] hover:border-emerald-500/50 shadow-[0_10px_35px_rgba(16,185,129,0.06)]'
-                                                        : 'border-white/10 bg-white/[0.02] hover:border-amber-400/40 hover:bg-white/[0.04] shadow-[0_10px_30px_rgba(0,0,0,0.5)]'
+                                                        ? 'border-emerald-500/50 bg-gradient-to-br from-[#0b221d] via-[#0d1628] to-[#090e1a] shadow-[0_16px_40px_rgba(16,185,129,0.14)] ring-1 ring-emerald-500/30'
+                                                        : 'border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] hover:border-white/30 hover:bg-[#121b30] shadow-[0_16px_40px_rgba(0,0,0,0.65)]'
                                                 }`}
                                             >
+                                                {/* top edge highlight beam */}
+                                                <div
+                                                    className={`absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r ${
+                                                        isLive
+                                                            ? 'from-transparent via-emerald-400 to-transparent opacity-80'
+                                                            : 'from-transparent via-white/20 to-transparent group-hover:via-white/40 opacity-70'
+                                                    }`}
+                                                />
+
                                                 {/* left: tournament meta info */}
-                                                <div className="flex flex-wrap lg:flex-col items-center lg:items-start justify-between lg:justify-center gap-2 lg:w-64 shrink-0">
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-                                                            {match.tournament}
+                                                <div className="flex flex-col items-start justify-center gap-2 lg:w-64 shrink-0">
+                                                    {/* game & format tag row */}
+                                                    <div className="flex flex-wrap items-center gap-2">
+                                                        <span className="px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/10 text-white border border-white/15">
+                                                            {match.game || 'Esports'}
                                                         </span>
-                                                        <span className="px-2 py-0.5 rounded text-[10px] font-extrabold bg-white/10 text-neutral-300 uppercase">
-                                                            {match.format}
+                                                        <span className="px-2 py-1 rounded-md text-[10px] font-mono font-bold bg-[#070b14] text-neutral-300 border border-white/10 uppercase">
+                                                            {match.format || 'BO3'}
                                                         </span>
                                                     </div>
-                                                    <span className="text-xs text-neutral-400 font-medium">
-                                                        {match.stage}
-                                                    </span>
 
-                                                    {/* match time / live badge */}
+                                                    {/* tournament title */}
+                                                    <h3 className="text-sm sm:text-base font-extrabold text-white tracking-tight line-clamp-1 group-hover:text-neutral-100 transition-colors">
+                                                        {match.tournament}
+                                                    </h3>
+
+                                                    {/* stage & venue */}
+                                                    <div className="flex flex-wrap items-center gap-1.5 text-xs text-neutral-400 font-medium">
+                                                        <span>{match.stage}</span>
+                                                        {match.venue && (
+                                                            <>
+                                                                <span className="text-neutral-600">•</span>
+                                                                <span className="inline-flex items-center gap-1 text-neutral-400 line-clamp-1">
+                                                                    <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
+                                                                    {match.venue}
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </div>
+
+                                                    {/* match time / live status pill */}
                                                     <div className="mt-1 flex items-center gap-2">
                                                         {isLive ? (
-                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-[0_0_12px_rgba(16,185,129,0.3)]">
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black tracking-widest uppercase bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.35)]">
                                                                 <span className="relative flex h-2 w-2">
                                                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                                                                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
                                                                 </span>
-                                                                LIVE
+                                                                LIVE NOW
+                                                            </span>
+                                                        ) : isCompleted ? (
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-white/5 text-neutral-400 border border-white/10">
+                                                                Concluded
                                                             </span>
                                                         ) : (
-                                                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-white/5 text-neutral-300 border border-white/10">
-                                                                <svg className="w-3 h-3 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                                                </svg>
+                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#090d18] text-neutral-200 border border-white/15 shadow-inner">
+                                                                <Clock className="w-3 h-3 text-neutral-400" />
                                                                 {match.time}
                                                             </span>
                                                         )}
                                                     </div>
                                                 </div>
 
-                                                {/* center: teams match display */}
-                                                <div className="flex-1 flex items-center justify-between sm:justify-center gap-4 sm:gap-8 md:gap-12 py-3 lg:py-0 border-y lg:border-y-0 border-white/5">
-                                                    {/* team A */}
+                                                {/* center: teams showdown arena */}
+                                                <div className="flex-1 flex items-center justify-between sm:justify-center gap-3 sm:gap-6 md:gap-8 py-4 lg:py-0 border-y lg:border-y-0 lg:border-x border-white/10 lg:px-6">
+                                                    {/* team A side (right-aligned) */}
                                                     <div className="flex-1 flex items-center justify-end gap-3 sm:gap-4">
-                                                        <span className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight text-right group-hover:text-amber-200 transition-colors">
-                                                            {match.teamA.name}
-                                                        </span>
-                                                        <div className="h-11 w-11 sm:h-13 sm:w-13 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/15 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+                                                        <div className="text-right">
+                                                            <div className="text-sm sm:text-base md:text-lg font-black text-white tracking-tight leading-snug">
+                                                                {match.teamA.name}
+                                                            </div>
+                                                            <span className="text-[10px] sm:text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider">
+                                                                [{match.teamA.tag || getTeamInitials(match.teamA.name, match.teamA.tag)}]
+                                                            </span>
+                                                        </div>
+
+                                                        {/* team A logo container */}
+                                                        <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-2xl bg-black/70 border border-white/20 flex items-center justify-center shrink-0 overflow-hidden shadow-lg ring-1 ring-white/10 p-2">
                                                             {match.teamA.logo ? (
                                                                 <img
                                                                     src={match.teamA.logo}
@@ -301,41 +437,56 @@ export default function Matches({ matchGroups = [] }) {
                                                                     onError={(e) => {
                                                                         e.target.style.display = 'none';
                                                                         if (e.target.nextSibling) {
-                                                                            e.target.nextSibling.style.display = 'block';
+                                                                            e.target.nextSibling.style.display = 'flex';
                                                                         }
                                                                     }}
-                                                                    className="h-8 w-8 object-contain"
+                                                                    className="h-full w-full object-contain filter drop-shadow"
                                                                 />
                                                             ) : null}
-                                                            <span
-                                                                className="text-xs font-black text-amber-400 tracking-wider"
-                                                                style={{ display: match.teamA.logo ? 'none' : 'block' }}
+                                                            <div
+                                                                className="h-full w-full rounded-xl bg-gradient-to-br from-neutral-800 to-neutral-900 border border-white/10 items-center justify-center"
+                                                                style={{ display: match.teamA.logo ? 'none' : 'flex' }}
                                                             >
-                                                                {match.teamA.name.substring(0, 2).toUpperCase()}
-                                                            </span>
+                                                                <span className="text-xs sm:text-sm font-black text-white tracking-wider font-mono">
+                                                                    {getTeamInitials(match.teamA.name, match.teamA.tag)}
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        {match.teamA.score !== null && (
-                                                            <span className="text-2xl sm:text-3xl font-black text-white px-2">
-                                                                {match.teamA.score}
-                                                            </span>
+                                                    </div>
+
+                                                    {/* center: VS badge or Scoreboard box */}
+                                                    <div className="shrink-0 flex flex-col items-center justify-center px-1 sm:px-2">
+                                                        {hasScores ? (
+                                                            <div className="flex flex-col items-center gap-1">
+                                                                <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl bg-black/80 border border-white/20 shadow-inner">
+                                                                    <span className={`text-xl sm:text-2xl font-black ${isTeamAWinner ? 'text-emerald-400' : 'text-white'}`}>
+                                                                        {scoreA}
+                                                                    </span>
+                                                                    <span className="text-neutral-500 font-bold text-xs">:</span>
+                                                                    <span className={`text-xl sm:text-2xl font-black ${isTeamBWinner ? 'text-emerald-400' : 'text-white'}`}>
+                                                                        {scoreB}
+                                                                    </span>
+                                                                </div>
+                                                                <span className="text-[9px] font-black uppercase tracking-widest text-neutral-400">
+                                                                    {isLive ? 'LIVE' : 'FINAL'}
+                                                                </span>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex flex-col items-center gap-1">
+                                                                <div className="px-3 py-1 rounded-xl bg-black/80 border border-white/20 text-neutral-200 text-xs font-black tracking-widest shadow-inner">
+                                                                    VS
+                                                                </div>
+                                                                <span className="text-[9px] font-extrabold uppercase tracking-wider text-neutral-400 font-mono">
+                                                                    {match.format || 'BO3'}
+                                                                </span>
+                                                            </div>
                                                         )}
                                                     </div>
 
-                                                    {/* VS badge / divider */}
-                                                    <div className="shrink-0 flex flex-col items-center justify-center px-2">
-                                                        <span className="px-2.5 py-1 rounded-md text-[11px] font-black tracking-widest uppercase bg-black/60 border border-white/10 text-neutral-400">
-                                                            VS
-                                                        </span>
-                                                    </div>
-
-                                                    {/* team B */}
+                                                    {/* team B side (left-aligned) */}
                                                     <div className="flex-1 flex items-center justify-start gap-3 sm:gap-4">
-                                                        {match.teamB.score !== null && (
-                                                            <span className="text-2xl sm:text-3xl font-black text-white px-2">
-                                                                {match.teamB.score}
-                                                            </span>
-                                                        )}
-                                                        <div className="h-11 w-11 sm:h-13 sm:w-13 rounded-xl bg-gradient-to-br from-white/10 to-white/5 border border-white/15 flex items-center justify-center shrink-0 overflow-hidden shadow-inner">
+                                                        {/* team B logo container */}
+                                                        <div className="h-12 w-12 sm:h-14 sm:w-14 md:h-16 md:w-16 rounded-2xl bg-black/70 border border-white/20 flex items-center justify-center shrink-0 overflow-hidden shadow-lg ring-1 ring-white/10 p-2">
                                                             {match.teamB.logo ? (
                                                                 <img
                                                                     src={match.teamB.logo}
@@ -343,22 +494,30 @@ export default function Matches({ matchGroups = [] }) {
                                                                     onError={(e) => {
                                                                         e.target.style.display = 'none';
                                                                         if (e.target.nextSibling) {
-                                                                            e.target.nextSibling.style.display = 'block';
+                                                                            e.target.nextSibling.style.display = 'flex';
                                                                         }
                                                                     }}
-                                                                    className="h-8 w-8 object-contain"
+                                                                    className="h-full w-full object-contain filter drop-shadow"
                                                                 />
                                                             ) : null}
-                                                            <span
-                                                                className="text-xs font-black text-amber-400 tracking-wider"
-                                                                style={{ display: match.teamB.logo ? 'none' : 'block' }}
+                                                            <div
+                                                                className="h-full w-full rounded-xl bg-gradient-to-br from-neutral-800 to-neutral-900 border border-white/10 items-center justify-center"
+                                                                style={{ display: match.teamB.logo ? 'none' : 'flex' }}
                                                             >
-                                                                {match.teamB.name.substring(0, 2).toUpperCase()}
+                                                                <span className="text-xs sm:text-sm font-black text-white tracking-wider font-mono">
+                                                                    {getTeamInitials(match.teamB.name, match.teamB.tag)}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="text-left">
+                                                            <div className="text-sm sm:text-base md:text-lg font-black text-white tracking-tight leading-snug">
+                                                                {match.teamB.name}
+                                                            </div>
+                                                            <span className="text-[10px] sm:text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider">
+                                                                [{match.teamB.tag || getTeamInitials(match.teamB.name, match.teamB.tag)}]
                                                             </span>
                                                         </div>
-                                                        <span className="text-base sm:text-lg md:text-xl font-bold text-white tracking-tight text-left group-hover:text-amber-200 transition-colors">
-                                                            {match.teamB.name}
-                                                        </span>
                                                     </div>
                                                 </div>
 
@@ -369,16 +528,23 @@ export default function Matches({ matchGroups = [] }) {
                                                         onClick={() => {
                                                             router.visit(match.id ? `/matches/${match.id}` : '/matches/details'); // redirect
                                                         }}
-                                                        className={`w-full lg:w-auto px-5 py-2.5 rounded-xl text-xs font-bold tracking-wider uppercase inline-flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
+                                                        className={`w-full lg:w-auto px-5 py-3 rounded-xl text-xs font-bold tracking-wider uppercase inline-flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
                                                             isLive
-                                                                ? 'bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold shadow-[0_0_20px_rgba(16,185,129,0.35)]'
-                                                                : 'bg-white/[0.04] hover:bg-amber-400 hover:text-black border border-white/10 hover:border-amber-400 text-white'
+                                                                ? 'bg-emerald-500 hover:bg-emerald-400 text-black font-extrabold shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                                                                : 'bg-white hover:bg-neutral-200 text-black border border-white shadow-md font-extrabold'
                                                         }`}
                                                     >
-                                                        <span>{isLive ? 'Watch Stream' : 'Match Details'}</span>
-                                                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                                        </svg>
+                                                        {isLive ? (
+                                                            <>
+                                                                <Tv className="w-3.5 h-3.5" />
+                                                                <span>Watch Live</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <span>Match Details</span>
+                                                                <ArrowRight className="w-3.5 h-3.5" />
+                                                            </>
+                                                        )}
                                                     </button>
                                                 </div>
                                             </div>
@@ -396,3 +562,4 @@ export default function Matches({ matchGroups = [] }) {
         </div>
     );
 }
+

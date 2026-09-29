@@ -27,3 +27,4 @@
 
 # UI Design Rules
 - Do NOT put yellow/amber line or bar accent elements (e.g. `<span className="h-1.5 w-6 bg-amber-400 ...">` or `<div className="h-3.5 w-1 bg-amber-400 ...">`) before section titles, eyebrows, or headings. Keep titles and section headers clean without prepended line accents.
+- NEVER use zoom-in on hover effects (e.g. no scale-up transforms on hover such as `hover:scale-105`, `group-hover:scale-105`, `scale-[1.02]`, or image zooming). Keep element dimensions stable and static without hover zooming.

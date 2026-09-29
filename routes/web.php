@@ -87,6 +87,29 @@ Route::get('/', function () {
 
     $latestUpdates = array_merge($filledUpdates, $emptyUpdates); // convert
 
+    $allNews = \App\Models\News::published() // check
+        ->orderBy('published_at', 'desc')
+        ->orderBy('created_at', 'desc')
+        ->limit(16)
+        ->get()
+        ->map(function ($article) { // convert
+            return [
+                'id' => $article->id,
+                'title' => $article->title,
+                'slug' => $article->slug,
+                'category' => $article->category,
+                'tag' => $article->tag ?: "[ {$article->category} ]",
+                'excerpt' => $article->excerpt,
+                'image' => $article->image_path ? \Illuminate\Support\Facades\Storage::url($article->image_path) : null,
+                'video_url' => $article->video_url,
+                'date' => $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y'),
+                'timestamp' => $article->published_at ? $article->published_at->timestamp : $article->created_at->timestamp,
+                'location' => $article->location ?: 'OFFICIAL',
+                'is_featured' => (bool)$article->is_featured,
+                'is_empty' => false, // check
+            ];
+        });
+
     $featuredArticle = \App\Models\News::published() // check
         ->where('is_featured', true)
         ->orderBy('published_at', 'desc')
@@ -133,6 +156,26 @@ Route::get('/', function () {
             ];
         });
 
+    $teams = Team::where('is_active', true) // state
+        ->orderBy('name', 'asc')
+        ->limit(16)
+        ->get()
+        ->map(function ($t) {
+            return [ // convert
+                'id' => $t->id,
+                'name' => $t->name,
+                'slug' => $t->slug,
+                'tag' => $t->tag ?: strtoupper(substr($t->name, 0, 3)),
+                'type' => $t->type,
+                'region' => $t->region ?: 'National',
+                'game' => $t->game_title,
+                'status' => $t->status ?: 'ACTIVE',
+                'logo' => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
+                'manager' => $t->manager_name,
+                'motto' => $t->motto,
+            ];
+        });
+
     return Inertia::render('Welcome', [ // screen
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -140,8 +183,10 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
         'latestByCategory' => $latestByCategory,
         'latestUpdates' => $latestUpdates,
+        'allNews' => $allNews,
         'featuredArticle' => $featuredData,
         'leagues' => $leagues,
+        'teams' => $teams,
     ]);
 })->name('home');
 
@@ -231,12 +276,145 @@ Route::get('/matches', function () {
 })->name('matches');
 
 Route::get('/matches/details', function () {
-    return Inertia::render('MatchDetails');
+    $match = EsportMatch::where('is_active', true)->orderBy('scheduled_date', 'asc')->first(); // state
+
+    $teamA = $match ? Team::where('name', $match->team_a_name)->orWhere('tag', $match->team_a_tag)->first() : null; // check
+    $teamB = $match ? Team::where('name', $match->team_b_name)->orWhere('tag', $match->team_b_tag)->first() : null; // check
+
+    $matchData = $match ? [ // convert
+        'id' => $match->id,
+        'tournament_name' => $match->tournament_name,
+        'game_title' => $match->game_title,
+        'round' => $match->round ?: 'Match Fixture',
+        'format' => $match->format ?: 'BO3',
+        'scheduled_date' => $match->scheduled_date ? $match->scheduled_date->format('Y-m-d') : null,
+        'formatted_date' => $match->scheduled_date ? $match->scheduled_date->format('l, d F Y') : 'TBA',
+        'scheduled_time' => $match->scheduled_time ?: 'TBA',
+        'venue' => $match->venue ?: 'Online Arena',
+        'stream_url' => $match->stream_url,
+        'status' => $match->status ?: 'UPCOMING',
+        'team_a' => [
+            'name' => $match->team_a_name,
+            'tag' => $match->team_a_tag ?: strtoupper(substr($match->team_a_name, 0, 3)),
+            'score' => $match->team_a_score,
+            'logo' => $teamA && $teamA->logo_path ? \Illuminate\Support\Facades\Storage::url($teamA->logo_path) : null,
+            'region' => $teamA ? $teamA->region : 'National / All Malaysia',
+            'motto' => $teamA ? $teamA->motto : null,
+            'manager' => $teamA ? $teamA->manager_name : null,
+            'slug' => $teamA ? $teamA->slug : null,
+        ],
+        'team_b' => [
+            'name' => $match->team_b_name,
+            'tag' => $match->team_b_tag ?: strtoupper(substr($match->team_b_name, 0, 3)),
+            'score' => $match->team_b_score,
+            'logo' => $teamB && $teamB->logo_path ? \Illuminate\Support\Facades\Storage::url($teamB->logo_path) : null,
+            'region' => $teamB ? $teamB->region : 'Malaysia',
+            'motto' => $teamB ? $teamB->motto : null,
+            'manager' => $teamB ? $teamB->manager_name : null,
+            'slug' => $teamB ? $teamB->slug : null,
+        ],
+    ] : null;
+
+    $otherMatches = EsportMatch::where('is_active', true) // state
+        ->when($match, function ($query) use ($match) {
+            return $query->where('id', '!=', $match->id);
+        })
+        ->orderBy('scheduled_date', 'asc')
+        ->limit(4)
+        ->get()
+        ->map(function ($om) {
+            return [ // convert
+                'id' => $om->id,
+                'tournament_name' => $om->tournament_name,
+                'game_title' => $om->game_title,
+                'round' => $om->round ?: 'Match Fixture',
+                'format' => $om->format ?: 'BO3',
+                'team_a_name' => $om->team_a_name,
+                'team_a_tag' => $om->team_a_tag ?: strtoupper(substr($om->team_a_name, 0, 3)),
+                'team_b_name' => $om->team_b_name,
+                'team_b_tag' => $om->team_b_tag ?: strtoupper(substr($om->team_b_name, 0, 3)),
+                'formatted_date' => $om->scheduled_date ? $om->scheduled_date->format('d M Y') : 'TBA',
+                'scheduled_time' => $om->scheduled_time ?: 'TBA',
+                'status' => $om->status ?: 'UPCOMING',
+            ];
+        });
+
+    return Inertia::render('MatchDetails', [ // screen
+        'match' => $matchData,
+        'otherMatches' => $otherMatches
+    ]);
 })->name('matches.details');
 
 Route::get('/matches/{id}', function ($id) {
-    return Inertia::render('MatchDetails', [
-        'id' => $id
+    $match = EsportMatch::find($id); // state
+    if (!$match) { // check
+        $match = EsportMatch::where('is_active', true)->orderBy('scheduled_date', 'asc')->first(); // state
+    }
+
+    $teamA = $match ? Team::where('name', $match->team_a_name)->orWhere('tag', $match->team_a_tag)->first() : null; // check
+    $teamB = $match ? Team::where('name', $match->team_b_name)->orWhere('tag', $match->team_b_tag)->first() : null; // check
+
+    $matchData = $match ? [ // convert
+        'id' => $match->id,
+        'tournament_name' => $match->tournament_name,
+        'game_title' => $match->game_title,
+        'round' => $match->round ?: 'Match Fixture',
+        'format' => $match->format ?: 'BO3',
+        'scheduled_date' => $match->scheduled_date ? $match->scheduled_date->format('Y-m-d') : null,
+        'formatted_date' => $match->scheduled_date ? $match->scheduled_date->format('l, d F Y') : 'TBA',
+        'scheduled_time' => $match->scheduled_time ?: 'TBA',
+        'venue' => $match->venue ?: 'Online Arena',
+        'stream_url' => $match->stream_url,
+        'status' => $match->status ?: 'UPCOMING',
+        'team_a' => [
+            'name' => $match->team_a_name,
+            'tag' => $match->team_a_tag ?: strtoupper(substr($match->team_a_name, 0, 3)),
+            'score' => $match->team_a_score,
+            'logo' => $teamA && $teamA->logo_path ? \Illuminate\Support\Facades\Storage::url($teamA->logo_path) : null,
+            'region' => $teamA ? $teamA->region : 'National / All Malaysia',
+            'motto' => $teamA ? $teamA->motto : null,
+            'manager' => $teamA ? $teamA->manager_name : null,
+            'slug' => $teamA ? $teamA->slug : null,
+        ],
+        'team_b' => [
+            'name' => $match->team_b_name,
+            'tag' => $match->team_b_tag ?: strtoupper(substr($match->team_b_name, 0, 3)),
+            'score' => $match->team_b_score,
+            'logo' => $teamB && $teamB->logo_path ? \Illuminate\Support\Facades\Storage::url($teamB->logo_path) : null,
+            'region' => $teamB ? $teamB->region : 'Malaysia',
+            'motto' => $teamB ? $teamB->motto : null,
+            'manager' => $teamB ? $teamB->manager_name : null,
+            'slug' => $teamB ? $teamB->slug : null,
+        ],
+    ] : null;
+
+    $otherMatches = EsportMatch::where('is_active', true) // state
+        ->when($match, function ($query) use ($match) {
+            return $query->where('id', '!=', $match->id);
+        })
+        ->orderBy('scheduled_date', 'asc')
+        ->limit(4)
+        ->get()
+        ->map(function ($om) {
+            return [ // convert
+                'id' => $om->id,
+                'tournament_name' => $om->tournament_name,
+                'game_title' => $om->game_title,
+                'round' => $om->round ?: 'Match Fixture',
+                'format' => $om->format ?: 'BO3',
+                'team_a_name' => $om->team_a_name,
+                'team_a_tag' => $om->team_a_tag ?: strtoupper(substr($om->team_a_name, 0, 3)),
+                'team_b_name' => $om->team_b_name,
+                'team_b_tag' => $om->team_b_tag ?: strtoupper(substr($om->team_b_name, 0, 3)),
+                'formatted_date' => $om->scheduled_date ? $om->scheduled_date->format('d M Y') : 'TBA',
+                'scheduled_time' => $om->scheduled_time ?: 'TBA',
+                'status' => $om->status ?: 'UPCOMING',
+            ];
+        });
+
+    return Inertia::render('MatchDetails', [ // screen
+        'match' => $matchData,
+        'otherMatches' => $otherMatches
     ]);
 })->name('matches.show');
 
@@ -271,7 +449,9 @@ Route::get('/about', function () {
 })->name('about');
 
 Route::get('/teams/details', function () {
-    return Inertia::render('TeamDetails');
+    return Inertia::render('TeamDetails', [
+        'slug' => request()->query('slug', 'harimau-my')
+    ]);
 })->name('teams.details');
 
 Route::get('/teams/state-details', function () {
@@ -451,6 +631,9 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/teams', [AdminTeamController::class, 'index'])->name('teams'); // screen
         Route::get('/teams/create', [AdminTeamController::class, 'create'])->name('teams.create'); // screen
         Route::post('/teams', [AdminTeamController::class, 'store'])->name('teams.store'); // save
+        Route::get('/teams/{team}/edit', [AdminTeamController::class, 'edit'])->name('teams.edit'); // screen
+        Route::put('/teams/{team}', [AdminTeamController::class, 'update'])->name('teams.update'); // save
+        Route::post('/teams/{team}', [AdminTeamController::class, 'update'])->name('teams.update-post'); // save
         Route::delete('/teams/{team}', [AdminTeamController::class, 'destroy'])->name('teams.destroy'); // save
 
         Route::get('/library', function () {
