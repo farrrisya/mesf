@@ -11,7 +11,8 @@ import {
     Clock,
     Tv,
     MapPin,
-    ExternalLink
+    ExternalLink,
+    Edit2
 } from 'lucide-react';
 
 // --2. main component--
@@ -119,14 +120,24 @@ export default function Matches({ matches = [] }) {
                                             </span>
                                         </div>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDelete(match.id, match.tournament_name)} // trigger
-                                            className="p-1.5 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
-                                            title="Delete Fixture"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
+                                        <div className="flex items-center gap-1 shrink-0">
+                                            <Link
+                                                href={route('admin.matches.edit', match.id)} // redirect
+                                                className="p-1.5 rounded-xl text-slate-400 hover:text-amber-300 hover:bg-amber-400/10 transition-colors cursor-pointer"
+                                                title="Edit Fixture"
+                                            >
+                                                <Edit2 className="w-4 h-4" />
+                                            </Link>
+
+                                            <button
+                                                type="button"
+                                                onClick={() => handleDelete(match.id, match.tournament_name)} // trigger
+                                                className="p-1.5 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
+                                                title="Delete Fixture"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
 
                                     {/* tournament & round */}

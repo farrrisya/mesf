@@ -721,6 +721,8 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/matches', [AdminMatchController::class, 'index'])->name('matches'); // screen
         Route::get('/matches/create', [AdminMatchController::class, 'create'])->name('matches.create'); // screen
         Route::post('/matches', [AdminMatchController::class, 'store'])->name('matches.store'); // save
+        Route::get('/matches/{match}/edit', [AdminMatchController::class, 'edit'])->name('matches.edit'); // screen
+        Route::put('/matches/{match}', [AdminMatchController::class, 'update'])->name('matches.update'); // save
         Route::delete('/matches/{match}', [AdminMatchController::class, 'destroy'])->name('matches.destroy'); // save
 
         Route::get('/teams', [AdminTeamController::class, 'index'])->name('teams'); // screen

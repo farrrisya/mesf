@@ -17,9 +17,7 @@ import {
     X,
     AlertCircle,
     Flame,
-    Video,
-    LayoutList,
-    LayoutGrid
+    Video
 } from 'lucide-react';
 
 // --2. properties--
@@ -38,7 +36,6 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
     const [searchQuery, setSearchQuery] = useState(filters.search || ''); // state
     const [selectedCategory, setSelectedCategory] = useState(filters.category || 'ALL'); // state
     const [selectedStatus, setSelectedStatus] = useState(filters.status || 'ALL'); // state
-    const [viewMode, setViewMode] = useState('table'); // state
     const [deleteModalState, setDeleteModalState] = useState({ isOpen: false, article: null }); // state
 
     // --4. actions--
@@ -163,69 +160,37 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                         </div>
                     </div>
 
-                    {/* category filter tabs & view mode switcher */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-white/5">
-                        <div className="flex flex-wrap items-center gap-2">
+                    {/* category filter tabs */}
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+                        <button
+                            type="button"
+                            onClick={() => setSelectedCategory('ALL')} // trigger
+                            className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all cursor-pointer ${
+                                selectedCategory === 'ALL'
+                                    ? 'bg-white/20 text-white border border-white/30 shadow'
+                                    : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:bg-white/10'
+                            }`}
+                        >
+                            All Categories
+                        </button>
+                        {categories.map((cat) => (
                             <button
+                                key={cat}
                                 type="button"
-                                onClick={() => setSelectedCategory('ALL')} // trigger
+                                onClick={() => setSelectedCategory(cat)} // trigger
                                 className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all cursor-pointer ${
-                                    selectedCategory === 'ALL'
-                                        ? 'bg-white/20 text-white border border-white/30 shadow'
+                                    selectedCategory === cat
+                                        ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40 shadow-[0_0_10px_rgba(251,191,36,0.2)]'
                                         : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:bg-white/10'
                                 }`}
                             >
-                                All Categories
+                                {cat}
                             </button>
-                            {categories.map((cat) => (
-                                <button
-                                    key={cat}
-                                    type="button"
-                                    onClick={() => setSelectedCategory(cat)} // trigger
-                                    className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider uppercase transition-all cursor-pointer ${
-                                        selectedCategory === cat
-                                            ? 'bg-amber-400/20 text-amber-300 border border-amber-400/40 shadow-[0_0_10px_rgba(251,191,36,0.2)]'
-                                            : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:bg-white/10'
-                                    }`}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
-
-                        {/* view switcher */}
-                        <div className="flex items-center self-end sm:self-auto bg-white/5 p-1 rounded-xl border border-white/10 shrink-0 gap-1">
-                            <button
-                                type="button"
-                                onClick={() => setViewMode('table')} // toggle
-                                title="Table View"
-                                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                                    viewMode === 'table'
-                                        ? 'bg-amber-400 text-black font-bold shadow'
-                                        : 'text-slate-400 hover:text-white'
-                                }`}
-                            >
-                                <LayoutList className="w-3.5 h-3.5" />
-                                <span>Table</span>
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setViewMode('cards')} // toggle
-                                title="Cards View"
-                                className={`px-2.5 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
-                                    viewMode === 'cards'
-                                        ? 'bg-amber-400 text-black font-bold shadow'
-                                        : 'text-slate-400 hover:text-white'
-                                }`}
-                            >
-                                <LayoutGrid className="w-3.5 h-3.5" />
-                                <span>Cards</span>
-                            </button>
-                        </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* articles list / table */}
+                {/* articles card list */}
                 {filteredArticles.length === 0 ? (
                     <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-12 shadow-2xl text-center space-y-4">
                         <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
@@ -249,165 +214,8 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                             </Link>
                         </div>
                     </div>
-                ) : viewMode === 'table' ? (
-                    /* Table View: Clean, structured data grid inside a solid container */
-                    <div className="bg-[#090D18]/90 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl overflow-hidden animate-fadeIn">
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left text-xs sm:text-sm text-slate-300">
-                                <thead className="bg-white/[0.04] text-slate-400 uppercase text-[10px] tracking-wider border-b border-white/10 font-mono">
-                                    <tr>
-                                        <th className="py-3.5 px-5">Article</th>
-                                        <th className="py-3.5 px-4 w-36">Category</th>
-                                        <th className="py-3.5 px-4 w-32">Status</th>
-                                        <th className="py-3.5 px-4 w-28 text-center">Hero Story</th>
-                                        <th className="py-3.5 px-4 w-40">Date & Stats</th>
-                                        <th className="py-3.5 px-5 w-36 text-right">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-white/5">
-                                    {filteredArticles.map((article) => {
-                                        const isPublished = article.status === 'published';
-                                        const isFeatured = Boolean(article.is_featured);
-
-                                        return (
-                                            <tr
-                                                key={article.id}
-                                                className={`hover:bg-white/[0.03] transition-colors ${
-                                                    isFeatured ? 'bg-amber-400/[0.02]' : ''
-                                                }`}
-                                            >
-                                                {/* Article column */}
-                                                <td className="py-3.5 px-5">
-                                                    <div className="flex items-center gap-3.5">
-                                                        <div className="relative w-16 h-12 rounded-lg overflow-hidden bg-black/70 border border-white/20 shrink-0 flex items-center justify-center">
-                                                            {article.image_path ? (
-                                                                <img
-                                                                    src={article.image_path}
-                                                                    alt={article.title}
-                                                                    className="w-full h-full object-cover"
-                                                                    onError={(e) => {
-                                                                        e.target.style.display = 'none';
-                                                                    }}
-                                                                />
-                                                            ) : (
-                                                                <Newspaper className="w-4 h-4 text-slate-500" />
-                                                            )}
-                                                        </div>
-                                                        <div className="min-w-0 max-w-md">
-                                                            <div className="flex items-center gap-2">
-                                                                <h4 className="font-bold text-white hover:text-amber-300 transition-colors truncate text-sm">
-                                                                    {article.title}
-                                                                </h4>
-                                                                {article.video_url && (
-                                                                    <span className="flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold text-amber-300 bg-amber-400/15 border border-amber-400/30 shrink-0">
-                                                                        <Video className="w-2.5 h-2.5" />
-                                                                        <span>Video</span>
-                                                                    </span>
-                                                                )}
-                                                            </div>
-                                                            <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
-                                                                <span className="text-amber-400/90 font-medium text-[11px]">
-                                                                    {article.tag || article.category}
-                                                                </span>
-                                                                <span>•</span>
-                                                                <span className="font-mono text-slate-500 text-[10px] truncate">
-                                                                    /{article.slug}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-
-                                                {/* Category */}
-                                                <td className="py-3.5 px-4 whitespace-nowrap">
-                                                    <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/5 border border-white/10 text-slate-300">
-                                                        {article.category}
-                                                    </span>
-                                                </td>
-
-                                                {/* Status Toggle */}
-                                                <td className="py-3.5 px-4 whitespace-nowrap">
-                                                    <button
-                                                        type="button"
-                                                        title={`Click to switch to ${isPublished ? 'draft' : 'published'}`}
-                                                        onClick={() => handleToggleStatus(article)} // trigger
-                                                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer inline-flex items-center gap-1.5 ${
-                                                            isPublished
-                                                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.15)]'
-                                                                : 'bg-amber-500/20 text-amber-300 border border-amber-500/40 hover:bg-amber-500/30'
-                                                        }`}
-                                                    >
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${isPublished ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-                                                        <span className="capitalize">{article.status}</span>
-                                                    </button>
-                                                </td>
-
-                                                {/* Hero Story Toggle */}
-                                                <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                                                    <button
-                                                        type="button"
-                                                        title={isFeatured ? 'Hero Story (Featured). Click to unfeature.' : 'Click to make this the Hero Story.'}
-                                                        onClick={() => handleToggleFeatured(article)} // trigger
-                                                        className={`p-1.5 rounded-lg border transition-all cursor-pointer inline-flex items-center justify-center ${
-                                                            isFeatured
-                                                                ? 'bg-amber-400 text-black border-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.35)]'
-                                                                : 'bg-white/5 text-slate-500 border border-white/10 hover:text-amber-400 hover:border-amber-400/30'
-                                                        }`}
-                                                    >
-                                                        <Star className={`w-3.5 h-3.5 ${isFeatured ? 'fill-black' : ''}`} />
-                                                    </button>
-                                                </td>
-
-                                                {/* Date & Stats */}
-                                                <td className="py-3.5 px-4 whitespace-nowrap">
-                                                    <div className="text-xs text-slate-300 font-medium">
-                                                        {article.published_at_formatted || (article.created_at ? new Date(article.created_at).toLocaleDateString('en-MY', { year: 'numeric', month: 'short', day: 'numeric' }) : '-')}
-                                                    </div>
-                                                    <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                                                        <Eye className="w-3 h-3 text-slate-500" />
-                                                        <span>{article.views_count || 0} views</span>
-                                                    </div>
-                                                </td>
-
-                                                {/* Actions */}
-                                                <td className="py-3.5 px-5 text-right whitespace-nowrap">
-                                                    <div className="inline-flex items-center gap-1.5">
-                                                        <a
-                                                            href={`/news/${article.slug}`}
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                            title="View article on public website"
-                                                            className="p-1.5 rounded-lg bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:border-white/25 hover:bg-white/10 transition-colors cursor-pointer"
-                                                        >
-                                                            <ExternalLink className="w-3.5 h-3.5" />
-                                                        </a>
-                                                        <Link
-                                                            href={route('admin.news.edit', article.id)} // redirect
-                                                            title="Edit article"
-                                                            className="p-1.5 rounded-lg bg-white/5 text-slate-300 border border-white/10 hover:text-amber-300 hover:border-amber-400/40 hover:bg-amber-400/10 transition-colors cursor-pointer"
-                                                        >
-                                                            <Edit2 className="w-3.5 h-3.5" />
-                                                        </Link>
-                                                        <button
-                                                            type="button"
-                                                            title="Delete article"
-                                                            onClick={() => confirmDelete(article)} // trigger
-                                                            className="p-1.5 rounded-lg bg-white/5 text-slate-400 border border-white/10 hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-colors cursor-pointer"
-                                                        >
-                                                            <Trash2 className="w-3.5 h-3.5" />
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
                 ) : (
-                    /* Cards View: Grid of high-contrast cards */
-                    <div className="space-y-4 animate-fadeIn">
+                    <div className="space-y-4">
                         {filteredArticles.map((article) => {
                             const isPublished = article.status === 'published';
                             const isFeatured = Boolean(article.is_featured);

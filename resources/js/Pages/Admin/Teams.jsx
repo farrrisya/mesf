@@ -266,13 +266,9 @@ export default function Teams({ teams = [] }) {
                                     <span className="text-[11px] font-mono">
                                         Roster: {team.roster_size || 5} Players
                                     </span>
-                                    <Link
-                                        href={route('admin.teams.edit', team.id)} // redirect
-                                        className="inline-flex items-center gap-1 text-slate-400 hover:text-amber-300 transition-colors"
-                                    >
-                                        <Edit2 className="w-3.5 h-3.5" />
-                                        <span>Edit</span>
-                                    </Link>
+                                    <span className="text-[11px] font-mono uppercase text-slate-500">
+                                        {team.region || (team.type === 'state' ? 'State Affiliate' : 'National Squad')}
+                                    </span>
                                 </div>
                             </div>
                         ))}
