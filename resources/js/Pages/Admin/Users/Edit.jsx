@@ -42,13 +42,10 @@ export default function Edit({ staffUser = {} }) {
                 </div>
 
                 {/* Header title */}
-                <div className="mb-6 space-y-1">
-                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-black text-white uppercase tracking-tight">
                         Edit Staff Role & Status
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                        Modify administrative privilege tier or toggle account active status.
-                    </p>
+                    </h1>
                 </div>
 
                 {/* Form Card */}

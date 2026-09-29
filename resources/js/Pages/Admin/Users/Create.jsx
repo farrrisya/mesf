@@ -44,13 +44,10 @@ export default function Create() {
                 </div>
 
                 {/* Header title */}
-                <div className="mb-6 space-y-1">
-                    <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-black text-white uppercase tracking-tight">
                         Add Staff Account
-                    </h2>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-0.5">
-                        Create an official federation administrator or management staff profile.
-                    </p>
+                    </h1>
                 </div>
 
                 {/* Form Card */}
