@@ -100,7 +100,7 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                 )}
 
                 {/* search & action bar */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl space-y-4">
+                <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border border-white/15 shadow-[0_12px_30px_rgba(0,0,0,0.65)] space-y-4">
                     <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                         {/* search input */}
                         <div className="relative flex-1">
@@ -111,7 +111,7 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                 value={searchQuery} // state
                                 onChange={(e) => setSearchQuery(e.target.value)} // trigger
                                 placeholder="Search articles by title, excerpt, location, tag..."
-                                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
+                                className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/15 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
                             />
                             {searchQuery && (
                                 <button
@@ -192,22 +192,22 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
 
                 {/* articles card list */}
                 {filteredArticles.length === 0 ? (
-                    <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-12 shadow-2xl text-center space-y-4">
-                        <div className="mx-auto w-16 h-16 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
-                            <Newspaper className="w-8 h-8" />
+                    <div className="bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border border-white/15 rounded-2xl p-8 sm:p-10 shadow-xl text-center space-y-4">
+                        <div className="mx-auto w-14 h-14 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shadow-inner">
+                            <Newspaper className="w-7 h-7" />
                         </div>
                         <div className="space-y-1 max-w-md mx-auto">
-                            <h3 className="text-lg font-bold text-white tracking-wide">No News Articles Found</h3>
+                            <h3 className="text-base sm:text-lg font-bold text-white tracking-wide">No News Articles Found</h3>
                             <p className="text-xs sm:text-sm text-slate-400">
                                 {searchQuery || selectedCategory !== 'ALL' || selectedStatus !== 'ALL'
                                     ? 'Try adjusting your search filters to find what you are looking for.'
                                     : 'Start by creating your first official news story or tournament announcement.'}
                             </p>
                         </div>
-                        <div className="pt-2">
+                        <div className="pt-1">
                             <Link
                                 href={route('admin.news.create')} // redirect
-                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 text-black font-bold text-xs hover:bg-amber-300 transition-all cursor-pointer shadow-lg"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs transition-all cursor-pointer shadow-lg"
                             >
                                 <Plus className="w-4 h-4" />
                                 <span>Create First News Article</span>
