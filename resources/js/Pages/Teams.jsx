@@ -364,7 +364,7 @@ export default function Teams({ uploadedTeams = [] }) {
                                 {filteredStates.map((state) => (
                                     <div
                                         key={state.id}
-                                        className="group relative overflow-hidden rounded-3xl p-6 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border border-white/15 hover:border-white/35 transition-all duration-300 flex flex-col items-center text-center space-y-4 shadow-[0_16px_40px_rgba(0,0,0,0.65)] hover:bg-[#121b30]"
+                                        className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border border-white/15 hover:border-white/35 transition-all duration-300 flex flex-col justify-between space-y-4 shadow-[0_16px_40px_rgba(0,0,0,0.65)] hover:bg-[#121b30] text-left"
                                     >
                                         {/* top edge luminous highlight beam */}
                                         <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:via-white/40 opacity-70" />
@@ -383,9 +383,9 @@ export default function Teams({ uploadedTeams = [] }) {
                                             </span>
                                         </div>
 
-                                        {/* central state crest pedestal (NO HOVER ZOOM) */}
-                                        <div className="relative z-10 my-1">
-                                            <div className="relative h-28 w-28 rounded-2xl bg-black/70 border border-white/20 p-3 flex items-center justify-center shadow-inner group-hover:border-white/40 transition-colors">
+                                        {/* state crest & title (left-aligned) */}
+                                        <div className="relative z-10 flex items-start gap-4 my-1">
+                                            <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-black/70 border border-white/20 p-2.5 flex items-center justify-center shadow-inner group-hover:border-white/40 transition-colors shrink-0">
                                                 <img
                                                     src={state.image}
                                                     alt={state.name}
@@ -395,16 +395,15 @@ export default function Teams({ uploadedTeams = [] }) {
                                                     }}
                                                 />
                                             </div>
-                                        </div>
 
-                                        {/* state name & official association title */}
-                                        <div className="relative z-10 space-y-1.5 flex-1 flex flex-col justify-center">
-                                            <h3 className="text-xl font-black text-white group-hover:text-neutral-100 transition-colors tracking-wide">
-                                                {state.name}
-                                            </h3>
-                                            <p className="text-xs text-neutral-400 leading-relaxed line-clamp-2 px-1">
-                                                {state.title}
-                                            </p>
+                                            <div className="space-y-1 min-w-0 flex-1">
+                                                <h3 className="text-base sm:text-lg font-black text-white group-hover:text-neutral-100 transition-colors tracking-wide truncate">
+                                                    {state.name}
+                                                </h3>
+                                                <p className="text-xs text-neutral-400 leading-snug line-clamp-2">
+                                                    {state.title}
+                                                </p>
+                                            </div>
                                         </div>
 
                                         {/* verified affiliate footer & details link */}
