@@ -48,26 +48,10 @@ export default function Index({ logs = { data: [], links: [] }, filters = {} }) 
             <Head title="Activity Logs - Admin" />
 
             <div className="space-y-6 max-w-7xl pb-16">
-                {/* Header title */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <div>
-                        <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider">
-                            Activity Logs & Audit Trail
-                        </h2>
-                        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                            System audit history tracking federation administrative updates, additions, and deletions.
-                        </p>
-                    </div>
-
-                    <span className="text-xs font-mono px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-300 w-fit">
-                        {logs.total ?? logs.data?.length ?? 0} Recorded Actions
-                    </span>
-                </div>
-
                 {/* Search Bar */}
                 <form
                     onSubmit={handleSearch} // trigger
-                    className="p-4 rounded-3xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl flex items-center gap-3"
+                    className="p-4 sm:p-5 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4"
                 >
                     <div className="relative flex-1 w-full">
                         <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -76,15 +60,21 @@ export default function Index({ logs = { data: [], links: [] }, filters = {} }) 
                             value={searchQuery} // state
                             onChange={(e) => setSearchQuery(e.target.value)} // trigger
                             placeholder="Search logs by staff name, action, description, or model..."
-                            className="w-full pl-10 pr-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
+                            className="w-full pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:outline-none focus:border-amber-400/50 transition-all font-sans"
                         />
                     </div>
-                    <button
-                        type="submit"
-                        className="px-4 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
-                    >
-                        Search
-                    </button>
+
+                    <div className="flex items-center gap-3 shrink-0">
+                        <span className="text-xs font-mono px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 w-fit whitespace-nowrap">
+                            {logs.total ?? logs.data?.length ?? 0} Recorded Actions
+                        </span>
+                        <button
+                            type="submit"
+                            className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                        >
+                            <span>Filter</span>
+                        </button>
+                    </div>
                 </form>
 
                 {/* Logs Table Card */}

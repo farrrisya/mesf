@@ -106,24 +106,6 @@ export default function Index({ users = [] }) {
             <Head title="Manage Roles - Admin" />
 
             <div className="space-y-6 max-w-7xl pb-16">
-                {/* Header title & Add User Button */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/10">
-                    <div>
-                        <h1 className="text-2xl sm:text-3xl font-black text-white uppercase tracking-tight">
-                            Staff Roles
-                        </h1>
-                    </div>
-
-                    <Link
-                        id="add-staff-btn"
-                        href={route('admin.users.create')} // redirect
-                        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs uppercase tracking-wider shadow-lg shadow-amber-400/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 w-fit"
-                    >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Staff Account</span>
-                    </Link>
-                </div>
-
                 {/* Feedback Alerts */}
                 {errors?.error && (
                     <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-300 flex items-center gap-3 animate-fadeIn">
@@ -141,7 +123,7 @@ export default function Index({ users = [] }) {
 
                 {/* Filter and Search Bar */}
                 <div className="p-4 sm:p-5 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl space-y-4">
-                    <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+                    <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
                         {/* search input */}
                         <div className="relative flex-1">
                             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
@@ -164,32 +146,44 @@ export default function Index({ users = [] }) {
                             )}
                         </div>
 
-                        {/* role filter tabs */}
-                        <div className="flex flex-wrap items-center gap-2 border-t lg:border-t-0 border-white/5 pt-3 lg:pt-0">
-                            {ROLE_TABS.map((tab) => {
-                                const isActive = roleFilter === tab.id;
-                                const count = counts[tab.id] || 0;
-                                return (
-                                    <button
-                                        key={tab.id}
-                                        type="button"
-                                        onClick={() => setRoleFilter(tab.id)} // trigger
-                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wider uppercase transition-all cursor-pointer flex items-center gap-1.5 ${
-                                            isActive
-                                                ? 'bg-amber-400 text-black shadow-md font-extrabold'
-                                                : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:bg-white/10'
-                                        }`}
-                                    >
-                                        <span>{tab.label}</span>
-                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
-                                            isActive ? 'bg-black/20 text-black' : 'bg-white/10 text-slate-300'
-                                        }`}>
-                                            {count}
-                                        </span>
-                                    </button>
-                                );
-                            })}
+                        {/* action controls */}
+                        <div className="flex items-center gap-3">
+                            <Link
+                                id="add-staff-btn"
+                                href={route('admin.users.create')} // redirect
+                                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs sm:text-sm shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                            >
+                                <Plus className="w-4 h-4" />
+                                <span>Add Staff Account</span>
+                            </Link>
                         </div>
+                    </div>
+
+                    {/* role filter tabs */}
+                    <div className="flex flex-wrap items-center gap-2 border-t border-white/5 pt-3">
+                        {ROLE_TABS.map((tab) => {
+                            const isActive = roleFilter === tab.id;
+                            const count = counts[tab.id] || 0;
+                            return (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setRoleFilter(tab.id)} // trigger
+                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold tracking-wider uppercase transition-all cursor-pointer flex items-center gap-1.5 ${
+                                        isActive
+                                            ? 'bg-amber-400 text-black shadow-md font-extrabold'
+                                            : 'bg-white/5 text-slate-400 border border-white/10 hover:text-white hover:bg-white/10'
+                                    }`}
+                                >
+                                    <span>{tab.label}</span>
+                                    <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold ${
+                                        isActive ? 'bg-black/20 text-black' : 'bg-white/10 text-slate-300'
+                                    }`}>
+                                        {count}
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
