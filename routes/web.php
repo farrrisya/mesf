@@ -449,8 +449,59 @@ Route::get('/about', function () {
 })->name('about');
 
 Route::get('/teams/details', function () {
+    $slug = request()->query('slug');
+    $team = null;
+    if ($slug) {
+        $team = Team::where('slug', $slug)->first() ?: Team::where('id', $slug)->first();
+    }
+    if (!$team) {
+        $team = Team::where('is_active', true)->whereIn('type', ['national', 'pro'])->first();
+    }
+
+    $teamData = $team ? [
+        'id' => $team->id,
+        'name' => $team->name,
+        'slug' => $team->slug,
+        'tag' => $team->tag ?: strtoupper(substr($team->name, 0, 3)),
+        'type' => $team->type,
+        'region' => $team->region ?: 'National / All Malaysia',
+        'country' => 'Malaysia',
+        'flag' => '🇲🇾',
+        'status' => $team->status ?: 'Active Squad',
+        'created' => $team->created_at ? $team->created_at->format('Y') : null,
+        'founder' => 'Official Management',
+        'manager' => $team->manager_name,
+        'contact_email' => $team->contact_email,
+        'motto' => $team->motto,
+        'primaryGame' => $team->game_title ?: 'Competitive Esports',
+        'logo' => $team->logo_path ? \Illuminate\Support\Facades\Storage::url($team->logo_path) : null,
+        'roster_size' => $team->roster_size ?: 5,
+        'stats' => [
+            'circuit' => $team->game_title ? "Official {$team->game_title} Circuit" : 'Sanctioned Circuit',
+            'placement' => 'Sanctioned',
+            'tier' => strtoupper($team->type) . ' TIER',
+        ],
+    ] : null;
+
+    $otherTeams = Team::where('is_active', true)
+        ->when($team, function ($q) use ($team) {
+            return $q->where('id', '!=', $team->id);
+        })
+        ->limit(4)
+        ->get()
+        ->map(function ($t) {
+            return [
+                'id' => $t->id,
+                'name' => $t->name,
+                'slug' => $t->slug,
+                'tag' => $t->tag ?: strtoupper(substr($t->name, 0, 3)),
+            ];
+        });
+
     return Inertia::render('TeamDetails', [
-        'slug' => request()->query('slug', 'harimau-my')
+        'team' => $teamData,
+        'otherTeams' => $otherTeams,
+        'slug' => $slug,
     ]);
 })->name('teams.details');
 
@@ -465,8 +516,52 @@ Route::get('/teams/state/{slug}', function ($slug) {
 })->name('teams.state-show');
 
 Route::get('/teams/{slug}', function ($slug) {
+    $team = Team::where('slug', $slug)->first() ?: Team::where('id', $slug)->first();
+
+    $teamData = $team ? [
+        'id' => $team->id,
+        'name' => $team->name,
+        'slug' => $team->slug,
+        'tag' => $team->tag ?: strtoupper(substr($team->name, 0, 3)),
+        'type' => $team->type,
+        'region' => $team->region ?: 'National / All Malaysia',
+        'country' => 'Malaysia',
+        'flag' => '🇲🇾',
+        'status' => $team->status ?: 'Active Squad',
+        'created' => $team->created_at ? $team->created_at->format('Y') : null,
+        'founder' => 'Official Management',
+        'manager' => $team->manager_name,
+        'contact_email' => $team->contact_email,
+        'motto' => $team->motto,
+        'primaryGame' => $team->game_title ?: 'Competitive Esports',
+        'logo' => $team->logo_path ? \Illuminate\Support\Facades\Storage::url($team->logo_path) : null,
+        'roster_size' => $team->roster_size ?: 5,
+        'stats' => [
+            'circuit' => $team->game_title ? "Official {$team->game_title} Circuit" : 'Sanctioned Circuit',
+            'placement' => 'Sanctioned',
+            'tier' => strtoupper($team->type) . ' TIER',
+        ],
+    ] : null;
+
+    $otherTeams = Team::where('is_active', true)
+        ->when($team, function ($q) use ($team) {
+            return $q->where('id', '!=', $team->id);
+        })
+        ->limit(4)
+        ->get()
+        ->map(function ($t) {
+            return [
+                'id' => $t->id,
+                'name' => $t->name,
+                'slug' => $t->slug,
+                'tag' => $t->tag ?: strtoupper(substr($t->name, 0, 3)),
+            ];
+        });
+
     return Inertia::render('TeamDetails', [
-        'slug' => $slug
+        'team' => $teamData,
+        'otherTeams' => $otherTeams,
+        'slug' => $slug,
     ]);
 })->name('teams.show');
 

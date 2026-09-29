@@ -6,55 +6,6 @@ import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
-const MATCH_GROUPS = [
-    {
-        date: '05 Oct 2026',
-        matches: [
-            {
-                id: 1,
-                tournament: 'Liga Esports Malaysia (LEM) 2026',
-                stage: 'Grand Finals',
-                game: 'Mobile Legends: Bang Bang',
-                format: 'BO5',
-                time: '20:00',
-                status: 'LIVE',
-                venue: 'Axiata Arena, Bukit Jalil',
-                teamA: { name: 'Harimau MY Esports', tag: 'HMY', logo: null, score: 2 },
-                teamB: { name: 'Selangor Red Giants', tag: 'SRG', logo: null, score: 1 }
-            },
-            {
-                id: 2,
-                tournament: 'Malaysia Cyber Games Championship',
-                stage: 'Semifinals - Match 1',
-                game: 'PUBG Mobile',
-                format: 'BO3',
-                time: '22:30',
-                status: 'UPCOMING',
-                venue: 'Mid Valley Exhibition Centre',
-                teamA: { name: 'HomeBois', tag: 'HB', logo: null, score: null },
-                teamB: { name: 'Geek Fam MY', tag: 'GF', logo: null, score: null }
-            }
-        ]
-    },
-    {
-        date: '08 Oct 2026',
-        matches: [
-            {
-                id: 3,
-                tournament: 'National Collegiate Esports League',
-                stage: 'Quarterfinals',
-                game: 'Valorant',
-                format: 'BO3',
-                time: '18:00',
-                status: 'UPCOMING',
-                venue: 'Sunway Pyramid Convention Centre',
-                teamA: { name: 'Team Secret Academy', tag: 'TSA', logo: null, score: null },
-                teamB: { name: 'Todak Gaming', tag: 'TDK', logo: null, score: null }
-            }
-        ]
-    }
-];
-
 const DEFAULT_STATUS_FILTERS = ['All Matches', 'Live', 'Upcoming', 'Results'];
 
 // helper to get team initials if logo is absent
@@ -70,8 +21,7 @@ function getTeamInitials(name = '', tag = '') { // convert
 // --3. main component--
 export default function Matches({ matchGroups = [] }) {
     // --4. actions--
-    const hasUploads = matchGroups && matchGroups.length > 0; // check
-    const baseGroups = hasUploads ? matchGroups : MATCH_GROUPS; // state
+    const baseGroups = matchGroups || []; // state
 
     const [statusFilter, setStatusFilter] = useState('All Matches'); // state
     const [gameFilter, setGameFilter] = useState('All Games'); // state
@@ -295,25 +245,33 @@ export default function Matches({ matchGroups = [] }) {
             {/* 3. horizontal match schedule section */}
             <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-24 text-left">
                 {filteredGroups.length === 0 ? (
-                    <div className="py-20 text-center rounded-2xl border border-white/15 bg-[#0e1628]/80 backdrop-blur-xl shadow-xl">
+                    <div className="py-20 text-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl shadow-xl">
                         <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-neutral-400">
                             <Shield className="w-6 h-6" />
                         </div>
-                        <p className="text-white font-bold text-base">No matches found</p>
-                        <p className="text-neutral-400 text-xs mt-1 max-w-sm mx-auto">
-                            No fixtures currently match your selected filters. Try choosing a different status or resetting filters.
+                        <p className="text-white font-bold text-base">
+                            {baseGroups.length === 0
+                                ? 'No Match Fixtures Scheduled'
+                                : 'No matches found'}
                         </p>
-                        <button
-                            type="button"
-                            onClick={() => {
-                                setStatusFilter('All Matches'); // state
-                                setGameFilter('All Games'); // state
-                                setSearchQuery(''); // state
-                            }}
-                            className="mt-5 px-5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-xs font-bold text-white hover:bg-white hover:text-black transition-all cursor-pointer"
-                        >
-                            Reset All Filters
-                        </button>
+                        <p className="text-neutral-400 text-xs mt-1 max-w-sm mx-auto">
+                            {baseGroups.length === 0
+                                ? 'There are currently no active match fixtures published by administration. Check back soon for upcoming tournaments and schedules.'
+                                : 'No fixtures currently match your selected filters. Try choosing a different status or resetting filters.'}
+                        </p>
+                        {baseGroups.length > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setStatusFilter('All Matches'); // state
+                                    setGameFilter('All Games'); // state
+                                    setSearchQuery(''); // state
+                                }}
+                                className="mt-5 px-5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-xs font-bold text-white hover:bg-white hover:text-black transition-all cursor-pointer"
+                            >
+                                Reset All Filters
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="space-y-12">

@@ -21,55 +21,21 @@ import {
     Radio
 } from 'lucide-react';
 
-// --2. properties--
-const DEFAULT_MATCH = {
-    id: 1,
-    tournament_name: 'Liga Esports Malaysia (LEM) 2026 Season 1',
-    game_title: 'Mobile Legends: Bang Bang (MLBB)',
-    round: 'Grand Finals',
-    format: 'BO5',
-    scheduled_date: '2026-10-05',
-    formatted_date: 'Monday, 05 October 2026',
-    scheduled_time: '20:00 GMT+8',
-    venue: 'Axiata Arena, Bukit Jalil, Kuala Lumpur',
-    stream_url: 'https://youtube.com/@esportsmalaysia',
-    status: 'UPCOMING',
-    team_a: {
-        name: 'Harimau MY Esports',
-        tag: 'HMY',
-        score: null,
-        logo: null,
-        region: 'National / All Malaysia',
-        motto: 'Demi Jalur Gemilang & Kejuaraan Dunia',
-        manager: 'Ahmad Farhan',
-        slug: 'harimau-my-esports',
-    },
-    team_b: {
-        name: 'Selangor Red Giants',
-        tag: 'SRG',
-        score: null,
-        logo: null,
-        region: 'Selangor',
-        motto: 'Gagah Merah Kuning',
-        manager: 'Coach Arcadia',
-        slug: null,
-    },
-};
-
 // --3. main component--
 export default function MatchDetails({ match = null, otherMatches = [] }) {
     // --4. actions--
-    const currentMatch = match || DEFAULT_MATCH; // state
+    const currentMatch = match; // state
     const [copied, setCopied] = useState(false); // state
     const [activeTab, setActiveTab] = useState('overview'); // state
 
-    const isLive = (currentMatch.status || '').toUpperCase().includes('LIVE'); // check
-    const isCompleted = (currentMatch.status || '').toUpperCase().includes('COMPLETED') ||
-        (currentMatch.status || '').toUpperCase().includes('RESULT'); // check
-    const isUpcoming = !isLive && !isCompleted; // check
+    const isLive = Boolean(currentMatch && (currentMatch.status || '').toUpperCase().includes('LIVE')); // check
+    const isCompleted = Boolean(currentMatch && ((currentMatch.status || '').toUpperCase().includes('COMPLETED') ||
+        (currentMatch.status || '').toUpperCase().includes('RESULT'))); // check
+    const isUpcoming = Boolean(currentMatch && !isLive && !isCompleted); // check
 
     // format games count from BO format
     const totalGames = (() => { // convert
+        if (!currentMatch) return 3;
         const fmt = (currentMatch.format || '').toUpperCase();
         if (fmt.includes('BO1')) return 1;
         if (fmt.includes('BO3')) return 3;
@@ -89,7 +55,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
     // --5. UI--
     return (
         <div className="relative min-h-screen bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
-            <Head title={`${currentMatch.team_a?.name} vs ${currentMatch.team_b?.name} - ${currentMatch.tournament_name} - MESF`} />
+            <Head title={currentMatch ? `${currentMatch.team_a?.name} vs ${currentMatch.team_b?.name} - ${currentMatch.tournament_name} - MESF` : 'Match Details - MESF'} />
 
             {/* ambient background glows */}
             <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-amber-500/10 blur-[150px] z-0" />
@@ -115,26 +81,53 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                 <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
                     <BackButton href="/matches" label="Back to Match Schedule" />
 
-                    <div className="flex items-center gap-3">
-                        <button
-                            type="button"
-                            onClick={handleShare} // trigger
-                            className="px-4 py-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 text-neutral-300 hover:text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
-                        >
-                            {copied ? (
-                                <>
-                                    <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                    <span className="text-emerald-400 font-bold">Link Copied!</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Share2 className="w-3.5 h-3.5 text-neutral-400" />
-                                    <span>Share Fixture</span>
-                                </>
-                            )}
-                        </button>
-                    </div>
+                    {currentMatch && (
+                        <div className="flex items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={handleShare} // trigger
+                                className="px-4 py-2 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] hover:border-white/20 text-neutral-300 hover:text-white text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer"
+                            >
+                                {copied ? (
+                                    <>
+                                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                                        <span className="text-emerald-400 font-bold">Link Copied!</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Share2 className="w-3.5 h-3.5 text-neutral-400" />
+                                        <span>Share Fixture</span>
+                                    </>
+                                )}
+                            </button>
+                        </div>
+                    )}
                 </div>
+
+                {!currentMatch ? (
+                    <div className="p-12 sm:p-16 rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] text-center space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-2xl">
+                        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-neutral-300 shadow-inner">
+                            <Swords className="w-8 h-8" />
+                        </div>
+                        <div className="space-y-2 max-w-md mx-auto">
+                            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
+                                No Match Fixture Available
+                            </h2>
+                            <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                                This fixture has not been published or scheduled by the administration yet. Check back soon for upcoming tournaments and schedules.
+                            </p>
+                        </div>
+                        <div className="pt-2">
+                            <Link
+                                href="/matches"
+                                className="px-6 py-2.5 rounded-xl bg-white text-black font-extrabold text-xs tracking-wider uppercase inline-flex items-center gap-2 hover:bg-neutral-200 transition-colors shadow-md"
+                            >
+                                <span>Browse All Fixtures</span>
+                            </Link>
+                        </div>
+                    </div>
+                ) : (
+                    <>
 
                 {/* match marquee hero banner */}
                 <div
@@ -734,6 +727,8 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                             ))}
                         </div>
                     </div>
+                )}
+                    </>
                 )}
             </main>
 

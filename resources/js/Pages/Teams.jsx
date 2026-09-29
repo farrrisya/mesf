@@ -6,81 +6,6 @@ import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
-const PRO_TEAMS = [
-    {
-        id: 1,
-        slug: 'harimau-my',
-        name: 'Harimau MY Esports',
-        tag: 'HMY',
-        logo: null,
-        region: 'Kuala Lumpur, Malaysia',
-        rosters: ['Mobile Legends', 'PUBG Mobile', 'Tekken 8'],
-        status: 'National Squad',
-        accolade: 'Official National Squad • SEA Games Representatives',
-        tier: 'National Tier 1'
-    },
-    {
-        id: 2,
-        slug: 'selangor-red-giants',
-        name: 'Selangor Red Giants',
-        tag: 'SRG',
-        logo: null,
-        region: 'Shah Alam, Selangor',
-        rosters: ['MLBB (MPL)', 'Honor of Kings'],
-        status: 'Pro Franchise',
-        accolade: 'MPL Malaysia Champion • Mid Season Cup Winner',
-        tier: 'Pro Tier 1'
-    },
-    {
-        id: 3,
-        slug: 'todak-gaming',
-        name: 'Todak Gaming',
-        tag: 'TDK',
-        logo: null,
-        region: 'Cyberjaya, Selangor',
-        rosters: ['MLBB (MPL)', 'Valorant', 'Dota 2'],
-        status: 'Pro Franchise',
-        accolade: 'Multi-Season M-Series World Finalists',
-        tier: 'Pro Tier 1'
-    },
-    {
-        id: 4,
-        slug: 'homebois',
-        name: 'HomeBois',
-        tag: 'HB',
-        logo: null,
-        region: 'Kota Bharu / Kuala Lumpur',
-        rosters: ['MLBB (MPL)', 'PUBG Mobile'],
-        status: 'Pro Franchise',
-        accolade: 'MPL Malaysia Champions • International Contender',
-        tier: 'Pro Tier 1'
-    },
-    {
-        id: 5,
-        slug: 'geek-fam-my',
-        name: 'Geek Fam MY',
-        tag: 'GF',
-        logo: null,
-        region: 'Petaling Jaya, Selangor',
-        rosters: ['Dota 2', 'PUBG Mobile (PMSL)'],
-        status: 'Pro Franchise',
-        accolade: 'The International & PMSL SEA Finalists',
-        tier: 'Pro Tier 1'
-    },
-    {
-        id: 6,
-        slug: 'team-secret-academy',
-        name: 'Team Secret Academy',
-        tag: 'TSA',
-        logo: null,
-        region: 'Kuala Lumpur, Malaysia',
-        rosters: ['Valorant Challengers', 'Apex Legends'],
-        status: 'Development Academy',
-        accolade: 'Official Malaysian Development Roster',
-        tier: 'Academy'
-    }
-];
-
 const STATE_AFFILIATES = [
     { id: 'johor', code: 'JHR', name: 'Johor', title: 'Persatuan Sukan Elektronik Negeri Johor', region: 'Peninsular', image: '/images/states/johor_transparent.png' },
     { id: 'kedah', code: 'KDH', name: 'Kedah', title: 'Persatuan Sukan Elektronik Negeri Kedah', region: 'Peninsular', image: '/images/states/kedah_transparent.png' },
@@ -117,8 +42,7 @@ export default function Teams({ uploadedTeams = [] }) {
 
     // national and pro organizations
     const nationalTeams = useMemo(() => { // check
-        const uploaded = uploadedTeams.filter(t => t.type === 'national' || t.type === 'pro');
-        return uploaded.length > 0 ? uploaded : PRO_TEAMS;
+        return uploadedTeams.filter(t => t.type === 'national' || t.type === 'pro');
     }, [uploadedTeams]);
 
     // all 14 official state associations
@@ -309,7 +233,11 @@ export default function Teams({ uploadedTeams = [] }) {
 
                         {filteredNationalTeams.length === 0 ? (
                             <div className="py-12 text-center rounded-2xl border border-white/10 bg-[#0e1628]/50">
-                                <p className="text-neutral-400 text-xs">No pro organizations match "{searchQuery}".</p>
+                                <p className="text-neutral-400 text-xs">
+                                    {searchQuery
+                                        ? `No pro organizations match "${searchQuery}".`
+                                        : 'No national squads or pro organizations have been uploaded by administration yet.'}
+                                </p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
