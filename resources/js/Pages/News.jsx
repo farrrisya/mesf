@@ -62,6 +62,9 @@ export default function News({
     // fallback featured article if none provided
     const displayHero = featuredArticle || (articles.length > 0 ? articles[0] : null); // state
 
+    // determine whether to show spotlight hero card
+    const showSpotlight = !searchQuery && !onlyVideos && displayHero && (activeCategory === 'ALL' || displayHero.category === activeCategory); // check
+
     // --5. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden flex flex-col justify-between">
@@ -84,84 +87,116 @@ export default function News({
                 <PublicNavbar activeTab="news" />
             </div>
 
-            {/* 1. hero header with competition stage background (natural wide aspect ratio, zero zoom-in) */}
-            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
-                {/* pristine zero-grain HD center-focused competition stage image */}
-                <img
-                    src="/images/news_hero_banner_hd.jpg"
-                    alt="Malaysia National Esports Team"
-                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
-                />
-
-                {/* cinematic gradient overlays: dark on left for clean left-aligned text, smooth fade at bottom */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/92 via-[#070B14]/70 to-transparent/10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
-
-                {/* left-aligned header container (matches teams, matches, leagues) */}
-                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
-                    <div className="text-left space-y-3 sm:space-y-4">
-                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
-                            Malaysia Esports Federation
-                        </span>
-                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
-                            News
-                        </h1>
-                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
-                            Official federation announcements, tournament recaps, and national team dispatches.
-                        </p>
+            {/* typographic hero header without photo background */}
+            <header className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 pb-6">
+                <div className="space-y-3 sm:space-y-4">
+                    <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
+                        Malaysia Esports Federation
+                    </span>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/10">
+                        <div>
+                            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white">
+                                News
+                            </h1>
+                            <p className="text-xs sm:text-sm md:text-base text-neutral-400 font-normal leading-relaxed mt-2 max-w-2xl">
+                                Official federation announcements, tournament recaps, and national team dispatches.
+                            </p>
+                        </div>
+                        <div className="hidden md:flex items-center gap-2.5 font-mono text-xs text-neutral-400 pb-1">
+                            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                            <span>Official Press Wire</span>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </header>
 
             {/* main content area */}
             <div className="flex-1">
                 {/* 2. content wrapper with spacious layout */}
-                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-8 sm:pt-10">
-                    {/* editorial hero (featured story) */}
-                    {displayHero && (
-                        <section className="relative w-full rounded-3xl overflow-hidden border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.7)] group bg-[#0A0F1D] min-h-[380px] md:min-h-[440px] flex flex-col justify-end">
+                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-4 sm:pt-6">
+                    {/* editorial hero spotlight (2-column featured story) */}
+                    {showSpotlight && (
+                        <section className="relative w-full rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.6)]">
                             {/* top luminous highlight beam */}
                             <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70 z-20" />
 
-                            {/* image background if available */}
-                            {displayHero.image ? (
-                                <img
-                                    src={displayHero.image}
-                                    alt={displayHero.title}
-                                    className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-75 transition-opacity duration-500 pointer-events-none"
-                                />
-                            ) : (
-                                <div className="absolute inset-0 bg-[#070B14]/80 -z-10" />
-                            )}
-
-                            {/* gradient vignette */}
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
-
-                            {/* hero story content */}
-                            <div className="relative z-10 w-full p-8 sm:p-12 flex flex-col justify-end text-left max-w-3xl space-y-4">
-                                <span className="inline-block px-3 py-1 rounded-lg text-xs font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 backdrop-blur-md w-fit">
-                                    {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
-                                </span>
-
-                                <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight leading-tight">
-                                    {displayHero.title}
-                                </h2>
-
-                                <div className="pt-2 flex items-center gap-6">
-                                    <Link
-                                        href={displayHero.slug ? `/news/${displayHero.slug}` : '/news/article'}
-                                        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-extrabold text-xs tracking-wider uppercase transition-colors shadow-md cursor-pointer"
-                                    >
-                                        <span>Read Story</span>
-                                        <ArrowRight className="w-3.5 h-3.5" />
-                                    </Link>
-
-                                    {displayHero.date && (
-                                        <span className="text-xs text-neutral-400 font-mono">
-                                            {displayHero.date}
-                                        </span>
+                            <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+                                {/* media column (7 cols) */}
+                                <div className="lg:col-span-7 relative min-h-[260px] sm:min-h-[340px] lg:min-h-[420px] bg-[#070B14] overflow-hidden flex items-center justify-center">
+                                    {displayHero.image ? (
+                                        <img
+                                            src={displayHero.image}
+                                            alt={displayHero.title}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex flex-col items-center justify-center gap-3 text-neutral-600 p-8">
+                                            <Newspaper className="w-12 h-12 opacity-40 text-neutral-400" />
+                                            <span className="text-xs font-mono uppercase text-neutral-400">Official Release</span>
+                                        </div>
                                     )}
+
+                                    {/* subtle inner gradients for contrast */}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0d1424]/60 hidden lg:block pointer-events-none" />
+
+                                    {/* badges on image */}
+                                    <div className="absolute top-4 left-4 flex items-center gap-2">
+                                        <span className="px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase bg-amber-400 text-black shadow-md">
+                                            Featured Story
+                                        </span>
+                                        <span className="px-3 py-1 rounded-lg text-xs font-mono font-medium uppercase bg-[#070B14]/80 backdrop-blur-md border border-white/20 text-neutral-200 shadow-sm">
+                                            {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
+                                        </span>
+                                    </div>
+
+                                    {displayHero.video_url && (
+                                        <div className="absolute top-4 right-4">
+                                            <span className="px-3 py-1 rounded-lg text-xs font-mono font-semibold uppercase bg-rose-500/90 text-white backdrop-blur-md flex items-center gap-1.5 shadow-md">
+                                                <Play className="w-3 h-3 fill-white text-white" />
+                                                <span>Video</span>
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* editorial content column (5 cols) */}
+                                <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6 text-left border-t lg:border-t-0 lg:border-l border-white/10">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
+                                            {displayHero.date && <span>{displayHero.date}</span>}
+                                            {displayHero.detail && (
+                                                <>
+                                                    <span className="text-neutral-600">•</span>
+                                                    <span className="truncate">{displayHero.detail}</span>
+                                                </>
+                                            )}
+                                        </div>
+
+                                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight leading-tight">
+                                            {displayHero.title}
+                                        </h2>
+
+                                        {displayHero.excerpt && (
+                                            <p className="text-xs sm:text-sm text-neutral-300 font-normal leading-relaxed line-clamp-4">
+                                                {displayHero.excerpt}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                                        <Link
+                                            href={displayHero.slug ? `/news/${displayHero.slug}` : '/news/article'}
+                                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-extrabold text-xs tracking-wider uppercase transition-colors shadow-md cursor-pointer"
+                                        >
+                                            <span>Read Full Story</span>
+                                            <ArrowRight className="w-3.5 h-3.5" />
+                                        </Link>
+
+                                        <span className="font-mono text-[11px] text-neutral-400">
+                                            MESF Editorial
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </section>
