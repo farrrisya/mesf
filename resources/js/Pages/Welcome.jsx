@@ -523,8 +523,14 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                     <Link
                                         key={item.id || `${cat}-${isBig ? 'hero' : 'sub'}`}
                                         href={`/news/${item.slug}`} // redirect
-                                        className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/10 hover:border-white/25 bg-gradient-to-b from-[#0d1322]/80 to-[#070b14]/90 backdrop-blur-xl transition-colors duration-300 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_45px_rgba(0,0,0,0.7)] flex flex-col justify-between cursor-pointer w-full h-full`}
+                                        className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/20 hover:border-white/35 bg-gradient-to-b from-[#11192e]/95 via-[#0d1527]/95 to-[#090f1d]/95 backdrop-blur-xl ring-1 ring-white/10 hover:ring-white/20 transition-all duration-300 relative overflow-hidden group shadow-[0_16px_40px_rgba(0,0,0,0.65)] hover:shadow-[0_22px_50px_rgba(0,0,0,0.8)] flex flex-col justify-between cursor-pointer w-full h-full`}
                                     >
+                                        {/* top luminous frame beam */}
+                                        <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:via-white/50 opacity-80 z-20 pointer-events-none" />
+
+                                        {/* inner hairline frame */}
+                                        <div className={`absolute inset-2 sm:inset-2.5 rounded-[12px] ${isBig ? 'md:rounded-[20px]' : 'rounded-[12px]'} border border-white/10 group-hover:border-white/20 pointer-events-none z-20 transition-colors duration-300`} />
+
                                         {item.image && (
                                             <>
                                                 <img
@@ -538,7 +544,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                         <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.03] group-hover:bg-white/[0.06] rounded-full blur-3xl transition-colors duration-500" />
 
                                         {/* top metadata: clean badge & tags */}
-                                        <div className="relative z-10 w-full flex items-center justify-between gap-2">
+                                        <div className="relative z-30 w-full flex items-center justify-between gap-2">
                                             <div className="inline-flex items-center px-3 py-1 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-sm shrink-0">
                                                 <span className={`${isBig ? 'text-[10px] sm:text-xs' : 'text-[10px] sm:text-[11px]'} font-mono font-medium tracking-wider text-neutral-200 uppercase`}>
                                                     {cleanTag}
@@ -561,7 +567,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                         </div>
 
                                         {/* bottom content: natural font colors & crisp readability */}
-                                        <div className={`relative z-10 w-full space-y-2 mt-auto ${isBig ? 'pt-8 space-y-2.5' : 'pt-3'} text-left`}>
+                                        <div className={`relative z-30 w-full space-y-2 mt-auto ${isBig ? 'pt-8 space-y-2.5' : 'pt-3'} text-left`}>
                                             <div className={`flex items-center gap-2.5 ${isBig ? 'text-[11px] sm:text-xs' : 'text-[10px] sm:text-[11px]'} font-mono font-normal text-neutral-400`}>
                                                 {item.date && (
                                                     <span className="flex items-center gap-1.5">
@@ -599,15 +605,17 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                             return (
                                 <div
                                     key={cat || (isBig ? 'hero-empty' : 'empty')}
-                                    className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/10 bg-gradient-to-b from-white/[0.03] to-white/[0.01] backdrop-blur-xl relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between w-full h-full`}
+                                    className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/20 bg-gradient-to-b from-[#11192e]/60 to-[#090f1d]/80 backdrop-blur-xl ring-1 ring-white/10 relative overflow-hidden group shadow-[0_16px_40px_rgba(0,0,0,0.65)] flex flex-col justify-between w-full h-full`}
                                 >
+                                    {/* inner hairline frame */}
+                                    <div className={`absolute inset-2 sm:inset-2.5 rounded-[12px] ${isBig ? 'md:rounded-[20px]' : 'rounded-[12px]'} border border-white/10 pointer-events-none z-20`} />
                                     <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.02] rounded-full blur-3xl" />
-                                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit">
+                                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit relative z-30">
                                         <span className="text-[11px] sm:text-xs font-mono font-medium tracking-wider text-neutral-400 uppercase">
                                             {cleanTag}
                                         </span>
                                     </div>
-                                    <div className="space-y-1 mt-auto text-left">
+                                    <div className="space-y-1 mt-auto text-left relative z-30">
                                         <h4 className="text-sm sm:text-base font-semibold text-neutral-300">Official Update</h4>
                                         <p className="text-xs text-neutral-500">Upcoming releases in this category will be published here.</p>
                                     </div>
