@@ -67,18 +67,30 @@ export default function News({
 
     // --5. UI--
     return (
-        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden flex flex-col justify-between">
+        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
             <Head title="News & Announcements - MESF" />
 
-            {/* ambient background glows */}
-            <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[150px] z-0" />
-            <div className="pointer-events-none fixed top-1/3 -right-20 h-[450px] w-[450px] rounded-full bg-emerald-500/5 blur-[160px] z-0" />
+            {/* custom animations & glow styles matching about page */}
+            <style>{`
+                @keyframes pulseGlow {
+                    0%, 100% { opacity: 0.35; transform: scale(1); }
+                    50% { opacity: 0.6; transform: scale(1.05); }
+                }
+                .pulse-glow {
+                    animation: pulseGlow 7s ease-in-out infinite;
+                }
+            `}</style>
 
-            {/* background SVG grain texture */}
+            {/* ambient background glows matching about page */}
+            <div className="pointer-events-none absolute -top-40 left-1/4 h-[550px] w-[550px] rounded-full bg-amber-500/10 blur-[150px] pulse-glow" />
+            <div className="pointer-events-none absolute top-[40%] right-10 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[160px]" />
+            <div className="pointer-events-none absolute top-[75%] left-10 h-[450px] w-[450px] rounded-full bg-amber-400/5 blur-[150px]" />
+
+            {/* fixed grain overlay matching about page */}
             <div
-                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
+                className="pointer-events-none fixed inset-0 z-40 opacity-[0.025]"
                 style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
+                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
                 }}
             />
 
@@ -87,40 +99,29 @@ export default function News({
                 <PublicNavbar activeTab="news" />
             </div>
 
-            {/* 1. hero header with tournament background (natural wide aspect ratio, zero zoom-in) */}
-            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
-                {/* HD esports athletes competition banner */}
-                <img
-                    src="/images/news_hero_banner_hd.jpg"
-                    alt="MESF Esports News"
-                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
-                />
-
-                {/* cinematic gradient overlays: dark on left for clean left-aligned text, smooth fade at bottom */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/90 via-[#070B14]/65 to-transparent/10" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
-
-                {/* left-aligned header container (matches Matches, Teams, and Leagues page) */}
-                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
-                    <div className="text-left space-y-3 sm:space-y-4">
-                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
-                            Malaysia Esports Federation
-                        </span>
-                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
-                            News
-                        </h1>
-                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
-                            Official federation announcements, tournament recaps, and national team dispatches.
-                        </p>
+            {/* typographic hero header matching about page top spacing */}
+            <header className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-32 md:pt-40 pb-6">
+                <div className="space-y-3 sm:space-y-4">
+                    <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
+                        Malaysia Esports Federation
+                    </span>
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/10">
+                        <div>
+                            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white">
+                                News
+                            </h1>
+                            <p className="text-xs sm:text-sm md:text-base text-neutral-400 font-normal leading-relaxed mt-2 max-w-2xl">
+                                Official federation announcements, tournament recaps, and national team dispatches.
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </section>
+            </header>
 
             {/* main content area */}
             <div className="flex-1">
-                {/* 2. content wrapper with standardized spacing matching other pages */}
-                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-8 sm:pt-10">
+                {/* content wrapper with spacious layout matching standard page spacing */}
+                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-6 sm:pt-8">
                     {/* editorial hero spotlight (2-column featured story) */}
                     {showSpotlight && (
                         <section className="relative w-full rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.6)]">
