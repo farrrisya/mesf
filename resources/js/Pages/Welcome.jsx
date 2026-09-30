@@ -489,7 +489,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                         </Link>
                     </div>
 
-                    {/* the editorial news grid: 1 big frame + 4 small frames */}
+                    {/* the editorial news grid: 1 big frame + 2 stacked small frames (3 updates total) */}
                     {(() => {
                         const newsSource = (allNews && allNews.length > 0)
                             ? allNews
@@ -500,11 +500,11 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                         // prioritize featured article for the big frame if available
                         const heroArticle = featuredArticle || newsSource.find(item => item.is_featured && !item.is_empty) || newsSource[0] || { category: 'TOURNAMENTS', is_empty: true }; // state
 
-                        // remaining items for the 4 small cards (prevent duplicate of hero)
+                        // remaining items for the 2 small cards (prevent duplicate of hero)
                         const remainingNews = newsSource.filter(item => item && !item.is_empty && (heroArticle.id ? item.id !== heroArticle.id : true)); // check
 
                         const smallCards = []; // state
-                        for (let i = 0; i < 4; i++) { // loop
+                        for (let i = 0; i < 2; i++) { // loop
                             if (remainingNews[i] && !remainingNews[i].is_empty) { // check
                                 smallCards.push(remainingNews[i]); // save
                             } else {
@@ -617,15 +617,15 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
 
                         return (
                             <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
-                                {/* Left: 1 Big Frame */}
-                                <div className="lg:col-span-5 xl:col-span-5 flex flex-col">
+                                {/* Left: 1 Big Frame (enlarged hero card) */}
+                                <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
                                     {renderCardContent(heroArticle, true)}
                                 </div>
 
-                                {/* Right: 4 Small Frames (2x2 grid) */}
-                                <div className="lg:col-span-7 xl:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                                {/* Right: 2 Small Frames stacked vertically (up and down) */}
+                                <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-4 sm:gap-5">
                                     {smallCards.map((card, idx) => (
-                                        <div key={card.id || `small-${idx}`} className="flex flex-col">
+                                        <div key={card.id || `small-${idx}`} className="flex-1 flex flex-col">
                                             {renderCardContent(card, false)}
                                         </div>
                                     ))}
