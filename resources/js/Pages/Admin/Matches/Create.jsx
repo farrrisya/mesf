@@ -79,31 +79,30 @@ export default function Create() {
         });
     };
 
-    // --5. UI--
     return (
         <AdminLayout
             title="Schedule Match - MESF Admin"
-            contentClassName="p-6 sm:p-8"
+            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
         >
             <Head title="Schedule Match - Admin" />
 
-            <div className="w-full max-w-6xl pb-16 space-y-6">
-                {/* header */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <BackButton href={route('admin.matches')} label="Back to Matches" />
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/20 text-amber-400">
-                            New Fixture
-                        </span>
+            <div className="w-full max-w-6xl pb-16 space-y-5">
+                {/* header bar: tightly positioned with inline back button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <BackButton href={route('admin.matches')} label="Back" />
+                        <div>
+                            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                                Schedule Match Fixture
+                            </h1>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                                Configure tournament stage, competing teams, match schedule, and live broadcast information.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                            Schedule Match Fixture
-                        </h1>
-                        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                            Configure tournament stage, competing teams, match schedule, and live broadcast information.
-                        </p>
-                    </div>
+                    <span className="self-start sm:self-auto px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/20 text-amber-400">
+                        New Fixture
+                    </span>
                 </div>
 
                 {/* success banner */}

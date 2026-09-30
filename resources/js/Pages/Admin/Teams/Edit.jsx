@@ -15,7 +15,9 @@ import {
     Sparkles,
     Check,
     Move,
-    Mail
+    Mail,
+    FileText,
+    CheckCircle2
 } from 'lucide-react';
 import ImagePositionerModal from '@/Components/ImagePositionerModal';
 
@@ -142,26 +144,40 @@ export default function Edit({ team }) {
     return (
         <AdminLayout
             title={`Edit ${team.name} - MESF Admin`}
-            contentClassName="p-6 sm:p-8"
+            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
         >
             <Head title={`Edit ${team.name} - Admin`} />
 
-            <div className="w-full max-w-6xl pb-16 space-y-6">
-                {/* header */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <BackButton href={route('admin.teams')} label="Back to Teams" />
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/20 text-amber-400">
-                            Editing Team #{team.id}
-                        </span>
+            <div className="w-full max-w-6xl pb-16 space-y-5">
+                {/* header bar: tightly positioned with inline back button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <BackButton href={route('admin.teams')} label="Back" />
+                        <div>
+                            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                                Edit Team Profile: {team.name}
+                            </h1>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                                Modify team classification, competitive roster details, manager information, and official logo.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                            Edit Team Profile
-                        </h1>
-                        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                            Update team classification, competitive details, manager information, and official logo.
-                        </p>
+
+                    <div className="flex items-center gap-2.5">
+                        <Link
+                            href={route('admin.teams')} // redirect
+                            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold tracking-wider transition-all"
+                        >
+                            Cancel
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={handleSubmit} // trigger
+                            disabled={processing} // check
+                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.3)] cursor-pointer disabled:opacity-50"
+                        >
+                            {processing ? 'Saving...' : 'Save Changes'}
+                        </button>
                     </div>
                 </div>
 
@@ -179,19 +195,24 @@ export default function Edit({ team }) {
                         {/* left column: team information (8 cols) */}
                         <div className="lg:col-span-8 space-y-6">
                             {/* Card 1: Team Classification */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Shield className="w-4 h-4" />
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
+                                            <Shield className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                Team Classification
+                                            </h2>
+                                            <p className="text-xs text-slate-400">
+                                                Select affiliation status and operational representation level
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 className="text-sm font-bold text-white tracking-wide">
-                                            Team Classification
-                                        </h2>
-                                        <p className="text-[11px] text-slate-400">
-                                            Select affiliation status and operational level
-                                        </p>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                                        Section 1
+                                    </span>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
@@ -223,18 +244,23 @@ export default function Edit({ team }) {
 
                             {/* Card 2: Identity & Discipline */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Users className="w-4 h-4" />
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                                            <Users className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                Team Identity & Discipline
+                                            </h2>
+                                            <p className="text-xs text-slate-400">
+                                                Official team name, tag, discipline title, and state affiliation
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 className="text-sm font-bold text-white tracking-wide">
-                                            Team Identity & Discipline
-                                        </h2>
-                                        <p className="text-[11px] text-slate-400">
-                                            Official team name, tag, and primary esport title
-                                        </p>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                                        Section 2
+                                    </span>
                                 </div>
 
                                 <div className="space-y-4">
@@ -253,7 +279,7 @@ export default function Edit({ team }) {
                                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
                                             />
                                             {errors.name && (
-                                                <p className="text-xs text-rose-400">{errors.name}</p>
+                                                <p className="text-xs text-rose-400 mt-1">{errors.name}</p>
                                             )}
                                         </div>
                                         <div className="space-y-1.5">
@@ -269,6 +295,9 @@ export default function Edit({ team }) {
                                                 onChange={(e) => setData('tag', e.target.value.toUpperCase())} // trigger
                                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-bold uppercase tracking-wider outline-none transition-all font-sans"
                                             />
+                                            {errors.tag && (
+                                                <p className="text-xs text-rose-400 mt-1">{errors.tag}</p>
+                                            )}
                                         </div>
                                     </div>
 
@@ -291,6 +320,9 @@ export default function Edit({ team }) {
                                                     </option>
                                                 ))}
                                             </select>
+                                            {errors.game_title && (
+                                                <p className="text-xs text-rose-400 mt-1">{errors.game_title}</p>
+                                            )}
                                         </div>
 
                                         <div className="space-y-1.5">
@@ -308,10 +340,13 @@ export default function Edit({ team }) {
                                                     </option>
                                                 ))}
                                             </select>
+                                            {errors.region && (
+                                                <p className="text-xs text-rose-400 mt-1">{errors.region}</p>
+                                            )}
                                         </div>
                                     </div>
 
-                                    {/* motto / bio */}
+                                    {/* motto / tagline */}
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
                                             Team Motto / Tagline
@@ -323,24 +358,32 @@ export default function Edit({ team }) {
                                             onChange={(e) => setData('motto', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
+                                        {errors.motto && (
+                                            <p className="text-xs text-rose-400 mt-1">{errors.motto}</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
                             {/* Card 3: Management & Contacts */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Mail className="w-4 h-4" />
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                            <Mail className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                Management & Correspondence
+                                            </h2>
+                                            <p className="text-xs text-slate-400">
+                                                Liaison contact details for federation correspondence
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 className="text-sm font-bold text-white tracking-wide">
-                                            Management & Contacts
-                                        </h2>
-                                        <p className="text-[11px] text-slate-400">
-                                            Liaison contact for federation correspondence
-                                        </p>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                                        Section 3
+                                    </span>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -355,6 +398,9 @@ export default function Edit({ team }) {
                                             onChange={(e) => setData('manager_name', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
+                                        {errors.manager_name && (
+                                            <p className="text-xs text-rose-400 mt-1">{errors.manager_name}</p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-1.5">
@@ -368,16 +414,19 @@ export default function Edit({ team }) {
                                             onChange={(e) => setData('contact_email', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
+                                        {errors.contact_email && (
+                                            <p className="text-xs text-rose-400 mt-1">{errors.contact_email}</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* right column: emblem & status (4 cols) */}
-                        <div className="lg:col-span-4 space-y-6">
+                        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
                             {/* emblem / logo upload card */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
-                                <div className="border-b border-white/5 pb-3">
+                                <div className="border-b border-white/10 pb-3">
                                     <h3 className="text-xs font-bold uppercase tracking-wider text-white">
                                         Official Team Emblem
                                     </h3>
@@ -445,10 +494,22 @@ export default function Edit({ team }) {
                                     onChange={handleLogoChange} // trigger
                                     className="hidden"
                                 />
+                                {errors.logo && (
+                                    <p className="text-xs text-rose-400 text-center mt-1">{errors.logo}</p>
+                                )}
                             </div>
 
                             {/* roster & status card */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
+                                <div className="border-b border-white/10 pb-3">
+                                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                                        Status & Registration
+                                    </h3>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">
+                                        Sanctioning state and active roster size.
+                                    </p>
+                                </div>
+
                                 <div className="space-y-3">
                                     <div className="space-y-1.5">
                                         <label className="block text-[11px] font-semibold text-slate-300">
@@ -486,7 +547,7 @@ export default function Edit({ team }) {
                                         disabled={processing} // check
                                         className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
                                     >
-                                        {processing ? 'Saving Changes...' : 'Update Team Profile'}
+                                        {processing ? 'Saving...' : 'Save Changes'}
                                     </button>
 
                                     <Link

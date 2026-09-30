@@ -141,15 +141,15 @@ export default function Create() {
     return (
         <AdminLayout
             title="Create League - MESF Admin"
-            contentClassName="p-6 sm:p-8"
+            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
         >
             <Head title="Create League - Admin" />
 
-            <div className="w-full max-w-6xl pb-16 space-y-6">
-                {/* header bar */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="w-full max-w-6xl pb-16 space-y-5">
+                {/* header bar: tightly positioned with inline back button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
-                        <BackButton href={route('admin.leagues')} label="Back to Leagues" />
+                        <BackButton href={route('admin.leagues')} label="Back" />
                         <div>
                             <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                                 Register New League

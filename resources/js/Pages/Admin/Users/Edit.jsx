@@ -32,20 +32,24 @@ export default function Edit({ staffUser = {} }) {
 
     // --5. UI--
     return (
-        <AdminLayout title={`Edit Staff User - ${staffUser.name}`}>
+        <AdminLayout
+            title={`Edit Staff User - ${staffUser.name}`}
+            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
+        >
             <Head title={`Edit Role - ${staffUser.name}`} />
 
-            <div className="w-full max-w-3xl pb-16">
-                {/* back button */}
-                <div className="mb-6 sm:mb-8 flex items-center">
-                    <BackButton href={route('admin.users.index')} label="Back to Staff Users" />
-                </div>
-
-                {/* Header title */}
-                <div className="mb-6">
-                    <h1 className="text-2xl font-black text-white uppercase tracking-tight">
-                        Edit Staff Role & Status
-                    </h1>
+            <div className="w-full max-w-3xl pb-16 space-y-5">
+                {/* header bar: tightly positioned with inline back button */}
+                <div className="flex items-center gap-3">
+                    <BackButton href={route('admin.users.index')} label="Back" />
+                    <div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                            Edit Staff Role & Status
+                        </h1>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                            Update permissions, assigned role level, and active login state.
+                        </p>
+                    </div>
                 </div>
 
                 {/* Form Card */}

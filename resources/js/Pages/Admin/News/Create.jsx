@@ -140,14 +140,22 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
     return (
         <AdminLayout
             title="Create News Article - MESF Admin"
-            contentClassName="p-6 sm:p-8"
+            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
         >
             <Head title="Create News Article - Admin" />
 
-            <div className="w-full max-w-6xl pb-16">
-                {/* back button */}
-                <div className="mb-6 sm:mb-8 flex items-center">
-                    <BackButton href={route('admin.news')} label="Back to News" />
+            <div className="w-full max-w-6xl pb-16 space-y-5">
+                {/* header bar: tightly positioned with inline back button */}
+                <div className="flex items-center gap-3">
+                    <BackButton href={route('admin.news')} label="Back" />
+                    <div>
+                        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                            Create News Article
+                        </h1>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                            Draft press releases, official announcements, and editorial articles.
+                        </p>
+                    </div>
                 </div>
 
                 {/* main form */}

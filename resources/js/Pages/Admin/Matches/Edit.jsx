@@ -84,27 +84,27 @@ export default function Edit({ match = {} }) {
     return (
         <AdminLayout
             title="Edit Match - MESF Admin"
-            contentClassName="p-6 sm:p-8"
+            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
         >
             <Head title="Edit Match - Admin" />
 
-            <div className="w-full max-w-6xl pb-16 space-y-6">
-                {/* header */}
-                <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <BackButton href={route('admin.matches')} label="Back to Matches" />
-                        <span className="px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/20 text-amber-400">
-                            Editing Fixture #{match.id}
-                        </span>
+            <div className="w-full max-w-6xl pb-16 space-y-5">
+                {/* header bar: tightly positioned with inline back button */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                        <BackButton href={route('admin.matches')} label="Back" />
+                        <div>
+                            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                                Edit Match Fixture
+                            </h1>
+                            <p className="text-xs text-slate-400 mt-0.5">
+                                Update competitor scores, schedule timing, broadcasting link, and match status.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                            Edit Match Fixture
-                        </h1>
-                        <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                            Update competitor scores, schedule timing, broadcasting link, and match status.
-                        </p>
-                    </div>
+                    <span className="self-start sm:self-auto px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/20 text-amber-400">
+                        Editing Fixture #{match.id}
+                    </span>
                 </div>
 
                 {/* success banner */}
