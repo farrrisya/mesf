@@ -141,7 +141,7 @@ export default function Create() {
     return (
         <AdminLayout
             title="Create League - MESF Admin"
-            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
+            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
         >
             <Head title="Create League - Admin" />
 

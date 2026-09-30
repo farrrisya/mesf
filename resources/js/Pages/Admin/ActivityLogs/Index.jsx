@@ -145,7 +145,7 @@ export default function Index({
     return (
         <AdminLayout
             title="Activity Logs - MESF Admin"
-            contentClassName="px-4 pt-3 pb-8 sm:px-8 sm:pt-4 sm:pb-10"
+            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
         >
             <Head title="Activity & Audit Logs - Admin" />
 

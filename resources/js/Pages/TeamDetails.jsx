@@ -43,7 +43,7 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
             </div>
 
             {/* main body container */}
-            <main className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-24 text-left flex-1 space-y-8">
+            <main className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 sm:pt-22 pb-16 text-left flex-1 space-y-5">
                 
                 {/* top navigation bar */}
                 <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">

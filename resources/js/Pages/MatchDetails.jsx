@@ -76,9 +76,9 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
             </div>
 
             {/* main body container */}
-            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-24 sm:pt-28 pb-20 flex-1">
+            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-20 sm:pt-22 pb-16 flex-1">
                 {/* top bar: back button + share */}
-                <div className="mb-5 sm:mb-6 flex flex-wrap items-center justify-between gap-4">
+                <div className="mb-3 sm:mb-4 flex flex-wrap items-center justify-between gap-4">
                     <BackButton href="/matches" label="Back to Match Schedule" />
 
                     {currentMatch && (
@@ -130,12 +130,12 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                     <>
 
                 {/* match marquee hero banner */}
-                <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-2xl p-6 sm:p-10 md:p-12 mb-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
+                <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-2xl p-5 sm:p-7 md:p-8 mb-8 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
                     {/* top edge luminous highlight beam */}
                     <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70" />
 
                     {/* tournament meta eyebrow & status pill */}
-                    <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-white/10 mb-8 sm:mb-12">
+                    <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-white/10 mb-5 sm:mb-6">
                         <div className="space-y-1.5">
                             <span className="text-xs font-black tracking-widest text-neutral-400 uppercase block">
                                 {currentMatch.tournament_name}
@@ -177,7 +177,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                     </div>
 
                     {/* teams showdown arena grid */}
-                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-11 gap-6 sm:gap-8 items-center py-4">
+                    <div className="relative z-10 grid grid-cols-1 md:grid-cols-11 gap-4 sm:gap-6 items-center py-1 sm:py-2">
                         {/* team A side (left) */}
                         <div className="md:col-span-4 flex flex-col md:flex-row items-center md:justify-end gap-5 text-center md:text-right">
                             <div className="space-y-1.5 order-2 md:order-1">

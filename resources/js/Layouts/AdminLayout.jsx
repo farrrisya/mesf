@@ -436,7 +436,7 @@ export default function AdminLayout({
                     </div>
                 </header>
 
-                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'p-5 sm:px-8 sm:pt-6 sm:pb-10'}`}>
+                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10'}`}>
                     {children}
                 </div>
             </main>
