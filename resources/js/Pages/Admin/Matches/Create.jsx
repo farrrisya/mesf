@@ -12,7 +12,8 @@ import {
     Tv,
     Check,
     Layers,
-    ShieldAlert
+    Shield,
+    Sparkles
 } from 'lucide-react';
 
 // --2. properties--
@@ -24,14 +25,16 @@ const GAME_DISCIPLINES = [
     'EA Sports FC',
     'Honor of Kings',
     'Tekken 8',
-    'Counter-Strike 2'
+    'Counter-Strike 2',
+    'Apex Legends',
+    'Other / Custom Title'
 ];
 
 const MATCH_FORMATS = [
-    { value: 'BO1', label: 'Best of 1 (BO1)' },
-    { value: 'BO3', label: 'Best of 3 (BO3)' },
-    { value: 'BO5', label: 'Best of 5 (BO5)' },
-    { value: 'BO7', label: 'Best of 7 (BO7)' }
+    { value: 'BO1', label: 'Best of 1 (BO1)', short: 'BO1' },
+    { value: 'BO3', label: 'Best of 3 (BO3)', short: 'BO3' },
+    { value: 'BO5', label: 'Best of 5 (BO5)', short: 'BO5' },
+    { value: 'BO7', label: 'Best of 7 (BO7)', short: 'BO7' }
 ];
 
 const MATCH_ROUNDS = [
@@ -42,6 +45,13 @@ const MATCH_ROUNDS = [
     'Third Place Playoff',
     'Grand Finals',
     'Exhibition / Showmatch'
+];
+
+const STATUS_OPTIONS = [
+    { value: 'UPCOMING', label: 'Upcoming Fixture', desc: 'Match scheduled for future broadcast' },
+    { value: 'LIVE', label: 'Live In Progress', desc: 'Game currently being played live' },
+    { value: 'COMPLETED', label: 'Completed', desc: 'Match finished with final scores recorded' },
+    { value: 'CANCELLED', label: 'Cancelled', desc: 'Fixture called off or postponed' }
 ];
 
 // --3. main component--
@@ -79,6 +89,7 @@ export default function Create() {
         });
     };
 
+    // --5. UI--
     return (
         <AdminLayout
             title="Schedule Match - MESF Admin"
@@ -100,9 +111,23 @@ export default function Create() {
                             </p>
                         </div>
                     </div>
-                    <span className="self-start sm:self-auto px-3 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase bg-amber-400/10 border border-amber-400/20 text-amber-400">
-                        New Fixture
-                    </span>
+
+                    <div className="flex items-center gap-2.5">
+                        <Link
+                            href={route('admin.matches')} // redirect
+                            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold tracking-wider transition-all"
+                        >
+                            Cancel
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={handleSubmit} // trigger
+                            disabled={processing} // check
+                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.3)] cursor-pointer disabled:opacity-50"
+                        >
+                            {processing ? 'Scheduling...' : 'Schedule Fixture'}
+                        </button>
+                    </div>
                 </div>
 
                 {/* success banner */}
@@ -116,29 +141,34 @@ export default function Create() {
                 {/* main form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                        {/* left column: tournament & competitors (8 cols) */}
+                        {/* left column: match details cards (8 cols) */}
                         <div className="lg:col-span-8 space-y-6">
-                            {/* Card 1: Tournament & Discipline */}
+                            {/* Card 1: Tournament & Series Details */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-                                    <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Trophy className="w-4 h-4" />
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
+                                            <Trophy className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                Tournament & Series Details
+                                            </h2>
+                                            <p className="text-xs text-slate-400">
+                                                Tournament name, game discipline, bracket round, and format
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 className="text-sm font-bold text-white tracking-wide">
-                                            Tournament & Discipline
-                                        </h2>
-                                        <p className="text-[11px] text-slate-400">
-                                            Specify league name, game title, format, and bracket stage
-                                        </p>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                                        Section 1
+                                    </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-4">
                                     {/* tournament name */}
-                                    <div className="space-y-1.5 sm:col-span-2">
+                                    <div className="space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Tournament / League Name <span className="text-amber-400">*</span>
+                                            Tournament / League Title <span className="text-amber-400">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -146,98 +176,118 @@ export default function Create() {
                                             placeholder="e.g. MESF National Championship 2026"
                                             value={data.tournament_name} // state
                                             onChange={(e) => setData('tournament_name', e.target.value)} // trigger
-                                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm outline-none transition-all font-sans"
+                                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
                                         />
                                         {errors.tournament_name && (
                                             <p className="text-xs text-rose-400 font-medium">{errors.tournament_name}</p>
                                         )}
                                     </div>
 
-                                    {/* game discipline */}
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Game Discipline <span className="text-amber-400">*</span>
-                                        </label>
-                                        <select
-                                            value={data.game_title} // state
-                                            onChange={(e) => setData('game_title', e.target.value)} // trigger
-                                            required
-                                            className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
-                                        >
-                                            <option value="">Select Game Discipline</option>
-                                            {GAME_DISCIPLINES.map((game) => (
-                                                <option key={game} value={game}>
-                                                    {game}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {errors.game_title && (
-                                            <p className="text-xs text-rose-400 font-medium">{errors.game_title}</p>
-                                        )}
+                                    {/* game title & bracket stage */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                Game Discipline <span className="text-amber-400">*</span>
+                                            </label>
+                                            <select
+                                                value={data.game_title} // state
+                                                onChange={(e) => setData('game_title', e.target.value)} // trigger
+                                                required
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
+                                            >
+                                                <option value="">Select Game Discipline</option>
+                                                {GAME_DISCIPLINES.map((game) => (
+                                                    <option key={game} value={game}>
+                                                        {game}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {errors.game_title && (
+                                                <p className="text-xs text-rose-400 font-medium">{errors.game_title}</p>
+                                            )}
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                Tournament Bracket / Stage
+                                            </label>
+                                            <select
+                                                value={data.round} // state
+                                                onChange={(e) => setData('round', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
+                                            >
+                                                {MATCH_ROUNDS.map((r) => (
+                                                    <option key={r} value={r}>
+                                                        {r}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
                                     </div>
 
-                                    {/* match format */}
-                                    <div className="space-y-1.5">
+                                    {/* match series format pills */}
+                                    <div className="space-y-2 pt-1">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Series Format
+                                            Match Series Format
                                         </label>
-                                        <select
-                                            value={data.format} // state
-                                            onChange={(e) => setData('format', e.target.value)} // trigger
-                                            className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
-                                        >
-                                            {MATCH_FORMATS.map((f) => (
-                                                <option key={f.value} value={f.value}>
-                                                    {f.label}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {/* bracket stage */}
-                                    <div className="space-y-1.5 sm:col-span-2">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Tournament Bracket / Stage
-                                        </label>
-                                        <select
-                                            value={data.round} // state
-                                            onChange={(e) => setData('round', e.target.value)} // trigger
-                                            className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
-                                        >
-                                            {MATCH_ROUNDS.map((r) => (
-                                                <option key={r} value={r}>
-                                                    {r}
-                                                </option>
-                                            ))}
-                                        </select>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                                            {MATCH_FORMATS.map((f) => {
+                                                const isSelected = data.format === f.value;
+                                                return (
+                                                    <button
+                                                        key={f.value}
+                                                        type="button"
+                                                        onClick={() => setData('format', f.value)} // trigger
+                                                        className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                                                            isSelected
+                                                                ? 'bg-amber-400/10 border-amber-400 text-amber-300 shadow-[0_0_16px_rgba(251,191,36,0.15)] font-bold'
+                                                                : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
+                                                        }`}
+                                                    >
+                                                        <div className="text-xs font-bold">{f.short}</div>
+                                                        <div className="text-[10px] text-slate-400 mt-0.5">{f.label}</div>
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Card 2: Competitors & Head-to-Head Matchup */}
+                            {/* Card 2: Head-to-Head Competitors & Matchup */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-4">
-                                    <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Swords className="w-4 h-4" />
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
+                                            <Swords className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                Head-to-Head Competitors
+                                            </h2>
+                                            <p className="text-xs text-slate-400">
+                                                Participating teams, acronym tags, and live series scores
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h2 className="text-sm font-bold text-white tracking-wide">
-                                            Head-to-Head Competitors
-                                        </h2>
-                                        <p className="text-[11px] text-slate-400">
-                                            Enter team names, tags, and score tallies
-                                        </p>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                                        Section 2
+                                    </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    {/* Team A */}
-                                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-sky-500/20 space-y-3.5">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative">
+                                    {/* Team A (Blue Side / HOME) */}
+                                    <div className="p-4 sm:p-5 rounded-2xl bg-sky-500/[0.03] border border-sky-500/25 space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-[10px] font-bold tracking-widest text-sky-400 uppercase bg-sky-500/10 px-2.5 py-1 rounded-md">
-                                                Team A (Blue Side)
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.6)]" />
+                                                <span className="text-[11px] font-bold tracking-widest text-sky-400 uppercase">
+                                                    Team A (Blue Side)
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-mono font-bold text-sky-400/80 px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20">
+                                                HOME
                                             </span>
-                                            <span className="text-[10px] font-mono text-slate-500">HOME</span>
                                         </div>
 
                                         <div className="space-y-1.5">
@@ -250,7 +300,7 @@ export default function Create() {
                                                 placeholder="e.g. Todak Esports"
                                                 value={data.team_a_name} // state
                                                 onChange={(e) => setData('team_a_name', e.target.value)} // trigger
-                                                className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-sky-400/60 text-white text-xs font-semibold outline-none transition-all font-sans"
+                                                className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-sky-400/60 focus:ring-1 focus:ring-sky-400/30 text-white text-xs font-semibold outline-none transition-all font-sans"
                                             />
                                             {errors.team_a_name && (
                                                 <p className="text-xs text-rose-400">{errors.team_a_name}</p>
@@ -274,7 +324,7 @@ export default function Create() {
 
                                             <div className="space-y-1.5">
                                                 <label className="block text-[11px] font-semibold text-slate-300">
-                                                    Score
+                                                    Game Score
                                                 </label>
                                                 <input
                                                     type="number"
@@ -288,13 +338,18 @@ export default function Create() {
                                         </div>
                                     </div>
 
-                                    {/* Team B */}
-                                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-rose-500/20 space-y-3.5">
+                                    {/* Team B (Red Side / AWAY) */}
+                                    <div className="p-4 sm:p-5 rounded-2xl bg-rose-500/[0.03] border border-rose-500/25 space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-[10px] font-bold tracking-widest text-rose-400 uppercase bg-rose-500/10 px-2.5 py-1 rounded-md">
-                                                Team B (Red Side)
+                                            <div className="flex items-center gap-2">
+                                                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
+                                                <span className="text-[11px] font-bold tracking-widest text-rose-400 uppercase">
+                                                    Team B (Red Side)
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] font-mono font-bold text-rose-400/80 px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
+                                                AWAY
                                             </span>
-                                            <span className="text-[10px] font-mono text-slate-500">AWAY</span>
                                         </div>
 
                                         <div className="space-y-1.5">
@@ -307,7 +362,7 @@ export default function Create() {
                                                 placeholder="e.g. Team SMG"
                                                 value={data.team_b_name} // state
                                                 onChange={(e) => setData('team_b_name', e.target.value)} // trigger
-                                                className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-rose-400/60 text-white text-xs font-semibold outline-none transition-all font-sans"
+                                                className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-rose-400/60 focus:ring-1 focus:ring-rose-400/30 text-white text-xs font-semibold outline-none transition-all font-sans"
                                             />
                                             {errors.team_b_name && (
                                                 <p className="text-xs text-rose-400">{errors.team_b_name}</p>
@@ -331,7 +386,7 @@ export default function Create() {
 
                                             <div className="space-y-1.5">
                                                 <label className="block text-[11px] font-semibold text-slate-300">
-                                                    Score
+                                                    Game Score
                                                 </label>
                                                 <input
                                                     type="number"
@@ -346,25 +401,63 @@ export default function Create() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* right column: schedule, broadcast & actions (4 cols) */}
-                        <div className="lg:col-span-4 space-y-6">
-                            {/* Card 3: Schedule & Logistics */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Calendar className="w-4 h-4" />
+                            {/* Card 3: Broadcast & Coverage */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
+                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+                                            <Tv className="w-4 h-4" />
+                                        </div>
+                                        <div>
+                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                Livestream & Broadcast
+                                            </h2>
+                                            <p className="text-xs text-slate-400">
+                                                Official digital transmission URL for spectator coverage
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                                            Schedule & Venue
-                                        </h3>
-                                        <p className="text-[10px] text-slate-400">Date, time & match location</p>
-                                    </div>
+                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                                        Section 3
+                                    </span>
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-2">
+                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                        Livestream URL (YouTube / Twitch / Facebook Gaming)
+                                    </label>
+                                    <input
+                                        type="url"
+                                        placeholder="https://youtube.com/watch?v=... or https://twitch.tv/..."
+                                        value={data.stream_url} // state
+                                        onChange={(e) => setData('stream_url', e.target.value)} // trigger
+                                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all font-sans"
+                                    />
+                                    {errors.stream_url && (
+                                        <p className="text-xs text-rose-400">{errors.stream_url}</p>
+                                    )}
+                                    <p className="text-[11px] text-slate-400">
+                                        Provide a valid stream link to enable the direct video player embed on the public match view.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* right column: schedule, venue & status (4 cols, sticky) */}
+                        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
+                            {/* Card 4: Schedule & Venue */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
+                                <div className="border-b border-white/10 pb-3">
+                                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                                        Schedule & Venue
+                                    </h3>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">
+                                        Timing and arena logistics
+                                    </p>
+                                </div>
+
+                                <div className="space-y-3.5">
                                     <div className="space-y-1.5">
                                         <label className="block text-[11px] font-semibold text-slate-300">
                                             Match Date <span className="text-amber-400">*</span>
@@ -376,6 +469,9 @@ export default function Create() {
                                             onChange={(e) => setData('scheduled_date', e.target.value)} // trigger
                                             className="w-full px-3.5 py-2 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
                                         />
+                                        {errors.scheduled_date && (
+                                            <p className="text-xs text-rose-400">{errors.scheduled_date}</p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-1.5">
@@ -388,6 +484,9 @@ export default function Create() {
                                             onChange={(e) => setData('scheduled_time', e.target.value)} // trigger
                                             className="w-full px-3.5 py-2 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
                                         />
+                                        {errors.scheduled_time && (
+                                            <p className="text-xs text-rose-400">{errors.scheduled_time}</p>
+                                        )}
                                     </div>
 
                                     <div className="space-y-1.5">
@@ -401,63 +500,57 @@ export default function Create() {
                                             onChange={(e) => setData('venue', e.target.value)} // trigger
                                             className="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
                                         />
+                                        {errors.venue && (
+                                            <p className="text-xs text-rose-400">{errors.venue}</p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Card 4: Broadcast & Status */}
+                            {/* Card 5: Match Status & Publishing */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
-                                <div className="flex items-center gap-3 border-b border-white/5 pb-3">
-                                    <div className="w-8 h-8 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                                        <Tv className="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                                            Broadcast & Status
-                                        </h3>
-                                        <p className="text-[10px] text-slate-400">Stream URL and fixture status</p>
-                                    </div>
+                                <div className="border-b border-white/10 pb-3">
+                                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">
+                                        Match Status
+                                    </h3>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">
+                                        Current competitive state of fixture
+                                    </p>
                                 </div>
 
-                                <div className="space-y-3">
-                                    <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
-                                            Livestream Link
-                                        </label>
-                                        <input
-                                            type="url"
-                                            placeholder="https://youtube.com/... or twitch.tv"
-                                            value={data.stream_url} // state
-                                            onChange={(e) => setData('stream_url', e.target.value)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
-                                        />
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
-                                            Match Status
-                                        </label>
-                                        <select
-                                            value={data.status} // state
-                                            onChange={(e) => setData('status', e.target.value)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all cursor-pointer font-sans"
-                                        >
-                                            <option value="UPCOMING">Upcoming Fixture</option>
-                                            <option value="LIVE">Live In Progress</option>
-                                            <option value="COMPLETED">Completed</option>
-                                            <option value="CANCELLED">Cancelled</option>
-                                        </select>
-                                    </div>
+                                <div className="space-y-2">
+                                    {STATUS_OPTIONS.map((st) => {
+                                        const isSelected = data.status === st.value;
+                                        return (
+                                            <button
+                                                key={st.value}
+                                                type="button"
+                                                onClick={() => setData('status', st.value)} // trigger
+                                                className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                    isSelected
+                                                        ? 'bg-amber-400/10 border-amber-400 text-white shadow-[0_0_12px_rgba(251,191,36,0.15)]'
+                                                        : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
+                                                }`}
+                                            >
+                                                <div className="flex items-center justify-between text-xs font-bold">
+                                                    <span>{st.label}</span>
+                                                    {isSelected && <span className="w-2 h-2 rounded-full bg-amber-400" />}
+                                                </div>
+                                                <p className="text-[10px] text-slate-400 mt-0.5">
+                                                    {st.desc}
+                                                </p>
+                                            </button>
+                                        );
+                                    })}
                                 </div>
 
-                                {/* submit actions */}
                                 <div className="pt-3 border-t border-white/10 space-y-2.5">
                                     <button
                                         type="submit"
                                         disabled={processing} // check
                                         className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
                                     >
-                                        {processing ? 'Scheduling...' : 'Schedule Fixture'}
+                                        {processing ? 'Scheduling Fixture...' : 'Schedule Fixture'}
                                     </button>
 
                                     <Link
