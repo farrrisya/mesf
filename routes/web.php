@@ -210,8 +210,8 @@ Route::get('/leagues', function () {
                 'game' => $l->game_title,
                 'status' => $l->registration_status ?: 'UPCOMING',
                 'date' => $l->start_date ? $l->start_date->format('d M Y') . ($l->end_date ? ' - ' . $l->end_date->format('d M Y') : '') : 'TBA',
-                'location' => $l->location ?: 'Malaysia',
-                'description' => $l->description ?: 'Official sanctioned esports tournament circuit organized by Malaysian Electronic Sports Federation.',
+                'location' => $l->location,
+                'description' => $l->description,
                 'banner' => $l->banner_path ? \Illuminate\Support\Facades\Storage::url($l->banner_path) : null,
                 'tier' => $l->tier,
                 'prize_pool' => $l->prize_pool,
@@ -223,13 +223,136 @@ Route::get('/leagues', function () {
     ]);
 })->name('leagues');
 
-Route::get('/leagues/details', function () {
-    return Inertia::render('LeagueDetails');
+Route::get('/leagues/details', function (\Illuminate\Http\Request $request) {
+    $slug = $request->query('slug'); // state
+    $league = null; // state
+    if ($slug) { // check
+        $league = League::where('slug', $slug)->first();
+    }
+    if (!$league) { // check
+        $league = League::where('is_active', true)->orderBy('start_date', 'desc')->first();
+    }
+
+    $formattedDates = null; // state
+    if ($league && $league->start_date && $league->end_date) {
+        $formattedDates = $league->start_date->format('d M Y') . ' - ' . $league->end_date->format('d M Y');
+    } elseif ($league && $league->start_date) {
+        $formattedDates = 'Starts ' . $league->start_date->format('d M Y');
+    }
+
+    $formattedDeadline = $league && $league->registration_deadline ? $league->registration_deadline->format('d M Y') : null; // state
+
+    $otherLeagues = $league ? League::where('is_active', true) // state
+        ->where('id', '!=', $league->id)
+        ->orderBy('start_date', 'desc')
+        ->limit(4)
+        ->get()
+        ->map(function ($ol) {
+            return [ // convert
+                'id' => $ol->id,
+                'name' => $ol->name,
+                'slug' => $ol->slug,
+                'game_title' => $ol->game_title,
+                'season' => $ol->season,
+                'tier' => $ol->tier,
+                'prize_pool' => $ol->prize_pool,
+                'registration_status' => $ol->registration_status,
+                'banner_url' => $ol->banner_path ? \Illuminate\Support\Facades\Storage::url($ol->banner_path) : null,
+            ];
+        }) : [];
+
+    $leagueData = $league ? [ // convert
+        'id' => $league->id,
+        'name' => $league->name,
+        'slug' => $league->slug,
+        'season' => $league->season,
+        'game_title' => $league->game_title,
+        'tier' => $league->tier,
+        'format' => $league->format,
+        'prize_pool' => $league->prize_pool,
+        'start_date' => $league->start_date ? $league->start_date->format('Y-m-d') : null,
+        'end_date' => $league->end_date ? $league->end_date->format('Y-m-d') : null,
+        'formatted_dates' => $formattedDates,
+        'registration_deadline' => $league->registration_deadline ? $league->registration_deadline->format('Y-m-d') : null,
+        'formatted_deadline' => $formattedDeadline,
+        'slots' => $league->slots,
+        'entry_fee' => $league->entry_fee,
+        'location' => $league->location,
+        'registration_status' => $league->registration_status ?: 'REGISTRATION OPEN',
+        'banner_url' => $league->banner_path ? \Illuminate\Support\Facades\Storage::url($league->banner_path) : null,
+        'description' => $league->description,
+        'display_options' => $league->display_options ?: ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'format', 'location'],
+    ] : null;
+
+    return Inertia::render('LeagueDetails', [ // screen
+        'league' => $leagueData,
+        'otherLeagues' => $otherLeagues,
+    ]);
 })->name('leagues.details');
 
 Route::get('/leagues/{slug}', function ($slug) {
-    return Inertia::render('LeagueDetails', [
-        'slug' => $slug
+    $league = League::where('slug', $slug)->first(); // state
+    if (!$league && is_numeric($slug)) { // check
+        $league = League::find($slug);
+    }
+    if (!$league) { // check
+        $league = League::where('is_active', true)->orderBy('start_date', 'desc')->first();
+    }
+
+    $formattedDates = null; // state
+    if ($league && $league->start_date && $league->end_date) {
+        $formattedDates = $league->start_date->format('d M Y') . ' - ' . $league->end_date->format('d M Y');
+    } elseif ($league && $league->start_date) {
+        $formattedDates = 'Starts ' . $league->start_date->format('d M Y');
+    }
+
+    $formattedDeadline = $league && $league->registration_deadline ? $league->registration_deadline->format('d M Y') : null; // state
+
+    $otherLeagues = $league ? League::where('is_active', true) // state
+        ->where('id', '!=', $league->id)
+        ->orderBy('start_date', 'desc')
+        ->limit(4)
+        ->get()
+        ->map(function ($ol) {
+            return [ // convert
+                'id' => $ol->id,
+                'name' => $ol->name,
+                'slug' => $ol->slug,
+                'game_title' => $ol->game_title,
+                'season' => $ol->season,
+                'tier' => $ol->tier,
+                'prize_pool' => $ol->prize_pool,
+                'registration_status' => $ol->registration_status,
+                'banner_url' => $ol->banner_path ? \Illuminate\Support\Facades\Storage::url($ol->banner_path) : null,
+            ];
+        }) : [];
+
+    $leagueData = $league ? [ // convert
+        'id' => $league->id,
+        'name' => $league->name,
+        'slug' => $league->slug,
+        'season' => $league->season,
+        'game_title' => $league->game_title,
+        'tier' => $league->tier,
+        'format' => $league->format,
+        'prize_pool' => $league->prize_pool,
+        'start_date' => $league->start_date ? $league->start_date->format('Y-m-d') : null,
+        'end_date' => $league->end_date ? $league->end_date->format('Y-m-d') : null,
+        'formatted_dates' => $formattedDates,
+        'registration_deadline' => $league->registration_deadline ? $league->registration_deadline->format('Y-m-d') : null,
+        'formatted_deadline' => $formattedDeadline,
+        'slots' => $league->slots,
+        'entry_fee' => $league->entry_fee,
+        'location' => $league->location,
+        'registration_status' => $league->registration_status ?: 'REGISTRATION OPEN',
+        'banner_url' => $league->banner_path ? \Illuminate\Support\Facades\Storage::url($league->banner_path) : null,
+        'description' => $league->description,
+        'display_options' => $league->display_options ?: ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'format', 'location'],
+    ] : null;
+
+    return Inertia::render('LeagueDetails', [ // screen
+        'league' => $leagueData,
+        'otherLeagues' => $otherLeagues,
     ]);
 })->name('leagues.show');
 
@@ -239,16 +362,27 @@ Route::get('/matches', function () {
         ->orderBy('scheduled_time', 'asc')
         ->get();
 
+    $allTeams = Team::all()->keyBy(function ($t) { return strtolower(trim($t->name)); }); // state
+    $allTeamsByTag = Team::whereNotNull('tag')->get()->keyBy(function ($t) { return strtolower(trim($t->tag)); }); // state
+
     $groups = $rawMatches->groupBy(function ($m) { // loop
         return $m->scheduled_date ? $m->scheduled_date->format('d M Y') : 'TBA';
-    })->map(function ($items, $date) {
+    })->map(function ($items, $date) use ($allTeams, $allTeamsByTag) {
         return [ // convert
             'date' => $date,
-            'matches' => $items->map(function ($m) {
+            'matches' => $items->map(function ($m) use ($allTeams, $allTeamsByTag) {
+                $nameA = strtolower(trim($m->team_a_name ?? ''));
+                $tagA = strtolower(trim($m->team_a_tag ?? ''));
+                $tA = $allTeams->get($nameA) ?: $allTeamsByTag->get($tagA);
+
+                $nameB = strtolower(trim($m->team_b_name ?? ''));
+                $tagB = strtolower(trim($m->team_b_tag ?? ''));
+                $tB = $allTeams->get($nameB) ?: $allTeamsByTag->get($tagB);
+
                 return [
                     'id' => $m->id,
                     'tournament' => $m->tournament_name,
-                    'stage' => $m->round ?: 'Match Fixture',
+                    'stage' => $m->round ?: 'Match',
                     'game' => $m->game_title,
                     'format' => $m->format ?: 'BO3',
                     'time' => $m->scheduled_time ?: 'TBA',
@@ -259,11 +393,13 @@ Route::get('/matches', function () {
                         'name' => $m->team_a_name,
                         'tag' => $m->team_a_tag ?: strtoupper(substr($m->team_a_name, 0, 3)),
                         'score' => $m->team_a_score,
+                        'logo' => $tA && $tA->logo_path ? \Illuminate\Support\Facades\Storage::url($tA->logo_path) : null,
                     ],
                     'teamB' => [
                         'name' => $m->team_b_name,
                         'tag' => $m->team_b_tag ?: strtoupper(substr($m->team_b_name, 0, 3)),
                         'score' => $m->team_b_score,
+                        'logo' => $tB && $tB->logo_path ? \Illuminate\Support\Facades\Storage::url($tB->logo_path) : null,
                     ],
                 ];
             })->values(),
@@ -285,12 +421,12 @@ Route::get('/matches/details', function () {
         'id' => $match->id,
         'tournament_name' => $match->tournament_name,
         'game_title' => $match->game_title,
-        'round' => $match->round ?: 'Match Fixture',
+        'round' => $match->round ?: 'Match',
         'format' => $match->format ?: 'BO3',
         'scheduled_date' => $match->scheduled_date ? $match->scheduled_date->format('Y-m-d') : null,
         'formatted_date' => $match->scheduled_date ? $match->scheduled_date->format('l, d F Y') : 'TBA',
         'scheduled_time' => $match->scheduled_time ?: 'TBA',
-        'venue' => $match->venue ?: 'Online Arena',
+        'venue' => $match->venue,
         'stream_url' => $match->stream_url,
         'status' => $match->status ?: 'UPCOMING',
         'team_a' => [
@@ -298,9 +434,10 @@ Route::get('/matches/details', function () {
             'tag' => $match->team_a_tag ?: strtoupper(substr($match->team_a_name, 0, 3)),
             'score' => $match->team_a_score,
             'logo' => $teamA && $teamA->logo_path ? \Illuminate\Support\Facades\Storage::url($teamA->logo_path) : null,
-            'region' => $teamA ? $teamA->region : 'National / All Malaysia',
+            'region' => $teamA ? $teamA->region : null,
             'motto' => $teamA ? $teamA->motto : null,
             'manager' => $teamA ? $teamA->manager_name : null,
+            'status' => $teamA ? $teamA->status : null,
             'slug' => $teamA ? $teamA->slug : null,
         ],
         'team_b' => [
@@ -308,9 +445,10 @@ Route::get('/matches/details', function () {
             'tag' => $match->team_b_tag ?: strtoupper(substr($match->team_b_name, 0, 3)),
             'score' => $match->team_b_score,
             'logo' => $teamB && $teamB->logo_path ? \Illuminate\Support\Facades\Storage::url($teamB->logo_path) : null,
-            'region' => $teamB ? $teamB->region : 'Malaysia',
+            'region' => $teamB ? $teamB->region : null,
             'motto' => $teamB ? $teamB->motto : null,
             'manager' => $teamB ? $teamB->manager_name : null,
+            'status' => $teamB ? $teamB->status : null,
             'slug' => $teamB ? $teamB->slug : null,
         ],
     ] : null;
@@ -327,7 +465,7 @@ Route::get('/matches/details', function () {
                 'id' => $om->id,
                 'tournament_name' => $om->tournament_name,
                 'game_title' => $om->game_title,
-                'round' => $om->round ?: 'Match Fixture',
+                'round' => $om->round ?: 'Match',
                 'format' => $om->format ?: 'BO3',
                 'team_a_name' => $om->team_a_name,
                 'team_a_tag' => $om->team_a_tag ?: strtoupper(substr($om->team_a_name, 0, 3)),
@@ -358,12 +496,12 @@ Route::get('/matches/{id}', function ($id) {
         'id' => $match->id,
         'tournament_name' => $match->tournament_name,
         'game_title' => $match->game_title,
-        'round' => $match->round ?: 'Match Fixture',
+        'round' => $match->round ?: 'Match',
         'format' => $match->format ?: 'BO3',
         'scheduled_date' => $match->scheduled_date ? $match->scheduled_date->format('Y-m-d') : null,
         'formatted_date' => $match->scheduled_date ? $match->scheduled_date->format('l, d F Y') : 'TBA',
         'scheduled_time' => $match->scheduled_time ?: 'TBA',
-        'venue' => $match->venue ?: 'Online Arena',
+        'venue' => $match->venue,
         'stream_url' => $match->stream_url,
         'status' => $match->status ?: 'UPCOMING',
         'team_a' => [
@@ -371,9 +509,10 @@ Route::get('/matches/{id}', function ($id) {
             'tag' => $match->team_a_tag ?: strtoupper(substr($match->team_a_name, 0, 3)),
             'score' => $match->team_a_score,
             'logo' => $teamA && $teamA->logo_path ? \Illuminate\Support\Facades\Storage::url($teamA->logo_path) : null,
-            'region' => $teamA ? $teamA->region : 'National / All Malaysia',
+            'region' => $teamA ? $teamA->region : null,
             'motto' => $teamA ? $teamA->motto : null,
             'manager' => $teamA ? $teamA->manager_name : null,
+            'status' => $teamA ? $teamA->status : null,
             'slug' => $teamA ? $teamA->slug : null,
         ],
         'team_b' => [
@@ -381,9 +520,10 @@ Route::get('/matches/{id}', function ($id) {
             'tag' => $match->team_b_tag ?: strtoupper(substr($match->team_b_name, 0, 3)),
             'score' => $match->team_b_score,
             'logo' => $teamB && $teamB->logo_path ? \Illuminate\Support\Facades\Storage::url($teamB->logo_path) : null,
-            'region' => $teamB ? $teamB->region : 'Malaysia',
+            'region' => $teamB ? $teamB->region : null,
             'motto' => $teamB ? $teamB->motto : null,
             'manager' => $teamB ? $teamB->manager_name : null,
+            'status' => $teamB ? $teamB->status : null,
             'slug' => $teamB ? $teamB->slug : null,
         ],
     ] : null;
@@ -400,7 +540,7 @@ Route::get('/matches/{id}', function ($id) {
                 'id' => $om->id,
                 'tournament_name' => $om->tournament_name,
                 'game_title' => $om->game_title,
-                'round' => $om->round ?: 'Match Fixture',
+                'round' => $om->round ?: 'Match',
                 'format' => $om->format ?: 'BO3',
                 'team_a_name' => $om->team_a_name,
                 'team_a_tag' => $om->team_a_tag ?: strtoupper(substr($om->team_a_name, 0, 3)),
@@ -458,43 +598,43 @@ Route::get('/teams/details', function () {
         $team = Team::where('is_active', true)->whereIn('type', ['national', 'pro'])->first();
     }
 
+    if ($team && $team->type === 'state') {
+        return redirect()->route('teams.state-show', $team->slug ?: $team->id);
+    }
+
     $teamData = $team ? [
         'id' => $team->id,
         'name' => $team->name,
         'slug' => $team->slug,
-        'tag' => $team->tag ?: strtoupper(substr($team->name, 0, 3)),
+        'tag' => $team->tag,
         'type' => $team->type,
-        'region' => $team->region ?: 'National / All Malaysia',
-        'country' => 'Malaysia',
-        'flag' => '🇲🇾',
-        'status' => $team->status ?: 'Active Squad',
-        'created' => $team->created_at ? $team->created_at->format('Y') : null,
-        'founder' => 'Official Management',
-        'manager' => $team->manager_name,
+        'region' => $team->region,
+        'game_title' => $team->game_title,
+        'manager_name' => $team->manager_name,
         'contact_email' => $team->contact_email,
         'motto' => $team->motto,
-        'primaryGame' => $team->game_title ?: 'Competitive Esports',
+        'roster_size' => $team->roster_size,
+        'status' => $team->status ?: 'ACTIVE',
         'logo' => $team->logo_path ? \Illuminate\Support\Facades\Storage::url($team->logo_path) : null,
-        'roster_size' => $team->roster_size ?: 5,
-        'stats' => [
-            'circuit' => $team->game_title ? "Official {$team->game_title} Circuit" : 'Sanctioned Circuit',
-            'placement' => 'Sanctioned',
-            'tier' => strtoupper($team->type) . ' TIER',
-        ],
     ] : null;
 
     $otherTeams = Team::where('is_active', true)
+        ->whereIn('type', ['national', 'pro'])
         ->when($team, function ($q) use ($team) {
             return $q->where('id', '!=', $team->id);
         })
-        ->limit(4)
+        ->orderBy('name', 'asc')
+        ->limit(6)
         ->get()
         ->map(function ($t) {
             return [
                 'id' => $t->id,
                 'name' => $t->name,
                 'slug' => $t->slug,
-                'tag' => $t->tag ?: strtoupper(substr($t->name, 0, 3)),
+                'tag' => $t->tag,
+                'region' => $t->region,
+                'game_title' => $t->game_title,
+                'logo' => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
             ];
         });
 
@@ -506,55 +646,216 @@ Route::get('/teams/details', function () {
 })->name('teams.details');
 
 Route::get('/teams/state-details', function () {
-    return Inertia::render('StateDetails');
+    $slug = request()->query('slug');
+    $state = null;
+    if ($slug) {
+        $normalizedSlug = str_replace('_', '-', \Illuminate\Support\Str::slug($slug));
+        $state = Team::where('type', 'state')
+            ->where(function ($q) use ($slug, $normalizedSlug) {
+                $q->where('slug', $slug)
+                  ->orWhere('slug', $normalizedSlug)
+                  ->orWhere('id', $slug)
+                  ->orWhere('tag', strtoupper($slug))
+                  ->orWhereRaw('LOWER(name) = ?', [strtolower(str_replace(['_', '-'], ' ', $slug))]);
+            })
+            ->first();
+    }
+    if (!$state) {
+        $state = Team::where('type', 'state')->where('is_active', true)->first();
+    }
+
+    $stateLogo = null;
+    if ($state) {
+        if ($state->logo_path) {
+            $stateLogo = \Illuminate\Support\Facades\Storage::url($state->logo_path);
+        } else {
+            $slugCrest = $state->slug ? public_path("images/states/{$state->slug}_transparent.png") : null;
+            $slugUnderscoreCrest = $state->slug ? public_path("images/states/" . str_replace('-', '_', $state->slug) . "_transparent.png") : null;
+            if ($slugCrest && file_exists($slugCrest)) {
+                $stateLogo = "/images/states/{$state->slug}_transparent.png";
+            } elseif ($slugUnderscoreCrest && file_exists($slugUnderscoreCrest)) {
+                $stateLogo = "/images/states/" . str_replace('-', '_', $state->slug) . "_transparent.png";
+            }
+        }
+    }
+
+    $stateData = $state ? [
+        'id' => $state->id,
+        'name' => $state->name,
+        'slug' => $state->slug,
+        'tag' => $state->tag,
+        'type' => $state->type,
+        'region' => $state->region,
+        'game_title' => $state->game_title,
+        'manager_name' => $state->manager_name,
+        'contact_email' => $state->contact_email,
+        'motto' => $state->motto,
+        'roster_size' => $state->roster_size,
+        'status' => $state->status ?: 'ACTIVE',
+        'logo' => $stateLogo,
+    ] : null;
+
+    $otherStates = Team::where('type', 'state')
+        ->where('is_active', true)
+        ->when($state, function ($q) use ($state) {
+            return $q->where('id', '!=', $state->id);
+        })
+        ->orderBy('name', 'asc')
+        ->get()
+        ->map(function ($s) {
+            $crest = null;
+            if ($s->logo_path) {
+                $crest = \Illuminate\Support\Facades\Storage::url($s->logo_path);
+            } else {
+                $p1 = public_path("images/states/{$s->slug}_transparent.png");
+                $p2 = public_path("images/states/" . str_replace('-', '_', $s->slug) . "_transparent.png");
+                if (file_exists($p1)) {
+                    $crest = "/images/states/{$s->slug}_transparent.png";
+                } elseif (file_exists($p2)) {
+                    $crest = "/images/states/" . str_replace('-', '_', $s->slug) . "_transparent.png";
+                }
+            }
+            return [
+                'id' => $s->id,
+                'name' => $s->name,
+                'slug' => $s->slug,
+                'tag' => $s->tag,
+                'region' => $s->region,
+                'logo' => $crest,
+            ];
+        });
+
+    return Inertia::render('StateDetails', [
+        'state' => $stateData,
+        'otherStates' => $otherStates,
+        'stateSlug' => $slug,
+    ]);
 })->name('teams.state-details');
 
 Route::get('/teams/state/{slug}', function ($slug) {
+    $normalizedSlug = str_replace('_', '-', \Illuminate\Support\Str::slug($slug));
+    $state = Team::where('type', 'state')
+        ->where(function ($q) use ($slug, $normalizedSlug) {
+            $q->where('slug', $slug)
+              ->orWhere('slug', $normalizedSlug)
+              ->orWhere('id', $slug)
+              ->orWhere('tag', strtoupper($slug))
+              ->orWhereRaw('LOWER(name) = ?', [strtolower(str_replace(['_', '-'], ' ', $slug))]);
+        })
+        ->first();
+
+    if (!$state) {
+        $state = Team::where('type', 'state')->where('is_active', true)->first();
+    }
+
+    $stateLogo = null;
+    if ($state) {
+        if ($state->logo_path) {
+            $stateLogo = \Illuminate\Support\Facades\Storage::url($state->logo_path);
+        } else {
+            $slugCrest = $state->slug ? public_path("images/states/{$state->slug}_transparent.png") : null;
+            $slugUnderscoreCrest = $state->slug ? public_path("images/states/" . str_replace('-', '_', $state->slug) . "_transparent.png") : null;
+            if ($slugCrest && file_exists($slugCrest)) {
+                $stateLogo = "/images/states/{$state->slug}_transparent.png";
+            } elseif ($slugUnderscoreCrest && file_exists($slugUnderscoreCrest)) {
+                $stateLogo = "/images/states/" . str_replace('-', '_', $state->slug) . "_transparent.png";
+            }
+        }
+    }
+
+    $stateData = $state ? [
+        'id' => $state->id,
+        'name' => $state->name,
+        'slug' => $state->slug,
+        'tag' => $state->tag,
+        'type' => $state->type,
+        'region' => $state->region,
+        'game_title' => $state->game_title,
+        'manager_name' => $state->manager_name,
+        'contact_email' => $state->contact_email,
+        'motto' => $state->motto,
+        'roster_size' => $state->roster_size,
+        'status' => $state->status ?: 'ACTIVE',
+        'logo' => $stateLogo,
+    ] : null;
+
+    $otherStates = Team::where('type', 'state')
+        ->where('is_active', true)
+        ->when($state, function ($q) use ($state) {
+            return $q->where('id', '!=', $state->id);
+        })
+        ->orderBy('name', 'asc')
+        ->get()
+        ->map(function ($s) {
+            $crest = null;
+            if ($s->logo_path) {
+                $crest = \Illuminate\Support\Facades\Storage::url($s->logo_path);
+            } else {
+                $p1 = public_path("images/states/{$s->slug}_transparent.png");
+                $p2 = public_path("images/states/" . str_replace('-', '_', $s->slug) . "_transparent.png");
+                if (file_exists($p1)) {
+                    $crest = "/images/states/{$s->slug}_transparent.png";
+                } elseif (file_exists($p2)) {
+                    $crest = "/images/states/" . str_replace('-', '_', $s->slug) . "_transparent.png";
+                }
+            }
+            return [
+                'id' => $s->id,
+                'name' => $s->name,
+                'slug' => $s->slug,
+                'tag' => $s->tag,
+                'region' => $s->region,
+                'logo' => $crest,
+            ];
+        });
+
     return Inertia::render('StateDetails', [
-        'stateSlug' => $slug
+        'state' => $stateData,
+        'otherStates' => $otherStates,
+        'stateSlug' => $slug,
     ]);
 })->name('teams.state-show');
 
 Route::get('/teams/{slug}', function ($slug) {
     $team = Team::where('slug', $slug)->first() ?: Team::where('id', $slug)->first();
 
+    if ($team && $team->type === 'state') {
+        return redirect()->route('teams.state-show', $team->slug ?: $team->id);
+    }
+
     $teamData = $team ? [
         'id' => $team->id,
         'name' => $team->name,
         'slug' => $team->slug,
-        'tag' => $team->tag ?: strtoupper(substr($team->name, 0, 3)),
+        'tag' => $team->tag,
         'type' => $team->type,
-        'region' => $team->region ?: 'National / All Malaysia',
-        'country' => 'Malaysia',
-        'flag' => '🇲🇾',
-        'status' => $team->status ?: 'Active Squad',
-        'created' => $team->created_at ? $team->created_at->format('Y') : null,
-        'founder' => 'Official Management',
-        'manager' => $team->manager_name,
+        'region' => $team->region,
+        'game_title' => $team->game_title,
+        'manager_name' => $team->manager_name,
         'contact_email' => $team->contact_email,
         'motto' => $team->motto,
-        'primaryGame' => $team->game_title ?: 'Competitive Esports',
+        'roster_size' => $team->roster_size,
+        'status' => $team->status ?: 'ACTIVE',
         'logo' => $team->logo_path ? \Illuminate\Support\Facades\Storage::url($team->logo_path) : null,
-        'roster_size' => $team->roster_size ?: 5,
-        'stats' => [
-            'circuit' => $team->game_title ? "Official {$team->game_title} Circuit" : 'Sanctioned Circuit',
-            'placement' => 'Sanctioned',
-            'tier' => strtoupper($team->type) . ' TIER',
-        ],
     ] : null;
 
     $otherTeams = Team::where('is_active', true)
+        ->whereIn('type', ['national', 'pro'])
         ->when($team, function ($q) use ($team) {
             return $q->where('id', '!=', $team->id);
         })
-        ->limit(4)
+        ->orderBy('name', 'asc')
+        ->limit(6)
         ->get()
         ->map(function ($t) {
             return [
                 'id' => $t->id,
                 'name' => $t->name,
                 'slug' => $t->slug,
-                'tag' => $t->tag ?: strtoupper(substr($t->name, 0, 3)),
+                'tag' => $t->tag,
+                'region' => $t->region,
+                'game_title' => $t->game_title,
+                'logo' => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
             ];
         });
 

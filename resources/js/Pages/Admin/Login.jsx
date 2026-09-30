@@ -21,6 +21,15 @@ export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false); // state
 
     // --3. actions--
+    const handleBack = (e) => { // trigger
+        e.preventDefault();
+        if (typeof window !== 'undefined' && window.history.length > 1) { // check
+            window.history.back(); // redirect
+        } else {
+            window.location.href = '/'; // redirect
+        }
+    };
+
     const submit = (e) => { // trigger
         e.preventDefault();
         post(route('login'), { // save
@@ -31,7 +40,7 @@ export default function Login({ status, canResetPassword }) {
     // --4. UI--
     return (
         <div className="relative min-h-screen w-full font-sans bg-[#070B14] text-white selection:bg-amber-400 selection:text-black overflow-x-hidden flex flex-col justify-between items-center py-6 sm:py-8 px-4 sm:px-6">
-            <Head title="Management Portal Sign In - MESF" />
+            <Head title="Sign In - MESF" />
 
             {/* texture effect */}
             <div
@@ -74,15 +83,16 @@ export default function Login({ status, canResetPassword }) {
             </div>
 
             <header className="relative z-10 w-full max-w-5xl flex items-center justify-between">
-                <Link
-                    href="/"
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-semibold rounded-full transition-all border border-white/10 group"
+                <button
+                    type="button"
+                    onClick={handleBack} // trigger
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-semibold rounded-full transition-all border border-white/10 group cursor-pointer"
                 >
                     <svg className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
-                    <span>Back to Homepage</span>
-                </Link>
+                    <span>Back</span>
+                </button>
             </header>
 
             <main className="relative z-10 w-full max-w-[420px] my-auto py-6 flex flex-col items-center">
@@ -102,10 +112,10 @@ export default function Login({ status, canResetPassword }) {
                         {orgName}
                     </div>
                     <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
-                        Management Portal
+                        Sign In
                     </h1>
                     <p className="text-sm text-slate-400 mt-1 font-medium">
-                        Enter your credentials to access the management portal
+                        Enter your credentials to access your account
                     </p>
                 </div>
 
@@ -235,6 +245,17 @@ export default function Login({ status, canResetPassword }) {
                                     </>
                                 )}
                             </button>
+                        </div>
+
+                        {/* sign up prompt */}
+                        <div className="pt-4 border-t border-white/10 text-center flex flex-col items-center gap-2.5">
+                            <span className="text-xs text-slate-400">Don't have an account yet?</span>
+                            <Link
+                                href={route('register')} // redirect
+                                className="w-full py-2.5 px-4 rounded-xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-amber-400/50 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold transition-all duration-200 block text-center"
+                            >
+                                Sign Up
+                            </Link>
                         </div>
                     </form>
                 </div>

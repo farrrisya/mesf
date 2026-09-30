@@ -1,375 +1,466 @@
 // --1. imports--
 import React from 'react';
-import { Head } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 import BackButton from '@/Components/BackButton';
-import { MapPin, Shield, CheckCircle2, Globe, Mail, Phone } from 'lucide-react';
+import { Shield, MapPin, Mail, Gamepad2, Users, ArrowUpRight, CheckCircle2, Send } from 'lucide-react';
 
-// --2. properties--
-const STATE_DATABASE = {
-    johor: {
-        stateName: 'Johor',
-        bodyName: 'Persatuan Sukan Elektronik Negeri Johor',
-        code: 'JHR',
-        status: 'Active State Affiliate',
-        headquarters: 'Johor Bahru, Johor',
-        parentBody: 'Malaysian Esports Federation (MESF)',
-        image: '/images/states/johor_transparent.png',
-        districts: ['Johor Bahru', 'Muar', 'Batu Pahat', 'Kluang', 'Kota Tinggi', 'Segamat', 'Pontian', 'Kulai', 'Tangkak', 'Mersing'],
-        programs: [
-            { id: 'JHR-01', title: 'Piala Presiden Esports Johor', discipline: 'MLBB & PUBG Mobile', cadence: 'Annual Championship', status: 'Sanctioned' },
-            { id: 'JHR-02', title: 'Liga Belia Daerah Johor', discipline: 'Multi-Discipline', cadence: 'Quarterly Series', status: 'Grassroots' }
-        ],
-        contactInfo: {
-            address: 'Kompleks Belia & Sukan Negeri Johor, Johor Bahru',
-            email: 'sekretariat@esportsjohor.my',
-            phone: '+60 7-223 8844',
-            website: 'www.esportsjohor.my'
-        },
-        executiveCommittee: [
-            { role: 'President', name: 'Dato’ Sri Mohd Ariff' },
-            { role: 'Deputy President', name: 'Mohd Hafizul Zakaria' },
-            { role: 'Secretary General', name: 'Nurul Aisyah Binti Radzi' }
-        ]
-    },
-    kedah: {
-        stateName: 'Kedah',
-        bodyName: 'Persatuan Sukan Elektronik Negeri Kedah',
-        code: 'KDH',
-        status: 'Active State Affiliate',
-        headquarters: 'Alor Setar, Kedah',
-        parentBody: 'Malaysian Esports Federation (MESF)',
-        image: '/images/states/kedah_transparent.png',
-        districts: ['Kota Setar', 'Kuala Muda', 'Kulim', 'Kubang Pasu', 'Baling', 'Langkawi', 'Yan', 'Sik', 'Padang Terap', 'Pendang', 'Bandar Baharu'],
-        programs: [
-            { id: 'KDH-01', title: 'Kedah Esports Darul Aman Cup', discipline: 'MLBB & Valorant', cadence: 'Annual Championship', status: 'Sanctioned' },
-            { id: 'KDH-02', title: 'Jelajah Esports Komuniti Kedah', discipline: 'Mobile Gaming', cadence: 'Bi-Monthly', status: 'Grassroots' }
-        ],
-        contactInfo: {
-            address: 'Pusat Sukan Komuniti Negeri Kedah, Alor Setar',
-            email: 'info@esportskedah.my',
-            phone: '+60 4-733 1122',
-            website: 'www.esportskedah.my'
-        },
-        executiveCommittee: [
-            { role: 'President', name: 'Syed Faizal Al-Hadi' },
-            { role: 'Deputy President', name: 'Azman Bin Kassim' },
-            { role: 'Secretary General', name: 'Siti Sarah Othman' }
-        ]
-    },
-    selangor: {
-        stateName: 'Selangor',
-        bodyName: 'Persatuan Sukan Elektronik Negeri Selangor',
-        code: 'SGR',
-        status: 'Active State Affiliate',
-        headquarters: 'Shah Alam, Selangor',
-        parentBody: 'Malaysian Esports Federation (MESF)',
-        image: '/images/states/selangor_transparent.png',
-        districts: ['Petaling', 'Hulu Langat', 'Klang', 'Gombak', 'Kuala Langat', 'Sepang', 'Kuala Selangor', 'Hulu Selangor', 'Sabak Bernam'],
-        programs: [
-            { id: 'SGR-01', title: 'Selangor Esports League (SEL)', discipline: 'MLBB, Valorant & Tekken 8', cadence: 'Bi-Annual Circuit', status: 'Sanctioned' },
-            { id: 'SGR-02', title: 'Piala Raja Muda Selangor Esports', discipline: 'Youth Invitational', cadence: 'Annual Championship', status: 'Tier 1 Official' }
-        ],
-        contactInfo: {
-            address: 'Wisma Kebudayaan & Sukan Negeri Selangor, Seksyen 14, Shah Alam',
-            email: 'admin@esportsselangor.my',
-            phone: '+60 3-5510 2200',
-            website: 'www.esportsselangor.my'
-        },
-        executiveCommittee: [
-            { role: 'President', name: 'Abdul Razak Bin Hashim' },
-            { role: 'Deputy President', name: 'Khairul Anuar Bin Ahmad' },
-            { role: 'Secretary General', name: 'Farah Nadia Binti Kamaruddin' }
-        ]
-    },
-    penang: {
-        stateName: 'Pulau Pinang',
-        bodyName: 'Persatuan Sukan Elektronik Pulau Pinang',
-        code: 'PNG',
-        status: 'Active State Affiliate',
-        headquarters: 'Georgetown, Pulau Pinang',
-        parentBody: 'Malaysian Esports Federation (MESF)',
-        image: '/images/states/penang_transparent.png',
-        districts: ['Timur Laut', 'Barat Daya', 'Seberang Perai Utara', 'Seberang Perai Tengah', 'Seberang Perai Selatan'],
-        programs: [
-            { id: 'PNG-01', title: 'Penang International Esports Championship', discipline: 'Dota 2 & CS2', cadence: 'Annual Championship', status: 'Sanctioned' },
-            { id: 'PNG-02', title: 'Piala Komuniti Mutiara', discipline: 'Mobile Esports', cadence: 'Quarterly Series', status: 'Grassroots' }
-        ],
-        contactInfo: {
-            address: 'Pusat Konvensyen & Sukan Komuniti Pulau Pinang, Georgetown',
-            email: 'contact@esportspenang.my',
-            phone: '+60 4-262 7700',
-            website: 'www.esportspenang.my'
-        },
-        executiveCommittee: [
-            { role: 'President', name: 'Tan Chee Keong' },
-            { role: 'Deputy President', name: 'Muhammad Zulhilmi' },
-            { role: 'Secretary General', name: 'Lim Wei Shen' }
-        ]
-    },
-    sabah: {
-        stateName: 'Sabah',
-        bodyName: 'Persatuan Sukan Elektronik Negeri Sabah',
-        code: 'SBH',
-        status: 'Active State Affiliate',
-        headquarters: 'Kota Kinabalu, Sabah',
-        parentBody: 'Malaysian Esports Federation (MESF)',
-        image: '/images/states/sabah_transparent.png',
-        districts: ['Kota Kinabalu', 'Sandakan', 'Tawau', 'Penampang', 'Lahad Datu', 'Keningau', 'Tuaran'],
-        programs: [
-            { id: 'SBH-01', title: 'Sabah Borneo Esports Masters', discipline: 'PUBG Mobile & MLBB', cadence: 'Annual Championship', status: 'Sanctioned' },
-            { id: 'SBH-02', title: 'Liga Belia Kinabalu', discipline: 'Mobile & PC Gaming', cadence: 'Bi-Monthly', status: 'Grassroots' }
-        ],
-        contactInfo: {
-            address: 'Kompleks Sukan Likas, Kota Kinabalu, Sabah',
-            email: 'urusetia@esportssabah.my',
-            phone: '+60 88-234 567',
-            website: 'www.esportssabah.my'
-        },
-        executiveCommittee: [
-            { role: 'President', name: 'Datuk Jeffrey Kitingan' },
-            { role: 'Deputy President', name: 'Mohd Fadhil Bin Yusof' },
-            { role: 'Secretary General', name: 'Grace Wong Siew Mei' }
-        ]
-    },
-    sarawak: {
-        stateName: 'Sarawak',
-        bodyName: 'Persatuan Sukan Elektronik Sarawak',
-        code: 'SWK',
-        status: 'Active State Affiliate',
-        headquarters: 'Kuching, Sarawak',
-        parentBody: 'Malaysian Esports Federation (MESF)',
-        image: '/images/states/sarawak_transparent.png',
-        districts: ['Kuching', 'Miri', 'Sibu', 'Bintulu', 'Samarahan', 'Sri Aman', 'Sarikei', 'Kapit'],
-        programs: [
-            { id: 'SWK-01', title: 'Sarawak Bumi Kenyalang Cup', discipline: 'Dota 2, MLBB & E-Racing', cadence: 'Annual Circuit', status: 'Sanctioned' },
-            { id: 'SWK-02', title: 'SUKMA Sarawak Development Series', discipline: 'National Squad Qualifier', cadence: 'Bi-Annual', status: 'Tier 1 Official' }
-        ],
-        contactInfo: {
-            address: 'Perbadanan Sukan Sarawak, Stadium Negeri, Kuching',
-            email: 'admin@esportssarawak.my',
-            phone: '+60 82-445 566',
-            website: 'www.esportssarawak.my'
-        },
-        executiveCommittee: [
-            { role: 'President', name: 'Afif Bin Mohamad' },
-            { role: 'Deputy President', name: 'Leonard Ting' },
-            { role: 'Secretary General', name: 'Ahmad Faizul' }
-        ]
-    }
-};
+// --2. helpers--
+function getInitials(name = '', tag = '') { // convert
+    if (tag && tag.length <= 4) return tag; // check
+    const words = (name || '').trim().split(/\s+/); // convert
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase(); // check
+    return ((name || '').slice(0, 3) || 'MY').toUpperCase(); // convert
+}
 
 // --3. main component--
-export default function StateDetails({ stateSlug = 'selangor', slug = null }) {
+export default function StateDetails({ state = null, otherStates = [] }) {
     // --4. actions--
-    const key = (slug || stateSlug || 'selangor').toLowerCase().replace('-', '_'); // check
-    const data = STATE_DATABASE[key] || {
-        ...STATE_DATABASE.selangor,
-        stateName: key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' '),
-        bodyName: `Persatuan Sukan Elektronik Negeri ${key.charAt(0).toUpperCase() + key.slice(1).replace('_', ' ')}`,
-        code: key.slice(0, 3).toUpperCase(),
-        image: `/images/states/${key}_transparent.png`,
-    };
+    const isActive = (state?.status || '').toUpperCase() === 'ACTIVE'; // check
+    const isPending = (state?.status || '').toUpperCase() === 'PENDING'; // check
 
     // --5. UI--
     return (
         <div className="relative min-h-screen bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
-            <Head title={`${data.bodyName} - State Association | MESF`} />
+            <Head title={state?.name ? `${state.name} - State Affiliate - MESF` : 'State Affiliate - MESF'} />
 
             {/* ambient background glows */}
-            <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[150px] z-0" />
-            <div className="pointer-events-none fixed top-1/3 -right-20 h-[450px] w-[450px] rounded-full bg-indigo-600/10 blur-[160px] z-0" />
+            <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/[0.06] blur-[160px]" />
+            <div className="pointer-events-none fixed top-1/3 right-10 h-[450px] w-[450px] rounded-full bg-amber-400/[0.04] blur-[160px]" />
 
-            {/* grain overlay */}
-            <div
-                className="pointer-events-none fixed inset-0 z-10 opacity-[0.035]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
-
-            {/* 1. floating glass navbar */}
+            {/* floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                 <PublicNavbar activeTab="teams" />
             </div>
 
-            {/* main content */}
-            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-24 flex-1 text-left">
-                {/* back link */}
-                <div className="mb-8">
-                    <BackButton href="/teams" label="Back to Directory" />
+            {/* main body container */}
+            <main className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-24 text-left flex-1 space-y-8">
+                
+                {/* top navigation bar */}
+                <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                        <BackButton href="/teams" label="Back to Directory" />
+                        <span className="text-xs text-neutral-500 font-mono hidden sm:inline">/</span>
+                        <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider hidden sm:inline">
+                            {state?.name || ''}
+                        </span>
+                    </div>
+
+                    {state && (
+                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-xs font-mono">
+                            <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                    isActive ? 'bg-emerald-400 animate-pulse' : isPending ? 'bg-amber-400' : 'bg-neutral-500'
+                                }`}
+                            />
+                            <span className={isActive ? 'text-emerald-400' : isPending ? 'text-amber-300' : 'text-neutral-400'}>
+                                {state.status || ''}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
-                {/* state profile hero banner */}
-                <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-2xl p-6 sm:p-10 md:p-12 mb-12 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
-                    {/* top edge luminous highlight beam */}
-                    <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70" />
-
-                    <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                        <div className="flex items-start sm:items-center gap-6 sm:gap-8">
-                            {/* state crest container (NO HOVER SCALE) */}
-                            <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-black/70 border border-white/20 flex items-center justify-center shrink-0 p-3 shadow-inner ring-1 ring-white/10">
-                                <img
-                                    src={data.image}
-                                    alt={data.stateName}
-                                    className="h-full w-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none'; // fallback
-                                        if (e.currentTarget.nextSibling) {
-                                            e.currentTarget.nextSibling.style.display = 'flex';
-                                        }
-                                    }}
-                                />
-                                <div className="h-full w-full rounded-xl bg-neutral-900 border border-white/10 items-center justify-center hidden">
-                                    <span className="text-xl font-black text-white font-mono">{data.code}</span>
-                                </div>
-                            </div>
-
-                            <div className="space-y-2">
-                                <div className="flex flex-wrap items-center gap-2.5">
-                                    <span className="px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-white/10 text-white border border-white/15">
-                                        {data.status}
-                                    </span>
-                                    <span className="text-xs text-neutral-400 flex items-center gap-1.5 font-medium">
-                                        <MapPin className="w-3.5 h-3.5 text-neutral-400" />
-                                        {data.headquarters}
-                                    </span>
-                                </div>
-
-                                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight uppercase">
-                                    {data.bodyName}
-                                </h1>
-
-                                <p className="text-xs sm:text-sm text-neutral-400 font-medium">
-                                    Affiliated governing body under {data.parentBody}
-                                </p>
-                            </div>
+                {!state ? (
+                    <div className="p-12 sm:p-16 rounded-3xl border border-white/10 bg-[#0B101D] text-center space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
+                        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400">
+                            <Shield className="w-8 h-8" />
                         </div>
-
-                        {/* high-level overview capsules */}
-                        <div className="flex flex-wrap items-center gap-3 pt-4 lg:pt-0 border-t lg:border-t-0 border-white/10">
-                            <div className="px-5 py-3 rounded-2xl bg-[#070b14]/80 border border-white/15 text-center min-w-[110px] shadow-inner">
-                                <span className="block text-2xl font-black text-white font-mono">{data.districts.length}</span>
-                                <span className="text-[10px] font-bold text-neutral-400 tracking-wider uppercase">Districts</span>
-                            </div>
-                            <div className="px-5 py-3 rounded-2xl bg-[#070b14]/80 border border-white/15 text-center min-w-[110px] shadow-inner">
-                                <span className="block text-2xl font-black text-emerald-400 font-mono">{data.programs.length}</span>
-                                <span className="text-[10px] font-bold text-neutral-400 tracking-wider uppercase">Circuits</span>
-                            </div>
+                        <div className="space-y-2 max-w-md mx-auto">
+                            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
+                                No State Affiliate Selected
+                            </h2>
+                            <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
+                                Please choose a state association from the directory to review official accreditation.
+                            </p>
+                        </div>
+                        <div className="pt-2">
+                            <Link
+                                href="/teams" // redirect
+                                className="px-6 py-2.5 rounded-xl bg-white text-black font-extrabold text-xs tracking-wider uppercase inline-flex items-center gap-2 hover:bg-neutral-200 transition-colors shadow-md"
+                            >
+                                <span>Browse Directory</span>
+                            </Link>
                         </div>
                     </div>
-                </div>
+                ) : (
+                    <>
+                        {/* organized hero profile banner */}
+                        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-[#0E1629]/90 to-[#080D1A]/95 backdrop-blur-2xl p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] space-y-8">
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/[0.03] rounded-full blur-3xl pointer-events-none" />
+                            <div className="absolute -bottom-10 left-10 w-80 h-80 bg-blue-500/[0.03] rounded-full blur-3xl pointer-events-none" />
 
-                {/* 2-column layout */}
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-                    {/* left column: sanctioned programs & districts */}
-                    <div className="lg:col-span-8 space-y-10">
-                        {/* programs & qualifiers */}
-                        <section className="space-y-4">
-                            <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                                <h2 className="text-xl font-black text-white uppercase tracking-wider">
-                                    Sanctioned Programs & Qualifiers
-                                </h2>
-                                <span className="text-xs text-neutral-400 font-mono font-bold">[ STATE REGISTRY ]</span>
-                            </div>
+                            {/* top block: crest + identity info */}
+                            <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6 sm:gap-8">
+                                
+                                {/* state crest badge */}
+                                <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-[#070B14]/90 border border-white/15 p-3 flex items-center justify-center shrink-0 shadow-xl overflow-hidden backdrop-blur-md">
+                                    {state.logo ? (
+                                        <img
+                                            src={state.logo} // state
+                                            alt={state.name || ''}
+                                            className="h-full w-full object-contain filter drop-shadow"
+                                        />
+                                    ) : (
+                                        <span className="text-2xl sm:text-3xl font-black tracking-widest text-amber-400 uppercase font-mono">
+                                            {state.tag || getInitials(state.name, state.tag)}
+                                        </span>
+                                    )}
+                                </div>
 
-                            <div className="grid grid-cols-1 gap-3">
-                                {data.programs.map((item) => (
-                                    <div
-                                        key={item.id}
-                                        className="p-5 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-lg flex items-center justify-between gap-4"
-                                    >
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <span className="font-mono text-xs font-bold text-neutral-400">{item.id}</span>
-                                                <span className="text-neutral-600">&bull;</span>
-                                                <span className="text-xs text-white font-semibold">{item.discipline}</span>
-                                            </div>
-                                            <h3 className="text-base font-bold text-white tracking-wide">
-                                                {item.title}
-                                            </h3>
-                                        </div>
-
-                                        <div className="flex items-center gap-3 shrink-0">
-                                            <span className="text-xs text-neutral-400 hidden sm:inline">{item.cadence}</span>
-                                            <span className="px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-white/10 border border-white/15 text-white">
-                                                {item.status}
+                                {/* state details */}
+                                <div className="space-y-2.5 min-w-0 flex-1">
+                                    {/* metadata pills row */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {state.tag && (
+                                            <span className="px-2.5 py-0.5 rounded-md bg-white/[0.06] border border-white/10 font-mono text-xs font-bold text-neutral-300">
+                                                [{state.tag}]
                                             </span>
+                                        )}
+                                        <span className="px-2.5 py-0.5 rounded-md bg-amber-400/10 border border-amber-400/25 text-amber-300 text-xs font-mono font-bold tracking-wider uppercase">
+                                            State Affiliate
+                                        </span>
+                                        {state.region && (
+                                            <span className="px-2.5 py-0.5 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs font-medium flex items-center gap-1.5">
+                                                <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                                                <span>{state.region}</span>
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* state title */}
+                                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-tight">
+                                        {state.name || ''}
+                                    </h1>
+
+                                    {/* motto / tagline */}
+                                    {state.motto && (
+                                        <p className="text-sm sm:text-base italic text-neutral-300 font-normal">
+                                            &ldquo;{state.motto}&rdquo;
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* bottom block: structured metrics row */}
+                            <div className="relative z-10 pt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <Gamepad2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                        <span>Primary Discipline</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-white truncate min-h-[20px]">
+                                        {state.game_title || ''}
+                                    </div>
+                                </div>
+
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <Users className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                                        <span>Squad Capacity</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-white min-h-[20px]">
+                                        {state.roster_size ? `${state.roster_size} Athletes` : ''}
+                                    </div>
+                                </div>
+
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                        <span>Jurisdiction</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-white truncate min-h-[20px]">
+                                        {state.region || ''}
+                                    </div>
+                                </div>
+
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                        <span>Affiliation Standing</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-emerald-400 min-h-[20px]">
+                                        {state.status || ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2-column balanced split: specifications (left 8 cols) & general contact info (right 4 cols) */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            
+                            {/* left column (8 cols): specifications & governance */}
+                            <div className="lg:col-span-8 space-y-8">
+                                
+                                {/* 1. Official Registry Specifications */}
+                                <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-6">
+                                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                        <div>
+                                            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                                Registry Intel
+                                            </span>
+                                            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
+                                                State Specifications
+                                            </h2>
+                                        </div>
+                                        <span className="text-xs font-mono text-neutral-400">
+                                            {state.id ? `MESF-ID #${state.id}` : ''}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                State Association Name
+                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px]">
+                                                {state.name || ''}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Tag / Acronym
+                                            </span>
+                                            <div className="text-sm font-bold text-white font-mono min-h-[22px]">
+                                                {state.tag ? `[${state.tag}]` : ''}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                State / Territory
+                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px] flex items-center gap-1.5">
+                                                {state.region && <MapPin className="w-4 h-4 text-neutral-400 shrink-0" />}
+                                                <span>{state.region || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Primary Discipline Focus
+                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px] flex items-center gap-1.5">
+                                                {state.game_title && <Gamepad2 className="w-4 h-4 text-amber-400 shrink-0" />}
+                                                <span>{state.game_title || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Motto / Slogan
+                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px]">
+                                                {state.motto || ''}
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Registered Athlete Capacity
+                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px] flex items-center gap-1.5">
+                                                {state.roster_size ? (
+                                                    <>
+                                                        <Users className="w-4 h-4 text-blue-400 shrink-0" />
+                                                        <span>{state.roster_size} Registered Slots</span>
+                                                    </>
+                                                ) : null}
+                                            </div>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* registered districts */}
-                        <section className="space-y-4">
-                            <div className="flex items-baseline justify-between border-b border-white/10 pb-3">
-                                <h2 className="text-xl font-black text-white uppercase tracking-wider">
-                                    Registered Districts & Sub-Associations
-                                </h2>
-                                <span className="text-xs text-neutral-400 font-mono font-bold">{data.districts.length} Districts</span>
-                            </div>
-
-                            <div className="flex flex-wrap gap-2.5">
-                                {data.districts.map((district) => (
-                                    <span
-                                        key={district}
-                                        className="px-4 py-2 rounded-xl bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border border-white/15 text-xs font-semibold text-neutral-200 flex items-center gap-2 shadow-sm"
-                                    >
-                                        <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                                        {district}
-                                    </span>
-                                ))}
-                            </div>
-                        </section>
-                    </div>
-
-                    {/* right column: secretary & board */}
-                    <aside className="lg:col-span-4 space-y-6">
-                        {/* contact box */}
-                        <div className="p-6 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-xl space-y-4">
-                            <h3 className="text-xs font-black tracking-widest text-neutral-300 uppercase pb-2 border-b border-white/10">
-                                Official Secretariat
-                            </h3>
-
-                            <div className="space-y-3.5 text-xs">
-                                <div>
-                                    <span className="text-neutral-500 uppercase tracking-wider block text-[10px] mb-0.5">Address</span>
-                                    <span className="text-neutral-200 font-medium leading-relaxed">{data.contactInfo.address}</span>
                                 </div>
-                                <div>
-                                    <span className="text-neutral-500 uppercase tracking-wider block text-[10px] mb-0.5">Email</span>
-                                    <span className="text-white font-mono">{data.contactInfo.email}</span>
-                                </div>
-                                <div>
-                                    <span className="text-neutral-500 uppercase tracking-wider block text-[10px] mb-0.5">Contact</span>
-                                    <span className="text-white font-mono">{data.contactInfo.phone}</span>
-                                </div>
-                                <div>
-                                    <span className="text-neutral-500 uppercase tracking-wider block text-[10px] mb-0.5">Official Portal</span>
-                                    <span className="text-neutral-300 font-mono">{data.contactInfo.website}</span>
-                                </div>
-                            </div>
-                        </div>
 
-                        {/* executive board */}
-                        <div className="p-6 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-xl space-y-3">
-                            <h3 className="text-xs font-black tracking-widest text-neutral-300 uppercase pb-2 border-b border-white/10">
-                                Executive Board
-                            </h3>
-
-                            <div className="space-y-2 text-xs">
-                                {data.executiveCommittee.map((official) => (
-                                    <div key={official.role} className="flex items-center justify-between py-1.5 border-b border-white/5 last:border-0">
-                                        <span className="text-neutral-400">{official.role}</span>
-                                        <span className="text-white font-bold">{official.name}</span>
+                                {/* 2. Federation Accreditation & Sanction Standards */}
+                                <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-4">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                            Accreditation
+                                        </span>
+                                        <h2 className="text-lg sm:text-xl font-black text-white tracking-tight uppercase">
+                                            Federation Sanction & Standards
+                                        </h2>
                                     </div>
-                                ))}
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                                        <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                                <span>Accredited State Body</span>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400">
+                                                Recognized state affiliate under national esports governance.
+                                            </p>
+                                        </div>
+
+                                        <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                                <span>Grassroots Pathway</span>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400">
+                                                Official feeder network for SUKMA and state tournaments.
+                                            </p>
+                                        </div>
+
+                                        <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                                <span>Statutory Integrity</span>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400">
+                                                Fully compliant with Sports Development Act standards.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
+
+                            {/* right column (4 cols): general contact info & other states directory */}
+                            <aside className="lg:col-span-4 space-y-6">
+                                
+                                {/* Card 1: General Contact Info (aligned with Admin Management & Contacts) */}
+                                <div className="p-6 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-5">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                            Secretariat
+                                        </span>
+                                        <h3 className="text-base font-black text-white uppercase tracking-tight">
+                                            General Contact Info
+                                        </h3>
+                                        <p className="text-[11px] text-neutral-400 mt-0.5">
+                                            Official secretariat and association leadership channels
+                                        </p>
+                                    </div>
+
+                                    <div className="space-y-3.5">
+                                        {/* Association President / Manager */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Association President / Manager
+                                            </span>
+                                            <div className="text-white font-bold text-sm min-h-[22px]">
+                                                {state.manager_name || ''}
+                                            </div>
+                                        </div>
+
+                                        {/* Official Secretariat Email */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Official Contact Email
+                                            </span>
+                                            <div className="text-sm font-mono text-white min-h-[22px]">
+                                                {state.contact_email ? (
+                                                    <a
+                                                        href={`mailto:${state.contact_email}`} // redirect
+                                                        className="text-white hover:text-amber-400 flex items-center gap-1.5 transition-colors break-all"
+                                                    >
+                                                        <Mail className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+                                                        <span>{state.contact_email}</span>
+                                                    </a>
+                                                ) : null}
+                                            </div>
+                                        </div>
+
+                                        {/* State Jurisdiction */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                State / Jurisdiction
+                                            </span>
+                                            <div className="text-white font-semibold text-xs min-h-[20px] flex items-center gap-1.5">
+                                                {state.region && <MapPin className="w-3.5 h-3.5 text-neutral-400 shrink-0" />}
+                                                <span>{state.region || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Affiliation Standing */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Affiliation Standing
+                                            </span>
+                                            <div className="text-emerald-400 font-bold text-xs min-h-[20px] flex items-center gap-1.5">
+                                                <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                                <span>{state.status || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Direct Email Action Button */}
+                                        {state.contact_email && (
+                                            <div className="pt-1">
+                                                <a
+                                                    href={`mailto:${state.contact_email}`} // redirect
+                                                    className="w-full py-2.5 px-4 rounded-xl bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 text-amber-300 font-bold text-xs tracking-wider uppercase inline-flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                                >
+                                                    <Send className="w-3.5 h-3.5" />
+                                                    <span>Contact Secretariat</span>
+                                                </a>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Card 2: Other State Affiliates Directory */}
+                                {otherStates && otherStates.length > 0 && (
+                                    <div className="p-6 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-4">
+                                        <div className="border-b border-white/10 pb-3 flex items-center justify-between">
+                                            <div>
+                                                <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                                    Directory
+                                                </span>
+                                                <h3 className="text-base font-black text-white uppercase tracking-tight">
+                                                    Other State Affiliates
+                                                </h3>
+                                            </div>
+                                            <Link
+                                                href="/teams" // redirect
+                                                className="text-[11px] font-mono text-neutral-400 hover:text-amber-400 transition-colors"
+                                            >
+                                                View All
+                                            </Link>
+                                        </div>
+
+                                        <div className="space-y-2 max-h-[580px] overflow-y-auto pr-1">
+                                            {otherStates.map((s) => (
+                                                <button
+                                                    key={s.id}
+                                                    type="button"
+                                                    onClick={() => router.visit(`/teams/state/${s.slug || s.id}`)} // redirect
+                                                    className="w-full text-left p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-white/15 flex items-center justify-between text-xs transition-colors group cursor-pointer"
+                                                >
+                                                    <div className="flex items-center gap-2.5 min-w-0">
+                                                        <div className="w-7 h-7 rounded-lg bg-black/60 border border-white/10 p-1 flex items-center justify-center text-[10px] font-mono font-bold text-neutral-300 shrink-0 overflow-hidden">
+                                                            {s.logo ? (
+                                                                <img
+                                                                    src={s.logo} // state
+                                                                    alt={s.name || ''}
+                                                                    className="h-full w-full object-contain"
+                                                                />
+                                                            ) : (
+                                                                <span>{s.tag || getInitials(s.name, s.tag)}</span>
+                                                            )}
+                                                        </div>
+                                                        <div className="min-w-0 flex-1">
+                                                            <div className="font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                                {s.name || ''}
+                                                            </div>
+                                                            <div className="text-[10px] font-mono text-neutral-500 truncate">
+                                                                {s.region || ''}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-white shrink-0 transition-colors ml-2" />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </aside>
+
                         </div>
-                    </aside>
-                </div>
+                    </>
+                )}
             </main>
 
             {/* footer */}
@@ -377,4 +468,3 @@ export default function StateDetails({ stateSlug = 'selangor', slug = null }) {
         </div>
     );
 }
-

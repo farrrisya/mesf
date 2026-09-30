@@ -241,17 +241,29 @@ export default function About() {
                 <PublicNavbar activeTab="about" />
             </div>
 
-            {/* 1. hero header */}
-            <header className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-8 text-left">
-                <div className="pb-6 border-b border-white/10">
-                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
-                        About {orgAcronym}
-                    </h1>
-                </div>
-            </header>
+            {/* Main Content Area */}
+            <main className="relative z-10 pt-32 md:pt-40 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
 
-            {/* 2. main content area */}
-            <main className="relative z-20 pb-28 px-6 sm:px-10 md:px-14 max-w-7xl mx-auto space-y-16 sm:space-y-20 text-left">
+                {/* Section 1: Hero Header */}
+                <section className="relative text-center max-w-3xl mx-auto space-y-5 pt-4">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-400/10 border border-amber-400/30 text-amber-300 text-xs font-semibold tracking-wider uppercase">
+                        <span className="h-2 w-2 rounded-full bg-amber-400" />
+                        National Esports Federation{rosNumber ? ` • Reg: ${rosNumber}` : ''}
+                    </div>
+
+                    <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
+                        About{' '}
+                        <span className="bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent">
+                            {orgAcronym}
+                        </span>
+                    </h1>
+
+                    {aboutHeroSubtitle && (
+                        <p className="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-2xl mx-auto">
+                            {aboutHeroSubtitle}
+                        </p>
+                    )}
+                </section>
 
                 {/* Section 2: About Us (Official Info from mesf.my) */}
                 <section className="relative rounded-3xl p-6 sm:p-10 lg:p-12 bg-white/[0.025] border border-white/10 shadow-2xl backdrop-blur-xl">
@@ -298,10 +310,13 @@ export default function About() {
                 </section>
 
                 {/* Section 3: Institutional Partners & Affiliations */}
-                <section className="space-y-6">
-                    <div className="border-b border-white/10 pb-4 text-left">
-                        <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                            Affiliates
+                <section className="py-8 sm:py-14 space-y-8 sm:space-y-10">
+                    <div className="text-center max-w-xl mx-auto space-y-2.5">
+                        <div className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-amber-400">
+                            Affiliations
+                        </div>
+                        <h2 className="text-xl sm:text-2xl font-bold text-white">
+                            Institutional & International Affiliates
                         </h2>
                     </div>
 
@@ -402,7 +417,7 @@ export default function About() {
                             </div>
 
                             {/* Grand Leadership Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
                                 {leadershipMembers.map((member) => (
                                     <div
                                         key={member.id}

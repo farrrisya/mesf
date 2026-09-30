@@ -88,7 +88,7 @@ export default function News({
             <div className="flex-1">
                 {/* 1. page header section */}
                 <header className="relative z-20 pt-32 pb-8 px-6 sm:px-10 md:px-14 max-w-7xl mx-auto text-left">
-                    <h1 className="text-3xl sm:text-4xl font-black text-white uppercase tracking-tight">
+                    <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white uppercase tracking-tight">
                         News
                     </h1>
                 </header>

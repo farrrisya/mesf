@@ -1,7 +1,7 @@
 // --1. imports--
 import { Head, Link, router } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
-import { Search, Shield, Trophy, MapPin, Building2, ArrowRight, CheckCircle2, Users, Sparkles } from 'lucide-react';
+import { Search, MapPin, ArrowUpRight, CheckCircle2, Gamepad2, X } from 'lucide-react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
@@ -23,7 +23,6 @@ const STATE_AFFILIATES = [
     { id: 'labuan', code: 'LBN', name: 'WP Labuan', title: 'Persatuan Sukan Elektronik WP Labuan', region: 'East Malaysia', image: '/images/states/labuan_transparent.png' }
 ];
 
-// helper to get team initials if logo is absent
 function getTeamInitials(name = '', tag = '') { // convert
     if (tag && tag.length <= 4) return tag;
     const words = name.trim().split(/\s+/);
@@ -37,16 +36,15 @@ function getTeamInitials(name = '', tag = '') { // convert
 export default function Teams({ uploadedTeams = [] }) {
     // --4. actions--
     const [directoryTab, setDirectoryTab] = useState('All'); // state
+    const [selectedGame, setSelectedGame] = useState('All'); // state
     const [stateRegionFilter, setStateRegionFilter] = useState('All'); // state
     const [searchQuery, setSearchQuery] = useState(''); // state
 
-    // national and pro organizations
-    const nationalTeams = useMemo(() => { // check
+    const nationalTeams = useMemo(() => { // filter
         return uploadedTeams.filter(t => t.type === 'national' || t.type === 'pro');
     }, [uploadedTeams]);
 
-    // all 14 official state associations
-    const allStateAffiliates = useMemo(() => { // check
+    const allStateAffiliates = useMemo(() => { // filter
         const uploadedStates = uploadedTeams.filter(t => t.type === 'state').map(t => ({
             id: t.slug || t.id,
             code: (t.tag || t.name.slice(0, 3)).toUpperCase(),
@@ -58,23 +56,38 @@ export default function Teams({ uploadedTeams = [] }) {
         return uploadedStates.length > 0 ? uploadedStates : STATE_AFFILIATES;
     }, [uploadedTeams]);
 
-    // filtered pro teams based on search query
+    const availableGames = useMemo(() => { // filter
+        const games = new Set();
+        nationalTeams.forEach(t => {
+            if (t.game) games.add(t.game);
+            if (Array.isArray(t.rosters)) {
+                t.rosters.forEach(r => {
+                    if (r && r !== 'National Squad') games.add(r);
+                });
+            }
+        });
+        return ['All', ...Array.from(games)];
+    }, [nationalTeams]);
+
     const filteredNationalTeams = useMemo(() => { // filter
         const query = searchQuery.trim().toLowerCase();
-        if (!query) return nationalTeams;
         return nationalTeams.filter(t => {
+            const matchesGame = selectedGame === 'All' || 
+                t.game === selectedGame || 
+                (t.rosters || []).includes(selectedGame);
+            if (!matchesGame) return false;
+
+            if (!query) return true;
             const nameMatch = (t.name || '').toLowerCase().includes(query);
             const tagMatch = (t.tag || '').toLowerCase().includes(query);
             const regionMatch = (t.region || '').toLowerCase().includes(query);
-            const rostersMatch = (t.rosters || []).some(r => r.toLowerCase().includes(query));
-            return nameMatch || tagMatch || regionMatch || rostersMatch;
+            return nameMatch || tagMatch || regionMatch;
         });
-    }, [nationalTeams, searchQuery]);
+    }, [nationalTeams, searchQuery, selectedGame]);
 
-    // filtered state affiliates by search query and region
     const filteredStates = useMemo(() => { // filter
         const query = searchQuery.trim().toLowerCase();
-        return allStateAffiliates.filter((s) => {
+        return allStateAffiliates.filter(s => {
             const regionMatches = stateRegionFilter === 'All' || s.region === stateRegionFilter;
             if (!regionMatches) return false;
             if (!query) return true;
@@ -91,349 +104,420 @@ export default function Teams({ uploadedTeams = [] }) {
     // --5. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
-            <Head title="Teams & Associations - MESF" />
+            <Head title="Teams - MESF" />
 
-            {/* custom animation for moving footer beam */}
-            <style>{`
-                @keyframes beamScan {
-                    0% {
-                        transform: translateX(-100%);
-                    }
-                    100% {
-                        transform: translateX(400%);
-                    }
-                }
-                .footer-beam {
-                    animation: beamScan 12s linear infinite;
-                }
-            `}</style>
-
-            {/* ambient background glows */}
-            <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-                <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-blue-600/10 blur-[130px]" />
-                <div className="absolute top-1/2 -right-48 w-96 h-96 rounded-full bg-indigo-600/10 blur-[140px]" />
-                <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-emerald-500/5 blur-[160px]" />
-            </div>
-
-            {/* background SVG grain texture */}
-            <div
-                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
-
-            {/* 1. floating glass navbar */}
+            {/* floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                 <PublicNavbar activeTab="teams" />
             </div>
 
-            {/* 2. hero header & filters */}
-            <header className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-8 text-left">
-                <div className="flex flex-col gap-6 pb-6 border-b border-white/10">
-                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-                        <div>
-                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
-                                Teams
-                            </h1>
-                        </div>
+            {/* 1. hero header with championship background (natural wide aspect ratio, zero zoom-in) */}
+            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
+                {/* pristine zero-grain HD center-focused MSC championship image */}
+                <img
+                    src="/images/teams_msc_center_hd.jpg?v=ultra_clean"
+                    alt="MSC Esports World Cup Champions"
+                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
+                />
 
-                        {/* search bar */}
-                        <div className="w-full lg:w-80 shrink-0">
-                            <div className="relative">
-                                <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)} // input
-                                    placeholder="Search team, association, or state..."
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/15 focus:border-white/40 focus:outline-none text-xs text-white placeholder-neutral-500 transition-colors shadow-inner"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSearchQuery('')} // trigger
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-bold"
-                                    >
-                                        ✕
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                    </div>
+                {/* cinematic gradient overlays: dark on left for clean left-aligned text, smooth fade at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/90 via-[#070B14]/65 to-transparent/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
 
-                    {/* dual filter bar: main directory tabs */}
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-4 border-t border-white/5">
-                        <div className="flex flex-wrap items-center gap-2">
-                            {[
-                                { id: 'All', label: 'All Organizations' },
-                                { id: 'Pro', label: `National & Pro (${nationalTeams.length})` },
-                                { id: 'States', label: `State Affiliates (${allStateAffiliates.length})` }
-                            ].map((tab) => {
-                                const isActive = directoryTab === tab.id;
-                                return (
-                                    <button
-                                        key={tab.id}
-                                        type="button"
-                                        onClick={() => setDirectoryTab(tab.id)} // filter
-                                        className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none ${
-                                            isActive
-                                                ? 'bg-white text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)] border border-white font-extrabold'
-                                                : 'border border-white/15 bg-[#0e1628]/90 text-neutral-300 hover:text-white hover:border-white/30 hover:bg-[#131d33]'
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {/* quick directory count stats */}
-                        <div className="flex items-center gap-3 text-xs text-neutral-400">
-                            <span className="inline-flex items-center gap-1.5 font-medium">
-                                <Users className="w-3.5 h-3.5 text-neutral-400" />
-                                {nationalTeams.length} Pro & National
-                            </span>
-                            <span>•</span>
-                            <span className="inline-flex items-center gap-1.5 font-medium">
-                                <Building2 className="w-3.5 h-3.5 text-neutral-400" />
-                                {allStateAffiliates.length} State Affiliates
-                            </span>
-                        </div>
+                {/* left-aligned header container (matches mesa.mn and our other pages) */}
+                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
+                    <div className="text-left space-y-3 sm:space-y-4">
+                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
+                            Malaysia Esports Federation
+                        </span>
+                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
+                            Teams
+                        </h1>
+                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
+                            Official directory of sanctioned esports clubs and accredited state associations.
+                        </p>
                     </div>
                 </div>
-            </header>
+            </section>
 
-            {/* 3. directory main content */}
-            <main className="w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-28 text-left space-y-20">
-                {/* SECTION 1: PRO TEAMS & NATIONAL ORGANIZATIONS */}
-                {showProSection && (
-                    <section className="space-y-6">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <div>
-                                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
-                                    National & Pro Teams
-                                </h2>
-                            </div>
-                            <span className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-wider hidden sm:block">
-                                [{filteredNationalTeams.length} {filteredNationalTeams.length === 1 ? 'Club' : 'Clubs'}]
-                            </span>
+            {/* 2. stats pill row (custom premium geometric svgs) */}
+            <section className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 -mt-10 sm:-mt-12">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#0B101D]/90 border border-white/10 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)]">
+                    
+                    {/* stat 1: esports clubs */}
+                    <div className="flex flex-col items-center text-center p-2.5 space-y-2">
+                        <div className="w-11 h-11 rounded-xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shadow-inner">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                                <path d="M4 4h16v6a7 7 0 0 1-14 0V4Z" />
+                                <path d="M12 15v4" />
+                                <path d="M8 21h8" />
+                                <circle cx="12" cy="8" r="1.5" fill="currentColor" stroke="none" />
+                            </svg>
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            {nationalTeams.length}
+                        </div>
+                        <div className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.18em] text-neutral-400">
+                            Esports Clubs
+                        </div>
+                    </div>
+
+                    {/* stat 2: state affiliates (updated landmark svg) */}
+                    <div className="flex flex-col items-center text-center p-2.5 space-y-2">
+                        <div className="w-11 h-11 rounded-xl bg-emerald-400/10 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shadow-inner">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M3 21h18" />
+                                <path d="M5 21V10" />
+                                <path d="M9 21V10" />
+                                <path d="M15 21V10" />
+                                <path d="M19 21V10" />
+                                <path d="M12 3L2 8h20L12 3Z" />
+                                <circle cx="12" cy="14.5" r="1.5" fill="currentColor" stroke="none" />
+                            </svg>
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            {allStateAffiliates.length}
+                        </div>
+                        <div className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.18em] text-neutral-400">
+                            State Affiliates
+                        </div>
+                    </div>
+
+                    {/* stat 3: roster athletes */}
+                    <div className="flex flex-col items-center text-center p-2.5 space-y-2">
+                        <div className="w-11 h-11 rounded-xl bg-blue-400/10 border border-blue-400/30 flex items-center justify-center text-blue-400 shadow-inner">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="9" cy="7" r="3.5" />
+                                <path d="M3 19c0-3.3 2.7-6 6-6s6 2.7 6 6" />
+                                <circle cx="17" cy="8" r="2.5" />
+                                <path d="M17 13.5c2.2 0 4 1.8 4 4.5" />
+                            </svg>
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            150+
+                        </div>
+                        <div className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.18em] text-neutral-400">
+                            Athletes
+                        </div>
+                    </div>
+
+                    {/* stat 4: nationwide federation */}
+                    <div className="flex flex-col items-center text-center p-2.5 space-y-2">
+                        <div className="w-11 h-11 rounded-xl bg-purple-400/10 border border-purple-400/30 flex items-center justify-center text-purple-400 shadow-inner">
+                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="9.5" />
+                                <path d="M2.5 12h19" />
+                                <path d="M12 2.5a15 15 0 0 1 0 19" />
+                                <path d="M12 2.5a15 15 0 0 0 0 19" />
+                            </svg>
+                        </div>
+                        <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
+                            14
+                        </div>
+                        <div className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.18em] text-neutral-400">
+                            States & FT
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            {/* 3. DIRECTORY SECTION */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-24 space-y-8">
+
+                {/* clean filter controls */}
+                <div className="p-3.5 sm:p-4 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+                        {/* tabs */}
+                        <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/10 self-start">
+                            {[
+                                { id: 'All', label: 'All Teams' },
+                                { id: 'Pro', label: `Clubs (${nationalTeams.length})` },
+                                { id: 'States', label: `State Affiliates (${allStateAffiliates.length})` }
+                            ].map(tab => (
+                                <button
+                                    key={tab.id}
+                                    type="button"
+                                    onClick={() => setDirectoryTab(tab.id)} // trigger
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-bold tracking-wide uppercase transition-all duration-200 cursor-pointer ${
+                                        directoryTab === tab.id
+                                            ? 'bg-white text-black font-extrabold shadow-sm'
+                                            : 'text-neutral-400 hover:text-white'
+                                    }`}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
                         </div>
 
-                        {filteredNationalTeams.length === 0 ? (
-                            <div className="py-12 text-center rounded-2xl border border-white/10 bg-[#0e1628]/50">
-                                <p className="text-neutral-400 text-xs">
-                                    {searchQuery
-                                        ? `No pro organizations match "${searchQuery}".`
-                                        : 'No national squads or pro organizations have been uploaded by administration yet.'}
-                                </p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {filteredNationalTeams.map((team) => (
-                                    <div
-                                        key={team.id}
-                                        className="group relative p-6 sm:p-7 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] hover:border-white/30 hover:bg-[#121b30] shadow-[0_16px_40px_rgba(0,0,0,0.65)] transition-all duration-300 flex flex-col sm:flex-row sm:items-center justify-between gap-6 overflow-hidden"
-                                    >
-                                        {/* top edge luminous highlight beam */}
-                                        <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:via-white/40 opacity-70" />
+                        {/* search */}
+                        <div className="relative w-full md:w-72">
+                            <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)} // input
+                                placeholder="Search club, tag, or state..."
+                                className="w-full pl-9 pr-8 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-white/30 focus:outline-none text-xs text-white placeholder-neutral-500 transition-colors"
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery('')} // trigger
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
+                    </div>
 
-                                        <div className="flex items-start sm:items-center gap-5">
-                                            {/* team logo / monogram container */}
-                                            <div className="h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-black/70 border border-white/20 flex items-center justify-center shrink-0 shadow-lg ring-1 ring-white/10 p-2.5 overflow-hidden">
-                                                {team.logo ? (
-                                                    <img
-                                                        src={team.logo}
-                                                        alt={team.name}
-                                                        onError={(e) => {
-                                                            e.target.style.display = 'none';
-                                                            if (e.target.nextSibling) {
-                                                                e.target.nextSibling.style.display = 'flex';
-                                                            }
-                                                        }}
-                                                        className="h-full w-full object-contain filter drop-shadow"
-                                                    />
-                                                ) : null}
-                                                <div
-                                                    className="h-full w-full rounded-xl bg-gradient-to-br from-neutral-800 to-neutral-900 border border-white/10 items-center justify-center"
-                                                    style={{ display: team.logo ? 'none' : 'flex' }}
-                                                >
-                                                    <span className="text-sm sm:text-base font-black text-white tracking-wider font-mono">
+                    {/* secondary pills */}
+                    {directoryTab === 'Pro' && availableGames.length > 2 && (
+                        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+                            <span className="text-[11px] font-mono text-neutral-500 uppercase mr-1 flex items-center gap-1">
+                                <Gamepad2 className="w-3 h-3" /> Game:
+                            </span>
+                            {availableGames.map(game => (
+                                <button
+                                    key={game}
+                                    type="button"
+                                    onClick={() => setSelectedGame(game)} // filter
+                                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                                        selectedGame === game
+                                            ? 'bg-amber-400 text-black font-bold'
+                                            : 'bg-white/[0.04] text-neutral-300 hover:text-white border border-white/10'
+                                    }`}
+                                >
+                                    {game}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {directoryTab === 'States' && (
+                        <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/5">
+                            <span className="text-[11px] font-mono text-neutral-500 uppercase mr-1 flex items-center gap-1">
+                                <MapPin className="w-3 h-3" /> Region:
+                            </span>
+                            {[
+                                { id: 'All', label: 'All Regions (14)' },
+                                { id: 'Peninsular', label: 'Peninsular (11)' },
+                                { id: 'East Malaysia', label: 'East Malaysia (3)' }
+                            ].map(reg => (
+                                <button
+                                    key={reg.id}
+                                    type="button"
+                                    onClick={() => setStateRegionFilter(reg.id)} // filter
+                                    className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+                                        stateRegionFilter === reg.id
+                                            ? 'bg-amber-400 text-black font-bold'
+                                            : 'bg-white/[0.04] text-neutral-300 hover:text-white border border-white/10'
+                                    }`}
+                                >
+                                    {reg.label}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                {/* directory sections */}
+                <div className="space-y-12">
+
+                    {/* SECTION 1: ESPORTS CLUBS */}
+                    {showProSection && (
+                        <section className="space-y-4">
+                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">
+                                    Esports Clubs
+                                </h2>
+                                <span className="text-xs font-mono text-neutral-400">
+                                    {filteredNationalTeams.length} {filteredNationalTeams.length === 1 ? 'CLUB' : 'CLUBS'}
+                                </span>
+                            </div>
+
+                            {filteredNationalTeams.length === 0 ? (
+                                <div className="py-12 text-center rounded-2xl border border-white/10 bg-white/[0.02]">
+                                    <p className="text-neutral-400 text-xs font-medium">
+                                        {searchQuery ? `No teams match "${searchQuery}".` : 'No clubs found in this category.'}
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {filteredNationalTeams.map(team => (
+                                        <div
+                                            key={team.id}
+                                            className="group relative p-5 rounded-2xl border border-white/10 bg-[#0A0F1D] hover:border-white/25 hover:bg-[#0D1426] transition-colors duration-200 flex flex-col justify-between space-y-4"
+                                        >
+                                            {/* tag and active status */}
+                                            <div className="flex items-center justify-between">
+                                                <span className="px-2.5 py-0.5 rounded-md bg-white/[0.06] border border-white/10 font-mono text-xs font-bold text-neutral-300">
+                                                    [{team.tag || getTeamInitials(team.name, team.tag)}]
+                                                </span>
+                                                <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-400">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                                    {team.status || 'Active'}
+                                                </span>
+                                            </div>
+
+                                            {/* logo and title */}
+                                            <div className="flex items-center gap-3.5 py-1">
+                                                <div className="h-14 w-14 rounded-xl bg-black/60 border border-white/15 p-2 flex items-center justify-center shrink-0">
+                                                    {team.logo ? (
+                                                        <img
+                                                            src={team.logo}
+                                                            alt={team.name}
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                            className="h-full w-full object-contain"
+                                                        />
+                                                    ) : null}
+                                                    <div
+                                                        className="h-full w-full items-center justify-center font-mono font-black text-white text-sm"
+                                                        style={{ display: team.logo ? 'none' : 'flex' }}
+                                                    >
                                                         {team.tag || getTeamInitials(team.name, team.tag)}
-                                                    </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-0.5 min-w-0 flex-1">
+                                                    <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                        {team.name}
+                                                    </h3>
+                                                    <div className="flex items-center gap-1.5 text-xs text-neutral-400">
+                                                        <MapPin className="w-3 h-3 shrink-0" />
+                                                        <span className="truncate">{team.region || 'Malaysia'}</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            {/* team text details */}
-                                            <div className="space-y-1.5 flex-1 min-w-0">
-                                                <div className="flex flex-wrap items-center gap-2">
-                                                    <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white border border-white/15">
-                                                        {team.status || 'Active'}
+                                            {/* game roster tags */}
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {(team.rosters || [team.game || 'Esports Squad']).map((r, idx) => (
+                                                    <span
+                                                        key={idx}
+                                                        className="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-[10px] font-mono text-neutral-400"
+                                                    >
+                                                        {r}
                                                     </span>
-                                                    {team.region && (
-                                                        <span className="text-xs text-neutral-400 font-medium flex items-center gap-1">
-                                                            <MapPin className="w-3 h-3 text-neutral-400 shrink-0" />
-                                                            {team.region}
-                                                        </span>
-                                                    )}
-                                                </div>
+                                                ))}
+                                            </div>
 
-                                                <h3 className="text-lg sm:text-xl font-black text-white tracking-tight leading-snug group-hover:text-neutral-100 transition-colors">
-                                                    {team.name}
-                                                </h3>
-
-                                                {team.accolade && (
-                                                    <p className="text-xs text-neutral-400 font-medium line-clamp-1">
-                                                        {team.accolade}
-                                                    </p>
-                                                )}
-
-                                                {/* disciplines / rosters */}
-                                                <div className="flex flex-wrap gap-1.5 pt-1">
-                                                    {(team.rosters || []).map((roster, idx) => (
-                                                        <span
-                                                            key={idx}
-                                                            className="px-2 py-0.5 rounded-md bg-[#070b14] border border-white/10 text-[10px] font-mono font-semibold text-neutral-300"
-                                                        >
-                                                            {roster}
-                                                        </span>
-                                                    ))}
-                                                </div>
+                                            {/* card footer */}
+                                            <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                                                <span className="text-[11px] text-neutral-500 font-mono">
+                                                    Official Club
+                                                </span>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        router.visit(team.slug ? `/teams/${team.slug}` : '/teams/details'); // redirect
+                                                    }}
+                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:text-amber-400 transition-colors cursor-pointer"
+                                                >
+                                                    <span>Profile</span>
+                                                    <ArrowUpRight className="w-3.5 h-3.5" />
+                                                </button>
                                             </div>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
 
-                                        {/* right: action button */}
-                                        <div className="shrink-0 self-end sm:self-center">
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    router.visit(team.slug ? `/teams/${team.slug}` : '/teams/details'); // redirect
-                                                }}
-                                                className="px-4 py-2 rounded-xl bg-white hover:bg-neutral-200 text-black border border-white font-extrabold text-xs uppercase tracking-wider inline-flex items-center gap-1.5 transition-all shadow-md cursor-pointer"
-                                            >
-                                                <span>Profile</span>
-                                                <ArrowRight className="w-3.5 h-3.5" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </section>
-                )}
-
-                {/* SECTION 2: STATE AFFILIATES (14 State Associations with Region Filtering) */}
-                {showStateSection && (
-                    <section id="affiliates" className="space-y-6 scroll-mt-32">
-                        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/10">
-                            <div>
-                                <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase">
+                    {/* SECTION 2: STATE ASSOCIATIONS */}
+                    {showStateSection && (
+                        <section className="space-y-4">
+                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                                <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">
                                     State Affiliates
                                 </h2>
+                                <span className="text-xs font-mono text-neutral-400">
+                                    {filteredStates.length} STATES
+                                </span>
                             </div>
 
-                            {/* Region Filter: All (14), Peninsular Malaysia (11), East Malaysia (3) */}
-                            <div className="flex items-center p-1 rounded-xl bg-[#0e1628] border border-white/15">
-                                {[
-                                    { id: 'All', label: 'All (14)' },
-                                    { id: 'Peninsular', label: 'Peninsular (11)' },
-                                    { id: 'East Malaysia', label: 'East Malaysia (3)' }
-                                ].map((tab) => (
-                                    <button
-                                        key={tab.id}
-                                        type="button"
-                                        onClick={() => setStateRegionFilter(tab.id)} // filter
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                                            stateRegionFilter === tab.id
-                                                ? 'bg-white text-black shadow-sm font-extrabold'
-                                                : 'text-neutral-400 hover:text-white'
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {filteredStates.length === 0 ? (
-                            <div className="py-12 text-center rounded-2xl border border-white/10 bg-[#0e1628]/50">
-                                <p className="text-neutral-400 text-xs">No state associations match "{searchQuery}".</p>
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                                {filteredStates.map((state) => (
-                                    <div
-                                        key={state.id}
-                                        className="group relative overflow-hidden rounded-2xl p-5 sm:p-6 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] border border-white/15 hover:border-white/35 transition-all duration-300 flex flex-col justify-between space-y-4 shadow-[0_16px_40px_rgba(0,0,0,0.65)] hover:bg-[#121b30] text-left"
-                                    >
-                                        {/* top edge luminous highlight beam */}
-                                        <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:via-white/40 opacity-70" />
-
-                                        {/* region tag pill & verified indicator */}
-                                        <div className="relative z-10 w-full flex items-center justify-between">
-                                            <span className="text-[10px] font-mono uppercase tracking-widest text-neutral-300 px-2.5 py-0.5 rounded-md bg-white/10 border border-white/15 font-bold">
-                                                {state.region === 'Peninsular' ? 'Peninsular' : 'Borneo / FT'}
-                                            </span>
-                                            <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 uppercase tracking-wider">
-                                                <span className="relative flex h-2 w-2">
-                                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                            {filteredStates.length === 0 ? (
+                                <div className="py-12 text-center rounded-2xl border border-white/10 bg-white/[0.02]">
+                                    <p className="text-neutral-400 text-xs font-medium">
+                                        No state associations match "{searchQuery}".
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {filteredStates.map(state => (
+                                        <div
+                                            key={state.id}
+                                            className="group relative p-5 rounded-2xl border border-white/10 bg-[#0A0F1D] hover:border-white/25 hover:bg-[#0D1426] transition-colors duration-200 flex flex-col justify-between space-y-4"
+                                        >
+                                            {/* top badge */}
+                                            <div className="flex items-center justify-between">
+                                                <span className="px-2 py-0.5 rounded bg-white/[0.06] border border-white/10 font-mono text-[10px] font-bold text-neutral-300">
+                                                    {state.code}
                                                 </span>
-                                                Active
-                                            </span>
-                                        </div>
+                                                <span className="text-[10px] font-mono text-neutral-400">
+                                                    {state.region === 'Peninsular' ? 'Peninsular' : 'Borneo / FT'}
+                                                </span>
+                                            </div>
 
-                                        {/* state crest & title (left-aligned) */}
-                                        <div className="relative z-10 flex items-start gap-4 my-1">
-                                            <div className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-2xl bg-black/70 border border-white/20 p-2.5 flex items-center justify-center shadow-inner group-hover:border-white/40 transition-colors shrink-0">
-                                                <img
-                                                    src={state.image}
-                                                    alt={state.name}
-                                                    className="h-full w-full object-contain filter drop-shadow-[0_4px_10px_rgba(0,0,0,0.7)]"
-                                                    onError={(e) => {
-                                                        e.currentTarget.style.display = 'none'; // fallback
+                                            {/* state crest & details */}
+                                            <div className="flex items-center gap-3.5 py-1">
+                                                <div className="h-14 w-14 rounded-xl bg-black/60 border border-white/15 p-2 flex items-center justify-center shrink-0">
+                                                    <img
+                                                        src={state.image}
+                                                        alt={state.name}
+                                                        onError={(e) => {
+                                                            e.currentTarget.style.display = 'none';
+                                                        }}
+                                                        className="h-full w-full object-contain"
+                                                    />
+                                                </div>
+
+                                                <div className="space-y-0.5 min-w-0 flex-1">
+                                                    <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                        {state.name}
+                                                    </h3>
+                                                    <p className="text-[11px] text-neutral-400 line-clamp-1">
+                                                        {state.title}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* affiliate verification badge */}
+                                            <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                                                <div className="flex items-center gap-1.5 text-[11px] text-neutral-400">
+                                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                                    <span>Affiliate</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        router.visit(`/teams/state/${state.id}`); // redirect
                                                     }}
-                                                />
-                                            </div>
-
-                                            <div className="space-y-1 min-w-0 flex-1">
-                                                <h3 className="text-base sm:text-lg font-black text-white group-hover:text-neutral-100 transition-colors tracking-wide truncate">
-                                                    {state.name}
-                                                </h3>
-                                                <p className="text-xs text-neutral-400 leading-snug line-clamp-2">
-                                                    {state.title}
-                                                </p>
+                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:text-amber-400 transition-colors cursor-pointer"
+                                                >
+                                                    <span>Details</span>
+                                                    <ArrowUpRight className="w-3.5 h-3.5" />
+                                                </button>
                                             </div>
                                         </div>
+                                    ))}
+                                </div>
+                            )}
+                        </section>
+                    )}
 
-                                        {/* verified affiliate footer & details link */}
-                                        <div className="relative z-10 w-full pt-3.5 border-t border-white/10 flex items-center justify-between gap-1.5 text-xs text-neutral-300 font-medium">
-                                            <div className="flex items-center gap-1.5">
-                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                                <span className="text-[11px] text-neutral-300 font-bold">Official Affiliate</span>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    router.visit(`/teams/state/${state.id}`); // redirect
-                                                }}
-                                                className="text-white hover:text-neutral-200 transition-colors inline-flex items-center gap-1 cursor-pointer font-bold text-xs"
-                                            >
-                                                <span>Details</span>
-                                                <ArrowRight className="w-3 h-3" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </section>
-                )}
-            </main>
+                </div>
+            </div>
 
-            {/* 4. footer */}
             <Footer />
         </div>
     );
 }
-

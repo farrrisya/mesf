@@ -138,42 +138,40 @@ export default function Matches({ matchGroups = [] }) {
                 <PublicNavbar activeTab="matches" />
             </div>
 
-            {/* 2. hero & filter bar */}
-            <header className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-8 text-left">
-                <div className="flex flex-col gap-6 pb-6 border-b border-white/10">
-                    <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-                        <div>
-                            <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
-                                Matches
-                            </h1>
-                        </div>
+            {/* 1. hero header with tournament background (natural wide aspect ratio, zero zoom-in) */}
+            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
+                {/* HD tournament esports athlete image with bottom focus */}
+                <img
+                    src="/images/matches_hero_banner_hd.jpg?v=2"
+                    alt="MESF Esports Match Fixtures"
+                    className="absolute inset-0 w-full h-full object-cover object-bottom filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
+                />
 
-                        {/* search bar */}
-                        <div className="w-full lg:w-80 shrink-0">
-                            <div className="relative">
-                                <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                                <input
-                                    type="text"
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)} // input
-                                    placeholder="Search team, game, or event..."
-                                    className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/15 focus:border-white/40 focus:outline-none text-xs text-white placeholder-neutral-500 transition-colors shadow-inner"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSearchQuery('')} // trigger
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-bold"
-                                    >
-                                        ✕
-                                    </button>
-                                )}
-                            </div>
-                        </div>
+                {/* cinematic gradient overlays: dark on left for clean left-aligned text, smooth fade at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/90 via-[#070B14]/65 to-transparent/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
+
+                {/* left-aligned header container (matches Teams page and mesa.mn) */}
+                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
+                    <div className="text-left space-y-3 sm:space-y-4">
+                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
+                            Malaysia Esports Federation
+                        </span>
+                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
+                            Matches
+                        </h1>
+                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
+                            Official schedule of upcoming matches and tournament results.
+                        </p>
                     </div>
+                </div>
+            </section>
 
-                    {/* dual filter bar: status pills & game category pills */}
-                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pt-4 border-t border-white/5">
+            {/* 2. filter toolbar & search bar */}
+            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-6 text-left">
+                <div className="flex flex-col gap-5 pb-6 border-b border-white/10">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                         {/* status pills */}
                         <div className="flex flex-wrap items-center gap-2">
                             {DEFAULT_STATUS_FILTERS.map((filter) => {
@@ -207,35 +205,58 @@ export default function Matches({ matchGroups = [] }) {
                             })}
                         </div>
 
-                        {/* game category pills */}
-                        <div className="flex flex-wrap items-center gap-1.5">
-                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mr-1 hidden sm:inline-block">
-                                Game:
-                            </span>
-                            {availableGames.map((game) => {
-                                const isActive = gameFilter === game;
-                                return (
+                        {/* search bar */}
+                        <div className="w-full lg:w-80 shrink-0">
+                            <div className="relative">
+                                <Search className="w-4 h-4 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)} // input
+                                    placeholder="Search team, game, or event..."
+                                    className="w-full pl-10 pr-4 py-2 rounded-xl bg-[#0d1424] border border-white/15 focus:border-white/40 focus:outline-none text-xs text-white placeholder-neutral-500 transition-colors shadow-inner"
+                                />
+                                {searchQuery && (
                                     <button
-                                        key={game}
                                         type="button"
-                                        onClick={() => setGameFilter(game)} // filter
-                                        className={`px-3 py-1.5 rounded-lg text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer select-none ${
-                                            isActive
-                                                ? 'bg-[#1e293b] border border-white/40 text-white font-bold shadow-sm'
-                                                : 'border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25'
-                                        }`}
+                                        onClick={() => setSearchQuery('')} // trigger
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white text-xs font-bold"
                                     >
-                                        {game}
+                                        ✕
                                     </button>
-                                );
-                            })}
+                                )}
+                            </div>
                         </div>
                     </div>
-                </div>
-            </header>
 
-            {/* 3. horizontal match schedule section */}
-            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-24 text-left">
+                    {/* game category pills */}
+                    <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-white/5">
+                        <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider mr-1 hidden sm:inline-block">
+                            Game:
+                        </span>
+                        {availableGames.map((game) => {
+                            const isActive = gameFilter === game;
+                            return (
+                                <button
+                                    key={game}
+                                    type="button"
+                                    onClick={() => setGameFilter(game)} // filter
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium tracking-wide transition-all duration-200 cursor-pointer select-none ${
+                                        isActive
+                                            ? 'bg-[#1e293b] border border-white/40 text-white font-bold shadow-sm'
+                                            : 'border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25'
+                                    }`}
+                                >
+                                    {game}
+                                </button>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            {/* 4. horizontal match schedule section */}
+            <main className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-left">
                 {filteredGroups.length === 0 ? (
                     <div className="py-20 text-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl shadow-xl">
                         <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-neutral-400">
@@ -243,13 +264,13 @@ export default function Matches({ matchGroups = [] }) {
                         </div>
                         <p className="text-white font-bold text-base">
                             {baseGroups.length === 0
-                                ? 'No Match Fixtures Scheduled'
+                                ? 'No Matches Scheduled'
                                 : 'No matches found'}
                         </p>
                         <p className="text-neutral-400 text-xs mt-1 max-w-sm mx-auto">
                             {baseGroups.length === 0
-                                ? 'There are currently no active match fixtures published by administration. Check back soon for upcoming tournaments and schedules.'
-                                : 'No fixtures currently match your selected filters. Try choosing a different status or resetting filters.'}
+                                ? 'There are currently no active matches published by administration. Check back soon for upcoming tournaments and schedules.'
+                                : 'No matches currently match your selected filters. Try choosing a different status or resetting filters.'}
                         </p>
                         {baseGroups.length > 0 && (
                             <button
@@ -269,16 +290,19 @@ export default function Matches({ matchGroups = [] }) {
                     <div className="space-y-12">
                         {filteredGroups.map((group, groupIdx) => (
                             <section key={groupIdx} className="space-y-4">
-                                {/* date section header */}
-                                <div className="flex items-center gap-3">
-                                    <div className="px-3.5 py-1.5 rounded-xl bg-[#0e1628] border border-white/15 text-xs font-extrabold uppercase tracking-widest text-neutral-200 shadow-sm flex items-center gap-2">
-                                        <Calendar className="w-3.5 h-3.5 text-neutral-400" />
-                                        <span>{group.date}</span>
+                                {/* date section header - prominent and easy to scan */}
+                                <div className="flex flex-wrap items-center justify-between gap-3 pt-6 pb-3 border-b border-white/10">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
+                                            <Calendar className="w-5 h-5" />
+                                        </div>
+                                        <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight uppercase">
+                                            {group.date}
+                                        </h2>
                                     </div>
-                                    <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                                        • {group.matches.length} {group.matches.length === 1 ? 'Fixture' : 'Fixtures'}
-                                    </span>
-                                    <div className="flex-1 h-[1px] bg-gradient-to-r from-white/15 via-white/5 to-transparent" />
+                                    <div className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-wider px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10">
+                                        {group.matches.length} {group.matches.length === 1 ? 'Match' : 'Matches'}
+                                    </div>
                                 </div>
 
                                 {/* match cards list */}
@@ -357,9 +381,9 @@ export default function Matches({ matchGroups = [] }) {
                                                                 Concluded
                                                             </span>
                                                         ) : (
-                                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-[#090d18] text-neutral-200 border border-white/15 shadow-inner">
-                                                                <Clock className="w-3 h-3 text-neutral-400" />
-                                                                {match.time}
+                                                            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-black font-mono tracking-wider uppercase bg-[#090d18] text-white border border-white/20 shadow-inner">
+                                                                <Clock className="w-3.5 h-3.5 text-amber-400" />
+                                                                <span>{match.time}</span>
                                                             </span>
                                                         )}
                                                     </div>

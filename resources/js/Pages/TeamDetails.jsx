@@ -1,33 +1,41 @@
 // --1. imports--
 import React from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 import BackButton from '@/Components/BackButton';
-import { Shield, Trophy, Users, Globe, ExternalLink, Calendar, MapPin, Award, CheckCircle, Mail } from 'lucide-react';
+import { Shield, Users, Gamepad2, MapPin, Mail, ArrowUpRight, CheckCircle2, UserCheck, Send, Trophy, Globe } from 'lucide-react';
 
-// --2. properties--
+// --2. helpers--
+function getInitials(name = '', tag = '') { // convert
+    if (tag && tag.length <= 4) return tag; // check
+    const words = (name || '').trim().split(/\s+/); // convert
+    if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase(); // check
+    return ((name || '').slice(0, 3) || 'MY').toUpperCase(); // convert
+}
+
+function getClassificationLabel(type = '') { // convert
+    if (type === 'national') return 'National Team'; // check
+    if (type === 'state') return 'State Affiliate'; // check
+    if (type === 'pro') return 'Club / Pro Team'; // check
+    return ''; // check
+}
 
 // --3. main component--
 export default function TeamDetails({ team = null, otherTeams = [] }) {
     // --4. actions--
+    const isActive = (team?.status || '').toUpperCase() === 'ACTIVE'; // check
+    const isPending = (team?.status || '').toUpperCase() === 'PENDING'; // check
+    const rosterSize = team?.roster_size ? parseInt(team.roster_size, 10) : 5; // convert
 
     // --5. UI--
     return (
-        <div className="relative min-h-screen bg-[#070B14] text-white selection:bg-white selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
-            <Head title={team ? `${team.name} - Team Profile - MESF` : 'Team Profile - MESF'} />
+        <div className="relative min-h-screen bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
+            <Head title={team?.name ? `${team.name} - Team Profile - MESF` : 'Team Profile - MESF'} />
 
             {/* ambient background glows */}
-            <div className="pointer-events-none absolute -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[150px]" />
-            <div className="pointer-events-none absolute top-1/3 right-10 h-[400px] w-[400px] rounded-full bg-emerald-500/5 blur-[150px]" />
-
-            {/* grain overlay */}
-            <div
-                className="pointer-events-none fixed inset-0 z-40 opacity-[0.025]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+            <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/[0.06] blur-[160px]" />
+            <div className="pointer-events-none fixed top-1/3 right-10 h-[450px] w-[450px] rounded-full bg-amber-400/[0.04] blur-[160px]" />
 
             {/* floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
@@ -35,22 +43,35 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
             </div>
 
             {/* main body container */}
-            <main className="relative z-10 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-24 text-left flex-1">
+            <main className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-24 text-left flex-1 space-y-8">
+                
                 {/* top navigation bar */}
-                <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-                    <BackButton href="/teams" label="Back to Team Directory" />
+                <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
+                    <div className="flex items-center gap-3">
+                        <BackButton href="/teams" label="Back to Directory" />
+                        <span className="text-xs text-neutral-500 font-mono hidden sm:inline">/</span>
+                        <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider hidden sm:inline">
+                            {team?.name || ''}
+                        </span>
+                    </div>
 
                     {team && (
-                        <div className="flex items-center gap-2 text-xs text-neutral-400">
-                            <Shield className="w-3.5 h-3.5 text-emerald-400" />
-                            <span>Official MESF Sanctioned Team</span>
+                        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 text-xs font-mono">
+                            <span
+                                className={`w-1.5 h-1.5 rounded-full ${
+                                    isActive ? 'bg-emerald-400 animate-pulse' : isPending ? 'bg-amber-400' : 'bg-neutral-500'
+                                }`}
+                            />
+                            <span className={isActive ? 'text-emerald-400' : isPending ? 'text-amber-300' : 'text-neutral-400'}>
+                                {team.status || ''}
+                            </span>
                         </div>
                     )}
                 </div>
 
                 {!team ? (
-                    <div className="p-12 sm:p-16 rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] text-center space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.7)] backdrop-blur-2xl">
-                        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/10 border border-white/15 flex items-center justify-center text-neutral-300 shadow-inner">
+                    <div className="p-12 sm:p-16 rounded-3xl border border-white/10 bg-[#0B101D] text-center space-y-5 shadow-[0_20px_50px_rgba(0,0,0,0.8)] backdrop-blur-2xl">
+                        <div className="mx-auto w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-neutral-400">
                             <Shield className="w-8 h-8" />
                         </div>
                         <div className="space-y-2 max-w-md mx-auto">
@@ -58,208 +79,441 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
                                 No Team Profile Found
                             </h2>
                             <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                                This team profile has not been uploaded or registered by administration yet. Check back once team details are published.
+                                Please choose a team from the directory to review its profile and credentials.
                             </p>
                         </div>
                         <div className="pt-2">
                             <Link
-                                href="/teams"
+                                href="/teams" // redirect
                                 className="px-6 py-2.5 rounded-xl bg-white text-black font-extrabold text-xs tracking-wider uppercase inline-flex items-center gap-2 hover:bg-neutral-200 transition-colors shadow-md"
                             >
-                                <span>Browse Team Directory</span>
+                                <span>Browse Directory</span>
                             </Link>
                         </div>
                     </div>
                 ) : (
                     <>
-                        {/* elevated team marquee hero box */}
-                        <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-2xl p-8 sm:p-12 mb-12 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
-                            {/* top edge luminous highlight beam */}
-                            <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70" />
+                        {/* organized hero profile banner */}
+                        <div className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-[#0E1629]/90 to-[#080D1A]/95 backdrop-blur-2xl p-6 sm:p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)] space-y-8">
+                            {/* subtle ambient background glow */}
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/[0.03] rounded-full blur-3xl pointer-events-none" />
+                            <div className="absolute -bottom-10 left-10 w-80 h-80 bg-blue-500/[0.03] rounded-full blur-3xl pointer-events-none" />
 
-                            <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-                                {/* emblem monogram & name block */}
-                                <div className="flex items-center gap-6 sm:gap-8">
-                                    <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-black/75 border border-white/20 flex items-center justify-center shrink-0 p-3 shadow-inner ring-1 ring-white/10 overflow-hidden">
-                                        {team.logo ? (
-                                            <img
-                                                src={team.logo}
-                                                alt={team.name}
-                                                className="h-full w-full object-contain filter drop-shadow"
-                                            />
-                                        ) : (
-                                            <span className="text-2xl sm:text-3xl font-black tracking-widest text-white uppercase font-mono">
-                                                {team.tag}
+                            {/* top block: emblem + identity info */}
+                            <div className="relative z-10 flex flex-col md:flex-row md:items-center gap-6 sm:gap-8">
+                                
+                                {/* team emblem badge */}
+                                <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl bg-[#070B14]/90 border border-white/15 p-3 flex items-center justify-center shrink-0 shadow-xl overflow-hidden backdrop-blur-md">
+                                    {team.logo ? (
+                                        <img
+                                            src={team.logo} // state
+                                            alt={team.name || ''}
+                                            className="h-full w-full object-contain filter drop-shadow"
+                                        />
+                                    ) : (
+                                        <span className="text-2xl sm:text-3xl font-black tracking-widest text-amber-400 uppercase font-mono">
+                                            {team.tag || getInitials(team.name, team.tag)}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* team identity details */}
+                                <div className="space-y-2.5 min-w-0 flex-1">
+                                    {/* metadata pills row */}
+                                    <div className="flex flex-wrap items-center gap-2">
+                                        {team.tag && (
+                                            <span className="px-2.5 py-0.5 rounded-md bg-white/[0.06] border border-white/10 font-mono text-xs font-bold text-neutral-300">
+                                                [{team.tag}]
+                                            </span>
+                                        )}
+                                        {team.game_title && (
+                                            <span className="px-2.5 py-0.5 rounded-md bg-amber-400/10 border border-amber-400/25 text-amber-300 text-xs font-mono font-bold tracking-wider uppercase">
+                                                {team.game_title}
+                                            </span>
+                                        )}
+                                        {team.type && (
+                                            <span className="px-2.5 py-0.5 rounded-md bg-white/[0.04] border border-white/10 text-neutral-300 text-xs font-medium">
+                                                {getClassificationLabel(team.type)}
                                             </span>
                                         )}
                                     </div>
 
-                                    <div className="space-y-2">
-                                        <div className="flex flex-wrap items-center gap-2.5">
-                                            <span className="px-2.5 py-0.5 rounded-md bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-bold tracking-wider uppercase">
-                                                {team.status || 'Active'}
-                                            </span>
-                                            <span className="text-neutral-500 text-xs">•</span>
-                                            <span className="text-xs text-neutral-300 font-medium flex items-center gap-1.5">
-                                                <span>{team.flag || '🇲🇾'}</span>
-                                                <span>{team.region || 'Malaysia'}</span>
-                                            </span>
-                                        </div>
-                                        <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-                                            {team.name}
-                                        </h1>
-                                        {team.motto && (
-                                            <p className="text-sm italic text-neutral-300 font-normal">
-                                                &ldquo;{team.motto}&rdquo;
-                                            </p>
-                                        )}
+                                    {/* team name */}
+                                    <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white uppercase leading-tight">
+                                        {team.name || ''}
+                                    </h1>
+
+                                    {/* motto / tagline */}
+                                    {team.motto && (
+                                        <p className="text-sm sm:text-base italic text-neutral-300 font-normal">
+                                            &ldquo;{team.motto}&rdquo;
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* bottom block: structured metrics row */}
+                            <div className="relative z-10 pt-6 border-t border-white/10 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <Gamepad2 className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                                        <span>Primary Discipline</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-white truncate min-h-[20px]">
+                                        {team.game_title || ''}
                                     </div>
                                 </div>
 
-                                {/* high-level stats pills */}
-                                <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-                                    <div className="px-5 py-3.5 rounded-2xl border border-white/10 bg-[#070b14]/80 min-w-[130px] shadow-inner">
-                                        <span className="text-[10px] font-bold tracking-wider text-neutral-400 uppercase block">Discipline</span>
-                                        <span className="text-sm sm:text-base font-bold text-white">{team.primaryGame}</span>
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <Users className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                                        <span>Registered Squad</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-white min-h-[20px]">
+                                        {team.roster_size ? `${team.roster_size} Athletes` : ''}
                                     </div>
-                                    <div className="px-5 py-3.5 rounded-2xl border border-white/10 bg-[#070b14]/80 min-w-[110px] shadow-inner">
-                                        <span className="text-[10px] font-bold tracking-wider text-neutral-400 uppercase block">Status</span>
-                                        <span className="text-sm sm:text-base font-bold text-emerald-400">{team.status || 'Active'}</span>
+                                </div>
+
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <MapPin className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                        <span>Home Base</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-white truncate min-h-[20px]">
+                                        {team.region || ''}
                                     </div>
-                                    {team.created && (
-                                        <div className="px-5 py-3.5 rounded-2xl border border-white/10 bg-[#070b14]/80 min-w-[90px] shadow-inner">
-                                            <span className="text-[10px] font-bold tracking-wider text-neutral-400 uppercase block">Est.</span>
-                                            <span className="text-sm sm:text-base font-bold text-white">{team.created}</span>
-                                        </div>
-                                    )}
+                                </div>
+
+                                <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                    <span className="text-[10px] font-mono font-bold tracking-wider text-neutral-400 uppercase flex items-center gap-1.5">
+                                        <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                        <span>MESF Standing</span>
+                                    </span>
+                                    <div className="text-sm font-bold text-emerald-400 min-h-[20px]">
+                                        {team.status || ''}
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 2-column split: team info (left) & metadata (right) */}
-                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-10 items-start">
-                            {/* left column (8 cols): team intel & details */}
+                        {/* 2-column balanced split: team specifications (left 8 cols) & general contact info (right 4 cols) */}
+                        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                            
+                            {/* left column (8 cols): specifications, roster capacity & compliance */}
                             <div className="lg:col-span-8 space-y-8">
-                                <div className="p-6 sm:p-8 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-xl space-y-6">
-                                    <div className="space-y-1">
-                                        <span className="text-xs font-black tracking-widest text-neutral-400 uppercase block">
-                                            Organization Intel
+                                
+                                {/* 1. Club Identity & Specifications */}
+                                <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-6">
+                                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                        <div>
+                                            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                                Registry Intel
+                                            </span>
+                                            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
+                                                Team Specifications
+                                            </h2>
+                                        </div>
+                                        <span className="text-xs font-mono text-neutral-400">
+                                            {team.id ? `MESF-ID #${team.id}` : ''}
                                         </span>
-                                        <h2 className="text-2xl font-black text-white tracking-tight">
-                                            {team.name}
-                                        </h2>
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="p-4 rounded-xl border border-white/10 bg-[#070b14]/80 shadow-inner space-y-1">
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block">
-                                                Competitive Title
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Team Full Name
                                             </span>
-                                            <span className="text-sm font-semibold text-white">
-                                                {team.primaryGame}
-                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px]">
+                                                {team.name || ''}
+                                            </div>
                                         </div>
 
-                                        <div className="p-4 rounded-xl border border-white/10 bg-[#070b14]/80 shadow-inner space-y-1">
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block">
-                                                Club Tag
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Tag / Acronym
                                             </span>
-                                            <span className="text-sm font-bold text-white font-mono">
-                                                [{team.tag}]
-                                            </span>
+                                            <div className="text-sm font-bold text-white font-mono min-h-[22px]">
+                                                {team.tag ? `[${team.tag}]` : ''}
+                                            </div>
                                         </div>
 
-                                        <div className="p-4 rounded-xl border border-white/10 bg-[#070b14]/80 shadow-inner space-y-1">
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block">
-                                                Registered Region
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Classification
                                             </span>
-                                            <span className="text-sm font-semibold text-white">
-                                                {team.region}
-                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px]">
+                                                {getClassificationLabel(team.type)}
+                                            </div>
                                         </div>
 
-                                        <div className="p-4 rounded-xl border border-white/10 bg-[#070b14]/80 shadow-inner space-y-1">
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block">
-                                                Squad Capacity
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Primary Discipline
                                             </span>
-                                            <span className="text-sm font-semibold text-white">
-                                                {team.roster_size} Registered Players
+                                            <div className="text-sm font-semibold text-white min-h-[22px] flex items-center gap-1.5">
+                                                {team.game_title && <Gamepad2 className="w-4 h-4 text-amber-400 shrink-0" />}
+                                                <span>{team.game_title || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                State / Territory
                                             </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px] flex items-center gap-1.5">
+                                                {team.region && <MapPin className="w-4 h-4 text-neutral-400 shrink-0" />}
+                                                <span>{team.region || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-wider block">
+                                                Team Motto / Tagline
+                                            </span>
+                                            <div className="text-sm font-semibold text-white min-h-[22px]">
+                                                {team.motto || ''}
+                                            </div>
                                         </div>
                                     </div>
+                                </div>
 
-                                    {team.motto && (
-                                        <div className="p-4 rounded-xl border border-white/10 bg-[#070b14]/80 space-y-1 shadow-inner">
-                                            <span className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider block">
-                                                Team Motto
+                                {/* 2. Sanctioned Athlete Roster Capacity */}
+                                <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-6">
+                                    <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                        <div>
+                                            <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                                Active Squad
                                             </span>
-                                            <p className="text-sm italic text-neutral-200">
-                                                &ldquo;{team.motto}&rdquo;
+                                            <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
+                                                Sanctioned Roster
+                                            </h2>
+                                        </div>
+                                        <span className="text-xs font-mono text-neutral-400 uppercase">
+                                            {rosterSize} Registered Slots
+                                        </span>
+                                    </div>
+
+                                    {/* clean grid of roster slots ready for team administration */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        {Array.from({ length: rosterSize }).map((_, idx) => (
+                                            <div
+                                                key={idx}
+                                                className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-3"
+                                            >
+                                                <div className="flex items-center justify-between">
+                                                    <span className="px-2 py-0.5 rounded bg-white/[0.06] border border-white/10 font-mono text-[10px] font-bold text-neutral-300">
+                                                        SLOT #{idx + 1}
+                                                    </span>
+                                                    <span className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                                                        <UserCheck className="w-3 h-3 text-emerald-400" />
+                                                        <span>Active</span>
+                                                    </span>
+                                                </div>
+
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-lg bg-black/60 border border-white/10 flex items-center justify-center font-mono font-bold text-xs text-neutral-300">
+                                                        {team.tag ? `${team.tag[0]}${idx + 1}` : `A${idx + 1}`}
+                                                    </div>
+                                                    <div className="space-y-0.5 min-w-0 flex-1">
+                                                        <div className="text-xs font-bold text-white truncate">
+                                                            Athlete Slot #{idx + 1}
+                                                        </div>
+                                                        <div className="text-[10px] text-neutral-400 font-mono truncate">
+                                                            {team.game_title || 'Competitive'}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* 3. Federation Sanction & Standards */}
+                                <div className="p-6 sm:p-8 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-4">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                            Accreditation
+                                        </span>
+                                        <h2 className="text-lg sm:text-xl font-black text-white tracking-tight uppercase">
+                                            Federation Sanction & Compliance
+                                        </h2>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                                        <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                                <span>Verified Entity</span>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400">
+                                                Accredited under Malaysian national esports standards.
                                             </p>
                                         </div>
-                                    )}
+
+                                        <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                                <span>Athlete Welfare</span>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400">
+                                                Committed to MESF player protection guidelines.
+                                            </p>
+                                        </div>
+
+                                        <div className="p-3.5 rounded-xl border border-white/5 bg-white/[0.02] space-y-1">
+                                            <div className="flex items-center gap-1.5 text-xs font-bold text-white">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                                <span>Fair Play Code</span>
+                                            </div>
+                                            <p className="text-[11px] text-neutral-400">
+                                                Fully compliant with anti-doping & integrity protocols.
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
+
                             </div>
 
-                            {/* right column (4 cols): organization details & other teams */}
+                            {/* right column (4 cols): general contact info & other teams directory */}
                             <aside className="lg:col-span-4 space-y-6">
-                                <div className="p-6 sm:p-7 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-xl space-y-5">
-                                    <h3 className="text-sm font-black tracking-widest text-white uppercase pb-3 border-b border-white/10">
-                                        Management & Registry
-                                    </h3>
+                                
+                                {/* Card 1: General Contact Info (aligned with Admin Management & Contacts) */}
+                                <div className="p-6 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-5">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                            Liaison
+                                        </span>
+                                        <h3 className="text-base font-black text-white uppercase tracking-tight">
+                                            General Contact Info
+                                        </h3>
+                                        <p className="text-[11px] text-neutral-400 mt-0.5">
+                                            Official management and communication channels
+                                        </p>
+                                    </div>
 
-                                    <div className="space-y-4 text-xs sm:text-sm">
-                                        {team.manager && (
-                                            <div className="p-3 rounded-xl bg-[#070b14]/70 border border-white/5">
-                                                <span className="text-neutral-400 block text-[11px] uppercase tracking-wider mb-0.5">Team Manager</span>
-                                                <span className="text-white font-bold">{team.manager}</span>
+                                    <div className="space-y-3.5">
+                                        {/* Team Manager / Captain */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Team Manager / Captain
+                                            </span>
+                                            <div className="text-white font-bold text-sm min-h-[22px]">
+                                                {team.manager_name || ''}
                                             </div>
-                                        )}
+                                        </div>
 
+                                        {/* Official Contact Email */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Official Contact Email
+                                            </span>
+                                            <div className="text-sm font-mono text-white min-h-[22px]">
+                                                {team.contact_email ? (
+                                                    <a
+                                                        href={`mailto:${team.contact_email}`} // redirect
+                                                        className="text-white hover:text-amber-400 flex items-center gap-1.5 transition-colors break-all"
+                                                    >
+                                                        <Mail className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+                                                        <span>{team.contact_email}</span>
+                                                    </a>
+                                                ) : null}
+                                            </div>
+                                        </div>
+
+                                        {/* Registered Base */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Operational Base
+                                            </span>
+                                            <div className="text-white font-semibold text-xs min-h-[20px] flex items-center gap-1.5">
+                                                {team.region && <MapPin className="w-3.5 h-3.5 text-neutral-400 shrink-0" />}
+                                                <span>{team.region || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Affiliation Standing */}
+                                        <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/5 space-y-1">
+                                            <span className="text-neutral-400 block text-[10px] font-mono uppercase tracking-wider">
+                                                Federation Standing
+                                            </span>
+                                            <div className="text-emerald-400 font-bold text-xs min-h-[20px] flex items-center gap-1.5">
+                                                <Shield className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                                                <span>{team.status || ''}</span>
+                                            </div>
+                                        </div>
+
+                                        {/* Direct Email Action Button */}
                                         {team.contact_email && (
-                                            <div className="p-3 rounded-xl bg-[#070b14]/70 border border-white/5">
-                                                <span className="text-neutral-400 block text-[11px] uppercase tracking-wider mb-0.5">Contact Email</span>
-                                                <a href={`mailto:${team.contact_email}`} className="text-white hover:text-neutral-300 font-mono text-xs break-all flex items-center gap-1.5 mt-0.5">
-                                                    <Mail className="w-3.5 h-3.5 text-neutral-400" />
-                                                    <span>{team.contact_email}</span>
+                                            <div className="pt-1">
+                                                <a
+                                                    href={`mailto:${team.contact_email}`} // redirect
+                                                    className="w-full py-2.5 px-4 rounded-xl bg-amber-400/10 hover:bg-amber-400/20 border border-amber-400/30 text-amber-300 font-bold text-xs tracking-wider uppercase inline-flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                                >
+                                                    <Send className="w-3.5 h-3.5" />
+                                                    <span>Contact Management</span>
                                                 </a>
                                             </div>
                                         )}
-
-                                        <div className="p-3 rounded-xl bg-[#070b14]/70 border border-white/5">
-                                            <span className="text-neutral-400 block text-[11px] uppercase tracking-wider mb-0.5">MESF Sanction Status</span>
-                                            <span className="text-emerald-400 font-bold flex items-center gap-1.5 mt-0.5">
-                                                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" /> Sanctioned Official Team
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
 
-                                {/* explore other teams quick list from DB */}
+                                {/* Card 2: Other Sanctioned Clubs Directory */}
                                 {otherTeams && otherTeams.length > 0 && (
-                                    <div className="p-6 rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] shadow-xl space-y-3">
-                                        <span className="text-xs font-black tracking-widest text-neutral-300 uppercase block">
-                                            Explore Other Teams
-                                        </span>
+                                    <div className="p-6 rounded-2xl border border-white/10 bg-[#0B101D] shadow-xl space-y-4">
+                                        <div className="border-b border-white/10 pb-3 flex items-center justify-between">
+                                            <div>
+                                                <span className="text-[11px] font-mono font-bold tracking-[0.2em] text-amber-400 uppercase block">
+                                                    Directory
+                                                </span>
+                                                <h3 className="text-base font-black text-white uppercase tracking-tight">
+                                                    Other Sanctioned Clubs
+                                                </h3>
+                                            </div>
+                                            <Link
+                                                href="/teams" // redirect
+                                                className="text-[11px] font-mono text-neutral-400 hover:text-amber-400 transition-colors"
+                                            >
+                                                View All
+                                            </Link>
+                                        </div>
+
                                         <div className="space-y-2">
                                             {otherTeams.map((t) => (
-                                                <Link
+                                                <button
                                                     key={t.id}
-                                                    href={`/teams/details?slug=${t.slug || t.id}`}
-                                                    className="p-2.5 rounded-xl bg-[#070b14]/70 hover:bg-white/10 border border-white/5 hover:border-white/20 flex items-center justify-between text-xs transition-all group block"
+                                                    type="button"
+                                                    onClick={() => router.visit(t.slug ? `/teams/${t.slug}` : `/teams/details?slug=${t.id}`)} // redirect
+                                                    className="w-full text-left p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/5 hover:border-white/15 flex items-center justify-between text-xs transition-colors group cursor-pointer"
                                                 >
-                                                    <span className="font-bold text-white group-hover:text-neutral-200 truncate">
-                                                        {t.name}
-                                                    </span>
-                                                    <span className="text-neutral-400 font-mono text-[11px] shrink-0">
-                                                        [{t.tag}]
-                                                    </span>
-                                                </Link>
+                                                    <div className="flex items-center gap-2.5 min-w-0">
+                                                        <div className="w-7 h-7 rounded-lg bg-black/60 border border-white/10 p-1 flex items-center justify-center text-[10px] font-mono font-bold text-neutral-300 shrink-0 overflow-hidden">
+                                                            {t.logo ? (
+                                                                <img
+                                                                    src={t.logo} // state
+                                                                    alt={t.name || ''}
+                                                                    className="h-full w-full object-contain"
+                                                                />
+                                                            ) : (
+                                                                <span>{t.tag || getInitials(t.name, t.tag)}</span>
+                                                            )}
+                                                        </div>
+                                                        <div className="min-w-0 flex-1">
+                                                            <div className="font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                                {t.name || ''}
+                                                            </div>
+                                                            <div className="text-[10px] font-mono text-neutral-500 truncate">
+                                                                {t.game_title || t.region || ''}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <ArrowUpRight className="w-3.5 h-3.5 text-neutral-500 group-hover:text-white shrink-0 transition-colors ml-2" />
+                                                </button>
                                             ))}
                                         </div>
                                     </div>
                                 )}
                             </aside>
+
                         </div>
                     </>
                 )}

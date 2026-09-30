@@ -1,73 +1,11 @@
 // --1. imports--
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
+import { Trophy, Calendar, MapPin, ArrowRight } from 'lucide-react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
-const TOURNAMENTS = [
-    {
-        id: 1,
-        slug: 'mpl-malaysia-s14',
-        game: 'Tag',
-        status: 'Status',
-        date: 'Date',
-        location: 'Location',
-        title: 'Title',
-        description: 'Description'
-    },
-    {
-        id: 2,
-        slug: 'mpl-malaysia-s14',
-        game: 'Tag',
-        status: 'Status',
-        date: 'Date',
-        location: 'Location',
-        title: 'Title',
-        description: 'Description'
-    },
-    {
-        id: 3,
-        slug: 'mpl-malaysia-s14',
-        game: 'Tag',
-        status: 'Status',
-        date: 'Date',
-        location: 'Location',
-        title: 'Title',
-        description: 'Description'
-    },
-    {
-        id: 4,
-        slug: 'mpl-malaysia-s14',
-        game: 'Tag',
-        status: 'Status',
-        date: 'Date',
-        location: 'Location',
-        title: 'Title',
-        description: 'Description'
-    },
-    {
-        id: 5,
-        slug: 'mpl-malaysia-s14',
-        game: 'Tag',
-        status: 'Status',
-        date: 'Date',
-        location: 'Location',
-        title: 'Title',
-        description: 'Description'
-    },
-    {
-        id: 6,
-        slug: 'mpl-malaysia-s14',
-        game: 'Tag',
-        status: 'Status',
-        date: 'Date',
-        location: 'Location',
-        title: 'Title',
-        description: 'Description'
-    }
-];
-
 const STATUS_FILTERS = ['All Events', 'Live', 'Upcoming', 'Completed'];
 
 // --3. main component--
@@ -75,8 +13,7 @@ export default function Leagues({ leagues = [] }) {
     // --4. actions--
     const [activeFilter, setActiveFilter] = useState('All Events'); // state
 
-    const hasUploads = leagues && leagues.length > 0; // check
-    const items = hasUploads ? leagues : TOURNAMENTS; // state
+    const items = leagues || []; // state
 
     const filteredTournaments = items.filter((item) => { // check
         if (activeFilter === 'All Events') return true; // check
@@ -107,9 +44,16 @@ export default function Leagues({ leagues = [] }) {
                 }
             `}</style>
 
+            {/* ambient background glows */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+                <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-blue-600/10 blur-[130px]" />
+                <div className="absolute top-1/2 -right-48 w-96 h-96 rounded-full bg-amber-600/10 blur-[140px]" />
+                <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[160px]" />
+            </div>
+
             {/* background SVG grain texture */}
             <div
-                className="pointer-events-none fixed inset-0 opacity-[0.04] mix-blend-overlay z-10"
+                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
                 style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
                 }}
@@ -120,17 +64,41 @@ export default function Leagues({ leagues = [] }) {
                 <PublicNavbar activeTab="leagues" />
             </div>
 
-            {/* 2. hero header */}
-            <header className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-8 text-left">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/10">
-                    <div>
-                        <h1 className="text-3xl sm:text-4xl font-black tracking-tight uppercase text-white">
+            {/* 1. hero header with leagues championship background (natural wide aspect ratio, zero zoom-in) */}
+            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
+                {/* HD leagues banner image */}
+                <img
+                    src="/images/leagues_hero_banner_hd.jpg"
+                    alt="MESF Leagues & Tournaments"
+                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
+                />
+
+                {/* cinematic gradient overlays: dark on left for clean left-aligned text, smooth fade at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/90 via-[#070B14]/65 to-transparent/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
+
+                {/* left-aligned header container (matches Teams and Matches page) */}
+                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
+                    <div className="text-left space-y-3 sm:space-y-4">
+                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
+                            Malaysia Esports Federation
+                        </span>
+                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
                             Leagues
                         </h1>
+                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
+                            Official national leagues, sanctioned tournaments, and competitive circuits.
+                        </p>
                     </div>
+                </div>
+            </section>
 
+            {/* 2. filter toolbar */}
+            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-6 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
                     {/* status filter pills */}
-                    <div className="flex flex-wrap items-center gap-2 self-start md:self-auto shrink-0">
+                    <div className="flex flex-wrap items-center gap-2">
                         {STATUS_FILTERS.map((filter) => {
                             const isActive = activeFilter === filter;
                             return (
@@ -138,10 +106,10 @@ export default function Leagues({ leagues = [] }) {
                                     key={filter}
                                     type="button"
                                     onClick={() => setActiveFilter(filter)} // filter
-                                    className={`px-4 py-2 rounded-full text-xs font-semibold tracking-wider transition-all duration-200 cursor-pointer select-none ${
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase transition-all duration-200 cursor-pointer select-none ${
                                         isActive
-                                            ? 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-bold shadow-[0_0_15px_rgba(251,191,36,0.35)]'
-                                            : 'border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25 hover:bg-white/[0.06]'
+                                            ? 'bg-white text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)] border border-white'
+                                            : 'border border-white/15 bg-[#0e1628]/90 text-neutral-300 hover:text-white hover:border-white/30 hover:bg-[#131d33]'
                                     }`}
                                 >
                                     {filter}
@@ -150,45 +118,55 @@ export default function Leagues({ leagues = [] }) {
                         })}
                     </div>
                 </div>
-            </header>
+            </div>
 
             {/* 3. 2-column tournament grid */}
-            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pb-24 text-left">
+            <main className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-left">
                 {filteredTournaments.length === 0 ? (
-                    <div className="py-20 text-center rounded-2xl border border-dashed border-white/10 bg-white/[0.01]">
-                        <p className="text-neutral-400 text-sm">No tournaments found for this filter category.</p>
-                        <button
-                            type="button"
-                            onClick={() => setActiveFilter('All Events')} // state
-                            className="mt-4 px-4 py-2 rounded-full border border-white/15 text-xs text-amber-400 hover:bg-white/5 transition-colors cursor-pointer"
-                        >
-                            Reset Filter
-                        </button>
+                    <div className="py-20 text-center rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl shadow-xl">
+                        <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-neutral-400">
+                            <Trophy className="w-6 h-6" />
+                        </div>
+                        <p className="text-white font-bold text-base">
+                            {items.length === 0
+                                ? 'No Leagues or Circuits Scheduled'
+                                : 'No leagues found'}
+                        </p>
+                        <p className="text-neutral-400 text-xs mt-1 max-w-sm mx-auto">
+                            {items.length === 0
+                                ? 'There are currently no active leagues published by administration. Check back soon for upcoming tournaments and circuits.'
+                                : 'No leagues currently match your selected filters. Try choosing a different status or resetting filters.'}
+                        </p>
+                        {items.length > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => setActiveFilter('All Events')} // state
+                                className="mt-5 px-5 py-2.5 rounded-xl border border-white/20 bg-white/10 text-xs font-bold text-white hover:bg-white hover:text-black transition-all cursor-pointer"
+                            >
+                                Reset All Filters
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {filteredTournaments.map((tournament) => (
                             <div
                                 key={tournament.id}
-                                className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden hover:border-amber-400/40 hover:bg-white/[0.04] transition-all duration-300 shadow-lg hover:shadow-[0_20px_45px_rgba(0,0,0,0.6)]"
+                                className="group flex flex-col rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl overflow-hidden hover:border-white/30 transition-all duration-300 shadow-xl"
                             >
                                 {/* visual banner area */}
-                                <div className="aspect-[21/9] w-full overflow-hidden relative bg-[#0A0F1D] flex items-center justify-center border-b border-white/5">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-blue-600/5 to-transparent opacity-60 group-hover:opacity-100 transition-opacity duration-500" />
-
+                                <div className="aspect-[21/9] w-full overflow-hidden relative bg-[#0A0F1D] flex items-center justify-center border-b border-white/10">
                                     {/* banner image or fallback */}
                                     {tournament.banner ? (
                                         <img
                                             src={tournament.banner}
                                             alt={tournament.title}
-                                            className="w-full h-full object-cover transition-opacity duration-300 z-10"
+                                            className="w-full h-full object-cover z-10"
                                         />
                                     ) : (
-                                        <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 group-hover:text-neutral-500 transition-colors z-10">
-                                            <svg className="w-8 h-8 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.5">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                            </svg>
-                                            <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-500">Image</span>
+                                        <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 z-10">
+                                            <Trophy className="w-8 h-8 opacity-40 text-neutral-400" />
+                                            <span className="text-[11px] font-semibold tracking-wider uppercase text-neutral-400">MESF Sanctioned League</span>
                                         </div>
                                     )}
 
@@ -196,11 +174,11 @@ export default function Leagues({ leagues = [] }) {
 
                                     {/* top badges */}
                                     <div className="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none z-20">
-                                        <span className="px-3 py-1 rounded-md text-[11px] font-bold tracking-widest uppercase bg-black/75 backdrop-blur-md border border-white/15 text-white">
+                                        <span className="px-3 py-1 rounded-md text-[11px] font-black tracking-widest uppercase bg-black/80 backdrop-blur-md border border-white/20 text-white shadow-md">
                                             {tournament.game}
                                         </span>
 
-                                        <span className="px-3 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border backdrop-blur-md bg-white/10 text-neutral-400 border-white/15">
+                                        <span className="px-3 py-1 rounded-md text-[10px] font-bold tracking-wider uppercase border backdrop-blur-md bg-white/10 text-neutral-200 border-white/20 shadow-md">
                                             {tournament.status}
                                         </span>
                                     </div>
@@ -211,49 +189,45 @@ export default function Leagues({ leagues = [] }) {
                                     <div>
                                         {/* meta row */}
                                         <div className="flex items-center gap-2 text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-3">
-                                            <span className="text-amber-400">{tournament.game}</span>
+                                            <span className="text-amber-400 font-bold">{tournament.game}</span>
                                             <span>•</span>
                                             <span>{tournament.date}</span>
                                         </div>
 
                                         {/* tournament name */}
-                                        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white group-hover:text-amber-400 transition-colors duration-200 my-4 sm:my-5 leading-snug">
+                                        <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white transition-colors duration-200 my-4 sm:my-5 leading-snug">
                                             {tournament.title}
                                         </h2>
 
-                                        {/* stage & venue label */}
-                                        <div className="flex items-center gap-2 text-xs text-neutral-300 font-medium mb-3">
-                                            <svg className="w-3.5 h-3.5 text-neutral-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                            </svg>
-                                            <span className="truncate">{tournament.location}</span>
-                                        </div>
+                                        {/* venue / location label */}
+                                        {tournament.location && (
+                                            <div className="flex items-center gap-2 text-xs text-neutral-300 font-medium mb-3">
+                                                <MapPin className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
+                                                <span className="truncate">{tournament.location}</span>
+                                            </div>
+                                        )}
 
                                         {/* description */}
-                                        <p className="pt-1 text-sm sm:text-base text-neutral-400 leading-relaxed font-normal">
-                                            {tournament.description}
-                                        </p>
+                                        {tournament.description && (
+                                            <p className="pt-1 text-sm sm:text-base text-neutral-400 leading-relaxed font-normal">
+                                                {tournament.description}
+                                            </p>
+                                        )}
                                     </div>
 
                                     {/* footer action row inside card */}
-                                    <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between">
-                                        <span className="text-xs font-medium text-neutral-500 uppercase tracking-wider">
-                                            Detail
+                                    <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between">
+                                        <span className="text-xs font-mono font-bold text-neutral-500 uppercase tracking-wider">
+                                            Circuit Info
                                         </span>
 
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                router.visit(tournament.slug ? `/leagues/${tournament.slug}` : '/leagues/details'); // redirect
-                                            }}
-                                            className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-amber-400 group-hover:text-amber-300 hover:translate-x-1 transition-all cursor-pointer"
+                                        <Link
+                                            href={tournament.slug ? `/leagues/${tournament.slug}` : '/leagues/details'} // redirect
+                                            className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
                                         >
                                             <span>View Details</span>
-                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                            </svg>
-                                        </button>
+                                            <ArrowRight className="w-3.5 h-3.5" />
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

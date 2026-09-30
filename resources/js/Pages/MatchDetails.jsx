@@ -60,7 +60,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
             {/* ambient background glows */}
             <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-amber-500/10 blur-[150px] z-0" />
             <div className="pointer-events-none fixed top-1/3 -right-20 h-[450px] w-[450px] rounded-full bg-blue-500/10 blur-[160px] z-0" />
-            <div className="pointer-events-none fixed bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-emerald-500/5 blur-[160px] z-0" />
+            <div className="pointer-events-none fixed bottom-10 left-10 h-[400px] w-[400px] rounded-full bg-blue-500/5 blur-[160px] z-0" />
 
             {/* grain overlay */}
             <div
@@ -96,7 +96,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                 ) : (
                                     <>
                                         <Share2 className="w-3.5 h-3.5 text-neutral-400" />
-                                        <span>Share Fixture</span>
+                                        <span>Share Match</span>
                                     </>
                                 )}
                             </button>
@@ -111,10 +111,10 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                         </div>
                         <div className="space-y-2 max-w-md mx-auto">
                             <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase">
-                                No Match Fixture Available
+                                No Match Available
                             </h2>
                             <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                                This fixture has not been published or scheduled by the administration yet. Check back soon for upcoming tournaments and schedules.
+                                This match has not been published or scheduled by the administration yet. Check back soon for upcoming tournaments and schedules.
                             </p>
                         </div>
                         <div className="pt-2">
@@ -122,7 +122,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                 href="/matches"
                                 className="px-6 py-2.5 rounded-xl bg-white text-black font-extrabold text-xs tracking-wider uppercase inline-flex items-center gap-2 hover:bg-neutral-200 transition-colors shadow-md"
                             >
-                                <span>Browse All Fixtures</span>
+                                <span>Browse All Matches</span>
                             </Link>
                         </div>
                     </div>
@@ -130,21 +130,9 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                     <>
 
                 {/* match marquee hero banner */}
-                <div
-                    className={`relative overflow-hidden rounded-3xl border backdrop-blur-2xl p-6 sm:p-10 md:p-12 mb-10 transition-all duration-300 shadow-[0_20px_50px_rgba(0,0,0,0.7)] ${
-                        isLive
-                            ? 'border-emerald-500/50 bg-gradient-to-br from-[#0c2420] via-[#0d1628] to-[#0a0f1d] ring-1 ring-emerald-500/30'
-                            : 'border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a]'
-                    }`}
-                >
+                <div className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-2xl p-6 sm:p-10 md:p-12 mb-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
                     {/* top edge luminous highlight beam */}
-                    <div
-                        className={`absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r ${
-                            isLive
-                                ? 'from-transparent via-emerald-400 to-transparent opacity-80'
-                                : 'from-transparent via-white/25 to-transparent opacity-70'
-                        }`}
-                    />
+                    <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70" />
 
                     {/* tournament meta eyebrow & status pill */}
                     <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 pb-6 border-b border-white/10 mb-8 sm:mb-12">
@@ -226,11 +214,11 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                             {isCompleted || isLive ? (
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-center gap-3 sm:gap-4 px-5 py-3 rounded-2xl bg-black/80 border border-white/20 shadow-inner">
-                                        <span className={`text-4xl sm:text-5xl font-black ${currentMatch.team_a?.score > currentMatch.team_b?.score ? 'text-emerald-400' : 'text-white'}`}>
+                                        <span className="text-4xl sm:text-5xl font-black text-white">
                                             {currentMatch.team_a?.score ?? 0}
                                         </span>
                                         <span className="text-xl sm:text-2xl text-neutral-600 font-light">:</span>
-                                        <span className={`text-4xl sm:text-5xl font-black ${currentMatch.team_b?.score > currentMatch.team_a?.score ? 'text-emerald-400' : 'text-white'}`}>
+                                        <span className="text-4xl sm:text-5xl font-black text-white">
                                             {currentMatch.team_b?.score ?? 0}
                                         </span>
                                     </div>
@@ -314,7 +302,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                 href="/matches"
                                 className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white text-white hover:text-black border border-white/20 text-xs font-bold tracking-wider uppercase inline-flex items-center gap-1.5 transition-all"
                             >
-                                <span>All Fixtures</span>
+                                <span>All Matches</span>
                             </Link>
                         </div>
                     </div>
@@ -536,7 +524,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                 </div>
                                 <div className="flex justify-between py-2 border-b border-white/5">
                                     <span className="text-neutral-400">Competitive Status</span>
-                                    <span className="text-emerald-400 font-semibold">Active Roster</span>
+                                    <span className="text-neutral-200 font-semibold">Active</span>
                                 </div>
                             </div>
 
@@ -591,7 +579,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                 </div>
                                 <div className="flex justify-between py-2 border-b border-white/5">
                                     <span className="text-neutral-400">Competitive Status</span>
-                                    <span className="text-emerald-400 font-semibold">Active Roster</span>
+                                    <span className="text-neutral-200 font-semibold">Active</span>
                                 </div>
                             </div>
 
@@ -614,7 +602,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                                 {currentMatch.format} Match Progression Schedule
                             </h3>
                             <p className="text-xs text-neutral-400">
-                                Fixture timeline breakdown across all scheduled games in this series
+                                Match timeline breakdown across all scheduled games in this series
                             </p>
                         </div>
 
@@ -663,7 +651,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
                         <div className="flex items-center justify-between">
                             <div>
                                 <h3 className="text-xl font-black text-white tracking-tight uppercase">
-                                    Other Scheduled Fixtures
+                                    Other Scheduled Matches
                                 </h3>
                                 <p className="text-xs text-neutral-400 mt-1">
                                     Upcoming matches in current MESF circuits
