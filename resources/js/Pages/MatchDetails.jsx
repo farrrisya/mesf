@@ -76,9 +76,9 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
             </div>
 
             {/* main body container */}
-            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-32 pb-24 flex-1">
+            <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-24 sm:pt-28 pb-20 flex-1">
                 {/* top bar: back button + share */}
-                <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
+                <div className="mb-5 sm:mb-6 flex flex-wrap items-center justify-between gap-4">
                     <BackButton href="/matches" label="Back to Match Schedule" />
 
                     {currentMatch && (

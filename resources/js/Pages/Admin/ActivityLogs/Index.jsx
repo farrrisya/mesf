@@ -13,12 +13,7 @@ import {
     PlusCircle,
     Edit3,
     Trash2,
-    RotateCcw,
-    ChevronLeft,
-    ChevronRight,
     SlidersHorizontal,
-    FileText,
-    ArrowUpRight,
     X
 } from 'lucide-react';
 
@@ -150,45 +145,12 @@ export default function Index({
     return (
         <AdminLayout
             title="Activity Logs - MESF Admin"
-            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
+            contentClassName="px-4 pt-3 pb-8 sm:px-8 sm:pt-4 sm:pb-10"
         >
             <Head title="Activity & Audit Logs - Admin" />
 
-            <div className="w-full max-w-7xl pb-16 space-y-6">
-                {/* header bar: clean, tightly positioned */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
-                            <Activity className="w-5 h-5" />
-                        </div>
-                        <div>
-                            <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-                                Activity & Audit Logs
-                            </h1>
-                            <p className="text-xs text-slate-400 mt-0.5">
-                                Real-time administrative audit trail tracking staff sign-ins, content updates, and data records.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono px-3.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-slate-300 whitespace-nowrap">
-                            {logs.total ?? logs.data?.length ?? 0} Recorded Events
-                        </span>
-                        {hasActiveFilters && (
-                            <button
-                                type="button"
-                                onClick={handleClearFilters} // trigger
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 text-xs font-medium transition-all cursor-pointer"
-                            >
-                                <X className="w-3.5 h-3.5" />
-                                <span>Clear Filters</span>
-                            </button>
-                        )}
-                    </div>
-                </div>
-
-                {/* stats summary cards */}
+            <div className="space-y-4 sm:space-y-5 max-w-7xl">
+                {/* stats summary cards: starts immediately at the top */}
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                     {/* card 1: total activities */}
                     <div
@@ -306,16 +268,14 @@ export default function Index({
                                 <span>Filter Logs</span>
                             </button>
 
-                            {searchQuery && (
+                            {hasActiveFilters && (
                                 <button
                                     type="button"
-                                    onClick={() => {
-                                        setSearchQuery(''); // state
-                                        handleFilter(currentActionType, ''); // trigger
-                                    }}
-                                    className="px-3 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 text-xs font-semibold transition-all"
+                                    onClick={handleClearFilters} // trigger
+                                    className="px-3.5 py-2.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 text-rose-300 text-xs font-semibold transition-all inline-flex items-center gap-1.5 cursor-pointer"
                                 >
-                                    Clear Search
+                                    <X className="w-3.5 h-3.5" />
+                                    <span>Clear</span>
                                 </button>
                             )}
                         </div>
