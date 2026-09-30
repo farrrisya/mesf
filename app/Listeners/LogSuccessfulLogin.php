@@ -22,8 +22,8 @@ class LogSuccessfulLogin
     {
         ActivityLog::create([
             'user_id' => $event->user->id,
-            'action' => 'Log Masuk',
-            'description' => 'Telah log masuk ke sistem',
+            'action' => 'Sign In',
+            'description' => 'Signed into system',
             'model_type' => get_class($event->user),
             'model_id' => $event->user->id,
             'properties' => null,

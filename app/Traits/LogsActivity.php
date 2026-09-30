@@ -13,15 +13,15 @@ trait LogsActivity
     protected static function bootLogsActivity()
     {
         static::created(function ($model) {
-            static::logAction($model, 'Tambah', "Menambah data " . static::getModelName($model));
+            static::logAction($model, 'Create', "Created " . static::getModelName($model));
         });
 
         static::updated(function ($model) {
-            static::logAction($model, 'Kemaskini', "Mengemaskini data " . static::getModelName($model));
+            static::logAction($model, 'Update', "Updated " . static::getModelName($model));
         });
 
         static::deleted(function ($model) {
-            static::logAction($model, 'Hapus', "Menghapus data " . static::getModelName($model));
+            static::logAction($model, 'Delete', "Deleted " . static::getModelName($model));
         });
     }
 
@@ -35,12 +35,12 @@ trait LogsActivity
         ActivityLog::create([
             'user_id' => Auth::id(),
             'action' => $action,
-            'description' => $description,
+            'description' => $description . ($itemName ? " [{$itemName}]" : ''),
             'model_type' => get_class($model),
             'model_id' => $model->id,
             'properties' => array_merge(
                 ['item_name' => $itemName],
-                $action === 'Kemaskini' ? [
+                $action === 'Update' || $action === 'Kemaskini' ? [
                     'old' => $model->getOriginal(),
                     'new' => $model->getChanges(),
                 ] : []
@@ -56,15 +56,18 @@ trait LogsActivity
         $className = class_basename(get_class($model));
 
         $names = [
-            'Notice' => 'Notis & Berita',
-            'Penerbitan' => 'Penerbitan',
-            'Document' => 'Muat Turun (Dokumen)',
-            'Gallery' => 'Galeri',
-            'Album' => 'Album',
-            'Slider' => 'Slider',
-            'Setting' => 'Tetapan Sistem',
-            'User' => 'Pengguna (Staff & Admin)',
-            'Media' => 'Media',
+            'Notice' => 'News Article',
+            'Penerbitan' => 'Publication',
+            'Document' => 'Official Document',
+            'Gallery' => 'Gallery',
+            'Album' => 'Photo Album',
+            'Slider' => 'Banner Slider',
+            'Setting' => 'System Setting',
+            'User' => 'Staff User',
+            'Media' => 'Media Asset',
+            'League' => 'League',
+            'Team' => 'Team',
+            'EsportMatch' => 'Match Fixture',
         ];
 
         return $names[$className] ?? $className;
