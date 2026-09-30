@@ -30,6 +30,10 @@ const DEFAULT_CATEGORIES = [
 export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) {
     const fileInputRef = useRef(null); // properties
     const [imagePreview, setImagePreview] = useState(article.image_path || null); // state
+    // original full poster source: prefer poster_path if available, otherwise image_path
+    const [originalSource, setOriginalSource] = useState(article.poster_path || article.image_path || null); // state
+    const [originalFile, setOriginalFile] = useState(null); // state
+    const [hasCustomCrop, setHasCustomCrop] = useState(false); // state
     const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
     const [positionerSource, setPositionerSource] = useState(null); // state
     const [rawFileName, setRawFileName] = useState('cover.jpg'); // state
@@ -49,6 +53,7 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         published_at: article.published_at || '',
         video_url: article.video_url || '',
         image: null,
+        poster: null,
         remove_image: false,
     }); // state
 
@@ -65,25 +70,63 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         const file = e.target.files?.[0]; // state
         if (file) { // check
             setRawFileName(file.name); // state
+            setOriginalFile(file); // state
+            setOriginalSource(file); // state
             setPositionerSource(file); // state
             setIsPositionerOpen(true); // state
-            setFormData((prev) => ({ ...prev, image: file, remove_image: false })); // state
+            setFormData((prev) => ({
+                ...prev,
+                poster: file, // full original poster
+                image: file, // initial cover
+                remove_image: false
+            })); // state
             const reader = new FileReader(); // convert
             reader.onloadend = () => setImagePreview(reader.result); // state
             reader.readAsDataURL(file); // convert
+            setHasCustomCrop(false); // state
         }
     };
 
     const handlePositionerComplete = (croppedFile, previewUrl) => { // save
-        setFormData((prev) => ({ ...prev, image: croppedFile, remove_image: false })); // state
+        setFormData((prev) => ({
+            ...prev,
+            image: croppedFile, // 16:9 framed cover
+            remove_image: false
+        })); // state
         setImagePreview(previewUrl); // state
-        setPositionerSource(croppedFile); // state
+        setHasCustomCrop(true); // state
+        // positionerSource remains original uncropped file/source so admin can reposition again anytime
+    };
+
+    const handleOpenPositioner = () => { // trigger
+        const src = originalFile || originalSource || imagePreview; // state
+        if (src) { // check
+            setPositionerSource(src); // state
+            setIsPositionerOpen(true); // state
+        }
+    };
+
+    const handleResetFraming = () => { // trigger
+        if (originalFile) { // check
+            setFormData((prev) => ({ ...prev, image: originalFile })); // state
+            const reader = new FileReader(); // convert
+            reader.onloadend = () => setImagePreview(reader.result); // state
+            reader.readAsDataURL(originalFile); // convert
+            setHasCustomCrop(false); // state
+        } else if (originalSource) {
+            setFormData((prev) => ({ ...prev, image: null })); // state
+            setImagePreview(originalSource); // state
+            setHasCustomCrop(false); // state
+        }
     };
 
     const handleRemoveImage = () => { // trigger
-        setFormData((prev) => ({ ...prev, image: null, remove_image: true })); // state
+        setFormData((prev) => ({ ...prev, image: null, poster: null, remove_image: true })); // state
         setImagePreview(null); // state
+        setOriginalSource(null); // state
+        setOriginalFile(null); // state
         setPositionerSource(null); // state
+        setHasCustomCrop(false); // state
         if (fileInputRef.current) { // check
             fileInputRef.current.value = ''; // state
         }
@@ -112,6 +155,9 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         }
         if (formData.image instanceof File) { // check
             submission.append('image', formData.image); // state
+        }
+        if (formData.poster instanceof File) { // check
+            submission.append('poster', formData.poster); // state
         }
         submission.append('_method', 'PUT'); // state
 
@@ -194,37 +240,73 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                         Featured Cover Image
                                     </label>
                                     {imagePreview ? (
-                                        <div className="relative w-full h-56 rounded-2xl overflow-hidden border border-white/15 bg-black/40 group">
-                                            <img
-                                                src={imagePreview}
-                                                alt="Preview"
-                                                className="w-full h-full object-cover"
-                                            />
-                                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5">
+                                        <div className="space-y-3">
+                                            <div className="relative w-full h-56 rounded-2xl overflow-hidden border border-white/15 bg-black/40 group">
+                                                <img
+                                                    src={imagePreview}
+                                                    alt="Preview"
+                                                    className="w-full h-full object-cover"
+                                                />
+
+                                                {/* badge overlay */}
+                                                <div className="absolute top-3 left-3 flex items-center gap-2 pointer-events-none">
+                                                    <span className="px-2.5 py-1 rounded-lg bg-black/75 backdrop-blur-md border border-white/20 text-[10px] font-mono font-bold text-white uppercase">
+                                                        {hasCustomCrop ? '16:9 Framed Cover' : 'Current Cover'}
+                                                    </span>
+                                                    <span className="px-2.5 py-1 rounded-lg bg-emerald-500/20 backdrop-blur-md border border-emerald-500/40 text-[10px] font-mono text-emerald-300">
+                                                        Full Poster Preserved
+                                                    </span>
+                                                </div>
+
+                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleOpenPositioner} // trigger
+                                                        className="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                                        title="Reposition cover framing"
+                                                    >
+                                                        <Move className="w-3.5 h-3.5" />
+                                                        <span>Reposition</span>
+                                                    </button>
+                                                    {hasCustomCrop && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleResetFraming} // trigger
+                                                            className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-neutral-200 text-xs font-mono transition-all cursor-pointer shadow-lg"
+                                                            title="Use original framing"
+                                                        >
+                                                            Reset Crop
+                                                        </button>
+                                                    )}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => fileInputRef.current?.click()} // trigger
+                                                        className="px-3.5 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                                    >
+                                                        Change
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleRemoveImage} // trigger
+                                                        className="px-3.5 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            {/* admin friendly helper action rail */}
+                                            <div className="flex flex-wrap items-center justify-between gap-2 px-1">
+                                                <p className="text-[11px] text-slate-400 font-mono">
+                                                    Original full poster will be displayed in full-screen poster view.
+                                                </p>
                                                 <button
                                                     type="button"
-                                                    onClick={() => {
-                                                        setPositionerSource(imagePreview); // state
-                                                        setIsPositionerOpen(true); // trigger
-                                                    }}
-                                                    className="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                                    onClick={handleOpenPositioner} // trigger
+                                                    className="text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1.5 cursor-pointer font-bold"
                                                 >
-                                                    <Move className="w-3.5 h-3.5" />
-                                                    <span>Reposition</span>
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => fileInputRef.current?.click()} // trigger
-                                                    className="px-3.5 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
-                                                >
-                                                    Change Image
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleRemoveImage} // trigger
-                                                    className="px-3.5 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
-                                                >
-                                                    Remove
+                                                    <Move className="w-3 h-3" />
+                                                    <span>Adjust Cover Crop (Re-position)</span>
                                                 </button>
                                             </div>
                                         </div>

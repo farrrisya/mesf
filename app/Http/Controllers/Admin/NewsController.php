@@ -118,6 +118,7 @@ class NewsController extends Controller
             'is_featured' => 'nullable', // validate
             'published_at' => 'nullable', // validate
             'image' => 'nullable|image|max:10240', // validate
+            'poster' => 'nullable|image|max:10240', // validate
             'video_url' => 'nullable|string|max:500', // validate
         ]);
 
@@ -131,8 +132,20 @@ class NewsController extends Controller
             : "[ " . strtoupper($category) . " ]"; // convert
 
         $imagePath = null; // state
+        $posterPath = null; // state
+
         if ($request->hasFile('image')) { // check
             $imagePath = $request->file('image')->store('news', 'public'); // save
+        }
+
+        if ($request->hasFile('poster')) { // check
+            $posterPath = $request->file('poster')->store('news/posters', 'public'); // save
+        } elseif ($imagePath) {
+            $posterPath = $imagePath; // fallback
+        }
+
+        if (!$imagePath && $posterPath) {
+            $imagePath = $posterPath; // fallback
         }
 
         $isFeatured = $request->boolean('is_featured'); // state
@@ -154,6 +167,7 @@ class NewsController extends Controller
             'excerpt' => $validated['excerpt'] ?? $request->input('excerpt'), // state
             'content' => $validated['content'] ?? $request->input('content'), // state
             'image_path' => $imagePath, // state
+            'poster_path' => $posterPath, // state
             'video_url' => $validated['video_url'] ?? $request->input('video_url'), // state
             'location' => $validated['location'] ?? $request->input('location'), // state
             'status' => $validated['status'], // state
@@ -198,6 +212,9 @@ class NewsController extends Controller
                 'excerpt' => $news->excerpt, // state
                 'content' => $news->content, // state
                 'image_path' => $news->image_path ? Storage::url($news->image_path) : null, // state
+                'poster_path' => $news->poster_path ? Storage::url($news->poster_path) : ($news->image_path ? Storage::url($news->image_path) : null), // state
+                'raw_image_path' => $news->image_path, // state
+                'raw_poster_path' => $news->poster_path ?: $news->image_path, // state
                 'video_url' => $news->video_url ?? '', // state
                 'location' => $news->location, // state
                 'status' => $news->status, // state
@@ -223,6 +240,7 @@ class NewsController extends Controller
             'is_featured' => 'nullable', // validate
             'published_at' => 'nullable', // validate
             'image' => 'nullable|image|max:10240', // validate
+            'poster' => 'nullable|image|max:10240', // validate
             'remove_image' => 'nullable|boolean', // validate
             'video_url' => 'nullable|string|max:500', // validate
         ]);
@@ -236,11 +254,17 @@ class NewsController extends Controller
         }
 
         $imagePath = $news->image_path; // state
+        $posterPath = $news->poster_path; // state
+
         if ($request->boolean('remove_image')) { // check
             if ($imagePath && Storage::disk('public')->exists($imagePath)) { // check
                 Storage::disk('public')->delete($imagePath); // save
             }
+            if ($posterPath && $posterPath !== $imagePath && Storage::disk('public')->exists($posterPath)) { // check
+                Storage::disk('public')->delete($posterPath); // save
+            }
             $imagePath = null; // state
+            $posterPath = null; // state
         }
 
         if ($request->hasFile('image')) { // check
@@ -248,6 +272,20 @@ class NewsController extends Controller
                 Storage::disk('public')->delete($imagePath); // save
             }
             $imagePath = $request->file('image')->store('news', 'public'); // save
+        }
+
+        if ($request->hasFile('poster')) { // check
+            if ($posterPath && $posterPath !== $news->image_path && Storage::disk('public')->exists($posterPath)) { // check
+                Storage::disk('public')->delete($posterPath); // save
+            }
+            $posterPath = $request->file('poster')->store('news/posters', 'public'); // save
+        }
+
+        if (!$posterPath && $imagePath) {
+            $posterPath = $imagePath; // fallback
+        }
+        if (!$imagePath && $posterPath) {
+            $imagePath = $posterPath; // fallback
         }
 
         $isFeatured = $request->boolean('is_featured'); // state
@@ -273,6 +311,7 @@ class NewsController extends Controller
             'excerpt' => $validated['excerpt'] ?? $request->input('excerpt'), // state
             'content' => $validated['content'] ?? $request->input('content'), // state
             'image_path' => $imagePath, // state
+            'poster_path' => $posterPath, // state
             'video_url' => $validated['video_url'] ?? $request->input('video_url'), // state
             'location' => $validated['location'] ?? $request->input('location'), // state
             'status' => $validated['status'], // state

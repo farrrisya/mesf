@@ -81,6 +81,9 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
         }
     };
 
+    // full uncropped poster with cover fallback
+    const posterSrc = article?.poster || article?.image; // state
+
     // --4. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden flex flex-col justify-between">
@@ -240,7 +243,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
 
                 {/* 2. featured media showcase (crystal clear, high definition with hover & click-to-pop-up) */}
                 <div className="relative z-20 max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-8 sm:mb-12">
-                    {article?.image ? (
+                    {posterSrc ? (
                         <div className="relative rounded-3xl border border-white/15 bg-gradient-to-b from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.65)] group">
                             {/* top luminous highlight beam */}
                             <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70 z-10" />
@@ -253,7 +256,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                                 title="View full poster"
                             >
                                 <img
-                                    src={article.image}
+                                    src={posterSrc}
                                     alt={article.title || 'Article Cover'}
                                     className="w-full max-h-[680px] object-contain object-center"
                                 />
@@ -469,7 +472,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
             </div>
 
             {/* 4. full poster pop-up modal lightbox */}
-            {isPosterOpen && article?.image && (
+            {isPosterOpen && posterSrc && (
                 <div
                     role="dialog"
                     aria-modal="true"
@@ -493,7 +496,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                         className="relative max-h-screen max-w-screen flex items-center justify-center p-1 sm:p-2"
                     >
                         <img
-                            src={article.image}
+                            src={posterSrc}
                             alt={article.title || 'Full Poster'}
                             className="max-h-[94vh] max-w-[96vw] w-auto h-auto object-contain select-none shadow-2xl rounded-lg"
                         />
