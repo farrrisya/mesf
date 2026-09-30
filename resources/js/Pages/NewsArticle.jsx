@@ -261,26 +261,20 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                                     className="w-full max-h-[680px] object-contain object-center"
                                 />
 
-                                {/* hover overlay with pure SVG icon (no sentence/text) */}
-                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
-                                    <div className="w-14 h-14 rounded-full bg-black/75 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-2xl">
-                                        <Maximize2 className="w-6 h-6 text-white" />
+                                {/* hover overlay with pure minimalist SVG icon (only button to view full poster) */}
+                                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+                                    <div className="w-12 h-12 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-white shadow-xl">
+                                        <Maximize2 className="w-5 h-5 text-white" />
                                     </div>
                                 </div>
                             </button>
 
-                            {/* caption footer */}
+                            {/* caption footer (clean, without duplicate view poster button) */}
                             <div className="px-5 py-3 border-t border-white/10 flex items-center justify-between gap-2 text-xs font-mono text-neutral-400">
                                 <span className="truncate">{article.title}</span>
-                                <button
-                                    type="button"
-                                    onClick={() => setIsPosterOpen(true)} // trigger
-                                    aria-label="View full poster"
-                                    className="p-1 rounded-md text-neutral-400 hover:text-white transition-colors cursor-pointer"
-                                    title="View full poster"
-                                >
-                                    <Maximize2 className="w-4 h-4" />
-                                </button>
+                                <span className="text-[11px] text-neutral-500 uppercase">
+                                    Official Dispatch
+                                </span>
                             </div>
                         </div>
                     ) : article?.video_url ? (
@@ -471,36 +465,32 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                 </main>
             </div>
 
-            {/* 4. full poster pop-up modal lightbox */}
+            {/* 4. minimalist full poster pop-up modal lightbox */}
             {isPosterOpen && posterSrc && (
                 <div
                     role="dialog"
                     aria-modal="true"
-                    aria-label="Full Article Poster"
-                    className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-md"
+                    aria-label="Full Poster"
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/90 backdrop-blur-sm cursor-zoom-out"
                     onClick={() => setIsPosterOpen(false)} // trigger
                 >
-                    {/* close button */}
+                    {/* minimalist close button */}
                     <button
                         type="button"
                         onClick={() => setIsPosterOpen(false)} // trigger
-                        aria-label="Close poster view"
-                        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 p-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white hover:text-amber-400 transition-colors cursor-pointer shadow-lg backdrop-blur-md"
+                        aria-label="Close"
+                        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 p-2 text-neutral-400 hover:text-white transition-colors cursor-pointer"
                     >
                         <X className="w-6 h-6" />
                     </button>
 
-                    {/* complete uncropped poster */}
-                    <div
+                    {/* uncropped full poster */}
+                    <img
+                        src={posterSrc}
+                        alt={article.title || 'Full Poster'}
                         onClick={(e) => e.stopPropagation()} // trigger
-                        className="relative max-h-screen max-w-screen flex items-center justify-center p-1 sm:p-2"
-                    >
-                        <img
-                            src={posterSrc}
-                            alt={article.title || 'Full Poster'}
-                            className="max-h-[94vh] max-w-[96vw] w-auto h-auto object-contain select-none shadow-2xl rounded-lg"
-                        />
-                    </div>
+                        className="max-h-[92vh] max-w-[94vw] w-auto h-auto object-contain rounded-lg shadow-2xl select-none cursor-default"
+                    />
                 </div>
             )}
 
