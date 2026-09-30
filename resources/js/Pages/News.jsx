@@ -87,29 +87,40 @@ export default function News({
                 <PublicNavbar activeTab="news" />
             </div>
 
-            {/* typographic hero header without photo background */}
-            <header className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-36 pb-6">
-                <div className="space-y-3 sm:space-y-4">
-                    <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
-                        Malaysia Esports Federation
-                    </span>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/10">
-                        <div>
-                            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white">
-                                News
-                            </h1>
-                            <p className="text-xs sm:text-sm md:text-base text-neutral-400 font-normal leading-relaxed mt-2 max-w-2xl">
-                                Official federation announcements, tournament recaps, and national team dispatches.
-                            </p>
-                        </div>
+            {/* 1. hero header with tournament background (natural wide aspect ratio, zero zoom-in) */}
+            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
+                {/* HD esports athletes competition banner */}
+                <img
+                    src="/images/news_hero_banner_hd.jpg"
+                    alt="MESF Esports News"
+                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
+                />
+
+                {/* cinematic gradient overlays: dark on left for clean left-aligned text, smooth fade at bottom */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#070B14]/90 via-[#070B14]/65 to-transparent/10" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
+
+                {/* left-aligned header container (matches Matches, Teams, and Leagues page) */}
+                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
+                    <div className="text-left space-y-3 sm:space-y-4">
+                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
+                            Malaysia Esports Federation
+                        </span>
+                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
+                            News
+                        </h1>
+                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
+                            Official federation announcements, tournament recaps, and national team dispatches.
+                        </p>
                     </div>
                 </div>
-            </header>
+            </section>
 
             {/* main content area */}
             <div className="flex-1">
-                {/* 2. content wrapper with spacious layout */}
-                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-4 sm:pt-6">
+                {/* 2. content wrapper with standardized spacing matching other pages */}
+                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-8 sm:pt-10">
                     {/* editorial hero spotlight (2-column featured story) */}
                     {showSpotlight && (
                         <section className="relative w-full rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.6)]">
