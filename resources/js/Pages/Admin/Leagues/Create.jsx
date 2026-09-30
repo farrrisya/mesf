@@ -222,7 +222,6 @@ export default function Create() {
                                             type="text"
                                             required
                                             value={data.name} // state
-                                            placeholder="e.g. Malaysia Esports League 2026"
                                             onChange={(e) => setData('name', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
                                         />
@@ -236,7 +235,6 @@ export default function Create() {
                                         <input
                                             type="text"
                                             value={data.season} // state
-                                            placeholder="e.g. Season 4 / 2026"
                                             onChange={(e) => setData('season', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
@@ -294,7 +292,6 @@ export default function Create() {
                                     <textarea
                                         rows={3}
                                         value={data.description || ''} // state
-                                        placeholder="Brief overview of the league format, eligibility, or qualifier stages..."
                                         onChange={(e) => setData('description', e.target.value)} // trigger
                                         className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans resize-none"
                                     />
@@ -350,7 +347,6 @@ export default function Create() {
                                         <input
                                             type="text"
                                             value={data.prize_pool} // state
-                                            placeholder="e.g. RM 50,000"
                                             onChange={(e) => setData('prize_pool', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm font-semibold outline-none transition-all font-sans"
                                         />
@@ -368,7 +364,6 @@ export default function Create() {
                                             min={2}
                                             max={256}
                                             value={data.slots} // state
-                                            placeholder="e.g. 16 or 32"
                                             onChange={(e) => setData('slots', e.target.value ? parseInt(e.target.value) : '')} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
@@ -382,7 +377,6 @@ export default function Create() {
                                         <input
                                             type="text"
                                             value={data.entry_fee} // state
-                                            placeholder="e.g. Free Entry, RM 50/team"
                                             onChange={(e) => setData('entry_fee', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
@@ -440,7 +434,6 @@ export default function Create() {
                                         <input
                                             type="text"
                                             value={data.location} // state
-                                            placeholder="e.g. Online Qualifier / Kuala Lumpur LAN"
                                             onChange={(e) => setData('location', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />

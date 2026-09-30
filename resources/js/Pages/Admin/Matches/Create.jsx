@@ -173,7 +173,6 @@ export default function Create() {
                                         <input
                                             type="text"
                                             required
-                                            placeholder="e.g. MESF National Championship 2026"
                                             value={data.tournament_name} // state
                                             onChange={(e) => setData('tournament_name', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
@@ -297,7 +296,6 @@ export default function Create() {
                                             <input
                                                 type="text"
                                                 required
-                                                placeholder="e.g. Todak Esports"
                                                 value={data.team_a_name} // state
                                                 onChange={(e) => setData('team_a_name', e.target.value)} // trigger
                                                 className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-sky-400/60 focus:ring-1 focus:ring-sky-400/30 text-white text-xs font-semibold outline-none transition-all font-sans"
@@ -315,7 +313,6 @@ export default function Create() {
                                                 <input
                                                     type="text"
                                                     maxLength={6}
-                                                    placeholder="TOD"
                                                     value={data.team_a_tag} // state
                                                     onChange={(e) => setData('team_a_tag', e.target.value.toUpperCase())} // trigger
                                                     className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 focus:border-sky-400/60 text-white text-xs font-mono font-bold uppercase outline-none transition-all font-sans"
@@ -329,7 +326,6 @@ export default function Create() {
                                                 <input
                                                     type="number"
                                                     min="0"
-                                                    placeholder="0"
                                                     value={data.team_a_score} // state
                                                     onChange={(e) => setData('team_a_score', e.target.value)} // trigger
                                                     className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 focus:border-sky-400/60 text-amber-400 text-xs font-mono font-bold outline-none transition-all font-sans"
@@ -359,7 +355,6 @@ export default function Create() {
                                             <input
                                                 type="text"
                                                 required
-                                                placeholder="e.g. Team SMG"
                                                 value={data.team_b_name} // state
                                                 onChange={(e) => setData('team_b_name', e.target.value)} // trigger
                                                 className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-rose-400/60 focus:ring-1 focus:ring-rose-400/30 text-white text-xs font-semibold outline-none transition-all font-sans"
@@ -377,7 +372,6 @@ export default function Create() {
                                                 <input
                                                     type="text"
                                                     maxLength={6}
-                                                    placeholder="SMG"
                                                     value={data.team_b_tag} // state
                                                     onChange={(e) => setData('team_b_tag', e.target.value.toUpperCase())} // trigger
                                                     className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 focus:border-rose-400/60 text-white text-xs font-mono font-bold uppercase outline-none transition-all font-sans"
@@ -391,7 +385,6 @@ export default function Create() {
                                                 <input
                                                     type="number"
                                                     min="0"
-                                                    placeholder="0"
                                                     value={data.team_b_score} // state
                                                     onChange={(e) => setData('team_b_score', e.target.value)} // trigger
                                                     className="w-full px-3.5 py-2 rounded-xl bg-black/40 border border-white/10 focus:border-rose-400/60 text-amber-400 text-xs font-mono font-bold outline-none transition-all font-sans"
@@ -429,7 +422,6 @@ export default function Create() {
                                     </label>
                                     <input
                                         type="url"
-                                        placeholder="https://youtube.com/watch?v=... or https://twitch.tv/..."
                                         value={data.stream_url} // state
                                         onChange={(e) => setData('stream_url', e.target.value)} // trigger
                                         className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all font-sans"
@@ -495,7 +487,6 @@ export default function Create() {
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="Online Arena"
                                             value={data.venue} // state
                                             onChange={(e) => setData('venue', e.target.value)} // trigger
                                             className="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"

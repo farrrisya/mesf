@@ -320,7 +320,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                             type="url"
                                             value={data.video_url} // state
                                             onChange={(e) => setData('video_url', e.target.value)} // trigger
-                                            placeholder="https://www.youtube.com/watch?v=... or Facebook video link"
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm outline-none transition-all font-sans pr-10"
                                         />
                                         {data.video_url && (

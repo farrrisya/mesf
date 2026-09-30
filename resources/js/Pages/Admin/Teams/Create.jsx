@@ -259,7 +259,6 @@ export default function Create() {
                                             <input
                                                 type="text"
                                                 required
-                                                placeholder="e.g. Todak Esports"
                                                 value={data.name} // state
                                                 onChange={(e) => setData('name', e.target.value)} // trigger
                                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
@@ -276,7 +275,6 @@ export default function Create() {
                                                 type="text"
                                                 required
                                                 maxLength={6}
-                                                placeholder="TOD"
                                                 value={data.tag} // state
                                                 onChange={(e) => setData('tag', e.target.value.toUpperCase())} // trigger
                                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-bold uppercase tracking-wider outline-none transition-all font-sans"
@@ -339,7 +337,6 @@ export default function Create() {
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="e.g. Langgar Sampai Habis"
                                             value={data.motto} // state
                                             onChange={(e) => setData('motto', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
@@ -379,7 +376,6 @@ export default function Create() {
                                         </label>
                                         <input
                                             type="text"
-                                            placeholder="e.g. Ahmad Firdaus"
                                             value={data.manager_name} // state
                                             onChange={(e) => setData('manager_name', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
@@ -395,7 +391,6 @@ export default function Create() {
                                         </label>
                                         <input
                                             type="email"
-                                            placeholder="manager@team.com"
                                             value={data.contact_email} // state
                                             onChange={(e) => setData('contact_email', e.target.value)} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
