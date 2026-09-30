@@ -245,46 +245,38 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                             {/* top luminous highlight beam */}
                             <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70 z-10" />
 
-                            {/* crisp interactive image display (opens full poster pop-up on click/hover trigger) */}
+                            {/* crisp interactive image display (opens full poster pop-up on click) */}
                             <button
                                 type="button"
                                 onClick={() => setIsPosterOpen(true)} // trigger
                                 className="w-full bg-[#070B14] flex items-center justify-center overflow-hidden relative cursor-zoom-in text-left block focus:outline-none"
-                                title="Click to view full poster"
+                                title="View full poster"
                             >
                                 <img
                                     src={article.image}
                                     alt={article.title || 'Article Cover'}
-                                    className="w-full max-h-[560px] object-cover object-center"
+                                    className="w-full max-h-[680px] object-contain object-center"
                                 />
 
-                                {/* hover overlay pop-up prompt cue */}
-                                <div className="absolute inset-0 bg-black/45 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
-                                    <div className="px-5 py-2.5 rounded-xl bg-black/85 backdrop-blur-md border border-white/25 text-white text-xs font-mono font-bold uppercase tracking-wider flex items-center gap-2.5 shadow-2xl">
-                                        <Maximize2 className="w-4 h-4 text-amber-400" />
-                                        <span>Click to View Full Poster</span>
+                                {/* hover overlay with pure SVG icon (no sentence/text) */}
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center pointer-events-none">
+                                    <div className="w-14 h-14 rounded-full bg-black/75 backdrop-blur-md border border-white/30 flex items-center justify-center text-white shadow-2xl">
+                                        <Maximize2 className="w-6 h-6 text-white" />
                                     </div>
-                                </div>
-
-                                {/* top right indicator badge */}
-                                <div className="absolute top-4 right-4 pointer-events-none">
-                                    <span className="px-3 py-1.5 rounded-lg bg-black/75 backdrop-blur-md border border-white/20 text-neutral-200 text-[11px] font-mono flex items-center gap-1.5 shadow-md">
-                                        <Maximize2 className="w-3.5 h-3.5 text-amber-400" />
-                                        <span className="hidden sm:inline">Full Poster</span>
-                                    </span>
                                 </div>
                             </button>
 
-                            {/* caption / credit footer */}
-                            <div className="px-5 py-3 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-neutral-400">
-                                <span className="truncate max-w-md">{article.title}</span>
+                            {/* caption footer */}
+                            <div className="px-5 py-3 border-t border-white/10 flex items-center justify-between gap-2 text-xs font-mono text-neutral-400">
+                                <span className="truncate">{article.title}</span>
                                 <button
                                     type="button"
                                     onClick={() => setIsPosterOpen(true)} // trigger
-                                    className="text-[11px] text-amber-400 hover:text-amber-300 uppercase font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                                    aria-label="View full poster"
+                                    className="p-1 rounded-md text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                                    title="View full poster"
                                 >
-                                    <span>Expand Full Poster</span>
-                                    <Maximize2 className="w-3 h-3" />
+                                    <Maximize2 className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>
@@ -482,7 +474,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                     role="dialog"
                     aria-modal="true"
                     aria-label="Full Article Poster"
-                    className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/92 backdrop-blur-xl animate-fadeIn"
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 bg-black/95 backdrop-blur-md"
                     onClick={() => setIsPosterOpen(false)} // trigger
                 >
                     {/* close button */}
@@ -490,56 +482,21 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                         type="button"
                         onClick={() => setIsPosterOpen(false)} // trigger
                         aria-label="Close poster view"
-                        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-20 p-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white hover:text-amber-400 transition-colors cursor-pointer shadow-lg backdrop-blur-md"
+                        className="absolute top-4 right-4 sm:top-6 sm:right-6 z-30 p-2.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white hover:text-amber-400 transition-colors cursor-pointer shadow-lg backdrop-blur-md"
                     >
                         <X className="w-6 h-6" />
                     </button>
 
-                    {/* poster modal card */}
+                    {/* complete uncropped poster */}
                     <div
                         onClick={(e) => e.stopPropagation()} // trigger
-                        className="relative max-w-6xl max-h-[94vh] w-full flex flex-col items-center justify-center rounded-2xl overflow-hidden border border-white/15 bg-[#070B14]/95 shadow-2xl p-2 sm:p-4"
+                        className="relative max-h-screen max-w-screen flex items-center justify-center p-1 sm:p-2"
                     >
-                        {/* full image container */}
-                        <div className="relative flex items-center justify-center w-full max-h-[80vh] overflow-hidden rounded-xl bg-black/60">
-                            <img
-                                src={article.image}
-                                alt={article.title || 'Full Poster'}
-                                className="max-w-full max-h-[80vh] object-contain select-none"
-                            />
-                        </div>
-
-                        {/* modal bottom bar */}
-                        <div className="w-full pt-3 px-2 sm:px-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-neutral-300">
-                            <div className="flex items-center gap-2 truncate">
-                                <span className="px-2.5 py-1 rounded-md bg-amber-400 text-black text-[10px] font-bold uppercase shrink-0">
-                                    {(article?.tag || article?.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
-                                </span>
-                                <span className="font-bold text-white truncate max-w-lg">
-                                    {article.title}
-                                </span>
-                            </div>
-
-                            <div className="flex items-center gap-3">
-                                <a
-                                    href={article.image}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 border border-white/15 text-white text-xs font-mono transition-colors"
-                                >
-                                    <span>Open Full File</span>
-                                    <ExternalLink className="w-3.5 h-3.5" />
-                                </a>
-
-                                <button
-                                    type="button"
-                                    onClick={() => setIsPosterOpen(false)} // trigger
-                                    className="px-3.5 py-1.5 rounded-lg bg-white hover:bg-neutral-200 text-black text-xs font-bold font-mono uppercase transition-colors cursor-pointer"
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
+                        <img
+                            src={article.image}
+                            alt={article.title || 'Full Poster'}
+                            className="max-h-[94vh] max-w-[96vw] w-auto h-auto object-contain select-none shadow-2xl rounded-lg"
+                        />
                     </div>
                 </div>
             )}
