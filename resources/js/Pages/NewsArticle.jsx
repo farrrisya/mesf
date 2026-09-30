@@ -8,10 +8,7 @@ import NewsVideoPlayer from '@/Components/NewsVideoPlayer';
 import {
     Calendar,
     MapPin,
-    User,
-    Eye,
     Newspaper,
-    Clock,
     Share2,
     Check,
     Copy,
@@ -58,12 +55,6 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
             window.removeEventListener('keydown', handleKeyDown); // trigger
         };
     }, [isPosterOpen]);
-
-    // calculate estimated read time in minutes
-    const readTimeMinutes = useMemo(() => { // convert
-        const wordCount = ((article?.content || '') + ' ' + (article?.excerpt || '')).trim().split(/\s+/).filter(Boolean).length; // check
-        return Math.max(1, Math.ceil(wordCount / 180)); // state
-    }, [article?.content, article?.excerpt]);
 
     // parse article body content into readable paragraph blocks
     const paragraphs = useMemo(() => { // convert
@@ -135,13 +126,6 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                                 </span>
                             )}
 
-                            <span className="text-neutral-600 hidden sm:inline">•</span>
-
-                            <span className="flex items-center gap-1.5 text-xs font-mono text-neutral-400">
-                                <Clock className="w-3.5 h-3.5 text-neutral-400" />
-                                <span>{readTimeMinutes} min read</span>
-                            </span>
-
                             {article?.location && (
                                 <>
                                     <span className="text-neutral-600 hidden sm:inline">•</span>
@@ -165,27 +149,18 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                             </p>
                         )}
 
-                        {/* author, views & share action bar */}
+                        {/* author & share action bar */}
                         <div className="pt-4 border-t border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            {/* author and reads */}
-                            <div className="flex items-center gap-3 text-xs font-mono text-neutral-400">
-                                <div className="flex items-center gap-1.5 text-neutral-300">
-                                    <User className="w-3.5 h-3.5 text-neutral-400" />
-                                    <span>By {article?.author || 'MESF Editorial'}</span>
-                                </div>
-                                {article?.views_count > 0 && (
-                                    <>
-                                        <span className="text-neutral-600">•</span>
-                                        <span className="flex items-center gap-1.5">
-                                            <Eye className="w-3.5 h-3.5 text-neutral-400" />
-                                            <span>{article.views_count} reads</span>
-                                        </span>
-                                    </>
+                            <div>
+                                {article?.author && article.author !== 'MESF Editorial' && article.author !== 'MESF' && (
+                                    <span className="text-xs font-mono text-neutral-300">
+                                        By {article.author}
+                                    </span>
                                 )}
                             </div>
 
                             {/* social share buttons */}
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2 sm:ml-auto">
                                 <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400 mr-1">
                                     Share:
                                 </span>
@@ -269,12 +244,9 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                                 </div>
                             </button>
 
-                            {/* caption footer (clean, without duplicate view poster button) */}
-                            <div className="px-5 py-3 border-t border-white/10 flex items-center justify-between gap-2 text-xs font-mono text-neutral-400">
-                                <span className="truncate">{article.title}</span>
-                                <span className="text-[11px] text-neutral-500 uppercase">
-                                    Official Dispatch
-                                </span>
+                            {/* caption footer */}
+                            <div className="px-5 py-3 border-t border-white/10 text-xs font-mono text-neutral-400">
+                                <span className="truncate block">{article.title}</span>
                             </div>
                         </div>
                     ) : article?.video_url ? (
@@ -335,9 +307,6 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                             {/* tags & share footer */}
                             <div className="border-t border-white/10 pt-6 mt-12 space-y-6">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="text-xs font-mono text-neutral-500 uppercase mr-1">
-                                        Filed under:
-                                    </span>
                                     <span className="px-3 py-1 rounded-lg bg-white/5 border border-white/10 text-xs font-mono text-neutral-300">
                                         #MESF
                                     </span>
@@ -349,7 +318,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                                     </span>
                                 </div>
 
-                                {/* federation official dispatch notice card */}
+                                {/* federation notice card */}
                                 <div className="p-5 sm:p-6 rounded-2xl border border-white/10 bg-gradient-to-br from-[#0e1628] to-[#070B14] flex items-start gap-4">
                                     <div className="w-10 h-10 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center shrink-0 text-amber-400">
                                         <ShieldCheck className="w-5 h-5" />
@@ -368,36 +337,6 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
 
                         {/* sidebar column (4 cols) */}
                         <aside className="lg:col-span-4 lg:sticky lg:top-28 space-y-6">
-                            {/* article quick facts card */}
-                            <div className="rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] to-[#090e1a] backdrop-blur-xl p-5 space-y-4 shadow-lg">
-                                <div className="pb-3 border-b border-white/10">
-                                    <span className="text-[10px] font-mono uppercase tracking-wider text-amber-400 block font-bold">
-                                        Overview
-                                    </span>
-                                    <h2 className="text-sm font-bold text-white uppercase tracking-tight">
-                                        Story Details
-                                    </h2>
-                                </div>
-
-                                <div className="space-y-3 text-xs font-mono">
-                                    <div className="flex items-center justify-between py-1 border-b border-white/5">
-                                        <span className="text-neutral-400">Category</span>
-                                        <span className="text-white font-bold">{article?.category || 'News'}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between py-1 border-b border-white/5">
-                                        <span className="text-neutral-400">Published</span>
-                                        <span className="text-white">{article?.date || 'Recent'}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between py-1 border-b border-white/5">
-                                        <span className="text-neutral-400">Author</span>
-                                        <span className="text-white">{article?.author || 'MESF'}</span>
-                                    </div>
-                                    <div className="flex items-center justify-between py-1">
-                                        <span className="text-neutral-400">Location</span>
-                                        <span className="text-white">{article?.location || 'Malaysia'}</span>
-                                    </div>
-                                </div>
-                            </div>
 
                             {/* latest updates feed */}
                             <div className="rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] to-[#090e1a] backdrop-blur-xl p-5 space-y-4 shadow-lg">

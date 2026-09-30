@@ -102,10 +102,6 @@ export default function News({
                                 Official federation announcements, tournament recaps, and national team dispatches.
                             </p>
                         </div>
-                        <div className="hidden md:flex items-center gap-2.5 font-mono text-xs text-neutral-400 pb-1">
-                            <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                            <span>Official Press Wire</span>
-                        </div>
                     </div>
                 </div>
             </header>
@@ -192,10 +188,6 @@ export default function News({
                                             <span>Read Full Story</span>
                                             <ArrowRight className="w-3.5 h-3.5" />
                                         </Link>
-
-                                        <span className="font-mono text-[11px] text-neutral-400">
-                                            MESF Editorial
-                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -372,10 +364,7 @@ export default function News({
                                         </div>
 
                                         {/* bottom action footer */}
-                                        <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-white/5 flex items-center justify-between text-xs">
-                                            <span className="font-mono text-[11px] text-neutral-500">
-                                                MESF Editorial
-                                            </span>
+                                        <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-white/5 flex items-center justify-end text-xs">
                                             <span className="font-bold text-neutral-300 group-hover:text-white transition-colors duration-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
                                                 <span>Read Story</span>
                                                 <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
