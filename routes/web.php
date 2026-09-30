@@ -43,9 +43,7 @@ Route::get('/', function () {
     foreach ($categories as $cat) { // loop
         $article = \App\Models\News::published() // check
             ->where('category', $cat)
-            ->orderBy('is_featured', 'desc')
-            ->orderBy('published_at', 'desc')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('created_at', 'desc') // clock
             ->first();
 
         $data = $article ? [ // state
@@ -58,7 +56,7 @@ Route::get('/', function () {
             'image' => $article->image_path ? \Illuminate\Support\Facades\Storage::url($article->image_path) : null,
             'video_url' => $article->video_url,
             'date' => $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y'),
-            'timestamp' => $article->published_at ? $article->published_at->timestamp : $article->created_at->timestamp,
+            'timestamp' => $article->created_at ? $article->created_at->timestamp : ($article->published_at ? $article->published_at->timestamp : 0),
             'location' => $article->location ?: 'OFFICIAL',
             'is_empty' => false, // check
         ] : null;
@@ -71,7 +69,7 @@ Route::get('/', function () {
         }
     }
 
-    // sort filled articles by latest published/created date descending
+    // sort filled articles by latest upload date descending
     usort($filledUpdates, function ($a, $b) { // trigger
         return $b['timestamp'] <=> $a['timestamp'];
     });
@@ -88,8 +86,7 @@ Route::get('/', function () {
     $latestUpdates = array_merge($filledUpdates, $emptyUpdates); // convert
 
     $allNews = \App\Models\News::published() // check
-        ->orderBy('published_at', 'desc')
-        ->orderBy('created_at', 'desc')
+        ->orderBy('created_at', 'desc') // clock
         ->limit(16)
         ->get()
         ->map(function ($article) { // convert
@@ -103,7 +100,7 @@ Route::get('/', function () {
                 'image' => $article->image_path ? \Illuminate\Support\Facades\Storage::url($article->image_path) : null,
                 'video_url' => $article->video_url,
                 'date' => $article->published_at ? $article->published_at->format('d M Y') : $article->created_at->format('d M Y'),
-                'timestamp' => $article->published_at ? $article->published_at->timestamp : $article->created_at->timestamp,
+                'timestamp' => $article->created_at ? $article->created_at->timestamp : ($article->published_at ? $article->published_at->timestamp : 0),
                 'location' => $article->location ?: 'OFFICIAL',
                 'is_featured' => (bool)$article->is_featured,
                 'is_empty' => false, // check
@@ -112,8 +109,13 @@ Route::get('/', function () {
 
     $featuredArticle = \App\Models\News::published() // check
         ->where('is_featured', true)
-        ->orderBy('published_at', 'desc')
+        ->orderBy('created_at', 'desc') // clock
         ->first();
+    if (!$featuredArticle) { // check
+        $featuredArticle = \App\Models\News::published() // check
+            ->orderBy('created_at', 'desc') // clock
+            ->first();
+    }
 
     $featuredData = $featuredArticle ? [ // state
         'id' => $featuredArticle->id,
@@ -192,15 +194,14 @@ Route::get('/', function () {
 
 Route::get('/news', [PublicNewsController::class, 'index'])->name('news'); // screen
 Route::get('/news/article', function () {
-    $first = \App\Models\News::published()->latest('published_at')->first(); // state
+    $first = \App\Models\News::published()->latest('created_at')->first(); // state
     return $first ? redirect()->route('news.show', $first->slug) : redirect()->route('news'); // redirect
 })->name('news.article');
 Route::get('/news/{slug}', [PublicNewsController::class, 'show'])->name('news.show'); // screen
 
 Route::get('/leagues', function () {
     $leagues = League::where('is_active', true) // state
-        ->orderBy('start_date', 'desc')
-        ->orderBy('created_at', 'desc')
+        ->orderBy('created_at', 'desc') // clock
         ->get()
         ->map(function ($l) {
             return [ // convert
@@ -358,8 +359,7 @@ Route::get('/leagues/{slug}', function ($slug) {
 
 Route::get('/matches', function () {
     $rawMatches = EsportMatch::where('is_active', true) // state
-        ->orderBy('scheduled_date', 'asc')
-        ->orderBy('scheduled_time', 'asc')
+        ->orderByRaw('CASE WHEN scheduled_date IS NULL THEN 1 ELSE 0 END, scheduled_date ASC, scheduled_time ASC')
         ->get();
 
     $allTeams = Team::all()->keyBy(function ($t) { return strtolower(trim($t->name)); }); // state
@@ -412,7 +412,7 @@ Route::get('/matches', function () {
 })->name('matches');
 
 Route::get('/matches/details', function () {
-    $match = EsportMatch::where('is_active', true)->orderBy('scheduled_date', 'asc')->first(); // state
+    $match = EsportMatch::where('is_active', true)->orderByRaw('CASE WHEN scheduled_date IS NULL THEN 1 ELSE 0 END, scheduled_date ASC, scheduled_time ASC')->first(); // state
 
     $teamA = $match ? Team::where('name', $match->team_a_name)->orWhere('tag', $match->team_a_tag)->first() : null; // check
     $teamB = $match ? Team::where('name', $match->team_b_name)->orWhere('tag', $match->team_b_tag)->first() : null; // check
@@ -457,7 +457,7 @@ Route::get('/matches/details', function () {
         ->when($match, function ($query) use ($match) {
             return $query->where('id', '!=', $match->id);
         })
-        ->orderBy('scheduled_date', 'asc')
+        ->orderByRaw('CASE WHEN scheduled_date IS NULL THEN 1 ELSE 0 END, scheduled_date ASC, scheduled_time ASC')
         ->limit(4)
         ->get()
         ->map(function ($om) {
@@ -486,7 +486,7 @@ Route::get('/matches/details', function () {
 Route::get('/matches/{id}', function ($id) {
     $match = EsportMatch::find($id); // state
     if (!$match) { // check
-        $match = EsportMatch::where('is_active', true)->orderBy('scheduled_date', 'asc')->first(); // state
+        $match = EsportMatch::where('is_active', true)->orderByRaw('CASE WHEN scheduled_date IS NULL THEN 1 ELSE 0 END, scheduled_date ASC, scheduled_time ASC')->first(); // state
     }
 
     $teamA = $match ? Team::where('name', $match->team_a_name)->orWhere('tag', $match->team_a_tag)->first() : null; // check
@@ -532,7 +532,7 @@ Route::get('/matches/{id}', function ($id) {
         ->when($match, function ($query) use ($match) {
             return $query->where('id', '!=', $match->id);
         })
-        ->orderBy('scheduled_date', 'asc')
+        ->orderByRaw('CASE WHEN scheduled_date IS NULL THEN 1 ELSE 0 END, scheduled_date ASC, scheduled_time ASC')
         ->limit(4)
         ->get()
         ->map(function ($om) {

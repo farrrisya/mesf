@@ -26,10 +26,10 @@ class PublicNewsController extends Controller
                 });
             });
 
-        // get featured article (first priority is is_featured, then latest)
+        // get featured article (first priority is is_featured, then latest upload)
         $featuredArticle = (clone $baseQuery) // state
             ->orderBy('is_featured', 'desc') // state
-            ->orderBy('published_at', 'desc') // clock
+            ->orderBy('created_at', 'desc') // clock
             ->first();
 
         // grid query
@@ -43,8 +43,7 @@ class PublicNewsController extends Controller
             $gridQuery->where('id', '!=', $featuredArticle->id); // check
         }
 
-        $articles = $gridQuery->orderBy('published_at', 'desc') // clock
-            ->orderBy('created_at', 'desc') // clock
+        $articles = $gridQuery->orderBy('created_at', 'desc') // clock
             ->get() // state
             ->map(function ($item) { // convert
                 return [
@@ -112,7 +111,7 @@ class PublicNewsController extends Controller
         // fetch related / latest articles for sidebar feed
         $latestFeed = News::published() // check
             ->where('id', '!=', $article->id) // check
-            ->orderBy('published_at', 'desc') // clock
+            ->orderBy('created_at', 'desc') // clock
             ->limit(4) // state
             ->get() // state
             ->map(function ($item) { // convert

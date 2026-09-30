@@ -64,7 +64,7 @@ class NoticeController extends Controller
     public function publicIndex()
     {
         return \Inertia\Inertia::render('Public/NoticeIndex', [ // screen
-            'notices' => Notice::where('is_active', true)->orderBy('published_at', 'desc')->get(), // state
+            'notices' => Notice::where('is_active', true)->orderBy('created_at', 'desc')->get(), // state
         ]);
     }
 

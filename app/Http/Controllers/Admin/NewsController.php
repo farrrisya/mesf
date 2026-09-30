@@ -35,8 +35,6 @@ class NewsController extends Controller
             ->when($status && $status !== 'ALL', function ($q) use ($status) { // check
                 $q->where('status', $status); // check
             })
-            ->orderBy('is_featured', 'desc') // state
-            ->orderBy('published_at', 'desc') // clock
             ->orderBy('created_at', 'desc'); // clock
 
         $articles = $query->get()->map(function ($item) { // convert

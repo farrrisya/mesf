@@ -13,8 +13,7 @@ class MatchController extends Controller
 {
     public function index()
     {
-        $matches = EsportMatch::orderBy('scheduled_date', 'desc')
-            ->orderBy('scheduled_time', 'asc')
+        $matches = EsportMatch::orderByRaw('CASE WHEN scheduled_date IS NULL THEN 1 ELSE 0 END, scheduled_date ASC, scheduled_time ASC') // state
             ->get()
             ->map(function ($match) { // state
                 return [ // convert
