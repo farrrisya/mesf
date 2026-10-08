@@ -64,8 +64,8 @@ export default function Leagues({ leagues = [] }) {
                 <PublicNavbar activeTab="leagues" />
             </div>
 
-            {/* 1. hero header with leagues championship background */}
-            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
+            {/* 1. hero header with leagues championship background (compact, proportional) */}
+            <section className="relative w-full aspect-[21/9] md:aspect-[32/9] max-h-[240px] min-h-[170px] overflow-hidden">
                 {/* HD leagues banner image */}
                 <img
                     src="/images/leagues_hero_banner_hd.jpg"
@@ -79,15 +79,15 @@ export default function Leagues({ leagues = [] }) {
                 <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
 
                 {/* left-aligned header container */}
-                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
-                    <div className="text-left space-y-3 sm:space-y-4">
-                        <span className="text-[11px] sm:text-xs font-mono font-medium tracking-[0.25em] text-neutral-300 uppercase block">
+                <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-14 sm:pt-16">
+                    <div className="text-left space-y-2">
+                        <span className="text-[10px] sm:text-[11px] font-mono font-medium tracking-[0.25em] text-neutral-400 uppercase block">
                             Malaysia Esports Federation
                         </span>
-                        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight uppercase text-white drop-shadow-md">
                             Leagues
                         </h1>
-                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
+                        <p className="text-xs sm:text-sm text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
                             Official national leagues, sanctioned tournaments, and competitive circuits.
                         </p>
                     </div>
@@ -95,7 +95,7 @@ export default function Leagues({ leagues = [] }) {
             </section>
 
             {/* 2. minimalist filter toolbar & search */}
-            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-8 text-left">
+            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-7 pb-6 text-left">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-0">
                     {/* minimalist status filter tabs */}
                     <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
@@ -106,7 +106,7 @@ export default function Leagues({ leagues = [] }) {
                                     key={filter}
                                     type="button"
                                     onClick={() => setActiveFilter(filter)} // filter
-                                    className={`text-xs uppercase tracking-wider font-semibold pb-3.5 transition-colors duration-200 whitespace-nowrap cursor-pointer ${
+                                    className={`text-xs uppercase tracking-wider font-semibold pb-3 transition-colors duration-200 whitespace-nowrap cursor-pointer ${
                                         isActive
                                             ? 'text-white border-b-2 border-white'
                                             : 'text-neutral-400 hover:text-neutral-200 border-b-2 border-transparent'
@@ -119,7 +119,7 @@ export default function Leagues({ leagues = [] }) {
                     </div>
 
                     {/* minimalist search box */}
-                    <div className="w-full sm:w-56 md:w-64 pb-3.5 sm:pb-3">
+                    <div className="w-full sm:w-56 pb-3 sm:pb-2.5">
                         <div className="relative flex items-center">
                             <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-2.5 pointer-events-none" />
                             <input
@@ -143,7 +143,7 @@ export default function Leagues({ leagues = [] }) {
                 </div>
             </div>
 
-            {/* 3. 2-column tournament cards grid */}
+            {/* 3. 3-column compact tournament cards grid */}
             <div className="flex-1">
                 <main className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-left">
                     {filteredTournaments.length === 0 ? (
@@ -176,7 +176,7 @@ export default function Leagues({ leagues = [] }) {
                             )}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-7 sm:gap-8">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredTournaments.map((tournament) => (
                                 <Link
                                     key={tournament.id}
@@ -185,7 +185,7 @@ export default function Leagues({ leagues = [] }) {
                                 >
                                     <div>
                                         {/* visual banner area */}
-                                        <div className="aspect-[16/9] w-full overflow-hidden relative bg-[#050810] flex items-center justify-center border-b border-white/[0.06] shrink-0">
+                                        <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#050810] flex items-center justify-center border-b border-white/[0.06] shrink-0">
                                             {tournament.banner ? (
                                                 <img
                                                     src={tournament.banner}
@@ -219,18 +219,18 @@ export default function Leagues({ leagues = [] }) {
                                         </div>
 
                                         {/* card content area */}
-                                        <div className="p-6 sm:p-7 space-y-3.5 text-left">
+                                        <div className="p-5 space-y-3 text-left">
                                             {/* meta details row */}
-                                            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-mono text-neutral-400">
+                                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-mono text-neutral-400">
                                                 <div className="flex items-center gap-1.5">
-                                                    <Calendar className="w-3.5 h-3.5 text-neutral-500" />
+                                                    <Calendar className="w-3 h-3 text-neutral-500" />
                                                     <span>{tournament.date}</span>
                                                 </div>
                                                 {tournament.location && (
                                                     <>
                                                         <span className="text-neutral-600">•</span>
                                                         <div className="flex items-center gap-1.5 truncate">
-                                                            <MapPin className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
+                                                            <MapPin className="w-3 h-3 text-neutral-500 shrink-0" />
                                                             <span className="truncate">{tournament.location}</span>
                                                         </div>
                                                     </>
@@ -238,23 +238,23 @@ export default function Leagues({ leagues = [] }) {
                                             </div>
 
                                             {/* league title */}
-                                            <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-100 group-hover:text-white transition-colors duration-200 leading-snug">
+                                            <h2 className="text-base sm:text-lg font-bold tracking-tight text-neutral-100 group-hover:text-white transition-colors duration-200 leading-snug line-clamp-1">
                                                 {tournament.title}
                                             </h2>
 
                                             {/* description */}
                                             {tournament.description && (
-                                                <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-normal line-clamp-2">
+                                                <p className="text-xs text-neutral-400 leading-relaxed font-normal line-clamp-2">
                                                     {tournament.description}
                                                 </p>
                                             )}
 
                                             {/* prize bounty and circuit tier metrics */}
                                             {(tournament.prize_pool || tournament.tier) && (
-                                                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-white/[0.06] text-xs">
+                                                <div className="grid grid-cols-2 gap-2 pt-2.5 border-t border-white/[0.06] text-xs">
                                                     <div>
-                                                        <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider block">Prize Bounty</span>
-                                                        <span className="font-semibold text-neutral-200 font-mono text-xs">{tournament.prize_pool || 'Official Title'}</span>
+                                                        <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider block">Prize Pool</span>
+                                                        <span className="font-semibold text-neutral-200 font-mono text-xs truncate block">{tournament.prize_pool || 'Official Title'}</span>
                                                     </div>
                                                     <div>
                                                         <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider block">Circuit Tier</span>
@@ -266,14 +266,14 @@ export default function Leagues({ leagues = [] }) {
                                     </div>
 
                                     {/* card action footer */}
-                                    <div className="px-6 sm:px-7 pb-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                                        <span className="text-[11px] font-mono text-neutral-500 uppercase tracking-wider">
+                                    <div className="px-5 pb-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                                        <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider">
                                             {tournament.game || 'Circuit Info'}
                                         </span>
 
                                         <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 group-hover:text-white transition-colors">
                                             <span>View Details</span>
-                                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                                         </span>
                                     </div>
                                 </Link>
