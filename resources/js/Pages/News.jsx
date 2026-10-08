@@ -142,24 +142,26 @@ export default function News({
                     </div>
 
                     {/* minimalist search input */}
-                    <div className="relative w-full sm:w-56 md:w-64 pb-3.5 sm:pb-3">
-                        <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
-                        <input
-                            type="text"
-                            value={searchQuery} // state
-                            onChange={(e) => setSearchQuery(e.target.value)} // trigger
-                            placeholder="Search news..."
-                            className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
-                        />
-                        {searchQuery && (
-                            <button
-                                type="button"
-                                onClick={() => setSearchQuery('')} // trigger
-                                className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
-                            >
-                                <X className="w-3.5 h-3.5" />
-                            </button>
-                        )}
+                    <div className="w-full sm:w-56 md:w-64 pb-3.5 sm:pb-3">
+                        <div className="relative flex items-center">
+                            <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-2.5 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={searchQuery} // state
+                                onChange={(e) => setSearchQuery(e.target.value)} // trigger
+                                placeholder="Search news..."
+                                className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery('')} // trigger
+                                    className="absolute right-2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
