@@ -11,8 +11,6 @@ import {
     ArrowRight,
     Calendar,
     Newspaper,
-    Video,
-    Film,
     ExternalLink
 } from 'lucide-react';
 
@@ -30,7 +28,6 @@ export default function News({
     // --4. actions--
     const [activeCategory, setActiveCategory] = useState(initialCategory); // state
     const [searchQuery, setSearchQuery] = useState(initialSearch); // state
-    const [onlyVideos, setOnlyVideos] = useState(false); // state
     const [videoModalArticle, setVideoModalArticle] = useState(null); // state
     const [heroInlineVideo, setHeroInlineVideo] = useState(false); // state
 
@@ -51,14 +48,12 @@ export default function News({
         };
     }, [videoModalArticle]);
 
-    // filter articles by category, video toggle, and search keyword
+    // filter articles by category and search keyword
     const filteredArticles = useMemo(() => { // filter
         return articles.filter((article) => {
             const matchesCat = activeCategory === 'ALL' ||
                 (article.category && article.category.toUpperCase().trim() === activeCategory.toUpperCase().trim()); // check
             if (!matchesCat) return false;
-
-            if (onlyVideos && !article.video_url) return false; // check
 
             if (searchQuery.trim()) { // check
                 const q = searchQuery.toLowerCase();
@@ -71,25 +66,19 @@ export default function News({
 
             return true;
         });
-    }, [articles, activeCategory, onlyVideos, searchQuery]);
-
-    // count total available video articles
-    const videoCount = useMemo(() => { // convert
-        return articles.filter((a) => Boolean(a.video_url)).length;
-    }, [articles]);
+    }, [articles, activeCategory, searchQuery]);
 
     // reset all active filters
     const handleResetFilters = () => { // trigger
         setActiveCategory('ALL'); // state
         setSearchQuery(''); // state
-        setOnlyVideos(false); // state
     };
 
     // fallback featured article if none provided
     const displayHero = featuredArticle || (articles.length > 0 ? articles[0] : null); // state
 
-    // determine whether to show spotlight hero card: ONLY when viewing ALL categories
-    const showSpotlight = !searchQuery && !onlyVideos && displayHero && activeCategory === 'ALL'; // check
+    // determine whether to show spotlight hero card: ONLY when viewing ALL categories and not searching
+    const showSpotlight = !searchQuery && displayHero && activeCategory === 'ALL'; // check
 
     // grid articles: exclude hero from grid on ALL category to prevent duplication; show all articles in normal grid when filtered by category
     const displayGridArticles = useMemo(() => { // filter
@@ -116,41 +105,23 @@ export default function News({
                 <PublicNavbar activeTab="news" />
             </div>
 
-            {/* 1. distinct editorial header (clean, organized, no photo banner) */}
+            {/* 1. minimalist editorial header */}
             <header className="relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-32 sm:pt-36 pb-6 text-left">
-                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-white/10">
-                    <div className="space-y-3 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono font-semibold tracking-widest text-amber-400 uppercase">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                            <span>Official Federation Dispatches</span>
-                        </div>
-                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight uppercase text-white drop-shadow-sm">
-                            News & Media
-                        </h1>
-                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed">
-                            Official announcements, tournament bulletins, and video broadcasts from the Malaysia Esports Federation.
-                        </p>
-                    </div>
-
-                    {/* quick summary statistics chips */}
-                    <div className="flex items-center gap-3 shrink-0">
-                        <div className="px-4 py-3 rounded-2xl bg-[#090F1E] border border-white/10 flex flex-col items-start min-w-[110px]">
-                            <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Total Stories</span>
-                            <span className="text-lg sm:text-xl font-bold font-mono text-white">{articles.length}</span>
-                        </div>
-                        <div className="px-4 py-3 rounded-2xl bg-[#090F1E] border border-white/10 flex flex-col items-start min-w-[110px]">
-                            <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Video Bulletins</span>
-                            <span className="text-lg sm:text-xl font-bold font-mono text-amber-400">{videoCount}</span>
-                        </div>
-                    </div>
+                <div className="space-y-2 max-w-2xl">
+                    <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight uppercase text-white drop-shadow-sm">
+                        News
+                    </h1>
+                    <p className="text-xs sm:text-sm md:text-base text-neutral-400 font-normal leading-relaxed">
+                        Official announcements, tournament reports, and federation updates.
+                    </p>
                 </div>
             </header>
 
-            {/* 2. search & filter toolbar */}
-            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 text-left">
-                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-3 sm:p-4 rounded-2xl bg-[#090F1E]/90 border border-white/10 backdrop-blur-xl shadow-lg">
-                    {/* category filter pills */}
-                    <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
+            {/* 2. minimalist category navigation & search */}
+            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-10 text-left">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-0">
+                    {/* minimalist category tabs */}
+                    <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
                         {categories.map((cat) => {
                             const isActive = activeCategory === cat; // check
                             return (
@@ -158,10 +129,10 @@ export default function News({
                                     key={cat}
                                     type="button"
                                     onClick={() => setActiveCategory(cat)} // state
-                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase whitespace-nowrap transition-colors duration-200 cursor-pointer select-none ${
+                                    className={`text-xs uppercase tracking-wider font-semibold pb-3.5 transition-colors duration-200 whitespace-nowrap relative cursor-pointer ${
                                         isActive
-                                            ? 'bg-white text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)] border border-white'
-                                            : 'border border-white/10 bg-[#0E162B] text-neutral-300 hover:text-white hover:border-white/30'
+                                            ? 'text-white border-b-2 border-white'
+                                            : 'text-neutral-400 hover:text-neutral-200 border-b-2 border-transparent'
                                     }`}
                                 >
                                     {cat}
@@ -170,47 +141,25 @@ export default function News({
                         })}
                     </div>
 
-                    {/* right controls: search, video toggle & counter */}
-                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
-                        {/* search input */}
-                        <div className="relative w-full sm:w-60 md:w-72">
-                            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                            <input
-                                type="text"
-                                value={searchQuery} // state
-                                onChange={(e) => setSearchQuery(e.target.value)} // trigger
-                                placeholder="Search dispatches..."
-                                className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#0E162B] border border-white/15 focus:border-amber-400/50 text-xs text-white placeholder-neutral-500 outline-none backdrop-blur-md transition-colors"
-                            />
-                            {searchQuery && (
-                                <button
-                                    type="button"
-                                    onClick={() => setSearchQuery('')} // trigger
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
-                                >
-                                    <X className="w-3.5 h-3.5" />
-                                </button>
-                            )}
-                        </div>
-
-                        {/* video filter toggle */}
-                        <button
-                            type="button"
-                            onClick={() => setOnlyVideos((prev) => !prev)} // state
-                            className={`px-3.5 py-2 rounded-xl text-xs font-mono tracking-wider uppercase transition-colors duration-200 cursor-pointer flex items-center gap-1.5 shrink-0 ${
-                                onlyVideos
-                                    ? 'bg-rose-500/20 border border-rose-500/50 text-rose-300'
-                                    : 'bg-[#0E162B] border border-white/15 text-neutral-300 hover:text-white hover:border-white/30'
-                            }`}
-                        >
-                            <Video className="w-3.5 h-3.5" />
-                            <span className="hidden sm:inline">Only Videos</span>
-                        </button>
-
-                        {/* counter chip */}
-                        <span className="text-[11px] font-mono text-neutral-400 whitespace-nowrap px-3 py-2 rounded-xl bg-white/5 border border-white/10 shrink-0">
-                            {filteredArticles.length} {filteredArticles.length === 1 ? 'Story' : 'Stories'}
-                        </span>
+                    {/* minimalist search input */}
+                    <div className="relative w-full sm:w-56 md:w-64 pb-3.5 sm:pb-3">
+                        <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                        <input
+                            type="text"
+                            value={searchQuery} // state
+                            onChange={(e) => setSearchQuery(e.target.value)} // trigger
+                            placeholder="Search news..."
+                            className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
+                        />
+                        {searchQuery && (
+                            <button
+                                type="button"
+                                onClick={() => setSearchQuery('')} // trigger
+                                className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
+                            >
+                                <X className="w-3.5 h-3.5" />
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>
