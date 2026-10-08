@@ -64,13 +64,13 @@ export default function Leagues({ leagues = [] }) {
                 <PublicNavbar activeTab="leagues" />
             </div>
 
-            {/* 1. hero header with leagues championship background (original banner and title) */}
-            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[380px] min-h-[220px] overflow-hidden">
+            {/* 1. hero header with leagues championship background (matches Matches and Teams page sizing) */}
+            <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
                 {/* HD leagues banner image */}
                 <img
                     src="/images/leagues_hero_banner_hd.jpg"
                     alt="MESF Leagues & Tournaments"
-                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.92] contrast-[1.05]"
+                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
                 />
 
                 {/* gradient overlays for text contrast and edge fade */}
@@ -78,10 +78,10 @@ export default function Leagues({ leagues = [] }) {
                 <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/30 to-transparent" />
                 <div className="absolute inset-0 bg-gradient-to-b from-[#070B14]/70 via-transparent to-transparent pointer-events-none" />
 
-                {/* left-aligned header container */}
+                {/* left-aligned header container (matches Teams and Matches page) */}
                 <div className="relative z-10 max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex flex-col justify-center pt-16 sm:pt-20">
                     <div className="text-left space-y-3 sm:space-y-4">
-                        <span className="text-[11px] sm:text-xs font-mono font-medium tracking-[0.25em] text-neutral-300 uppercase block">
+                        <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-neutral-300 uppercase block">
                             Malaysia Esports Federation
                         </span>
                         <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white drop-shadow-2xl">
