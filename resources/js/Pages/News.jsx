@@ -331,13 +331,6 @@ export default function News({
                                                         </div>
                                                     )}
 
-                                                    {/* clean category tag in corner */}
-                                                    <div className="absolute top-3 left-3 z-10">
-                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-neutral-300">
-                                                            {cleanCategory}
-                                                        </span>
-                                                    </div>
-
                                                 </div>
 
                                                 {/* card text details */}
