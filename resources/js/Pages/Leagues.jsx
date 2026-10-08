@@ -184,14 +184,24 @@ export default function Leagues({ leagues = [] }) {
                                     className="group flex flex-col justify-between rounded-xl bg-[#090E1A]/90 hover:bg-[#0D1527] border border-white/[0.08] hover:border-white/20 backdrop-blur-xl overflow-hidden transition-colors duration-200 cursor-pointer"
                                 >
                                     <div>
-                                        {/* clean visual thumbnail (zero badges on image for pure minimalist clarity) */}
-                                        <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#050810] flex items-center justify-center border-b border-white/[0.06] shrink-0">
+                                        {/* uncropped full poster container with ambient letterbox glow */}
+                                        <div className="aspect-[4/3] w-full overflow-hidden relative bg-[#040711] flex items-center justify-center border-b border-white/[0.06] shrink-0 p-3">
                                             {tournament.banner ? (
-                                                <img
-                                                    src={tournament.banner}
-                                                    alt={tournament.title}
-                                                    className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-200"
-                                                />
+                                                <>
+                                                    {/* subtle ambient poster blur for smooth backdrop filling */}
+                                                    <img
+                                                        src={tournament.banner}
+                                                        alt=""
+                                                        aria-hidden="true"
+                                                        className="absolute inset-0 w-full h-full object-cover filter blur-2xl opacity-20 pointer-events-none"
+                                                    />
+                                                    {/* complete, uncropped tournament poster */}
+                                                    <img
+                                                        src={tournament.banner}
+                                                        alt={tournament.title}
+                                                        className="relative z-10 max-h-full max-w-full object-contain rounded-lg shadow-md opacity-95 group-hover:opacity-100 transition-opacity duration-200"
+                                                    />
+                                                </>
                                             ) : (
                                                 <div className="flex flex-col items-center justify-center gap-2 text-neutral-600">
                                                     <Trophy className="w-7 h-7 opacity-30 text-neutral-500" />
