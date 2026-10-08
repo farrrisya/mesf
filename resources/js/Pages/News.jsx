@@ -170,10 +170,10 @@ export default function News({
                     {/* editorial hero spotlight */}
                     {showSpotlight && (
                         <div className="mb-10 sm:mb-12">
-                            <div className="group relative block w-full rounded-2xl md:rounded-3xl border border-white/10 hover:border-amber-400/40 bg-[#090F1E]/90 hover:bg-[#0E162B] backdrop-blur-xl overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.55)] transition-colors duration-300">
+                            <div className="group relative block w-full rounded-2xl border border-white/[0.08] hover:border-white/20 bg-[#090E1A]/90 hover:bg-[#0D1527] backdrop-blur-xl overflow-hidden transition-colors duration-200">
                                 <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
                                     {/* media column: if playing video inline, show player; otherwise show image */}
-                                    <div className="lg:col-span-7 relative aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] lg:min-h-[400px] bg-[#060A14] overflow-hidden flex items-center justify-center">
+                                    <div className="lg:col-span-7 relative aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] lg:min-h-[380px] bg-[#050810] overflow-hidden flex items-center justify-center">
                                         {heroInlineVideo && displayHero.video_url ? (
                                             <div className="w-full h-full p-4 flex flex-col justify-center bg-black">
                                                 <div className="flex items-center justify-between pb-2">
@@ -195,39 +195,29 @@ export default function News({
                                                     <img
                                                         src={displayHero.image}
                                                         alt={displayHero.title}
-                                                        className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-300"
+                                                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-200"
                                                     />
                                                 ) : (
                                                     <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 p-8">
-                                                        <Newspaper className="w-10 h-10 opacity-40 text-neutral-400" />
-                                                        <span className="text-xs font-mono uppercase text-neutral-400">Official Release</span>
+                                                        <Newspaper className="w-10 h-10 opacity-30 text-neutral-400" />
+                                                        <span className="text-xs font-mono uppercase text-neutral-500">Official Release</span>
                                                     </div>
                                                 )}
 
-                                                {/* gradient overlay */}
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
-
-                                                {/* badges on image */}
-                                                <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-                                                    <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase bg-amber-400 text-black shadow-sm">
-                                                        Lead Story
-                                                    </span>
-                                                    <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase bg-[#070B14]/85 backdrop-blur-md border border-white/20 text-neutral-200">
+                                                {/* category badge */}
+                                                <div className="absolute top-4 left-4 z-10">
+                                                    <span className="px-2.5 py-1 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-neutral-200">
                                                         {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
                                                     </span>
                                                 </div>
 
-                                                {/* video play action overlay if spotlight has video */}
+                                                {/* video indicator badge */}
                                                 {displayHero.video_url && (
-                                                    <div className="absolute inset-0 flex items-center justify-center z-10">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setHeroInlineVideo(true)} // trigger
-                                                            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs font-mono tracking-wider uppercase transition-colors shadow-2xl cursor-pointer"
-                                                        >
-                                                            <Play className="w-4 h-4 fill-black" />
-                                                            <span>Watch Video Here</span>
-                                                        </button>
+                                                    <div className="absolute top-4 right-4 z-10">
+                                                        <span className="px-2.5 py-1 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-amber-300 flex items-center gap-1.5">
+                                                            <Play className="w-2.5 h-2.5 fill-amber-300" />
+                                                            <span>Video</span>
+                                                        </span>
                                                     </div>
                                                 )}
                                             </>
@@ -235,7 +225,7 @@ export default function News({
                                     </div>
 
                                     {/* content column */}
-                                    <div className="lg:col-span-5 p-6 sm:p-8 lg:p-9 flex flex-col justify-between space-y-4 text-left border-t lg:border-t-0 lg:border-l border-white/10">
+                                    <div className="lg:col-span-5 p-6 sm:p-8 lg:p-9 flex flex-col justify-between space-y-4 text-left border-t lg:border-t-0 lg:border-l border-white/[0.08]">
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
                                                 <Calendar className="w-3.5 h-3.5 text-neutral-500" />
@@ -248,19 +238,19 @@ export default function News({
                                                 )}
                                             </div>
 
-                                            <h2 className="text-xl sm:text-2xl font-black text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug">
+                                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug">
                                                 {displayHero.title}
                                             </h2>
 
                                             {displayHero.excerpt && (
-                                                <p className="text-xs sm:text-sm text-neutral-300/90 font-normal leading-relaxed line-clamp-3 lg:line-clamp-4">
+                                                <p className="text-xs sm:text-sm text-neutral-400 font-normal leading-relaxed line-clamp-3 lg:line-clamp-4">
                                                     {displayHero.excerpt}
                                                 </p>
                                             )}
                                         </div>
 
                                         {/* spotlight actions */}
-                                        <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                                        <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between gap-3">
                                             {displayHero.video_url ? (
                                                 <div className="flex items-center gap-3 w-full justify-between">
                                                     <button
@@ -268,7 +258,7 @@ export default function News({
                                                         onClick={() => setHeroInlineVideo(true)} // trigger
                                                         className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
                                                     >
-                                                        <Play className="w-3.5 h-3.5 fill-black" />
+                                                        <Play className="w-3 h-3 fill-black" />
                                                         <span>Play Video</span>
                                                     </button>
                                                     {displayHero.slug && (
@@ -284,10 +274,10 @@ export default function News({
                                                 displayHero.slug && (
                                                     <Link
                                                         href={`/news/${displayHero.slug}`} // redirect
-                                                        className="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
+                                                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300 group-hover:text-amber-400 uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
                                                     >
                                                         <span>Read Full Story</span>
-                                                        <ArrowRight className="w-3.5 h-3.5" />
+                                                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                                                     </Link>
                                                 )
                                             )}
@@ -301,12 +291,12 @@ export default function News({
                     {/* editorial article cards grid */}
                     <section className="w-full">
                         {filteredArticles.length === 0 ? (
-                            <div className="py-20 text-center rounded-2xl border border-white/15 bg-[#0e1628]/90 backdrop-blur-xl p-8 space-y-4 max-w-xl mx-auto shadow-xl">
-                                <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 mx-auto flex items-center justify-center text-neutral-400 shadow-inner">
+                            <div className="py-20 text-center rounded-2xl border border-white/10 bg-[#090E1A]/80 backdrop-blur-xl p-8 space-y-4 max-w-xl mx-auto">
+                                <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center text-neutral-400">
                                     <Newspaper className="w-6 h-6" />
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-base font-bold text-white">No matching dispatches found</p>
+                                    <p className="text-base font-bold text-white">No matching stories found</p>
                                     <p className="text-xs text-neutral-400">
                                         Try adjusting your search keywords or switching category filters.
                                     </p>
@@ -315,14 +305,14 @@ export default function News({
                                     <button
                                         type="button"
                                         onClick={handleResetFilters} // trigger
-                                        className="px-5 py-2.5 rounded-xl bg-white text-black text-xs font-bold tracking-wider uppercase transition-colors cursor-pointer hover:bg-neutral-200 shadow-md"
+                                        className="px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold tracking-wider uppercase transition-colors cursor-pointer hover:bg-neutral-200"
                                     >
-                                        Reset All Filters
+                                        Reset Filters
                                     </button>
                                 </div>
                             </div>
                         ) : displayGridArticles.length > 0 ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7">
                                 {displayGridArticles.map((article) => {
                                     const cleanCategory = (article.tag || article.category || 'News')
                                         .replace(/^\[\s*|\s*\]$/g, '')
@@ -331,48 +321,47 @@ export default function News({
 
                                     // card container content
                                     const CardContent = (
-                                        <div className="group flex flex-col justify-between h-full rounded-2xl bg-[#090F1E]/90 hover:bg-[#0E162B] border border-white/10 hover:border-amber-400/40 backdrop-blur-xl overflow-hidden cursor-pointer transition-colors duration-300 shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
+                                        <div className="group flex flex-col justify-between h-full rounded-xl bg-[#090E1A]/90 hover:bg-[#0D1527] border border-white/[0.08] hover:border-white/20 backdrop-blur-xl overflow-hidden cursor-pointer transition-colors duration-200">
                                             <div>
-                                                {/* 16:10 aspect ratio thumbnail box (static geometry, no zoom) */}
-                                                <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#060A14] flex items-center justify-center border-b border-white/[0.08] shrink-0">
+                                                {/* 16:10 aspect ratio thumbnail box (clean, static geometry, no zoom) */}
+                                                <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#050810] flex items-center justify-center border-b border-white/[0.06] shrink-0">
                                                     {article.image ? (
                                                         <img
                                                             src={article.image}
                                                             alt={article.title}
-                                                            className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-300"
+                                                            className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-200"
                                                             onError={(e) => {
                                                                 e.target.style.opacity = '0'; // error
                                                             }}
                                                         />
                                                     ) : (
                                                         <div className="flex flex-col items-center justify-center gap-2 text-neutral-600">
-                                                            <Newspaper className="w-8 h-8 opacity-40 text-neutral-500" />
+                                                            <Newspaper className="w-8 h-8 opacity-30 text-neutral-500" />
                                                             <span className="text-[10px] font-mono uppercase text-neutral-500">Official Release</span>
                                                         </div>
                                                     )}
 
-                                                    <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
-
-                                                    {/* category badge */}
+                                                    {/* clean category tag in corner */}
                                                     <div className="absolute top-3 left-3 z-10">
-                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase bg-[#070B14]/90 backdrop-blur-md border border-white/20 text-neutral-200">
+                                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-neutral-300">
                                                             {cleanCategory}
                                                         </span>
                                                     </div>
 
-                                                    {/* prominent video badge / play overlay */}
+                                                    {/* clean video pill badge */}
                                                     {hasVideo && (
-                                                        <div className="absolute inset-0 flex items-center justify-center z-10">
-                                                            <span className="w-11 h-11 rounded-full bg-amber-400/90 group-hover:bg-amber-400 text-black flex items-center justify-center shadow-lg transition-colors">
-                                                                <Play className="w-5 h-5 fill-black translate-x-0.5" />
+                                                        <div className="absolute top-3 right-3 z-10">
+                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-amber-300">
+                                                                <Play className="w-2.5 h-2.5 fill-amber-300" />
+                                                                <span>Video</span>
                                                             </span>
                                                         </div>
                                                     )}
                                                 </div>
 
                                                 {/* card text details */}
-                                                <div className="p-5 sm:p-6 space-y-2.5 text-left">
-                                                    {/* meta */}
+                                                <div className="p-5 space-y-2.5 text-left">
+                                                    {/* date and location metadata */}
                                                     <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-400">
                                                         <Calendar className="w-3 h-3 text-neutral-500" />
                                                         <span>{article.date}</span>
@@ -384,14 +373,14 @@ export default function News({
                                                         )}
                                                     </div>
 
-                                                    {/* title headline: stays static in size, shifts color to amber on hover */}
-                                                    <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem]">
+                                                    {/* headline: crisp, stable typography, shifts to amber on hover */}
+                                                    <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem]">
                                                         {article.title}
                                                     </h3>
 
                                                     {/* excerpt */}
                                                     {article.excerpt && (
-                                                        <p className="text-xs text-neutral-400 line-clamp-3 leading-relaxed font-normal">
+                                                        <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed font-normal">
                                                             {article.excerpt}
                                                         </p>
                                                     )}
@@ -399,18 +388,18 @@ export default function News({
                                             </div>
 
                                             {/* bottom action footer */}
-                                            <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                                            <div className="px-5 pb-4 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
                                                 <span className="text-[11px] font-mono text-neutral-500 uppercase tracking-wider">
-                                                    {hasVideo ? 'Video Broadcast' : 'Official Story'}
+                                                    {cleanCategory}
                                                 </span>
 
                                                 {hasVideo ? (
                                                     <span className="font-semibold text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
-                                                        <Play className="w-3 h-3 fill-amber-400 group-hover:fill-amber-300" />
+                                                        <Play className="w-2.5 h-2.5 fill-amber-400 group-hover:fill-amber-300" />
                                                         <span>Watch Video</span>
                                                     </span>
                                                 ) : (
-                                                    <span className="font-semibold text-neutral-300 group-hover:text-white transition-colors duration-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                                                    <span className="font-semibold text-neutral-400 group-hover:text-white transition-colors duration-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
                                                         <span>Read Story</span>
                                                         <ArrowRight className="w-3 h-3 text-neutral-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200" />
                                                     </span>
