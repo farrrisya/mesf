@@ -64,7 +64,7 @@ export default function Leagues({ leagues = [] }) {
                 <PublicNavbar activeTab="leagues" />
             </div>
 
-            {/* 1. hero header with leagues championship background (original banner & title) */}
+            {/* 1. hero header with leagues championship background (original banner and title) */}
             <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[380px] min-h-[220px] overflow-hidden">
                 {/* HD leagues banner image */}
                 <img
@@ -94,11 +94,11 @@ export default function Leagues({ leagues = [] }) {
                 </div>
             </section>
 
-            {/* 2. modern tournament command bar (status pills & search) */}
+            {/* 2. minimalist filter toolbar & search */}
             <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-8 text-left">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
-                    {/* modern status filter pills dock */}
-                    <div className="flex items-center gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/10 overflow-x-auto scrollbar-none">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-0">
+                    {/* minimalist status filter tabs */}
+                    <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
                         {STATUS_FILTERS.map((filter) => {
                             const isActive = activeFilter === filter; // check
                             return (
@@ -106,10 +106,10 @@ export default function Leagues({ leagues = [] }) {
                                     key={filter}
                                     type="button"
                                     onClick={() => setActiveFilter(filter)} // filter
-                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold tracking-wider uppercase transition-colors whitespace-nowrap cursor-pointer ${
+                                    className={`text-xs uppercase tracking-wider font-semibold pb-3.5 transition-colors duration-200 whitespace-nowrap cursor-pointer ${
                                         isActive
-                                            ? 'bg-white text-black font-bold shadow-sm'
-                                            : 'text-neutral-400 hover:text-white'
+                                            ? 'text-white border-b-2 border-white'
+                                            : 'text-neutral-400 hover:text-neutral-200 border-b-2 border-transparent'
                                     }`}
                                 >
                                     {filter}
@@ -118,38 +118,32 @@ export default function Leagues({ leagues = [] }) {
                         })}
                     </div>
 
-                    {/* search & live count */}
-                    <div className="flex items-center gap-3">
-                        <div className="relative flex items-center w-full sm:w-60 md:w-64">
-                            <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-3 pointer-events-none" />
+                    {/* minimalist search box */}
+                    <div className="w-full sm:w-56 md:w-64 pb-3.5 sm:pb-3">
+                        <div className="relative flex items-center">
+                            <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-2.5 pointer-events-none" />
                             <input
                                 type="text"
                                 value={searchQuery} // state
                                 onChange={(e) => setSearchQuery(e.target.value)} // trigger
                                 placeholder="Search leagues..."
-                                className="w-full pl-9 pr-7 py-2 rounded-xl bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
+                                className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
                             />
                             {searchQuery && (
                                 <button
                                     type="button"
                                     onClick={() => setSearchQuery('')} // trigger
-                                    className="absolute right-2.5 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
+                                    className="absolute right-2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
                                 >
                                     <X className="w-3.5 h-3.5" />
                                 </button>
                             )}
                         </div>
-
-                        {/* active count beacon */}
-                        <div className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl bg-white/[0.03] border border-white/10 text-[11px] font-mono text-neutral-300 whitespace-nowrap">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                            <span>{filteredTournaments.length} Active</span>
-                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* 3. modern tournament cards grid */}
+            {/* 3. clean organized tournament cards grid */}
             <div className="flex-1">
                 <main className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24 text-left">
                     {filteredTournaments.length === 0 ? (
@@ -182,16 +176,16 @@ export default function Leagues({ leagues = [] }) {
                             )}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredTournaments.map((tournament) => (
                                 <Link
                                     key={tournament.id}
                                     href={tournament.slug ? `/leagues/${tournament.slug}` : '/leagues/details'} // redirect
-                                    className="group relative flex flex-col justify-between rounded-2xl bg-gradient-to-b from-[#0D1424]/90 via-[#090E1A]/95 to-[#060A14] border border-white/[0.08] hover:border-white/25 backdrop-blur-xl transition-all duration-200 overflow-hidden cursor-pointer"
+                                    className="group flex flex-col justify-between rounded-xl bg-[#090E1A]/90 hover:bg-[#0D1527] border border-white/[0.08] hover:border-white/20 backdrop-blur-xl overflow-hidden transition-colors duration-200 cursor-pointer"
                                 >
                                     <div>
-                                        {/* visual banner area */}
-                                        <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#040711] flex items-center justify-center border-b border-white/[0.06] shrink-0">
+                                        {/* clean visual thumbnail (zero badges on image for pure minimalist clarity) */}
+                                        <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#050810] flex items-center justify-center border-b border-white/[0.06] shrink-0">
                                             {tournament.banner ? (
                                                 <img
                                                     src={tournament.banner}
@@ -200,44 +194,34 @@ export default function Leagues({ leagues = [] }) {
                                                 />
                                             ) : (
                                                 <div className="flex flex-col items-center justify-center gap-2 text-neutral-600">
-                                                    <Trophy className="w-8 h-8 opacity-30 text-neutral-500" />
-                                                    <span className="text-[10px] font-mono uppercase text-neutral-500">MESF Sanctioned League</span>
-                                                </div>
-                                            )}
-
-                                            {/* subtle vignette gradient */}
-                                            <div className="absolute inset-0 bg-gradient-to-t from-[#090E1A] via-[#090E1A]/20 to-transparent pointer-events-none" />
-
-                                            {/* top floating badges (HUD style) */}
-                                            <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
-                                                {/* game badge */}
-                                                <span className="px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/15 text-white font-mono text-[10px] font-bold tracking-wider uppercase">
-                                                    {tournament.game || 'Circuit'}
-                                                </span>
-
-                                                {/* status beacon */}
-                                                {tournament.status && (
-                                                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black/80 backdrop-blur-md border border-white/15 text-neutral-200 font-mono text-[10px] font-medium tracking-wider uppercase">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                                        {tournament.status}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            {/* tier tag over banner bottom */}
-                                            {tournament.tier && (
-                                                <div className="absolute bottom-2.5 left-3 z-10 pointer-events-none">
-                                                    <span className="px-2 py-0.5 rounded text-[10px] font-mono tracking-wider uppercase bg-white/10 backdrop-blur-md border border-white/10 text-neutral-300 font-medium">
-                                                        {tournament.tier}
-                                                    </span>
+                                                    <Trophy className="w-7 h-7 opacity-30 text-neutral-500" />
+                                                    <span className="text-[10px] font-mono uppercase text-neutral-500">Official Circuit</span>
                                                 </div>
                                             )}
                                         </div>
 
                                         {/* card content body */}
-                                        <div className="p-5 space-y-3.5 text-left">
-                                            {/* meta ribbon: date & venue */}
-                                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] font-mono text-neutral-400">
+                                        <div className="p-5 space-y-3 text-left">
+                                            {/* game category & status row */}
+                                            <div className="flex items-center justify-between text-[11px] font-mono">
+                                                <span className="text-neutral-400 uppercase tracking-wider font-semibold">
+                                                    {tournament.game || 'Circuit'}
+                                                </span>
+                                                {tournament.status && (
+                                                    <span className="inline-flex items-center gap-1.5 text-neutral-300">
+                                                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                                        <span className="text-[10px] uppercase tracking-wider font-medium">{tournament.status}</span>
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* tournament title */}
+                                            <h2 className="text-base font-bold text-neutral-100 group-hover:text-white transition-colors duration-200 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem]">
+                                                {tournament.title}
+                                            </h2>
+
+                                            {/* date & location metadata */}
+                                            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs text-neutral-400 font-mono">
                                                 <div className="flex items-center gap-1.5">
                                                     <Calendar className="w-3.5 h-3.5 text-neutral-500 shrink-0" />
                                                     <span>{tournament.date}</span>
@@ -252,40 +236,22 @@ export default function Leagues({ leagues = [] }) {
                                                     </>
                                                 )}
                                             </div>
-
-                                            {/* tournament title */}
-                                            <h2 className="text-base sm:text-lg font-black tracking-tight text-neutral-100 group-hover:text-white transition-colors duration-200 leading-snug line-clamp-2 min-h-[2.75rem]">
-                                                {tournament.title}
-                                            </h2>
-
-                                            {/* modern inset metrics HUD box */}
-                                            <div className="bg-black/50 border border-white/[0.06] rounded-xl p-3 grid grid-cols-2 gap-3">
-                                                <div>
-                                                    <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest block">
-                                                        Prize Pool
-                                                    </span>
-                                                    <span className="text-sm sm:text-base font-mono font-bold text-white truncate block">
-                                                        {tournament.prize_pool || 'Official Title'}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <span className="text-[9px] font-mono text-neutral-400 uppercase tracking-widest block">
-                                                        Circuit Stage
-                                                    </span>
-                                                    <span className="text-xs font-mono font-semibold text-neutral-300 truncate block">
-                                                        {tournament.tier || 'National'}
-                                                    </span>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* card tactical action CTA */}
-                                    <div className="p-5 pt-0">
-                                        <div className="w-full py-2.5 px-4 rounded-xl bg-white/[0.05] group-hover:bg-white text-neutral-300 group-hover:text-black font-semibold text-xs uppercase tracking-wider transition-colors duration-200 flex items-center justify-between">
-                                            <span>View Tournament</span>
-                                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                    {/* card footer */}
+                                    <div className="px-5 py-3.5 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                                        <div>
+                                            <span className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider block">Prize Pool</span>
+                                            <span className="text-xs font-mono font-bold text-neutral-200">
+                                                {tournament.prize_pool || (tournament.tier ? tournament.tier : 'Official Trophy')}
+                                            </span>
                                         </div>
+
+                                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 group-hover:text-white transition-colors">
+                                            <span>View Details</span>
+                                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                        </span>
                                     </div>
                                 </Link>
                             ))}
