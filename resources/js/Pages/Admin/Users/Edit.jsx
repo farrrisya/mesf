@@ -32,10 +32,7 @@ export default function Edit({ staffUser = {} }) {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title={`Edit Staff User - ${staffUser.name}`}
-            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
-        >
+        <AdminLayout title={`Edit Staff User - ${staffUser.name}`}>
             <Head title={`Edit Role - ${staffUser.name}`} />
 
             <div className="w-full max-w-3xl pb-16 space-y-5">
@@ -141,7 +138,7 @@ export default function Edit({ staffUser = {} }) {
                                 Account Active Status
                             </label>
                             <p className="text-xs text-slate-400 leading-relaxed">
-                                Deactivated accounts cannot sign in to the management portal.
+                                Deactivated accounts cannot log in to the management portal.
                             </p>
                         </div>
 

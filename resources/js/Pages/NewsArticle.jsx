@@ -90,13 +90,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
             <div className="pointer-events-none fixed -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[150px] z-0" />
             <div className="pointer-events-none fixed top-1/3 -right-20 h-[450px] w-[450px] rounded-full bg-emerald-500/5 blur-[160px] z-0" />
 
-            {/* background SVG grain texture */}
-            <div
-                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">

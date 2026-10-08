@@ -2,7 +2,16 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
+import {
+    User,
+    Mail,
+    Lock,
+    Eye,
+    EyeOff,
+    UserPlus,
+    ArrowLeft,
+    Check
+} from 'lucide-react';
 
 // --2. main component--
 export default function Register() {
@@ -37,18 +46,14 @@ export default function Register() {
         });
     };
 
+    const passwordsMatch = data.password && data.password_confirmation && data.password === data.password_confirmation; // check
+
     // --4. UI--
     return (
-        <div className="relative min-h-screen w-full font-sans bg-[#070B14] text-white selection:bg-amber-400 selection:text-black overflow-x-hidden flex flex-col justify-between items-center py-6 sm:py-8 px-4 sm:px-6">
+        <div className="relative h-screen max-h-screen w-full font-sans bg-[#070B14] text-white selection:bg-amber-400 selection:text-black overflow-hidden flex flex-col justify-between py-3 sm:py-4 px-4 sm:px-6">
             <Head title="Sign Up - MESF" />
 
-            {/* texture effect */}
-            <div
-                className="pointer-events-none fixed inset-0 z-40 opacity-[0.06] mix-blend-overlay"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* background wallpaper and gradients */}
             <div className="fixed inset-0 z-0 h-screen w-full overflow-hidden pointer-events-none">
@@ -59,187 +64,228 @@ export default function Register() {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = '/images/mesf_bg_v2.jpg';
                     }}
-                    className="h-full w-full object-cover object-center scale-[1.03] filter brightness-[0.7] contrast-[1.15]"
+                    className="h-full w-full object-cover object-center filter brightness-[0.55] contrast-[1.15]"
                 />
-                <div className="absolute inset-0 bg-[#070B14]/65" />
+                <div className="absolute inset-0 bg-[#070B14]/80" />
                 <div
                     className="absolute inset-0"
                     style={{
-                        background: 'radial-gradient(circle at 50% 50%, rgba(7, 11, 20, 0.25) 0%, rgba(7, 11, 20, 0.8) 55%, rgba(7, 11, 20, 0.98) 85%, #070B14 100%)'
+                        background: 'radial-gradient(circle at 50% 50%, rgba(7, 11, 20, 0.3) 0%, rgba(7, 11, 20, 0.85) 55%, #070B14 100%)'
                     }}
                 />
                 <div
                     className="absolute inset-0"
                     style={{
-                        background: 'linear-gradient(to bottom, rgba(7, 11, 20, 0.95) 0%, transparent 35%, transparent 65%, #070B14 100%)'
-                    }}
-                />
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        background: 'linear-gradient(to right, rgba(7, 11, 20, 0.95) 0%, transparent 35%, transparent 65%, rgba(7, 11, 20, 0.95) 100%)'
+                        background: 'linear-gradient(to bottom, rgba(7, 11, 20, 0.95) 0%, transparent 25%, transparent 75%, #070B14 100%)'
                     }}
                 />
             </div>
 
-            <header className="relative z-10 w-full max-w-5xl flex items-center justify-between">
+            {/* top navigation bar */}
+            <header className="relative z-10 w-full max-w-[420px] mx-auto flex items-center justify-start shrink-0 pt-1">
                 <button
                     type="button"
                     onClick={handleBack} // trigger
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 hover:text-white text-xs font-semibold rounded-full transition-all border border-white/10 group cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-slate-400 hover:text-white text-xs font-medium transition-all backdrop-blur-md cursor-pointer group"
                 >
-                    <svg className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
+                    <ArrowLeft className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-colors" />
                     <span>Back</span>
                 </button>
             </header>
 
-            <main className="relative z-10 w-full max-w-[440px] my-auto py-6 flex flex-col items-center">
-                <div className="flex flex-col items-center text-center mb-6 [perspective:1000px]">
-                    <Link href="/" className="group inline-block mb-4 cursor-pointer" aria-label="MESF Home">
-                        <img
-                            src={logoUrl}
-                            alt="MESF Logo"
-                            onError={(e) => {
-                                e.currentTarget.onerror = null;
-                                e.currentTarget.src = '/images/mesf_logo.png';
-                            }}
-                            className="h-24 sm:h-28 w-auto object-contain drop-shadow-[0_0_40px_rgba(245,158,11,0.35)] group-hover:[transform:rotateY(720deg)] transition-transform duration-1000 ease-in-out"
-                        />
-                    </Link>
-                    <div className="text-xs font-mono font-bold text-amber-400 tracking-[0.25em] uppercase mb-1.5">
-                        {orgName}
-                    </div>
-                    <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
-                        Create Account
-                    </h1>
-                    <p className="text-sm text-slate-400 mt-1 font-medium">
-                        Join MESF to follow matches, teams, and esports updates
-                    </p>
-                </div>
-
+            {/* main centered card */}
+            <main className="relative z-10 w-full flex-1 flex items-center justify-center min-h-0 py-2">
                 <div
-                    className="w-full text-white rounded-2xl p-7 sm:p-8 shadow-[0_30px_90px_rgba(0,0,0,0.98),0_0_1px_1px_rgba(255,255,255,0.08)] border border-white/10 relative overflow-hidden"
+                    className="w-full max-w-[420px] text-white rounded-3xl p-5 sm:p-6 shadow-[0_25px_80px_rgba(0,0,0,0.98),0_0_1px_1px_rgba(255,255,255,0.08)] border border-white/10 relative overflow-hidden flex flex-col justify-center"
                     style={{
                         backgroundColor: 'rgba(7, 11, 22, 0.94)',
                         backdropFilter: 'blur(36px) saturate(190%)',
                         WebkitBackdropFilter: 'blur(36px) saturate(190%)',
                     }}
                 >
-                    <div className="pointer-events-none absolute -top-24 -right-24 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl" />
+                    <div className="pointer-events-none absolute -top-24 -right-24 w-60 h-60 bg-amber-400/10 rounded-full blur-3xl" />
 
-                    <form onSubmit={submit} className="space-y-4">
-                        <div className="w-full">
-                            <InputLabel
+                    {/* brand identity & title */}
+                    <div className="flex flex-col items-center text-center mb-3 shrink-0">
+                        <Link href="/" className="inline-block mb-1.5 cursor-pointer" aria-label="MESF Home">
+                            <img
+                                src={logoUrl}
+                                alt="MESF Logo"
+                                onError={(e) => {
+                                    e.currentTarget.onerror = null;
+                                    e.currentTarget.src = '/images/mesf_logo.png';
+                                }}
+                                className="h-12 sm:h-14 w-auto object-contain drop-shadow-[0_0_25px_rgba(245,158,11,0.25)]"
+                            />
+                        </Link>
+                        <div className="text-[10px] font-mono font-bold text-amber-400 tracking-[0.2em] uppercase">
+                            {orgName}
+                        </div>
+                        <h1 className="text-xl sm:text-2xl font-black text-white tracking-tight uppercase mt-0.5">
+                            Sign Up
+                        </h1>
+                    </div>
+
+                    {/* dual mode switcher tabs */}
+                    <div className="w-full grid grid-cols-2 p-1 bg-white/5 border border-white/10 rounded-xl mb-3 shrink-0">
+                        <Link
+                            href={route('login')} // redirect
+                            className="py-1.5 rounded-lg text-slate-400 hover:text-white font-bold text-[11px] text-center uppercase tracking-wider transition-colors"
+                        >
+                            Log In
+                        </Link>
+                        <div className="py-1.5 rounded-lg bg-amber-400 text-black font-extrabold text-[11px] text-center uppercase tracking-wider shadow-sm">
+                            Sign Up
+                        </div>
+                    </div>
+
+                    {/* form */}
+                    <form onSubmit={submit} className="space-y-2.5">
+                        {/* full name */}
+                        <div className="space-y-1">
+                            <label
                                 htmlFor="name"
-                                value="Full Name"
-                                className="!text-xs !font-bold !text-slate-300 !uppercase !tracking-wider mb-2 block"
-                            />
-                            <input
-                                id="name"
-                                type="text"
-                                name="name"
-                                value={data.name} // input
-                                style={{ width: '100%', boxSizing: 'border-box' }}
-                                className="block w-full bg-white/[0.04] border border-white/15 rounded-xl py-3 px-4 text-sm sm:text-base text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all"
-                                autoComplete="name"
-                                autoFocus
-                                required
-                                onChange={(e) => setData('name', e.target.value)} // trigger
-                            />
-                            <InputError message={errors.name} className="mt-1.5 text-xs font-medium text-red-400" /> {/* error */}
-                        </div>
-
-                        <div className="w-full">
-                            <InputLabel
-                                htmlFor="email"
-                                value="Email Address"
-                                className="!text-xs !font-bold !text-slate-300 !uppercase !tracking-wider mb-2 block"
-                            />
-                            <input
-                                id="email"
-                                type="email"
-                                name="email"
-                                value={data.email} // input
-                                style={{ width: '100%', boxSizing: 'border-box' }}
-                                className="block w-full bg-white/[0.04] border border-white/15 rounded-xl py-3 px-4 text-sm sm:text-base text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all"
-                                autoComplete="username"
-                                required
-                                onChange={(e) => setData('email', e.target.value)} // trigger
-                            />
-                            <InputError message={errors.email} className="mt-1.5 text-xs font-medium text-red-400" /> {/* error */}
-                        </div>
-
-                        <div className="w-full">
-                            <InputLabel
-                                htmlFor="password"
-                                value="Password"
-                                className="!text-xs !font-bold !text-slate-300 !uppercase !tracking-wider mb-2 block"
-                            />
-                            <div className="relative w-full">
+                                className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider"
+                            >
+                                Full Name <span className="text-amber-400">*</span>
+                            </label>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                    <User className="w-3.5 h-3.5" />
+                                </div>
                                 <input
-                                    id="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    name="password"
-                                    value={data.password} // input
-                                    style={{ width: '100%', boxSizing: 'border-box' }}
-                                    className="block w-full bg-white/[0.04] border border-white/15 rounded-xl py-3 pl-4 pr-12 text-sm sm:text-base text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all"
-                                    autoComplete="new-password"
+                                    id="name"
+                                    type="text"
+                                    name="name"
                                     required
-                                    onChange={(e) => setData('password', e.target.value)} // trigger
+                                    value={data.name} // input
+                                    placeholder="Enter your full name"
+                                    autoComplete="name"
+                                    autoFocus
+                                    onChange={(e) => setData('name', e.target.value)} // trigger
+                                    className="block w-full pl-9 pr-3.5 py-2.5 bg-white/[0.04] border border-white/15 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all font-sans"
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)} // toggle
-                                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-400 transition-colors focus:outline-none p-1 cursor-pointer"
-                                    aria-label={showPassword ? "Hide password" : "Show password"}
-                                >
-                                    {showPassword ? (
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
-                                        </svg>
-                                    ) : (
-                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                                        </svg>
-                                    )}
-                                </button>
                             </div>
-                            <InputError message={errors.password} className="mt-1.5 text-xs font-medium text-red-400" /> {/* error */}
+                            <InputError message={errors.name} className="mt-0.5 text-[11px] font-medium text-rose-400" /> {/* error */}
                         </div>
 
-                        <div className="w-full">
-                            <InputLabel
-                                htmlFor="password_confirmation"
-                                value="Confirm Password"
-                                className="!text-xs !font-bold !text-slate-300 !uppercase !tracking-wider mb-2 block"
-                            />
-                            <input
-                                id="password_confirmation"
-                                type={showPassword ? 'text' : 'password'}
-                                name="password_confirmation"
-                                value={data.password_confirmation} // input
-                                style={{ width: '100%', boxSizing: 'border-box' }}
-                                className="block w-full bg-white/[0.04] border border-white/15 rounded-xl py-3 px-4 text-sm sm:text-base text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all"
-                                autoComplete="new-password"
-                                required
-                                onChange={(e) => setData('password_confirmation', e.target.value)} // trigger
-                            />
-                            <InputError message={errors.password_confirmation} className="mt-1.5 text-xs font-medium text-red-400" /> {/* error */}
+                        {/* email address */}
+                        <div className="space-y-1">
+                            <label
+                                htmlFor="email"
+                                className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider"
+                            >
+                                Email Address <span className="text-amber-400">*</span>
+                            </label>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                    <Mail className="w-3.5 h-3.5" />
+                                </div>
+                                <input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    required
+                                    value={data.email} // input
+                                    placeholder="name@example.com"
+                                    autoComplete="username"
+                                    onChange={(e) => setData('email', e.target.value)} // trigger
+                                    className="block w-full pl-9 pr-3.5 py-2.5 bg-white/[0.04] border border-white/15 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all font-sans"
+                                />
+                            </div>
+                            <InputError message={errors.email} className="mt-0.5 text-[11px] font-medium text-rose-400" /> {/* error */}
                         </div>
 
-                        <div className="pt-2">
+                        {/* password & confirm row */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                            {/* password */}
+                            <div className="space-y-1">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider"
+                                >
+                                    Password <span className="text-amber-400">*</span>
+                                </label>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                        <Lock className="w-3.5 h-3.5" />
+                                    </div>
+                                    <input
+                                        id="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password"
+                                        required
+                                        value={data.password} // input
+                                        placeholder="Min 8 chars"
+                                        autoComplete="new-password"
+                                        onChange={(e) => setData('password', e.target.value)} // trigger
+                                        className="block w-full pl-9 pr-9 py-2.5 bg-white/[0.04] border border-white/15 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all font-sans"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)} // toggle
+                                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-amber-400 transition-colors p-1 cursor-pointer"
+                                        aria-label={showPassword ? "Hide password" : "Show password"}
+                                    >
+                                        {showPassword ? (
+                                            <EyeOff className="w-3.5 h-3.5" />
+                                        ) : (
+                                            <Eye className="w-3.5 h-3.5" />
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* confirm password */}
+                            <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                    <label
+                                        htmlFor="password_confirmation"
+                                        className="block text-[11px] font-bold text-slate-300 uppercase tracking-wider"
+                                    >
+                                        Confirm <span className="text-amber-400">*</span>
+                                    </label>
+                                    {data.password_confirmation && (
+                                        <span className={`text-[10px] font-semibold ${passwordsMatch ? 'text-emerald-400' : 'text-amber-400'}`}>
+                                            {passwordsMatch ? 'Match' : 'Mismatch'}
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="relative">
+                                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                                        <Lock className="w-3.5 h-3.5" />
+                                    </div>
+                                    <input
+                                        id="password_confirmation"
+                                        type={showPassword ? 'text' : 'password'}
+                                        name="password_confirmation"
+                                        required
+                                        value={data.password_confirmation} // input
+                                        placeholder="Repeat pass"
+                                        autoComplete="new-password"
+                                        onChange={(e) => setData('password_confirmation', e.target.value)} // trigger
+                                        className="block w-full pl-9 pr-8 py-2.5 bg-white/[0.04] border border-white/15 rounded-xl text-xs sm:text-sm text-white placeholder:text-slate-500 focus:bg-white/[0.08] focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 shadow-inner transition-all font-sans"
+                                    />
+                                    {data.password_confirmation && passwordsMatch && (
+                                        <div className="absolute right-2.5 top-1/2 -translate-y-1/2 text-emerald-400">
+                                            <Check className="w-3.5 h-3.5" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        <InputError message={errors.password || errors.password_confirmation} className="mt-0.5 text-[11px] font-medium text-rose-400" /> {/* error */}
+
+                        {/* submit button */}
+                        <div className="pt-1.5">
                             <button
                                 type="submit"
-                                style={{ width: '100%' }}
-                                className="w-full flex justify-center items-center gap-2 py-3.5 px-4 bg-amber-400 hover:bg-amber-300 active:bg-amber-400 text-slate-950 font-bold text-sm sm:text-base rounded-xl transition-all duration-200 shadow-md shadow-amber-400/20 hover:shadow-lg hover:shadow-amber-400/30 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
                                 disabled={processing} // toggle
+                                className="w-full flex justify-center items-center gap-2 py-2.5 sm:py-3 px-4 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-[0_4px_16px_rgba(251,191,36,0.3)] hover:shadow-[0_4px_22px_rgba(251,191,36,0.45)] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             >
                                 {processing ? (
                                     <>
-                                        <svg className="animate-spin h-4 w-4 text-slate-950" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <svg className="animate-spin h-3.5 w-3.5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                         </svg>
@@ -247,30 +293,29 @@ export default function Register() {
                                     </>
                                 ) : (
                                     <>
-                                        <span>Create Account</span>
-                                        <svg className="w-4 h-4 text-slate-950" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2.2">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                        </svg>
+                                        <span>Sign Up</span>
+                                        <UserPlus className="w-3.5 h-3.5 text-black" />
                                     </>
                                 )}
                             </button>
                         </div>
 
-                        {/* back to login */}
-                        <div className="pt-4 border-t border-white/10 text-center flex flex-col items-center gap-2.5">
-                            <span className="text-xs text-slate-400">Already have an account?</span>
+                        {/* log in switch prompt */}
+                        <div className="pt-2 text-center text-[11px] text-slate-400">
+                            <span>Already have an account? </span>
                             <Link
                                 href={route('login')} // redirect
-                                className="w-full py-2.5 px-4 rounded-xl border border-white/15 bg-white/[0.04] hover:bg-white/[0.08] hover:border-amber-400/50 text-slate-200 hover:text-white text-xs sm:text-sm font-semibold transition-all duration-200 block text-center"
+                                className="text-amber-400 hover:text-amber-300 font-bold underline underline-offset-2 transition-colors"
                             >
-                                Sign In Instead
+                                Log In Instead
                             </Link>
                         </div>
                     </form>
                 </div>
             </main>
 
-            <footer className="relative z-10 text-center py-2 text-[11px] font-mono text-slate-500">
+            {/* footer */}
+            <footer className="relative z-10 text-center py-1 text-[10px] font-mono text-slate-500 shrink-0">
                 © {new Date().getFullYear()} Malaysia Esports Federation (MESF). All rights reserved.
             </footer>
         </div>

@@ -55,7 +55,7 @@ class LeagueController extends Controller
     {
         $request->validate([ // validate
             'name' => 'required|string|max:255',
-            'game_title' => 'required|string|max:255',
+            'game_title' => 'nullable|string|max:255',
             'season' => 'nullable|string|max:255',
             'tier' => 'nullable|string|max:255',
             'format' => 'nullable|string|max:255',
@@ -69,6 +69,7 @@ class LeagueController extends Controller
             'slots' => 'nullable|string|max:255',
             'registration_status' => 'nullable|string|max:255',
             'banner' => 'nullable|image|max:10240', // 10MB
+            'library_banner_path' => 'nullable|string',
             'description' => 'nullable|string',
             'location' => 'nullable|string|max:255',
         ]);
@@ -84,6 +85,8 @@ class LeagueController extends Controller
         $bannerPath = null; // state
         if ($request->hasFile('banner')) { // check
             $bannerPath = $request->file('banner')->store('leagues', 'public'); // save
+        } elseif ($request->filled('library_banner_path')) { // check
+            $bannerPath = $request->input('library_banner_path'); // state
         }
 
         League::create([ // save
@@ -140,7 +143,7 @@ class LeagueController extends Controller
     {
         $request->validate([ // validate
             'name' => 'required|string|max:255',
-            'game_title' => 'required|string|max:255',
+            'game_title' => 'nullable|string|max:255',
             'season' => 'nullable|string|max:255',
             'tier' => 'nullable|string|max:255',
             'format' => 'nullable|string|max:255',
@@ -154,16 +157,19 @@ class LeagueController extends Controller
             'slots' => 'nullable|string|max:255',
             'registration_status' => 'nullable|string|max:255',
             'banner' => 'nullable|image|max:10240', // 10MB
+            'library_banner_path' => 'nullable|string',
             'description' => 'nullable|string',
             'location' => 'nullable|string|max:255',
         ]);
 
         $bannerPath = $league->banner_path; // state
         if ($request->hasFile('banner')) { // check
-            if ($bannerPath && Storage::disk('public')->exists($bannerPath)) { // check
+            if ($bannerPath && !Str::startsWith($bannerPath, 'media/') && Storage::disk('public')->exists($bannerPath)) { // check
                 Storage::disk('public')->delete($bannerPath); // save
             }
             $bannerPath = $request->file('banner')->store('leagues', 'public'); // save
+        } elseif ($request->filled('library_banner_path')) { // check
+            $bannerPath = $request->input('library_banner_path'); // state
         }
 
         $league->update([ // save

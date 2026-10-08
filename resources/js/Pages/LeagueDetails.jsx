@@ -117,13 +117,7 @@ export default function LeagueDetails({ league = null, otherLeagues = [] }) {
                 <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[160px]" />
             </div>
 
-            {/* background SVG grain texture */}
-            <div
-                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* 1. floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
@@ -227,7 +221,7 @@ export default function LeagueDetails({ league = null, otherLeagues = [] }) {
                                         Game Discipline
                                     </span>
                                     <span className="text-sm sm:text-base font-semibold text-white tracking-tight block truncate">
-                                        {currentLeague.game_title || '—'}
+                                        {currentLeague.game_title || 'All Games / Multi-Title'}
                                     </span>
                                 </div>
 
@@ -441,11 +435,11 @@ export default function LeagueDetails({ league = null, otherLeagues = [] }) {
                                                     href={`/leagues/${ol.slug}`} // redirect
                                                     className="group block p-3 rounded-xl bg-[#090E1A] border border-white/5 hover:border-white/20 transition-all"
                                                 >
-                                                    <div className="text-xs font-extrabold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
+                                                    <div className="text-xs font-extrabold text-white transition-colors line-clamp-1">
                                                         {ol.name}
                                                     </div>
                                                     <div className="flex items-center gap-2 text-[10px] text-neutral-400 mt-1 font-mono">
-                                                        <span className="text-neutral-300">{ol.game_title}</span>
+                                                        <span className="text-neutral-300">{ol.game_title || 'All Games'}</span>
                                                         {ol.prize_pool && (
                                                             <>
                                                                 <span>•</span>

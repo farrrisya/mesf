@@ -52,6 +52,17 @@ class HandleInertiaRequests extends Middleware
                 }
                 return $settings;
             },
+            'hasLiveMatches' => function () {
+                if (!\Illuminate\Support\Facades\Schema::hasTable('matches')) {
+                    return false; // check
+                }
+                return \App\Models\EsportMatch::where('is_active', true)
+                    ->where(function ($q) {
+                        $q->where('status', 'like', '%LIVE%')
+                          ->orWhere('status', 'like', '%Live%');
+                    })
+                    ->exists(); // check
+            },
         ];
     }
 }

@@ -34,10 +34,7 @@ export default function Create() {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title="Add Staff Account - MESF Admin"
-            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
-        >
+        <AdminLayout title="Add Staff Account - MESF Admin">
             <Head title="Create Staff User - Admin" />
 
             <div className="w-full max-w-3xl pb-16 space-y-5">

@@ -17,9 +17,11 @@ import {
     Move,
     Mail,
     FileText,
-    CheckCircle2
+    CheckCircle2,
+    FolderOpen
 } from 'lucide-react';
 import ImagePositionerModal from '@/Components/ImagePositionerModal';
+import MediaPickerModal from '@/Components/MediaPickerModal';
 
 // --2. properties--
 const TEAM_TYPES = [
@@ -67,6 +69,7 @@ export default function Create() {
     const [logoPreview, setLogoPreview] = useState(null); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
     const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
+    const [isLibraryOpen, setIsLibraryOpen] = useState(false); // state
     const [positionerSource, setPositionerSource] = useState(null); // state
     const [rawFileName, setRawFileName] = useState('logo.jpg'); // state
 
@@ -81,7 +84,8 @@ export default function Create() {
         motto: '',
         roster_size: 5,
         status: 'ACTIVE',
-        logo: null
+        logo: null,
+        library_logo_path: null
     });
 
     // --4. actions--
@@ -94,18 +98,45 @@ export default function Create() {
             const reader = new FileReader(); // convert
             reader.onloadend = () => setLogoPreview(reader.result); // state
             reader.readAsDataURL(file); // convert
-            setData('logo', file); // state
+            setData((prev) => ({
+                ...prev,
+                logo: file,
+                library_logo_path: null
+            })); // state
         }
     };
 
+    const handleSelectFromLibrary = (mediaItem) => { // trigger
+        setLogoPreview(mediaItem.url); // state
+        setData((prev) => ({
+            ...prev,
+            library_logo_path: mediaItem.file_path,
+            logo: null
+        })); // state
+        setPositionerSource(mediaItem.url); // state
+        setRawFileName(mediaItem.file_name); // state
+        if (fileInputRef.current) { // check
+            fileInputRef.current.value = ''; // state
+        }
+        setIsLibraryOpen(false); // toggle
+    };
+
     const handlePositionerComplete = (croppedFile, previewUrl) => { // save
-        setData('logo', croppedFile); // state
+        setData((prev) => ({
+            ...prev,
+            logo: croppedFile,
+            library_logo_path: null
+        })); // state
         setLogoPreview(previewUrl); // state
         setPositionerSource(croppedFile); // state
     };
 
     const handleRemoveLogo = () => { // trigger
-        setData('logo', null); // state
+        setData((prev) => ({
+            ...prev,
+            logo: null,
+            library_logo_path: null
+        })); // state
         setLogoPreview(null); // state
         setPositionerSource(null); // state
         if (fileInputRef.current) { // check
@@ -128,10 +159,7 @@ export default function Create() {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title="Create Team Profile - MESF Admin"
-            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
-        >
+        <AdminLayout title="Create Team Profile - MESF Admin">
             <Head title="Create Team Profile - Admin" />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">
@@ -423,48 +451,71 @@ export default function Create() {
                                             alt="Team Logo Preview"
                                             className="w-32 h-32 object-contain"
                                         />
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                        <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity flex flex-wrap items-center justify-center gap-1.5 p-2">
                                             <button
                                                 type="button"
                                                 onClick={() => {
                                                     setPositionerSource(logoPreview); // state
                                                     setIsPositionerOpen(true); // trigger
                                                 }}
-                                                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                                className="px-2.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1"
                                             >
-                                                <Move className="w-3.5 h-3.5" />
-                                                <span>Reposition</span>
+                                                <Move className="w-3 h-3" />
+                                                <span>Crop</span>
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={() => fileInputRef.current?.click()} // trigger
-                                                className="px-3 py-1.5 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                                className="px-2.5 py-1.5 rounded-xl bg-white text-black text-[11px] font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
                                             >
-                                                Change
+                                                Upload
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLibraryOpen(true)} // trigger
+                                                className="px-2.5 py-1.5 rounded-xl bg-amber-400 text-black text-[11px] font-bold hover:bg-amber-300 transition-all cursor-pointer shadow-lg flex items-center gap-1"
+                                            >
+                                                <FolderOpen className="w-3 h-3" />
+                                                <span>Library</span>
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={handleRemoveLogo} // trigger
-                                                className="px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                                className="px-2.5 py-1.5 rounded-xl bg-rose-500 text-white text-[11px] font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
                                             >
                                                 Remove
                                             </button>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div
-                                        onClick={() => fileInputRef.current?.click()} // trigger
-                                        className="border-2 border-dashed border-white/15 hover:border-amber-400/50 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white/[0.02] hover:bg-amber-400/[0.03] group"
-                                    >
-                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-amber-400 transition-colors mb-3">
-                                            <UploadCloud className="w-6 h-6" />
+                                    <div className="border-2 border-dashed border-white/15 rounded-2xl p-5 flex flex-col items-center justify-center text-center bg-white/[0.02]">
+                                        <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400 mb-2.5">
+                                            <UploadCloud className="w-5 h-5" />
                                         </div>
-                                        <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
-                                            Click to upload logo
+                                        <p className="text-xs font-semibold text-slate-200">
+                                            Select Team Emblem
                                         </p>
-                                        <p className="text-[10px] text-slate-500 mt-1">
+                                        <p className="text-[10px] text-slate-500 mt-0.5 mb-3.5">
                                             PNG, WEBP, SVG up to 5MB
                                         </p>
+                                        <div className="flex items-center gap-2 w-full">
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()} // trigger
+                                                className="flex-1 py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                            >
+                                                <UploadCloud className="w-3.5 h-3.5 text-amber-400" />
+                                                <span>Upload</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLibraryOpen(true)} // trigger
+                                                className="flex-1 py-2 px-2.5 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/35 text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                            >
+                                                <FolderOpen className="w-3.5 h-3.5" />
+                                                <span>From Library</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
 
@@ -555,6 +606,13 @@ export default function Create() {
                 title="Reposition Team Logo"
                 outputWidth={800}
                 onComplete={handlePositionerComplete}
+            />
+
+            {/* media library picker modal */}
+            <MediaPickerModal
+                isOpen={isLibraryOpen}
+                onClose={() => setIsLibraryOpen(false)}
+                onSelect={handleSelectFromLibrary}
             />
         </AdminLayout>
     );

@@ -13,8 +13,16 @@ import {
     MapPin,
     Layers,
     ArrowRight,
-    Sparkles
+    ArrowUpRight,
+    Sparkles,
+    Shield,
+    FileText,
+    Award,
+    CheckCircle2,
+    ChevronLeft,
+    ChevronRight
 } from 'lucide-react';
+
 
 // --2. main component--
 export default function Welcome({ latestByCategory = {}, latestUpdates = [], allNews = [], featuredArticle = null, leagues = [], teams = [] }) {
@@ -27,27 +35,42 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
         new URLSearchParams(window.location.search).get('view') === 'dashboard' ||
         window.location.hash === '#dashboard'
     ); // check
+    const lastScrollYRef = useRef(isDashboardRoute ? 230 : 0); // ref
+    const scrollRafRef = useRef(null); // ref
     const [scrollY, setScrollY] = useState(() => (isDashboardRoute ? 230 : 0)); // state
     const [activeTab, setActiveTab] = useState('home'); // state
-    const [activeSquad, setActiveSquad] = useState('mlbb-open'); // state
+    const [squadIndex, setSquadIndex] = useState(0); // state
+    const touchStartX = useRef(null); // ref
 
     // --4. actions--
     useEffect(() => {
         if (typeof window !== 'undefined') {
+            if ('scrollRestoration' in window.history) {
+                window.history.scrollRestoration = 'manual'; // config
+            }
             const params = new URLSearchParams(window.location.search);
             const isDashboard = params.get('view') === 'dashboard' || window.location.hash === '#dashboard';
             
             if (isDashboard) {
-                if ('scrollRestoration' in window.history) {
-                    window.history.scrollRestoration = 'manual'; // config
-                }
                 window.scrollTo(0, 230); // scroll
                 setScrollY(230); // state
+            } else if (!window.location.hash && window.scrollY === 0) {
+                window.scrollTo(0, 0); // scroll
+                setScrollY(0); // state
             }
         }
 
         const handleScroll = () => {
-            setScrollY(window.scrollY); // scroll
+            if (scrollRafRef.current) return; // check
+            scrollRafRef.current = requestAnimationFrame(() => { // trigger
+                scrollRafRef.current = null; // state
+                const currentY = window.scrollY; // state
+                // hero transitions only occur within 0-240px, gate state updates to eliminate scroll lag
+                if (currentY <= 240 || lastScrollYRef.current <= 240) { // check
+                    setScrollY(currentY); // state
+                }
+                lastScrollYRef.current = currentY; // save
+            });
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true }); // trigger
@@ -65,8 +88,33 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
 
         return () => {
             window.removeEventListener('scroll', handleScroll);
+            if (scrollRafRef.current) cancelAnimationFrame(scrollRafRef.current); // trigger
             clearTimeout(timer);
         };
+    }, []);
+
+    useEffect(() => {
+        if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return; // check
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-revealed'); // trigger
+                        observer.unobserve(entry.target); // save
+                    }
+                });
+            },
+            {
+                threshold: 0.08,
+                rootMargin: '0px 0px -40px 0px'
+            }
+        );
+
+        const elements = document.querySelectorAll('.reveal-on-scroll'); // state
+        elements.forEach((el) => observer.observe(el)); // trigger
+
+        return () => observer.disconnect();
     }, []);
 
     // calculate sequenced scroll transitions
@@ -88,76 +136,283 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
         { id: 'about', label: 'ABOUT' }
     ];
 
-    const sanctionedGames = [
+    const sanctionedGameLogos = [
         {
-            name: 'Mobile Legends: Bang Bang',
-            shortName: 'MLBB',
-            genre: 'MOBA'
+            id: 'mlbb',
+            title: 'Mobile Legends: Bang Bang',
+            glowColor: 'rgba(245, 158, 11, 0.35)',
+            glowBorder: 'hover:border-amber-400/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(245,158,11,0.35)]',
+            svg: (
+                <svg viewBox="0 0 250 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <path d="M22 8 L36 25 L22 42 L8 25 Z" fill="#F59E0B" />
+                    <path d="M22 14 L31 25 L22 36 L13 25 Z" fill="#FBBF24" />
+                    <circle cx="22" cy="25" r="4.5" fill="#FFFFFF" />
+                    <text x="48" y="26" fill="#FFFFFF" fontSize="16.5" fontWeight="900" letterSpacing="2" fontFamily="sans-serif">MOBILE LEGENDS</text>
+                    <text x="48" y="41" fill="#F59E0B" fontSize="10.5" fontWeight="800" letterSpacing="4" fontFamily="sans-serif">BANG BANG</text>
+                </svg>
+            )
         },
         {
-            name: 'PUBG Mobile',
-            shortName: 'PUBGM',
-            genre: 'BATTLE ROYALE'
+            id: 'pubgm',
+            title: 'PUBG Mobile',
+            glowColor: 'rgba(245, 158, 11, 0.35)',
+            glowBorder: 'hover:border-amber-400/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(245,158,11,0.35)]',
+            svg: (
+                <svg viewBox="0 0 195 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <rect x="6" y="9" width="34" height="34" rx="6" fill="#F59E0B" />
+                    <path d="M14 17 h18 v18 h-18 Z" fill="#070B14" />
+                    <path d="M18 20 h10 v4 h-10 Z" fill="#F59E0B" />
+                    <text x="48" y="27" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="1.5" fontFamily="sans-serif">PUBG</text>
+                    <text x="48" y="42" fill="#F59E0B" fontSize="11" fontWeight="800" letterSpacing="3" fontFamily="sans-serif">MOBILE</text>
+                </svg>
+            )
         },
         {
-            name: 'Valorant',
-            shortName: 'VALORANT',
-            genre: 'TACTICAL FPS'
+            id: 'valorant',
+            title: 'Valorant',
+            glowColor: 'rgba(255, 70, 85, 0.38)',
+            glowBorder: 'hover:border-rose-500/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(255,70,85,0.38)]',
+            svg: (
+                <svg viewBox="0 0 205 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <path d="M8 12 L22 38 L28 38 L42 12 H33.5 L25 29 L16.5 12 Z" fill="#FF4655" />
+                    <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="4" fontFamily="sans-serif">VALORANT</text>
+                </svg>
+            )
         },
         {
-            name: 'Tekken 8',
-            shortName: 'TEKKEN 8',
-            genre: 'FIGHTING'
+            id: 'tekken8',
+            title: 'Tekken 8',
+            glowColor: 'rgba(239, 68, 68, 0.38)',
+            glowBorder: 'hover:border-red-500/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(239,68,68,0.38)]',
+            svg: (
+                <svg viewBox="0 0 185 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <path d="M10 10 L30 10 L22 23 L34 40 L15 40 L22 29 L10 29 Z" fill="#EF4444" />
+                    <text x="42" y="31" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="2" fontStyle="italic" fontFamily="sans-serif">TEKKEN</text>
+                    <text x="142" y="31" fill="#F59E0B" fontSize="23" fontWeight="900" fontStyle="italic" fontFamily="sans-serif">8</text>
+                </svg>
+            )
         },
         {
-            name: 'eFootball',
-            shortName: 'eFOOTBALL',
-            genre: 'SPORTS'
+            id: 'efootball',
+            title: 'eFootball',
+            glowColor: 'rgba(2, 132, 199, 0.38)',
+            glowBorder: 'hover:border-sky-400/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(2,132,199,0.38)]',
+            svg: (
+                <svg viewBox="0 0 190 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <circle cx="22" cy="25" r="15" fill="none" stroke="#0284C7" strokeWidth="4" />
+                    <circle cx="22" cy="25" r="7.5" fill="#F59E0B" />
+                    <path d="M12 25 h20" stroke="#0284C7" strokeWidth="2" />
+                    <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="1" fontFamily="sans-serif">eFootball</text>
+                    <text x="156" y="20" fill="#F59E0B" fontSize="10" fontWeight="700">™</text>
+                </svg>
+            )
         },
         {
-            name: 'Dota 2',
-            shortName: 'DOTA 2',
-            genre: 'MOBA'
+            id: 'dota2',
+            title: 'Dota 2',
+            glowColor: 'rgba(220, 38, 38, 0.38)',
+            glowBorder: 'hover:border-red-600/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(220,38,38,0.38)]',
+            svg: (
+                <svg viewBox="0 0 165 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <rect x="6" y="8" width="34" height="34" rx="6" fill="#DC2626" />
+                    <path d="M10 36 L36 10" stroke="#070B14" strokeWidth="4.5" />
+                    <circle cx="16" cy="20" r="3.5" fill="#070B14" />
+                    <circle cx="30" cy="30" r="3.5" fill="#070B14" />
+                    <text x="48" y="32" fill="#FFFFFF" fontSize="20" fontWeight="900" letterSpacing="3.5" fontFamily="sans-serif">DOTA 2</text>
+                </svg>
+            )
         },
         {
-            name: 'Honor of Kings',
-            shortName: 'HOK',
-            genre: 'MOBA'
+            id: 'hok',
+            title: 'Honor of Kings',
+            glowColor: 'rgba(251, 191, 36, 0.35)',
+            glowBorder: 'hover:border-amber-400/50',
+            glowShadow: 'hover:shadow-[0_0_30px_rgba(251,191,36,0.35)]',
+            svg: (
+                <svg viewBox="0 0 235 50" className="h-9 sm:h-10 md:h-11 w-auto">
+                    <path d="M8 34 L14 15 L22 26 L30 15 L36 34 Z" fill="#F59E0B" />
+                    <circle cx="22" cy="13" r="2.5" fill="#FBBF24" />
+                    <circle cx="14" cy="13" r="2" fill="#FBBF24" />
+                    <circle cx="30" cy="13" r="2" fill="#FBBF24" />
+                    <text x="48" y="26" fill="#FFFFFF" fontSize="16.5" fontWeight="900" letterSpacing="2" fontFamily="sans-serif">HONOR OF KINGS</text>
+                    <text x="48" y="40" fill="#F59E0B" fontSize="10" fontWeight="800" letterSpacing="4" fontFamily="sans-serif">OFFICIAL TITLE</text>
+                </svg>
+            )
         }
     ];
 
-    const stateAssociations = [
-        { id: 'johor', code: 'JHR', name: 'Johor', title: 'Persatuan Sukan Elektronik Negeri Johor', image: '/images/states/johor_transparent.png', glowColor: '#3B82F6', glowRgba: 'rgba(59, 130, 246, 0.75)' },
-        { id: 'kedah', code: 'KDH', name: 'Kedah', title: 'Persatuan Sukan Elektronik Negeri Kedah', image: '/images/states/kedah_transparent.png', glowColor: '#10B981', glowRgba: 'rgba(16, 185, 129, 0.75)' },
-        { id: 'kelantan', code: 'KTN', name: 'Kelantan', title: 'Persatuan Sukan Elektronik Negeri Kelantan', image: '/images/states/kelantan_transparent.png', glowColor: '#EF4444', glowRgba: 'rgba(239, 68, 68, 0.75)' },
-        { id: 'melaka', code: 'MLK', name: 'Melaka', title: 'Persatuan Sukan Elektronik Negeri Melaka', image: '/images/states/melaka_transparent.png', glowColor: '#2563EB', glowRgba: 'rgba(37, 99, 235, 0.75)' },
-        { id: 'negeri_sembilan', code: 'NSN', name: 'Negeri Sembilan', title: 'Persatuan Sukan Elektronik Negeri Sembilan', image: '/images/states/negeri_sembilan_transparent.png', glowColor: '#F59E0B', glowRgba: 'rgba(245, 158, 11, 0.75)' },
-        { id: 'pahang', code: 'PHG', name: 'Pahang', title: 'Persatuan Sukan Elektronik Negeri Pahang', image: '/images/states/pahang_transparent.png', glowColor: '#38BDF8', glowRgba: 'rgba(56, 189, 248, 0.75)' },
-        { id: 'penang', code: 'PNG', name: 'Pulau Pinang', title: 'Persatuan Sukan Elektronik Pulau Pinang', image: '/images/states/penang_transparent.png', glowColor: '#0EA5E9', glowRgba: 'rgba(14, 165, 233, 0.75)' },
-        { id: 'perak', code: 'PRK', name: 'Perak', title: 'Persatuan Sukan Elektronik Perak', image: '/images/states/perak_transparent.png', glowColor: '#FBBF24', glowRgba: 'rgba(251, 191, 36, 0.75)' },
-        { id: 'perlis', code: 'PLS', name: 'Perlis', title: 'Persatuan Sukan Elektronik Negeri Perlis', image: '/images/states/perlis_transparent.png', glowColor: '#F59E0B', glowRgba: 'rgba(245, 158, 11, 0.75)' },
-        { id: 'selangor', code: 'SGR', name: 'Selangor', title: 'Persatuan Sukan Elektronik Negeri Selangor', image: '/images/states/selangor_transparent.png', glowColor: '#DC2626', glowRgba: 'rgba(220, 38, 38, 0.75)' },
-        { id: 'terengganu', code: 'TRG', name: 'Terengganu', title: 'Persatuan Sukan Elektronik Negeri Terengganu', image: '/images/states/terengganu_transparent.png', glowColor: '#F1F5F9', glowRgba: 'rgba(241, 245, 249, 0.85)' },
-        { id: 'sabah', code: 'SBH', name: 'Sabah', title: 'Persatuan Sukan Elektronik Negeri Sabah', image: '/images/states/sabah_transparent.png', glowColor: '#06B6D4', glowRgba: 'rgba(6, 182, 212, 0.75)' },
-        { id: 'sarawak', code: 'SWK', name: 'Sarawak', title: 'Persatuan Sukan Elektronik Sarawak', image: '/images/states/sarawak_transparent.png', glowColor: '#EF4444', glowRgba: 'rgba(239, 68, 68, 0.75)' },
-        { id: 'labuan', code: 'LBN', name: 'WP Labuan', title: 'Persatuan Sukan Elektronik WP Labuan', image: '/images/states/labuan_transparent.png', glowColor: '#3B82F6', glowRgba: 'rgba(59, 130, 246, 0.75)' }
-    ];
 
     const teamRoster = [
-        { id: 'mlbb-open', label: 'MLBB (OPEN)', format: '5v5 Squad', image: '/images/squads/mlbb-open.jpg', accolade: 'SEA Games Representatives' },
-        { id: 'mlbb-women', label: 'MLBB (WOMEN)', format: '5v5 Squad', image: '/images/squads/mlbb-women.jpg', accolade: 'IESF World Contenders' },
-        { id: 'pubgm', label: 'PUBG MOBILE', format: '4-Player Squad', image: '/images/squads/pubgm.jpg', accolade: 'Asian Games Medalists' },
-        { id: 'cs2-open', label: 'CS2 (OPEN)', format: '5v5 Squad', image: '/images/squads/cs2-open.jpg', accolade: 'IESF World Contenders' },
-        { id: 'cs2-women', label: 'CS2 (WOMEN)', format: '5v5 Squad', image: '/images/squads/cs2-women.jpg', accolade: 'IESF World Contenders' },
-        { id: 'dota2', label: 'DOTA 2 (OPEN)', format: '5v5 Squad', image: '/images/squads/dota2.jpg', accolade: 'National Squad' },
-        { id: 'dota2-women', label: 'DOTA 2 (WOMEN)', format: '5v5 Squad', image: '/images/squads/dota2-women.jpg', accolade: 'National Squad' },
-        { id: 'valorant', label: 'VALORANT', format: '5v5 Squad', image: '/images/squads/valorant.jpg', accolade: 'National Squad' },
-        { id: 'hok', label: 'HONOR OF KINGS', format: '5v5 Squad', image: '/images/squads/hok.jpg', accolade: 'SEA Games Representatives' },
-        { id: 'efootball', label: 'eFOOTBALL', format: 'Individual / Duo', image: '/images/squads/efootball.jpg', accolade: 'National Champion' },
-        { id: 'tekken', label: 'TEKKEN 8', format: 'Individual', image: '/images/squads/tekken.jpg', accolade: 'National Champion' }
+        {
+            id: 'mlbb-open',
+            code: 'MAS-MLBB-M',
+            monogram: 'MLBB',
+            game: 'Mobile Legends: Bang Bang',
+            division: "Men's Open Division",
+            format: '5v5 MOBA',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/mlbb-open.jpg',
+            accolade: 'SEA Games Representatives',
+            status: 'Active Roster',
+            desc: 'Official national squad representing Malaysia in the SEA Games and global invitationals.'
+        },
+        {
+            id: 'mlbb-women',
+            code: 'MAS-MLBB-W',
+            monogram: 'MLBB',
+            game: 'Mobile Legends: Bang Bang',
+            division: "Women's Division",
+            format: '5v5 MOBA',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/mlbb-women.jpg',
+            accolade: 'IESF World Contenders',
+            status: 'Active Roster',
+            desc: "Premier women's national delegation contending in global IESF World Championships."
+        },
+        {
+            id: 'pubgm',
+            code: 'MAS-PUBGM',
+            monogram: 'PUBGM',
+            game: 'PUBG Mobile',
+            division: 'Open National Squad',
+            format: '4-Player Squad',
+            athletes: '4 Starters • 1 Sub',
+            image: '/images/squads/pubgm.jpg',
+            accolade: 'Asian Games Medalists',
+            status: 'Active Roster',
+            desc: 'Decorated battle royale contingent representing Malaysia in Asian Games and global circuits.'
+        },
+        {
+            id: 'cs2-open',
+            code: 'MAS-CS2-M',
+            monogram: 'CS2',
+            game: 'Counter-Strike 2',
+            division: "Men's Open Division",
+            format: '5v5 Tactical FPS',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/cs2-open.jpg',
+            accolade: 'IESF World Contenders',
+            status: 'Active Roster',
+            desc: 'National tactical FPS squad competing across Asian continental qualifiers and world stages.'
+        },
+        {
+            id: 'cs2-women',
+            code: 'MAS-CS2-W',
+            monogram: 'CS2',
+            game: 'Counter-Strike 2',
+            division: "Women's Division",
+            format: '5v5 Tactical FPS',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/cs2-women.jpg',
+            accolade: 'IESF World Contenders',
+            status: 'Active Roster',
+            desc: "National women's CS2 delegation representing the flag at global federated tournaments."
+        },
+        {
+            id: 'dota2',
+            code: 'MAS-DOTA-M',
+            monogram: 'DOTA2',
+            game: 'Dota 2',
+            division: "Men's Open Division",
+            format: '5v5 MOBA',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/dota2.jpg',
+            accolade: 'Commonwealth Gold Medalists',
+            status: 'Active Roster',
+            desc: 'Historic gold medal powerhouse representing Malaysia in premier international multi-sport events.'
+        },
+        {
+            id: 'dota2-women',
+            code: 'MAS-DOTA-W',
+            monogram: 'DOTA2',
+            game: 'Dota 2',
+            division: "Women's Division",
+            format: '5v5 MOBA',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/dota2-women.jpg',
+            accolade: 'National Squad',
+            status: 'Active Roster',
+            desc: "Dedicated national women's Dota 2 squad developing for international championships."
+        },
+        {
+            id: 'valorant',
+            code: 'MAS-VAL',
+            monogram: 'VAL',
+            game: 'VALORANT',
+            division: 'Open National Squad',
+            format: '5v5 Tactical FPS',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/valorant.jpg',
+            accolade: 'National Squad',
+            status: 'Active Roster',
+            desc: 'Selected through MESF national qualifiers to represent the federation in regional competitions.'
+        },
+        {
+            id: 'hok',
+            code: 'MAS-HOK',
+            monogram: 'HOK',
+            game: 'Honor of Kings',
+            division: 'Open National Squad',
+            format: '5v5 MOBA',
+            athletes: '5 Starters • 1 Sub',
+            image: '/images/squads/hok.jpg',
+            accolade: 'SEA Games Representatives',
+            status: 'Active Roster',
+            desc: 'National Honor of Kings delegation competing in regional championships and the SEA Games.'
+        },
+        {
+            id: 'efootball',
+            code: 'MAS-EFT',
+            monogram: 'eFT',
+            game: 'eFootball',
+            division: 'Sports Simulation',
+            format: 'Individual & Co-Op',
+            athletes: '2 National Athletes',
+            image: '/images/squads/efootball.jpg',
+            accolade: 'National Champion',
+            status: 'Active Roster',
+            desc: "Malaysia's virtual football athletes competing in Asian & world federated tournaments."
+        },
+        {
+            id: 'tekken',
+            code: 'MAS-TK8',
+            monogram: 'TK8',
+            game: 'Tekken 8',
+            division: 'Fighting Games (FGC)',
+            format: 'Individual 1v1',
+            athletes: '1 Athlete • 1 Reserve',
+            image: '/images/squads/tekken.jpg',
+            accolade: 'National Champion',
+            status: 'Active Roster',
+            desc: "Malaysia's premier fighting game representative at global IESF and multi-sport championships."
+        }
     ];
 
-    const currentSquad = teamRoster.find((s) => s.id === activeSquad) || teamRoster[0]; // check
+    const handlePrevSquad = () => { // action
+        setSquadIndex((prev) => (prev - 1 + teamRoster.length) % teamRoster.length);
+    };
+    const handleNextSquad = () => { // action
+        setSquadIndex((prev) => (prev + 1) % teamRoster.length);
+    };
+    const handleTouchStart = (e) => { // touch
+        touchStartX.current = e.touches[0].clientX;
+    };
+    const handleTouchEnd = (e) => { // touch
+        if (touchStartX.current === null) return;
+        const diff = touchStartX.current - e.changedTouches[0].clientX;
+        if (diff > 45) {
+            handleNextSquad();
+        } else if (diff < -45) {
+            handlePrevSquad();
+        }
+        touchStartX.current = null;
+    };
 
     // --5. UI--
     return (
@@ -207,13 +462,8 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                 }
             `}</style>
 
-            {/* grain overlay */}
-            <div
-                className="pointer-events-none fixed inset-0 z-40 opacity-[0.06] mix-blend-overlay"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+            {/* ambient vignette overlay */}
+            <div className="pointer-events-none fixed inset-0 z-0 bg-gradient-to-b from-[#080d19]/40 via-transparent to-[#04070f]/60" />
 
             {/* fixed background layer with vignette */}
             <div className="fixed inset-0 z-0 h-screen w-full overflow-hidden pointer-events-none">
@@ -272,19 +522,26 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                 <div className="flex flex-col items-center justify-center text-center [perspective:1200px]">
                     {/* logo with 3d horizontal spin on scroll and hover */}
                     <div
-                        className="group cursor-pointer mb-6"
+                        className="group cursor-pointer mb-6 select-none"
                         style={{
-                            transform: `rotateY(${heroRotateY}deg)`
+                            transform: `rotateY(${heroRotateY}deg)`,
+                            transformStyle: 'preserve-3d',
+                            willChange: 'transform'
                         }}
                     >
                         <img
                             src={logoUrl}
                             alt="MESF Logo"
+                            width={224}
+                            height={224}
+                            loading="eager"
+                            fetchPriority="high"
+                            decoding="sync"
                             onError={(e) => {
                                 e.currentTarget.onerror = null;
                                 e.currentTarget.src = '/images/mesf_logo.png';
                             }}
-                            className="h-44 w-44 md:h-56 md:w-56 object-contain drop-shadow-[0_20px_45px_rgba(0,0,0,0.9)] group-hover:[transform:rotateY(720deg)] transition-transform duration-1000 ease-in-out"
+                            className="h-40 w-40 sm:h-48 sm:w-48 md:h-56 md:w-56 max-h-[26vh] object-contain drop-shadow-[0_20px_45px_rgba(0,0,0,0.9)] group-hover:[transform:rotateY(720deg)] transition-transform duration-1000 ease-in-out [backface-visibility:hidden]"
                         />
                     </div>
 
@@ -309,7 +566,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                     aria-label="Scroll down"
                 >
                     <svg
-                        className="w-6 h-6 text-neutral-400 group-hover:text-amber-400 transition-colors"
+                        className="w-6 h-6 text-neutral-400 group-hover:text-white transition-colors"
                         style={{
                             animation: 'gentleFloat 2.6s ease-in-out infinite'
                         }}
@@ -350,7 +607,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                             </h2>
 
                             {/* official slogan */}
-                            <div className="inline-block text-xs sm:text-sm font-semibold tracking-widest uppercase text-amber-400 drop-shadow-[0_2px_10px_rgba(251,191,36,0.3)]">
+                            <div className="inline-block text-xs sm:text-sm font-semibold tracking-widest uppercase bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 bg-clip-text text-transparent drop-shadow-[0_2px_10px_rgba(251,191,36,0.3)]">
                                 &ldquo;Bersama Memacu Esports Malaysia&rdquo;
                             </div>
 
@@ -368,21 +625,14 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                             <div className="flex flex-wrap items-center justify-center gap-3.5 pt-1">
                                 <Link
                                     href="/about"
-                                    className="w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-[#070B14] font-bold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.45)] hover:brightness-110 transition-all duration-200 cursor-pointer"
+                                    className="w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-105 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_4px_25px_rgba(251,191,36,0.4)] transition-all duration-200 cursor-pointer"
                                 >
                                     Learn More
                                 </Link>
                                 <Link
                                     href="/leagues"
-                                    className="relative overflow-hidden w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs sm:text-sm tracking-wider uppercase border border-white/20 hover:border-amber-400/50 shadow-[0_4px_25px_rgba(0,0,0,0.4)] transition-[background-color,border-color] duration-200 cursor-pointer group"
+                                    className="relative overflow-hidden w-44 sm:w-48 py-2.5 sm:py-3 flex items-center justify-center rounded-full backdrop-blur-2xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs sm:text-sm tracking-wider uppercase border border-white/20 hover:border-white/40 shadow-[0_4px_25px_rgba(0,0,0,0.4)] transition-all duration-200 cursor-pointer group"
                                 >
-                                    {/* inner grain texture */}
-                                    <span
-                                        className="pointer-events-none absolute inset-0 opacity-[0.14] mix-blend-overlay rounded-full"
-                                        style={{
-                                            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                                        }}
-                                    />
                                     <span className="relative z-10">Explore Leagues</span>
                                 </Link>
                             </div>
@@ -465,31 +715,32 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                     </main>
                 </div>
 
-                {/* 2. latest news & announcements (the bento grid) */}
-                <section
-                    id="news"
-                    className="w-full pt-20 md:pt-24 pb-16 md:pb-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto"
-                >
-                    {/* section header: natural typography & minimalist action */}
-                    <div className="w-full flex items-end justify-between gap-4 mb-8 md:mb-10">
-                        <div>
-                            <p className="text-xs font-mono font-medium tracking-[0.2em] text-neutral-400 uppercase mb-2">
-                                OFFICIAL NEWSWIRE
-                            </p>
-                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white">
-                                LATEST UPDATES
-                            </h2>
-                        </div>
+                {/* 2. content sections (each part with distinctive thematic background color) */}
+                <div className="relative z-20 w-full">
+                    {/* part 1: latest news & announcements (obsidian slate theme) */}
+                    <section
+                        id="news"
+                        className="relative w-full bg-[#060A14] border-t border-white/[0.08] shadow-[0_-25px_60px_rgba(0,0,0,0.9)] overflow-hidden"
+                    >
+                        {/* subtle ambient cool-blue backlight */}
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(37,99,235,0.07),transparent_75%)]" />
+
+                        <div className="relative z-10 w-full pt-14 pb-12 sm:pt-16 sm:pb-14 md:pt-20 md:pb-16 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
+                            {/* section header */}
+                        <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 reveal-on-scroll">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
+                            LATEST NEWS
+                        </h2>
                         <Link
-                            href="/news"
-                            className="group inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] hover:bg-white/[0.09] border border-white/10 hover:border-white/20 backdrop-blur-md text-xs font-medium tracking-wider uppercase text-neutral-300 hover:text-white transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.3)] select-none cursor-pointer"
+                            href="/news" // redirect
+                            className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 hover:border-amber-400/40 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold tracking-wider uppercase text-neutral-300 hover:text-white transition-all duration-200 shrink-0 cursor-pointer self-start sm:self-auto"
                         >
-                            <span>VIEW ALL NEWS</span>
-                            <ArrowRight className="h-3.5 w-3.5 text-neutral-400 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
+                            <span>View All</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200" />
                         </Link>
                     </div>
 
-                    {/* the editorial news grid: 1 big frame + 2 stacked small frames (3 updates total) */}
+                    {/* refined institutional news layout */}
                     {(() => {
                         const newsSource = (allNews && allNews.length > 0)
                             ? allNews
@@ -497,168 +748,256 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
 
                         const fallbackCategories = ['TOURNAMENTS', 'ACHIEVEMENTS', 'ANNOUNCEMENTS', 'PARTNERSHIPS', 'COMMUNITY']; // state
 
-                        // prioritize featured article for the big frame if available
+                        // lead article: prioritized featured or newest
                         const heroArticle = featuredArticle || newsSource.find(item => item.is_featured && !item.is_empty) || newsSource[0] || { category: 'TOURNAMENTS', is_empty: true }; // state
 
-                        // remaining items for the 2 small cards (prevent duplicate of hero)
+                        // complementary articles (up to 2)
                         const remainingNews = newsSource.filter(item => item && !item.is_empty && (heroArticle.id ? item.id !== heroArticle.id : true)); // check
 
-                        const smallCards = []; // state
+                        const sideArticles = []; // state
                         for (let i = 0; i < 2; i++) { // loop
                             if (remainingNews[i] && !remainingNews[i].is_empty) { // check
-                                smallCards.push(remainingNews[i]); // save
+                                sideArticles.push(remainingNews[i]); // save
                             } else {
                                 const cat = fallbackCategories[(i + 1) % fallbackCategories.length]; // convert
-                                smallCards.push(latestByCategory?.[cat] || { category: cat, is_empty: true }); // save
+                                sideArticles.push(latestByCategory?.[cat] || { category: cat, is_empty: true }); // save
                             }
                         }
 
-                        const renderCardContent = (item, isBig = false) => {
-                            const cat = item.category; // state
-                            const hasArticle = !item.is_empty && item.slug; // check
-                            const cleanTag = (item.tag || item.category || cat || '').replace(/^\[\s*|\s*\]$/g, '').trim(); // convert
-
-                            if (hasArticle) { // check
-                                return (
-                                    <Link
-                                        key={item.id || `${cat}-${isBig ? 'hero' : 'sub'}`}
-                                        href={`/news/${item.slug}`} // redirect
-                                        className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/20 hover:border-white/35 bg-gradient-to-b from-[#11192e]/95 via-[#0d1527]/95 to-[#090f1d]/95 backdrop-blur-xl ring-1 ring-white/10 hover:ring-white/20 transition-all duration-300 relative overflow-hidden group shadow-[0_16px_40px_rgba(0,0,0,0.65)] hover:shadow-[0_22px_50px_rgba(0,0,0,0.8)] flex flex-col justify-between cursor-pointer w-full h-full`}
-                                    >
-                                        {/* top luminous frame beam */}
-                                        <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/30 to-transparent group-hover:via-white/50 opacity-80 z-20 pointer-events-none" />
-
-                                        {/* inner hairline frame */}
-                                        <div className={`absolute inset-2 sm:inset-2.5 rounded-[12px] ${isBig ? 'md:rounded-[20px]' : 'rounded-[12px]'} border border-white/10 group-hover:border-white/20 pointer-events-none z-20 transition-colors duration-300`} />
-
-                                        {item.image && (
-                                            <>
-                                                <img
-                                                    src={item.image}
-                                                    alt={item.title}
-                                                    className={`absolute inset-0 w-full h-full object-cover object-center ${isBig ? 'opacity-70 group-hover:opacity-85' : 'opacity-65 group-hover:opacity-85'} transition-opacity duration-300 pointer-events-none`}
-                                                />
-                                                <div className={`absolute inset-0 bg-gradient-to-t ${isBig ? 'from-[#06080F]/95 via-[#06080F]/55 to-transparent' : 'from-[#06080F]/95 via-[#06080F]/65 to-black/20'} pointer-events-none`} />
-                                            </>
-                                        )}
-                                        <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.03] group-hover:bg-white/[0.06] rounded-full blur-3xl transition-colors duration-500" />
-
-                                        {/* top metadata: clean badge & tags */}
-                                        <div className="relative z-30 w-full flex items-center justify-between gap-2">
-                                            <div className="inline-flex items-center px-3 py-1 rounded-full bg-black/60 border border-white/15 backdrop-blur-md shadow-sm shrink-0">
-                                                <span className={`${isBig ? 'text-[10px] sm:text-xs' : 'text-[10px] sm:text-[11px]'} font-mono font-medium tracking-wider text-neutral-200 uppercase`}>
-                                                    {cleanTag}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-1.5">
-                                                {item.is_featured && (
-                                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 flex items-center gap-1 shadow-sm backdrop-blur-md shrink-0">
-                                                        <Sparkles className="w-2.5 h-2.5 text-neutral-300" />
-                                                        <span>Featured</span>
-                                                    </span>
-                                                )}
-                                                {item.video_url && (
-                                                    <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 flex items-center gap-1 shadow-sm backdrop-blur-md shrink-0">
-                                                        <Play className="w-2.5 h-2.5 fill-current text-neutral-300" />
-                                                        <span>Video</span>
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        {/* bottom content: natural font colors & crisp readability */}
-                                        <div className={`relative z-30 w-full space-y-2 mt-auto ${isBig ? 'pt-8 space-y-2.5' : 'pt-3'} text-left`}>
-                                            <div className={`flex items-center gap-2.5 ${isBig ? 'text-[11px] sm:text-xs' : 'text-[10px] sm:text-[11px]'} font-mono font-normal text-neutral-400`}>
-                                                {item.date && (
-                                                    <span className="flex items-center gap-1.5">
-                                                        <Calendar className="w-3.5 h-3.5 text-neutral-400" />
-                                                        {item.date}
-                                                    </span>
-                                                )}
-                                                {item.location && item.location !== 'OFFICIAL' && (
-                                                    <span className="flex items-center gap-1.5">
-                                                        <MapPin className="w-3.5 h-3.5 text-neutral-400" />
-                                                        {item.location}
-                                                    </span>
-                                                )}
-                                            </div>
-
-                                            <h3 className={`${isBig ? 'text-xl sm:text-2xl lg:text-3xl' : 'text-sm sm:text-base'} font-bold text-white group-hover:text-white/90 transition-colors leading-snug drop-shadow-sm`}>
-                                                {item.title}
-                                            </h3>
-
-                                            {item.excerpt && isBig && (
-                                                <p className="text-xs sm:text-sm text-neutral-300 line-clamp-3 font-normal leading-relaxed">
-                                                    {item.excerpt}
-                                                </p>
-                                            )}
-
-                                            <div className="flex items-center gap-1.5 text-xs font-medium text-neutral-300 group-hover:text-white pt-1 transition-colors duration-200">
-                                                <span>Read article</span>
-                                                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200 text-neutral-400 group-hover:text-white" />
-                                            </div>
-                                        </div>
-                                    </Link>
-                                );
-                            }
-
-                            return (
-                                <div
-                                    key={cat || (isBig ? 'hero-empty' : 'empty')}
-                                    className={`rounded-2xl ${isBig ? 'md:rounded-3xl p-6 sm:p-8 min-h-[460px] lg:min-h-full' : 'p-4 sm:p-5 min-h-[220px] sm:min-h-[235px] lg:min-h-[240px]'} border border-white/20 bg-gradient-to-b from-[#11192e]/60 to-[#090f1d]/80 backdrop-blur-xl ring-1 ring-white/10 relative overflow-hidden group shadow-[0_16px_40px_rgba(0,0,0,0.65)] flex flex-col justify-between w-full h-full`}
-                                >
-                                    {/* inner hairline frame */}
-                                    <div className={`absolute inset-2 sm:inset-2.5 rounded-[12px] ${isBig ? 'md:rounded-[20px]' : 'rounded-[12px]'} border border-white/10 pointer-events-none z-20`} />
-                                    <div className="pointer-events-none absolute -top-20 -right-20 h-44 w-44 bg-white/[0.02] rounded-full blur-3xl" />
-                                    <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md w-fit relative z-30">
-                                        <span className="text-[11px] sm:text-xs font-mono font-medium tracking-wider text-neutral-400 uppercase">
-                                            {cleanTag}
-                                        </span>
-                                    </div>
-                                    <div className="space-y-1 mt-auto text-left relative z-30">
-                                        <h4 className="text-sm sm:text-base font-semibold text-neutral-300">Official Update</h4>
-                                        <p className="text-xs text-neutral-500">Upcoming releases in this category will be published here.</p>
-                                    </div>
-                                </div>
-                            );
+                        const cleanCategoryTag = (item) => { // convert
+                            const raw = item.tag || item.category || 'ANNOUNCEMENT'; // state
+                            return raw.replace(/^\[\s*|\s*\]$/g, '').trim().toUpperCase(); // convert
                         };
 
                         return (
-                            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
-                                {/* Left: 1 Big Frame (enlarged hero card) */}
-                                <div className="lg:col-span-7 xl:col-span-8 flex flex-col">
-                                    {renderCardContent(heroArticle, true)}
+                            <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch reveal-on-scroll reveal-delay-1">
+                                {/* Lead Featured Story (7 cols) */}
+                                <div className="lg:col-span-7 xl:col-span-7 flex flex-col">
+                                    {(() => {
+                                        const hasHero = !heroArticle.is_empty && heroArticle.slug; // check
+                                        const heroTag = cleanCategoryTag(heroArticle); // convert
+
+                                        if (hasHero) { // check
+                                            return (
+                                                <Link
+                                                    key={heroArticle.id || 'hero-article'}
+                                                    href={`/news/${heroArticle.slug}`} // redirect
+                                                    className="group flex flex-col justify-between h-full rounded-2xl bg-[#090d18] hover:bg-[#0c1222] border border-white/10 hover:border-white/25 transition-colors duration-200 overflow-hidden shadow-[0_12px_32px_rgba(0,0,0,0.45)] cursor-pointer"
+                                                >
+                                                    {/* lead image container */}
+                                                    <div className="relative aspect-[16/9] w-full bg-neutral-900 overflow-hidden shrink-0">
+                                                        {heroArticle.image ? (
+                                                            <img
+                                                                src={heroArticle.image}
+                                                                alt={heroArticle.title}
+                                                                className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-200"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0c1324] to-[#060911]">
+                                                                <img
+                                                                    src="/images/mesf_logo.png"
+                                                                    alt="MESF"
+                                                                    className="h-16 w-16 opacity-30 object-contain"
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        <div className="absolute inset-0 bg-gradient-to-t from-[#090d18] via-transparent to-black/25 pointer-events-none" />
+                                                        
+                                                        {/* badges overlay */}
+                                                        <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between gap-2 z-10">
+                                                            <span className="px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-mono font-semibold tracking-wider text-amber-400 bg-black/85 border border-amber-400/30 uppercase shadow-sm">
+                                                                {heroTag}
+                                                            </span>
+                                                            <div className="flex items-center gap-1.5">
+                                                                {heroArticle.is_featured && (
+                                                                    <span className="px-2 py-0.5 rounded-lg text-[10px] font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 flex items-center gap-1">
+                                                                        <Sparkles className="w-2.5 h-2.5 text-amber-300" />
+                                                                        <span>Featured</span>
+                                                                    </span>
+                                                                )}
+                                                                {heroArticle.video_url && (
+                                                                    <span className="px-2 py-0.5 rounded-lg text-[10px] font-mono font-semibold uppercase bg-white/10 border border-white/20 text-neutral-200 flex items-center gap-1">
+                                                                        <Play className="w-2.5 h-2.5 fill-current text-neutral-300" />
+                                                                        <span>Video</span>
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* lead text details */}
+                                                    <div className="p-5 sm:p-6 md:p-7 flex-1 flex flex-col justify-between space-y-4 text-left">
+                                                        <div className="space-y-2.5">
+                                                            <div className="flex items-center gap-3 text-xs font-mono text-neutral-400">
+                                                                {heroArticle.date && (
+                                                                    <span className="flex items-center gap-1.5">
+                                                                        <Calendar className="w-3.5 h-3.5 text-neutral-400" />
+                                                                        {heroArticle.date}
+                                                                    </span>
+                                                                )}
+                                                                {heroArticle.location && heroArticle.location !== 'OFFICIAL' && (
+                                                                    <span className="flex items-center gap-1.5">
+                                                                        <MapPin className="w-3.5 h-3.5 text-neutral-400" />
+                                                                        {heroArticle.location}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white transition-colors leading-snug">
+                                                                {heroArticle.title}
+                                                            </h3>
+                                                            {heroArticle.excerpt && (
+                                                                <p className="text-xs sm:text-sm text-neutral-300 line-clamp-3 font-normal leading-relaxed">
+                                                                    {heroArticle.excerpt}
+                                                                </p>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="pt-3 border-t border-white/5 flex items-center gap-2 text-xs font-semibold text-neutral-400 group-hover:text-white transition-colors">
+                                                            <span>Read Announcement</span>
+                                                            <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            );
+                                        }
+
+                                        return (
+                                            <div className="flex flex-col justify-between h-full rounded-2xl bg-[#090d18] border border-white/10 p-6 sm:p-8 text-left">
+                                                <span className="px-2.5 py-1 rounded-lg text-xs font-mono font-semibold tracking-wider text-amber-400 bg-amber-400/10 border border-amber-400/20 w-fit uppercase">
+                                                    {heroTag}
+                                                </span>
+                                                <div className="space-y-2 my-auto py-10">
+                                                    <h3 className="text-xl sm:text-2xl font-bold text-white">Official Bulletin</h3>
+                                                    <p className="text-sm text-neutral-400">Upcoming releases in this category will be published here.</p>
+                                                </div>
+                                                <div className="text-xs text-neutral-500">MESF Official Communications</div>
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
 
-                                {/* Right: 2 Small Frames stacked vertically (up and down) */}
-                                <div className="lg:col-span-5 xl:col-span-4 flex flex-col gap-4 sm:gap-5">
-                                    {smallCards.map((card, idx) => (
-                                        <div key={card.id || `small-${idx}`} className="flex-1 flex flex-col">
-                                            {renderCardContent(card, false)}
-                                        </div>
-                                    ))}
+                                {/* Complementary Articles Stack (5 cols) */}
+                                <div className="lg:col-span-5 xl:col-span-5 flex flex-col gap-4 sm:gap-5">
+                                    {sideArticles.map((article, idx) => {
+                                        const hasArticle = !article.is_empty && article.slug; // check
+                                        const tag = cleanCategoryTag(article); // convert
+
+                                        if (hasArticle) { // check
+                                            return (
+                                                <Link
+                                                    key={article.id || `side-${idx}`}
+                                                    href={`/news/${article.slug}`} // redirect
+                                                    className="group flex flex-col sm:flex-row items-stretch flex-1 rounded-2xl bg-[#090d18] hover:bg-[#0c1222] border border-white/10 hover:border-white/25 transition-colors duration-200 overflow-hidden shadow-[0_10px_28px_rgba(0,0,0,0.4)] cursor-pointer"
+                                                >
+                                                    {/* thumbnail container */}
+                                                    <div className="relative w-full sm:w-44 md:w-48 aspect-[16/10] sm:aspect-auto bg-neutral-900 shrink-0 overflow-hidden">
+                                                        {article.image ? (
+                                                            <img
+                                                                src={article.image}
+                                                                alt={article.title}
+                                                                className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-200"
+                                                            />
+                                                        ) : (
+                                                            <div className="w-full h-full min-h-[140px] flex items-center justify-center bg-gradient-to-br from-[#0c1324] to-[#060911]">
+                                                                <img
+                                                                    src="/images/mesf_logo.png"
+                                                                    alt="MESF"
+                                                                    className="h-10 w-10 opacity-30 object-contain"
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        <div className="absolute top-2.5 left-2.5 sm:hidden">
+                                                            <span className="px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase text-amber-400 bg-black/85 border border-amber-400/30">
+                                                                {tag}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* content container */}
+                                                    <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3 text-left">
+                                                        <div className="space-y-1.5">
+                                                            <div className="hidden sm:flex items-center justify-between gap-2">
+                                                                <span className="text-[10px] font-mono font-semibold tracking-wider text-amber-400 uppercase">
+                                                                    {tag}
+                                                                </span>
+                                                                {article.date && (
+                                                                    <span className="text-[11px] font-mono text-neutral-400">
+                                                                        {article.date}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                            <div className="sm:hidden flex items-center text-[11px] font-mono text-neutral-400">
+                                                                {article.date}
+                                                            </div>
+                                                            <h4 className="text-sm sm:text-base font-bold text-white transition-colors leading-snug line-clamp-2">
+                                                                {article.title}
+                                                            </h4>
+                                                            {article.excerpt && (
+                                                                <p className="text-xs text-neutral-400 line-clamp-2 leading-relaxed hidden md:block">
+                                                                    {article.excerpt}
+                                                                </p>
+                                                            )}
+                                                        </div>
+
+                                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-neutral-400 group-hover:text-white transition-colors pt-1">
+                                                            <span>Read Story</span>
+                                                            <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform duration-200" />
+                                                        </div>
+                                                    </div>
+                                                </Link>
+                                            );
+                                        }
+
+                                        return (
+                                            <div
+                                                key={article.id || `empty-${idx}`}
+                                                className="flex flex-col justify-between flex-1 rounded-2xl bg-[#090d18] border border-white/10 p-5 text-left"
+                                            >
+                                                <span className="text-[10px] font-mono font-semibold tracking-wider text-neutral-400 uppercase">
+                                                    {tag}
+                                                </span>
+                                                <div className="my-auto py-4">
+                                                    <h4 className="text-sm sm:text-base font-semibold text-neutral-300">Official Bulletin</h4>
+                                                    <p className="text-xs text-neutral-500 mt-1">Upcoming releases in this category will be published here.</p>
+                                                </div>
+                                                <div className="text-[11px] text-neutral-500">MESF Update</div>
+                                            </div>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         );
                     })()}
-                </section>
+                        </div>
+                    </section>
 
-                {/* 3. active leagues & tournaments (the circuit) */}
-                <section
-                    id="leagues"
-                    className="w-full py-16 md:py-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto"
-                >
-                    {/* title left aligned */}
-                    <div className="w-full text-left mb-8 md:mb-10">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white/95">
-                            LEAGUES
+                    {/* part 2: active leagues & tournaments (deep federation navy theme) */}
+                    <section
+                        id="leagues"
+                        className="relative w-full bg-[#0A1224] border-t border-white/[0.08] overflow-hidden"
+                    >
+                        {/* subtle ambient warm/amber corner wash */}
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_100%_20%,rgba(245,158,11,0.04),transparent_65%)]" />
+
+                        <div className="relative z-10 w-full py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
+                            {/* section header */}
+                        <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 reveal-on-scroll">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase font-sans">
+                            OFFICIAL LEAGUES
                         </h2>
+                        <Link
+                            href="/leagues" // redirect
+                            className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 hover:border-amber-400/40 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold tracking-wider uppercase text-neutral-300 hover:text-white transition-all duration-200 shrink-0 cursor-pointer self-start sm:self-auto"
+                        >
+                            <span>Explore All</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200" />
+                        </Link>
                     </div>
 
-                    {/* 3-column clean grid - uploaded leagues or clean empty glass cards with status badges */}
-                    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                    {/* 3-column clean grid - uploaded leagues or showcase glass cards with hover sneak peek */}
+                    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 reveal-on-scroll reveal-delay-1">
                         {leagues && leagues.length > 0 ? (
-                            leagues.slice(0, 3).map((league) => {
+                            leagues.slice(0, 3).map((league, index) => {
                                 const shouldShow = (key, val) => {
                                     if (!val || val === 'TBA') return false;
                                     if (Array.isArray(league.display_options) && league.display_options.length > 0) {
@@ -685,93 +1024,99 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                     <Link
                                         key={league.id}
                                         href={league.slug ? `/leagues/${league.slug}` : '/leagues'}
-                                        className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-white/20 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between block"
+                                        className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
                                     >
-                                        <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
-                                        
-                                        <div className="space-y-4">
-                                            {/* card header: status & game title */}
-                                            <div className="flex items-center justify-between gap-2">
-                                                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-semibold tracking-wider uppercase ${statusClass}`}>
-                                                    <span className={`h-2 w-2 rounded-full ${dotClass} ${isRegistrationOpen || isLive ? 'animate-pulse' : ''}`} />
-                                                    {league.registration_status || 'UPCOMING'}
-                                                </div>
-                                                <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
-                                                    {league.game_title}
-                                                </span>
-                                            </div>
+                                        {/* top card header: vibrant yellow theme bar */}
+                                        <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
+                                            <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
+                                                {league.name || 'LEAGUE NAME'}
+                                            </h3>
+                                        </div>
 
-                                            {/* banner artwork without zoom-in */}
+                                        {/* poster showcase area: shows the whole poster fully without cropping */}
+                                        <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
+                                            {/* normal poster uploaded by admin */}
                                             {league.banner_url ? (
-                                                <div className="w-full aspect-[16/9] rounded-2xl overflow-hidden border border-white/10 bg-black/40 relative">
-                                                    <img
-                                                        src={league.banner_url}
-                                                        alt={league.name}
-                                                        className="w-full h-full object-cover"
-                                                    />
-                                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                                                </div>
+                                                <img
+                                                    src={league.banner_url}
+                                                    alt={league.name || 'LEAGUE NAME'}
+                                                    className="w-full h-full object-contain object-center"
+                                                />
                                             ) : (
-                                                <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500 relative overflow-hidden">
-                                                    <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
+                                                <div className="w-full h-full flex flex-col items-center justify-center text-neutral-500 p-6 text-center">
+                                                    <Trophy className="w-9 h-9 text-neutral-600 mb-2" />
+                                                    <p className="text-[11px] font-mono tracking-wider uppercase text-neutral-500">
+                                                        Tournament Poster
+                                                    </p>
                                                 </div>
                                             )}
 
-                                            {/* league title & overview */}
-                                            <div>
-                                                <h3 className="text-lg md:text-xl font-bold text-white transition-colors line-clamp-2">
-                                                    {league.name}
-                                                </h3>
+                                            {/* frosted hover overlay: clean, spacious, visible hierarchy */}
+                                            <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
+                                                <div className="space-y-5 sm:space-y-6">
+                                                    {/* index & eyebrow */}
+                                                    <div className="space-y-1.5">
+                                                        <span className="text-xs sm:text-sm font-mono font-bold text-neutral-400 block tracking-wider">
+                                                            {String(index + 1).padStart(2, '0')}
+                                                        </span>
+                                                        <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
+                                                            {league.registration_status || 'REGISTRATION OPEN'} • {league.tier ? league.tier.split('-')[0].trim() : 'OFFICIAL CIRCUIT'}
+                                                        </p>
+                                                    </div>
 
-                                                {league.description && (
-                                                    <p className="text-xs text-neutral-400 mt-1.5 line-clamp-2 leading-relaxed">
-                                                        {league.description}
-                                                    </p>
-                                                )}
+                                                    {/* title & clean description */}
+                                                    <div className="space-y-2.5">
+                                                        <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
+                                                            {league.name || 'LEAGUE NAME'}
+                                                        </h4>
+                                                        <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
+                                                            {league.description || 'Official Malaysia Esports Federation sanctioned tournament circuit featuring premier national competition.'}
+                                                        </p>
+                                                    </div>
+
+                                                    {/* circuit highlights chips */}
+                                                    <div className="space-y-2.5 pt-1">
+                                                        <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
+                                                            CIRCUIT HIGHLIGHTS
+                                                        </p>
+                                                        <div className="flex flex-wrap gap-2.5">
+                                                            {shouldShow('prize_pool', league.prize_pool) && (
+                                                                <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
+                                                                    {league.prize_pool} Prize Pool
+                                                                </span>
+                                                            )}
+                                                            {shouldShow('closing_date', league.registration_deadline) && (
+                                                                <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                                    Closes {league.registration_deadline}
+                                                                </span>
+                                                            )}
+                                                            {shouldShow('dates', league.date_range) && (
+                                                                <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                                    {league.date_range}
+                                                                </span>
+                                                            )}
+                                                            {shouldShow('slots', league.slots) && (
+                                                                <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                                    {league.slots} Slots
+                                                                </span>
+                                                            )}
+                                                            {shouldShow('fee', league.entry_fee) && (
+                                                                <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                                    {league.entry_fee}
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                {/* bottom action button: clean white pill button */}
+                                                <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
+                                                    <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
+                                                        <span>View League</span>
+                                                        <ArrowUpRight className="w-4 h-4" />
+                                                    </span>
+                                                </div>
                                             </div>
-
-                                            {/* short & light teaser highlights */}
-                                            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 border-t border-white/10 text-xs">
-                                                {shouldShow('prize_pool', league.prize_pool) && (
-                                                    <div className="inline-flex items-center gap-1.5 text-amber-300 font-mono font-bold text-[11px]">
-                                                        <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                                        <span>{league.prize_pool}</span>
-                                                    </div>
-                                                )}
-
-                                                {shouldShow('closing_date', league.registration_deadline) ? (
-                                                    <div className="inline-flex items-center gap-1.5 text-rose-300 text-[11px]">
-                                                        <Clock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                                                        <span>Closes {league.registration_deadline}</span>
-                                                    </div>
-                                                ) : shouldShow('dates', league.date_range) ? (
-                                                    <div className="inline-flex items-center gap-1.5 text-slate-400 text-[11px]">
-                                                        <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                        <span>{league.date_range}</span>
-                                                    </div>
-                                                ) : shouldShow('slots', league.slots) ? (
-                                                    <div className="inline-flex items-center gap-1.5 text-slate-400 text-[11px]">
-                                                        <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                        <span>{league.slots} Slots</span>
-                                                    </div>
-                                                ) : shouldShow('fee', league.entry_fee) ? (
-                                                    <div className="inline-flex items-center gap-1.5 text-slate-400 text-[11px]">
-                                                        <Coins className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                        <span>{league.entry_fee}</span>
-                                                    </div>
-                                                ) : null}
-                                            </div>
-                                        </div>
-
-                                        {/* card footer */}
-                                        <div className="pt-3 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
-                                            <span className="text-[11px] text-slate-400">
-                                                {league.tier ? league.tier.split('-')[0].trim() : 'Official Circuit'}
-                                            </span>
-                                            <span className="text-amber-400 font-bold uppercase tracking-wider inline-flex items-center gap-1.5 text-[11px]">
-                                                <span>Details</span>
-                                                <ArrowRight className="w-3.5 h-3.5" />
-                                            </span>
                                         </div>
                                     </Link>
                                 );
@@ -779,459 +1124,488 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                         ) : (
                             <>
                                 {/* circuit card 1 fallback */}
-                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-white/20 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
-                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs font-semibold tracking-wider uppercase">
-                                                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                                                REGISTRATION OPEN
+                                <Link
+                                    href="/leagues"
+                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
+                                >
+                                    <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
+                                        <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
+                                            MESF National Championship 2026
+                                        </h3>
+                                    </div>
+                                    <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
+                                        <img
+                                            src="/images/leagues_hero_banner_hd.jpg"
+                                            alt="MESF National Championship 2026"
+                                            className="w-full h-full object-contain object-center"
+                                        />
+                                        <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
+                                            <div className="space-y-5 sm:space-y-6">
+                                                <div className="space-y-1.5">
+                                                    <span className="text-xs sm:text-sm font-mono font-bold text-neutral-400 block tracking-wider">
+                                                        01
+                                                    </span>
+                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
+                                                        REGISTRATION OPEN • TIER 1 NATIONAL CHAMPIONSHIP
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2.5">
+                                                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
+                                                        MESF National Championship 2026
+                                                    </h4>
+                                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
+                                                        Official nationwide championship circuit open for registered state esports teams across Malaysia.
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2.5 pt-1">
+                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
+                                                        CIRCUIT HIGHLIGHTS
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-2.5">
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
+                                                            RM 50,000 Prize Pool
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            Closes 31 Oct 2026
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            32 Slots
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            Free Entry
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
-                                                MLBB
-                                            </span>
-                                        </div>
-                                        <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500">
-                                            <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg md:text-xl font-bold text-white transition-colors">
-                                                MESF National Championship 2026
-                                            </h3>
-                                            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
-                                                Official nationwide championship circuit open for registered state esports teams.
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 border-t border-white/10 text-xs">
-                                            <div className="inline-flex items-center gap-1.5 text-amber-300 font-mono font-bold text-[11px]">
-                                                <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                                <span>RM 50,000</span>
-                                            </div>
-                                            <div className="inline-flex items-center gap-1.5 text-rose-300 text-[11px]">
-                                                <Clock className="w-3.5 h-3.5 text-rose-400 shrink-0" />
-                                                <span>Closes 31 Oct 2026</span>
+                                            <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
+                                                <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
+                                                    <span>View League</span>
+                                                    <ArrowUpRight className="w-4 h-4" />
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="pt-3 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
-                                        <span className="text-[11px] text-slate-400">Tier 1 Championship</span>
-                                        <span className="text-amber-400 font-bold uppercase tracking-wider inline-flex items-center gap-1.5 text-[11px]">
-                                            <span>Details</span>
-                                            <ArrowRight className="w-3.5 h-3.5" />
-                                        </span>
-                                    </div>
-                                </div>
+                                </Link>
 
                                 {/* circuit card 2 fallback */}
-                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-white/20 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
-                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/25 text-rose-400 text-xs font-semibold tracking-wider uppercase">
-                                                <span className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
-                                                LIVE SEASON
+                                <Link
+                                    href="/leagues"
+                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
+                                >
+                                    <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
+                                        <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
+                                            State Circuit Season 4
+                                        </h3>
+                                    </div>
+                                    <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
+                                        <img
+                                            src="/images/matches_hero_banner_hd.jpg"
+                                            alt="State Circuit Season 4"
+                                            className="w-full h-full object-contain object-center"
+                                        />
+                                        <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
+                                            <div className="space-y-5 sm:space-y-6">
+                                                <div className="space-y-1.5">
+                                                    <span className="text-xs font-mono font-bold text-neutral-400 block tracking-wider">
+                                                        02
+                                                    </span>
+                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
+                                                        LIVE SEASON • TIER 2 STATE CIRCUIT
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2.5">
+                                                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
+                                                        State Circuit Season 4
+                                                    </h4>
+                                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
+                                                        Battle royale premier state circuit streaming live on official federation broadcast channels.
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2.5 pt-1">
+                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
+                                                        CIRCUIT HIGHLIGHTS
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-2.5">
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
+                                                            RM 25,000 Prize Pool
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            10 Nov - 05 Dec
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            16 Slots
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            Official Broadcast
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
-                                                PUBG MOBILE
-                                            </span>
-                                        </div>
-                                        <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500">
-                                            <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg md:text-xl font-bold text-white transition-colors">
-                                                State Circuit Season 4
-                                            </h3>
-                                            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
-                                                Battle royale premier state circuit streaming live on official channels.
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 border-t border-white/10 text-xs">
-                                            <div className="inline-flex items-center gap-1.5 text-amber-300 font-mono font-bold text-[11px]">
-                                                <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                                <span>RM 25,000</span>
-                                            </div>
-                                            <div className="inline-flex items-center gap-1.5 text-slate-400 text-[11px]">
-                                                <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                <span>10 Nov - 05 Dec</span>
+                                            <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
+                                                <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
+                                                    <span>View League</span>
+                                                    <ArrowUpRight className="w-4 h-4" />
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="pt-3 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
-                                        <span className="text-[11px] text-slate-400">Tier 2 State Circuit</span>
-                                        <span className="text-amber-400 font-bold uppercase tracking-wider inline-flex items-center gap-1.5 text-[11px]">
-                                            <span>Details</span>
-                                            <ArrowRight className="w-3.5 h-3.5" />
-                                        </span>
-                                    </div>
-                                </div>
+                                </Link>
 
                                 {/* circuit card 3 fallback */}
-                                <div className="rounded-2xl md:rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl hover:border-white/20 transition-all duration-300 p-6 relative overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col justify-between">
-                                    <div className="pointer-events-none absolute -top-24 -right-24 h-48 w-48 bg-white/[0.03] rounded-full blur-3xl transition-all duration-500" />
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between gap-2">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neutral-400/10 border border-neutral-400/25 text-neutral-300 text-xs font-semibold tracking-wider uppercase">
-                                                <span className="h-2 w-2 rounded-full bg-neutral-300" />
-                                                OFF-SEASON
+                                <Link
+                                    href="/leagues"
+                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
+                                >
+                                    <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
+                                        <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
+                                            Grassroots Community Cup
+                                        </h3>
+                                    </div>
+                                    <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
+                                        <img
+                                            src="/images/news_hero_banner_hd.jpg"
+                                            alt="Grassroots Community Cup"
+                                            className="w-full h-full object-contain object-center"
+                                        />
+                                        <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
+                                            <div className="space-y-5 sm:space-y-6">
+                                                <div className="space-y-1.5">
+                                                    <span className="text-xs sm:text-sm font-mono font-bold text-neutral-400 block tracking-wider">
+                                                        03
+                                                    </span>
+                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
+                                                        REGISTRATION OPEN • AMATEUR COMMUNITY CUP
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2.5">
+                                                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
+                                                        Grassroots Community Cup
+                                                    </h4>
+                                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
+                                                        Open amateur series fostering emerging tactical shooter talent across Malaysia.
+                                                    </p>
+                                                </div>
+                                                <div className="space-y-2.5 pt-1">
+                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
+                                                        CIRCUIT HIGHLIGHTS
+                                                    </p>
+                                                    <div className="flex flex-wrap gap-2.5">
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
+                                                            RM 10,000 Prize Pool
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            16 Teams
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            Open Qualifier
+                                                        </span>
+                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
+                                                            Free Entry
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <span className="text-[10px] font-bold uppercase tracking-wider text-white/70 bg-white/5 border border-white/10 px-2.5 py-1 rounded-md">
-                                                VALORANT
-                                            </span>
-                                        </div>
-                                        <div className="w-full aspect-[16/9] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center text-slate-500">
-                                            <Trophy className="w-10 h-10 opacity-30 text-amber-400" />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-lg md:text-xl font-bold text-white transition-colors">
-                                                Grassroots Community Cup
-                                            </h3>
-                                            <p className="text-xs text-neutral-400 mt-1.5 leading-relaxed">
-                                                Open amateur series fostering emerging tactical shooter talent across Malaysia.
-                                            </p>
-                                        </div>
-                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 border-t border-white/10 text-xs">
-                                            <div className="inline-flex items-center gap-1.5 text-amber-300 font-mono font-bold text-[11px]">
-                                                <Trophy className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-                                                <span>RM 10,000</span>
-                                            </div>
-                                            <div className="inline-flex items-center gap-1.5 text-slate-400 text-[11px]">
-                                                <Users className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                                                <span>16 Teams</span>
+                                            <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
+                                                <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
+                                                    <span>View League</span>
+                                                    <ArrowUpRight className="w-4 h-4" />
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="pt-3 mt-4 border-t border-white/10 flex items-center justify-between text-xs text-neutral-400">
-                                        <span className="text-[11px] text-slate-400">Grassroots Cup</span>
-                                        <span className="text-amber-400 font-bold uppercase tracking-wider inline-flex items-center gap-1.5 text-[11px]">
-                                            <span>Details</span>
-                                            <ArrowRight className="w-3.5 h-3.5" />
-                                        </span>
-                                    </div>
-                                </div>
+                                </Link>
                             </>
                         )}
                     </div>
-                </section>
-
-                {/* 4. officially sanctioned games (infinite marquee ticker) */}
-                <section
-                    id="games"
-                    className="w-full py-16 md:py-20 overflow-hidden"
-                >
-                    {/* title left aligned inside container */}
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 mb-8 md:mb-10 text-left">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white/95">
-                            OFFICIALLY SANCTIONED GAMES
-                        </h2>
-                    </div>
-
-                    {/* full-width marquee container with gradient edge mask */}
-                    <div
-                        className="marquee-container w-full overflow-hidden py-4 select-none"
-                        style={{
-                            maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
-                            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)'
-                        }}
-                    >
-                        {/* single flex-row wrapper holding two identical sets of game logos side-by-side */}
-                        <div className="marquee-track flex items-center gap-14 sm:gap-20 md:gap-24">
-                            {/* set 1 */}
-                            <div className="flex items-center gap-14 sm:gap-20 md:gap-24 shrink-0">
-                                {/* MLBB */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Mobile Legends: Bang Bang">
-                                    <svg viewBox="0 0 250 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M22 8 L36 25 L22 42 L8 25 Z" fill="#F59E0B" />
-                                        <path d="M22 14 L31 25 L22 36 L13 25 Z" fill="#FBBF24" />
-                                        <circle cx="22" cy="25" r="4.5" fill="#FFFFFF" />
-                                        <text x="48" y="26" fill="#FFFFFF" fontSize="16.5" fontWeight="900" letterSpacing="2" fontFamily="sans-serif">MOBILE LEGENDS</text>
-                                        <text x="48" y="41" fill="#F59E0B" fontSize="10.5" fontWeight="800" letterSpacing="4" fontFamily="sans-serif">BANG BANG</text>
-                                    </svg>
-                                </div>
-
-                                {/* PUBG MOBILE */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="PUBG Mobile">
-                                    <svg viewBox="0 0 195 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <rect x="6" y="9" width="34" height="34" rx="6" fill="#F59E0B" />
-                                        <path d="M14 17 h18 v18 h-18 Z" fill="#070B14" />
-                                        <path d="M18 20 h10 v4 h-10 Z" fill="#F59E0B" />
-                                        <text x="48" y="27" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="1.5" fontFamily="sans-serif">PUBG</text>
-                                        <text x="48" y="42" fill="#F59E0B" fontSize="11" fontWeight="800" letterSpacing="3" fontFamily="sans-serif">MOBILE</text>
-                                    </svg>
-                                </div>
-
-                                {/* VALORANT */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(255,70,85,0.6)]" title="Valorant">
-                                    <svg viewBox="0 0 205 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M8 12 L22 38 L28 38 L42 12 H33.5 L25 29 L16.5 12 Z" fill="#FF4655" />
-                                        <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="4" fontFamily="sans-serif">VALORANT</text>
-                                    </svg>
-                                </div>
-
-                                {/* TEKKEN 8 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" title="Tekken 8">
-                                    <svg viewBox="0 0 185 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M10 10 L30 10 L22 23 L34 40 L15 40 L22 29 L10 29 Z" fill="#EF4444" />
-                                        <text x="42" y="31" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="2" fontStyle="italic" fontFamily="sans-serif">TEKKEN</text>
-                                        <text x="142" y="31" fill="#F59E0B" fontSize="23" fontWeight="900" fontStyle="italic" fontFamily="sans-serif">8</text>
-                                    </svg>
-                                </div>
-
-                                {/* eFootball */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(2,132,199,0.6)]" title="eFootball">
-                                    <svg viewBox="0 0 190 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <circle cx="22" cy="25" r="15" fill="none" stroke="#0284C7" strokeWidth="4" />
-                                        <circle cx="22" cy="25" r="7.5" fill="#F59E0B" />
-                                        <path d="M12 25 h20" stroke="#0284C7" strokeWidth="2" />
-                                        <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="1" fontFamily="sans-serif">eFootball</text>
-                                        <text x="156" y="20" fill="#F59E0B" fontSize="10" fontWeight="700">™</text>
-                                    </svg>
-                                </div>
-
-                                {/* DOTA 2 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" title="Dota 2">
-                                    <svg viewBox="0 0 165 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <rect x="6" y="8" width="34" height="34" rx="6" fill="#DC2626" />
-                                        <path d="M10 36 L36 10" stroke="#070B14" strokeWidth="4.5" />
-                                        <circle cx="16" cy="20" r="3.5" fill="#070B14" />
-                                        <circle cx="30" cy="30" r="3.5" fill="#070B14" />
-                                        <text x="48" y="32" fill="#FFFFFF" fontSize="20" fontWeight="900" letterSpacing="3.5" fontFamily="sans-serif">DOTA 2</text>
-                                    </svg>
-                                </div>
-
-                                {/* HONOR OF KINGS */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Honor of Kings">
-                                    <svg viewBox="0 0 235 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M8 34 L14 15 L22 26 L30 15 L36 34 Z" fill="#F59E0B" />
-                                        <circle cx="22" cy="13" r="2.5" fill="#FBBF24" />
-                                        <circle cx="14" cy="13" r="2" fill="#FBBF24" />
-                                        <circle cx="30" cy="13" r="2" fill="#FBBF24" />
-                                        <text x="48" y="26" fill="#FFFFFF" fontSize="16.5" fontWeight="900" letterSpacing="2" fontFamily="sans-serif">HONOR OF KINGS</text>
-                                        <text x="48" y="40" fill="#F59E0B" fontSize="10" fontWeight="800" letterSpacing="4" fontFamily="sans-serif">OFFICIAL TITLE</text>
-                                    </svg>
-                                </div>
-                            </div>
-
-                            {/* set 2 (identical duplicate for seamless 30s infinite loop) */}
-                            <div className="flex items-center gap-14 sm:gap-20 md:gap-24 shrink-0">
-                                {/* MLBB */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Mobile Legends: Bang Bang">
-                                    <svg viewBox="0 0 250 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M22 8 L36 25 L22 42 L8 25 Z" fill="#F59E0B" />
-                                        <path d="M22 14 L31 25 L22 36 L13 25 Z" fill="#FBBF24" />
-                                        <circle cx="22" cy="25" r="4.5" fill="#FFFFFF" />
-                                        <text x="48" y="26" fill="#FFFFFF" fontSize="16.5" fontWeight="900" letterSpacing="2" fontFamily="sans-serif">MOBILE LEGENDS</text>
-                                        <text x="48" y="41" fill="#F59E0B" fontSize="10.5" fontWeight="800" letterSpacing="4" fontFamily="sans-serif">BANG BANG</text>
-                                    </svg>
-                                </div>
-
-                                {/* PUBG MOBILE */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="PUBG Mobile">
-                                    <svg viewBox="0 0 195 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <rect x="6" y="9" width="34" height="34" rx="6" fill="#F59E0B" />
-                                        <path d="M14 17 h18 v18 h-18 Z" fill="#070B14" />
-                                        <path d="M18 20 h10 v4 h-10 Z" fill="#F59E0B" />
-                                        <text x="48" y="27" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="1.5" fontFamily="sans-serif">PUBG</text>
-                                        <text x="48" y="42" fill="#F59E0B" fontSize="11" fontWeight="800" letterSpacing="3" fontFamily="sans-serif">MOBILE</text>
-                                    </svg>
-                                </div>
-
-                                {/* VALORANT */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(255,70,85,0.6)]" title="Valorant">
-                                    <svg viewBox="0 0 205 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M8 12 L22 38 L28 38 L42 12 H33.5 L25 29 L16.5 12 Z" fill="#FF4655" />
-                                        <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="4" fontFamily="sans-serif">VALORANT</text>
-                                    </svg>
-                                </div>
-
-                                {/* TEKKEN 8 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(239,68,68,0.6)]" title="Tekken 8">
-                                    <svg viewBox="0 0 185 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M10 10 L30 10 L22 23 L34 40 L15 40 L22 29 L10 29 Z" fill="#EF4444" />
-                                        <text x="42" y="31" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="2" fontStyle="italic" fontFamily="sans-serif">TEKKEN</text>
-                                        <text x="142" y="31" fill="#F59E0B" fontSize="23" fontWeight="900" fontStyle="italic" fontFamily="sans-serif">8</text>
-                                    </svg>
-                                </div>
-
-                                {/* eFootball */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(2,132,199,0.6)]" title="eFootball">
-                                    <svg viewBox="0 0 190 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <circle cx="22" cy="25" r="15" fill="none" stroke="#0284C7" strokeWidth="4" />
-                                        <circle cx="22" cy="25" r="7.5" fill="#F59E0B" />
-                                        <path d="M12 25 h20" stroke="#0284C7" strokeWidth="2" />
-                                        <text x="48" y="32" fill="#FFFFFF" fontSize="19" fontWeight="900" letterSpacing="1" fontFamily="sans-serif">eFootball</text>
-                                        <text x="156" y="20" fill="#F59E0B" fontSize="10" fontWeight="700">™</text>
-                                    </svg>
-                                </div>
-
-                                {/* DOTA 2 */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(220,38,38,0.6)]" title="Dota 2">
-                                    <svg viewBox="0 0 165 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <rect x="6" y="8" width="34" height="34" rx="6" fill="#DC2626" />
-                                        <path d="M10 36 L36 10" stroke="#070B14" strokeWidth="4.5" />
-                                        <circle cx="16" cy="20" r="3.5" fill="#070B14" />
-                                        <circle cx="30" cy="30" r="3.5" fill="#070B14" />
-                                        <text x="48" y="32" fill="#FFFFFF" fontSize="20" fontWeight="900" letterSpacing="3.5" fontFamily="sans-serif">DOTA 2</text>
-                                    </svg>
-                                </div>
-
-                                {/* HONOR OF KINGS */}
-                                <div className="h-10 sm:h-11 md:h-12 flex items-center shrink-0 opacity-40 hover:opacity-100 transition-all duration-300 cursor-pointer drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] hover:drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]" title="Honor of Kings">
-                                    <svg viewBox="0 0 235 50" className="h-10 sm:h-11 md:h-12 w-auto">
-                                        <path d="M8 34 L14 15 L22 26 L30 15 L36 34 Z" fill="#F59E0B" />
-                                        <circle cx="22" cy="13" r="2.5" fill="#FBBF24" />
-                                        <circle cx="14" cy="13" r="2" fill="#FBBF24" />
-                                        <circle cx="30" cy="13" r="2" fill="#FBBF24" />
-                                        <text x="48" y="26" fill="#FFFFFF" fontSize="16.5" fontWeight="900" letterSpacing="2" fontFamily="sans-serif">HONOR OF KINGS</text>
-                                        <text x="48" y="40" fill="#F59E0B" fontSize="10" fontWeight="800" letterSpacing="4" fontFamily="sans-serif">OFFICIAL TITLE</text>
-                                    </svg>
-                                </div>
-                            </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                {/* 5. the national team (team mys) interactive tabbed showcase */}
-                <section
-                    id="teams"
-                    className="w-full py-16 md:py-20 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto"
-                >
-                    {/* header */}
-                    <div className="w-full text-center mb-8">
-                        <h3 className="text-xs md:text-sm font-bold uppercase tracking-[0.2em] text-neutral-500 mb-2">
-                            NATIONAL SQUAD
-                        </h3>
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-white uppercase">
-                            MEET TEAM MYS
-                        </h2>
-                    </div>
+                    {/* part 3: officially sanctioned games (pitch arena stage with glowing badges) */}
+                    <section
+                        id="games"
+                        className="relative w-full bg-[#03060E] border-t border-white/[0.08] overflow-hidden"
+                    >
+                        {/* subtle ambient golden wash in center */}
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(245,158,11,0.06),transparent_80%)]" />
 
-                    {/* tabs navigation */}
-                    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mb-8 sm:mb-10 max-w-5xl mx-auto">
-                        {teamRoster.map((squad) => {
-                            const isActive = activeSquad === squad.id; // check
-                            return (
-                                <button
-                                    key={squad.id}
-                                    type="button"
-                                    onClick={() => setActiveSquad(squad.id)} // state
-                                    className={`px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
-                                        isActive
-                                            ? 'bg-gradient-to-r from-amber-400 to-amber-600 text-black font-bold border-transparent shadow-[0_0_20px_rgba(251,191,36,0.4)]'
-                                            : 'border border-white/10 backdrop-blur-md bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/25 hover:bg-white/[0.06]'
-                                    }`}
-                                >
-                                    {squad.label}
-                                </button>
-                            );
-                        })}
-                    </div>
+                        <div className="relative z-10 w-full py-12 sm:py-14 md:py-16">
+                            {/* section header */}
+                            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-10 mb-6 sm:mb-8 reveal-on-scroll">
+                                <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
+                                    SANCTIONED GAMES
+                                </h2>
+                            </div>
 
-                    {/* cinematic roster showcase card */}
-                    <div className="relative h-[400px] md:h-[500px] w-full max-w-5xl mx-auto rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)] group bg-[#0A0F1D]">
-                        {/* active squad background image with smooth transition */}
-                        <img
-                            key={currentSquad.id}
-                            src={currentSquad.image}
-                            alt={currentSquad.label}
-                            onError={(e) => {
-                                e.target.style.opacity = '0'; // fallback
-                            }}
-                            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out opacity-90"
-                        />
+                            {/* full-width marquee container with gradient edge mask */}
+                            <div
+                                className="marquee-container w-full overflow-hidden py-4 select-none reveal-on-scroll reveal-delay-1"
+                                style={{
+                                    maskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)',
+                                    WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 12%, black 88%, transparent 100%)'
+                                }}
+                            >
+                                <div className="marquee-track flex items-center">
+                                    {/* set 1 */}
+                                    <div className="flex items-center gap-6 sm:gap-8 md:gap-10 shrink-0 pr-6 sm:pr-8 md:pr-10">
+                                        {sanctionedGameLogos.map((game) => (
+                                            <div
+                                                key={`set1-${game.id}`}
+                                                title={game.title}
+                                                className={`group relative px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-[#080E1C]/90 hover:bg-[#0D162B] border border-white/10 ${game.glowBorder} ${game.glowShadow} transition-all duration-300 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden backdrop-blur-md`}
+                                            >
+                                                {/* ambient radial glow behind logo that pops */}
+                                                <div
+                                                    className="pointer-events-none absolute inset-0 opacity-45 group-hover:opacity-95 transition-opacity duration-300 blur-xl"
+                                                    style={{
+                                                        background: `radial-gradient(circle at center, ${game.glowColor} 0%, transparent 70%)`
+                                                    }}
+                                                />
 
-                        {/* fallback dark backdrop */}
-                        <div className="absolute inset-0 bg-[#070B14]/40 -z-10" />
+                                                {/* top subtle glass reflection line */}
+                                                <div className="pointer-events-none absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
-                        {/* heavy dark gradient overlay for text readability */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/80 to-transparent pointer-events-none" />
+                                                {/* the logo SVG with full vibrant clarity */}
+                                                <div className="relative z-10 opacity-90 group-hover:opacity-100 transition-opacity duration-200">
+                                                    {game.svg}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
 
-                        {/* subtle amber corner glow */}
-                        <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 bg-amber-400/10 rounded-full blur-3xl transition-all duration-500" />
+                                    {/* set 2 (identical duplicate for seamless infinite loop) */}
+                                    <div className="flex items-center gap-6 sm:gap-8 md:gap-10 shrink-0 pr-6 sm:pr-8 md:pr-10">
+                                        {sanctionedGameLogos.map((game) => (
+                                            <div
+                                                key={`set2-${game.id}`}
+                                                title={game.title}
+                                                className={`group relative px-6 sm:px-8 py-3.5 sm:py-4 rounded-2xl bg-[#080E1C]/90 hover:bg-[#0D162B] border border-white/10 ${game.glowBorder} ${game.glowShadow} transition-all duration-300 flex items-center justify-center shrink-0 cursor-pointer overflow-hidden backdrop-blur-md`}
+                                            >
+                                                {/* ambient radial glow behind logo that pops */}
+                                                <div
+                                                    className="pointer-events-none absolute inset-0 opacity-45 group-hover:opacity-95 transition-opacity duration-300 blur-xl"
+                                                    style={{
+                                                        background: `radial-gradient(circle at center, ${game.glowColor} 0%, transparent 70%)`
+                                                    }}
+                                                />
 
-                        {/* content container */}
-                        <div className="relative z-10 h-full w-full p-6 sm:p-8 md:p-12 flex flex-col justify-end">
-                            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-                                {/* bottom left: accolade and large label */}
-                                <div className="space-y-1.5 sm:space-y-2 text-left">
-                                    <span className="inline-block text-xs sm:text-sm font-bold tracking-widest uppercase text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.5)]">
-                                        {currentSquad.accolade}
-                                    </span>
-                                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white uppercase drop-shadow-[0_10px_20px_rgba(0,0,0,0.8)]">
-                                        {currentSquad.label}
-                                    </h3>
-                                </div>
+                                                {/* top subtle glass reflection line */}
+                                                <div className="pointer-events-none absolute top-0 inset-x-4 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
 
-                                {/* bottom right: competitive format badge */}
-                                <div className="flex items-center md:justify-end">
-                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-white/20 bg-white/[0.08] backdrop-blur-md text-white/95 text-xs sm:text-sm font-semibold tracking-wide shadow-lg select-none">
-                                        <span className="h-2 w-2 rounded-full bg-amber-400" />
-                                        <span>{currentSquad.format}</span>
+                                                {/* the logo SVG with full vibrant clarity */}
+                                                <div className="relative z-10 opacity-90 group-hover:opacity-100 transition-opacity duration-200">
+                                                    {game.svg}
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </section>
+                    </section>
 
-                {/* 6. the 14 affiliated members (the 7x2 grid) */}
-                <section
-                    id="affiliates"
-                    className="w-full py-24 md:py-28 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto"
-                >
-                    {/* header */}
-                    <div className="w-full text-left mb-12 md:mb-16">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-white/95 uppercase">
-                            AFFILIATED MEMBERS
+                    {/* part 4: the national team (contingent indigo-slate theme) */}
+                    <section
+                        id="teams"
+                        className="relative w-full bg-[#080E1C] border-t border-white/[0.08] overflow-hidden select-none"
+                    >
+                        {/* subtle athletic ambient wash */}
+                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_20%_20%,rgba(37,99,235,0.06),transparent_70%)]" />
+
+                        <div className="relative z-10 w-full py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
+                            {/* section header */}
+                        <div className="w-full mb-6 sm:mb-8 reveal-on-scroll">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
+                            TEAM MALAYSIA
                         </h2>
-                        <p className="text-xs sm:text-sm text-neutral-400 mt-1">
-                            Official state and federal territory esports associations across Malaysia.
-                        </p>
                     </div>
 
-                    {/* symmetrical 7x2 grid on desktop, 4 cols on tablet, 2 cols on mobile */}
-                    <div className="w-full grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-y-14 sm:gap-y-16 gap-x-6 sm:gap-x-8 items-center justify-items-center">
-                        {stateAssociations.map((item) => (
-                            <Link
-                                key={item.id}
-                                href="/teams#affiliates"
-                                style={{
-                                    '--state-glow': item.glowRgba,
-                                    '--state-color': item.glowColor
-                                }}
-                                className="group relative flex flex-col items-center justify-center cursor-pointer select-none"
-                            >
-                                {/* raw floating logo/crest: zero background colors, zero borders, grayscale and opacity-60 by default */}
-                                <div className="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                                    <img
-                                        src={item.image}
-                                        alt={item.name}
-                                        className="max-h-full max-w-full object-contain filter transition-all duration-300 group-hover:[filter:drop-shadow(0_0_14px_var(--state-glow))_drop-shadow(0_0_28px_var(--state-glow))]"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = 'none'; // fallback
-                                        }}
-                                    />
-                                </div>
+                    {/* cover flow carousel stage */}
+                    <div className="relative w-full max-w-6xl mx-auto reveal-on-scroll reveal-delay-1">
+                        {/* minimalist premium navigation arrow buttons */}
+                        <button
+                            type="button"
+                            onClick={handlePrevSquad} // trigger
+                            aria-label="Previous Squad"
+                            className="group absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#050811]/60 hover:bg-[#0A1020]/90 border border-white/10 hover:border-white/25 active:border-white/40 text-neutral-400 hover:text-white flex items-center justify-center backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all duration-300 cursor-pointer"
+                        >
+                            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-200" strokeWidth={1.75} />
+                        </button>
 
-                                {/* tiny glowing text label drops down just below on hover */}
-                                <div className="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 transition-all duration-200 z-30 whitespace-nowrap">
-                                    <span
-                                        className="text-[11px] sm:text-xs font-semibold tracking-wider transition-colors duration-200"
+                        <button
+                            type="button"
+                            onClick={handleNextSquad} // trigger
+                            aria-label="Next Squad"
+                            className="group absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-40 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-[#050811]/60 hover:bg-[#0A1020]/90 border border-white/10 hover:border-white/25 active:border-white/40 text-neutral-400 hover:text-white flex items-center justify-center backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.6)] transition-all duration-300 cursor-pointer"
+                        >
+                            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6 transition-colors duration-200" strokeWidth={1.75} />
+                        </button>
+
+                        {/* cards track container */}
+                        <div
+                            className="relative h-[440px] sm:h-[510px] md:h-[560px] lg:h-[580px] w-full overflow-hidden flex items-center justify-center"
+                            onTouchStart={handleTouchStart} // touch
+                            onTouchEnd={handleTouchEnd} // touch
+                        >
+                            {teamRoster.map((squad, idx) => {
+                                const totalSquads = teamRoster.length; // properties
+                                let offset = idx - squadIndex; // check
+                                if (offset > totalSquads / 2) offset -= totalSquads;
+                                if (offset < -totalSquads / 2) offset += totalSquads;
+
+                                const absOffset = Math.abs(offset); // check
+                                const isCenter = absOffset === 0; // check
+                                const isVisible = absOffset <= 2; // check
+
+                                // Cover Flow scale, opacity, layering, and horizontal translation
+                                const scale = isCenter ? 1 : absOffset === 1 ? 0.88 : 0.76;
+                                const opacity = isCenter ? 1 : absOffset === 1 ? 0.65 : absOffset === 2 ? 0.28 : 0;
+                                const zIndex = 30 - absOffset * 10;
+                                const pointerEvents = isVisible ? 'auto' : 'none';
+
+                                return (
+                                    <div
+                                        key={squad.id}
+                                        onClick={() => { // state
+                                            if (!isCenter) setSquadIndex(idx);
+                                        }}
                                         style={{
-                                            color: item.glowColor,
-                                            textShadow: `0 0 10px ${item.glowRgba}`
+                                            transform: `translate(calc(-50% + ${offset * 72}%), -50%) scale(${scale})`,
+                                            opacity,
+                                            zIndex,
+                                            pointerEvents,
                                         }}
+                                        className={`absolute top-1/2 left-1/2 w-[280px] sm:w-[340px] md:w-[380px] lg:w-[400px] aspect-[4/5] rounded-2xl sm:rounded-3xl border transition-all duration-500 ease-out overflow-hidden flex flex-col justify-between p-6 sm:p-8 ${
+                                            isCenter
+                                                ? 'border-white/20 bg-gradient-to-b from-[#0F172A] via-[#090E1A] to-[#050811] shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(251,191,36,0.08)] cursor-default'
+                                                : 'border-white/10 bg-[#080D18]/95 backdrop-blur-md shadow-[0_15px_35px_rgba(0,0,0,0.7)] cursor-pointer hover:border-white/25'
+                                        }`}
                                     >
-                                        {item.name}
-                                    </span>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                </section>
+                                        {/* ambient background glow */}
+                                        <div className="pointer-events-none absolute -top-16 -right-16 w-40 h-40 bg-amber-400/5 rounded-full blur-2xl" />
+                                        <div className="pointer-events-none absolute -bottom-16 -left-16 w-40 h-40 bg-blue-600/10 rounded-full blur-2xl" />
 
-                {/* 7. official modern interactive footer */}
-                <Footer />
+                                        {/* faint athletic background grid pattern */}
+                                        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white/[0.04] via-transparent to-transparent" />
+
+                                        {/* fallback / future squad photo if loaded */}
+                                        {squad.image && (
+                                            <img
+                                                src={squad.image}
+                                                alt={squad.game}
+                                                onError={(e) => { // error
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
+                                                className="pointer-events-none absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity"
+                                            />
+                                        )}
+
+                                        {/* team profile avatar silhouette SVG placeholder */}
+                                        <div className="relative my-auto flex flex-col items-center justify-center py-4 select-none">
+                                            <div className="relative w-full flex flex-col items-center justify-center">
+                                                {/* subtle ambient backlight */}
+                                                <div className="absolute w-36 h-36 bg-amber-400/[0.06] rounded-full blur-2xl pointer-events-none" />
+
+                                                {/* team lineup silhouette frame */}
+                                                <div className="relative w-full max-w-[280px] sm:max-w-[320px] h-36 sm:h-44 md:h-48 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-md flex items-center justify-center p-4 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+                                                    <svg
+                                                        viewBox="0 0 160 100"
+                                                        className="w-full h-full max-h-36 drop-shadow-[0_6px_16px_rgba(0,0,0,0.7)]"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <defs>
+                                                            <linearGradient id="centerPlayerGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+                                                                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.45" />
+                                                                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.16" />
+                                                            </linearGradient>
+                                                            <linearGradient id="midPlayerGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+                                                                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.30" />
+                                                                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.09" />
+                                                            </linearGradient>
+                                                            <linearGradient id="wingPlayerGrad" x1="50%" y1="0%" x2="50%" y2="100%">
+                                                                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.18" />
+                                                                <stop offset="100%" stopColor="#FFFFFF" stopOpacity="0.05" />
+                                                            </linearGradient>
+                                                        </defs>
+
+                                                        {/* far-left wing player */}
+                                                        <circle cx="28" cy="46" r="9" fill="url(#wingPlayerGrad)" />
+                                                        <path d="M13 88 C13 75 21 69 28 69 C35 69 43 75 43 88 Z" fill="url(#wingPlayerGrad)" />
+
+                                                        {/* far-right wing player */}
+                                                        <circle cx="132" cy="46" r="9" fill="url(#wingPlayerGrad)" />
+                                                        <path d="M117 88 C117 75 125 69 132 69 C139 69 147 75 147 88 Z" fill="url(#wingPlayerGrad)" />
+
+                                                        {/* mid-left player */}
+                                                        <circle cx="52" cy="40" r="11" fill="url(#midPlayerGrad)" />
+                                                        <path d="M33 86 C33 70 43 64 52 64 C61 64 71 70 71 86 Z" fill="url(#midPlayerGrad)" />
+
+                                                        {/* mid-right player */}
+                                                        <circle cx="108" cy="40" r="11" fill="url(#midPlayerGrad)" />
+                                                        <path d="M89 86 C89 70 99 64 108 64 C117 64 127 70 127 86 Z" fill="url(#midPlayerGrad)" />
+
+                                                        {/* center lead player (front & prominent) */}
+                                                        <circle cx="80" cy="34" r="14" fill="url(#centerPlayerGrad)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                                                        <path d="M56 84 C56 65 68 57 80 57 C92 57 104 65 104 84 Z" fill="url(#centerPlayerGrad)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* poster bottom: game discipline & name placeholder */}
+                                        <div className="relative z-10 space-y-1 text-left">
+                                            <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400">
+                                                {squad.game}
+                                            </span>
+                                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
+                                                NAME
+                                            </h3>
+                                            <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
+                                                {squad.division}
+                                            </p>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* bottom navigation indicators & counter */}
+                        <div className="mt-6 sm:mt-8 flex flex-col items-center gap-3">
+                            {/* dot track */}
+                            <div className="flex items-center gap-1.5">
+                                {teamRoster.map((squad, dotIdx) => (
+                                    <button
+                                        key={squad.id}
+                                        type="button"
+                                        onClick={() => setSquadIndex(dotIdx)} // state
+                                        aria-label={`Jump to ${squad.game}`}
+                                        className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                                            dotIdx === squadIndex
+                                                ? 'w-6 sm:w-7 bg-amber-400'
+                                                : 'w-2 bg-white/20 hover:bg-white/40'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* textual position counter */}
+                            <div className="text-[11px] font-mono tracking-widest text-neutral-400 uppercase">
+                                <span className="text-white font-bold">{String(squadIndex + 1).padStart(2, '0')}</span>
+                                <span className="mx-1 text-neutral-600">/</span>
+                                <span>{String(teamRoster.length).padStart(2, '0')}</span>
+                                <span className="mx-2 text-neutral-600">•</span>
+                                <span className="text-amber-400 font-semibold">{teamRoster[squadIndex]?.game}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+
+
+                    {/* 7. official modern interactive footer */}
+                    <Footer />
+                </div>
             </div>
         </div>
     );

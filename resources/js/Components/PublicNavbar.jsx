@@ -16,59 +16,55 @@ const NAV_ITEMS = [
 export default function PublicNavbar({
     activeTab = null,
     onNavClick = null,
+    hasLiveMatches: propHasLiveMatches,
     className = '',
     style = {}
 }) {
     // --4. actions--
-    const { settings } = usePage().props; // properties
+    const { settings, hasLiveMatches: pageHasLiveMatches } = usePage().props; // properties
+    const hasLiveMatches = propHasLiveMatches ?? pageHasLiveMatches ?? false; // check
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
     const [hoveredTab, setHoveredTab] = useState(null); // state
-    const [indicatorStyle, setIndicatorStyle] = useState({ left: 6, top: 6, width: 44, height: 44, opacity: 0 }); // state
+    const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 }); // state
     const [isNavInitialized, setIsNavInitialized] = useState(false); // state
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false); // state
-    const navContainerRef = useRef(null); // ref
+    const centerNavRef = useRef(null); // ref
     const navRefs = useRef({}); // ref
+    const bellRef = useRef(null); // ref
 
-    const currentTab = hoveredTab || (isNotificationsOpen ? 'notifications' : activeTab); // state
+    const currentTab = hoveredTab || activeTab; // state
 
     const updateIndicator = () => { // trigger
-        const targetTab = hoveredTab || (isNotificationsOpen ? 'notifications' : activeTab); // check
-        if (!targetTab) { // check
-            setIndicatorStyle(prev => ({ ...prev, opacity: 0 })); // state
+        const targetId = hoveredTab || (NAV_ITEMS.some((n) => n.id === activeTab) ? activeTab : null); // check
+        if (!targetId || !navRefs.current[targetId] || !centerNavRef.current) { // check
+            setIndicatorStyle((prev) => (prev.opacity === 0 ? prev : { ...prev, opacity: 0 })); // state
             return;
         }
 
-        const el = navRefs.current[targetTab]; // state
-        const navEl = navContainerRef.current; // state
+        const el = navRefs.current[targetId]; // state
+        const left = el.offsetLeft; // state
+        const width = el.offsetWidth; // state
 
-        if (el && navEl) { // check
-            const elRect = el.getBoundingClientRect(); // state
-            const navRect = navEl.getBoundingClientRect(); // state
+        setIndicatorStyle((prev) => {
+            if (prev.left === left && prev.width === width && prev.opacity === 1) return prev; // check
+            return { left, width, opacity: 1 }; // save
+        });
 
-            setIndicatorStyle({
-                left: elRect.left - navRect.left,
-                top: elRect.top - navRect.top,
-                width: elRect.width,
-                height: elRect.height,
-                opacity: 1
-            }); // state
-
-            if (!isNavInitialized) { // check
-                requestAnimationFrame(() => {
-                    setTimeout(() => setIsNavInitialized(true), 40); // clock
-                });
-            }
+        if (!isNavInitialized) { // check
+            setIsNavInitialized(true); // state
         }
     };
 
     useEffect(() => {
-        const frameId = requestAnimationFrame(updateIndicator); // trigger
-        window.addEventListener('resize', updateIndicator); // trigger
+        updateIndicator(); // trigger
+        window.addEventListener('resize', updateIndicator, { passive: true }); // trigger
+        if (typeof document !== 'undefined' && document.fonts?.ready) { // check
+            document.fonts.ready.then(updateIndicator); // trigger
+        }
         return () => {
-            cancelAnimationFrame(frameId);
             window.removeEventListener('resize', updateIndicator);
         };
-    }, [activeTab, hoveredTab, isNotificationsOpen, isNavInitialized]);
+    }, [activeTab, hoveredTab, hasLiveMatches]);
 
     const handleItemClick = (e, tabId) => { // trigger
         e.preventDefault(); // trigger
@@ -98,42 +94,15 @@ export default function PublicNavbar({
     // --5. UI--
     return (
         <nav
-            ref={navContainerRef}
-            onMouseLeave={() => setHoveredTab(null)}
-            className={`relative flex items-center justify-between w-[94vw] max-w-5xl px-3 md:px-5 py-2 rounded-full backdrop-blur-2xl bg-[#090D18]/85 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+            className={`relative flex items-center justify-between w-[94vw] max-w-5xl px-3 md:px-5 py-2 rounded-full backdrop-blur-2xl bg-[#090D18]/90 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
             style={style}
         >
-            {/* inner grain texture */}
-            <div
-                className="pointer-events-none absolute inset-0 opacity-[0.08] mix-blend-overlay rounded-full overflow-hidden"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
-
-            {/* sliding apple-style yellow glass indicator */}
-            <div
-                className="absolute pointer-events-none rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 shadow-[0_2.5px_20px_rgba(251,191,36,0.5),inset_0_1px_1.5px_rgba(255,255,255,0.5)] z-0"
-                style={{
-                    left: `${indicatorStyle.left}px`,
-                    top: `${indicatorStyle.top}px`,
-                    width: `${indicatorStyle.width}px`,
-                    height: `${indicatorStyle.height}px`,
-                    opacity: indicatorStyle.opacity,
-                    transition: isNavInitialized
-                        ? 'left 280ms cubic-bezier(0.2, 0.8, 0.2, 1), top 280ms cubic-bezier(0.2, 0.8, 0.2, 1), width 280ms cubic-bezier(0.2, 0.8, 0.2, 1), height 280ms cubic-bezier(0.2, 0.8, 0.2, 1), opacity 200ms ease-out'
-                        : 'none'
-                }}
-            />
-
             {/* far left: mesf logo section */}
             <div className="flex items-center">
                 <button
-                    ref={(el) => (navRefs.current['home'] = el)}
                     type="button"
-                    onMouseEnter={() => setHoveredTab('home')}
                     onClick={(e) => handleItemClick(e, 'home')}
-                    className="relative z-10 flex items-center justify-center h-10 w-10 md:h-11 md:w-11 px-1 rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                    className="relative z-10 flex items-center justify-center h-10 w-10 md:h-11 md:w-11 px-1 rounded-full transition-opacity duration-200 hover:opacity-85 active:opacity-70 cursor-pointer"
                     aria-label="MESF Home"
                 >
                     <img
@@ -151,10 +120,28 @@ export default function PublicNavbar({
             {/* left-center vertical glass divider */}
             <div className="h-5 w-[1px] bg-white/10 mx-1.5 md:mx-4" />
 
-            {/* center: nav buttons pill container */}
-            <div className="flex items-center space-x-1 md:space-x-2 flex-1 justify-center">
+            {/* center: smooth gliding nav buttons pill container */}
+            <div
+                ref={centerNavRef}
+                onMouseLeave={() => setHoveredTab(null)}
+                className="relative flex items-center space-x-1 md:space-x-1.5 flex-1 justify-center py-0.5"
+            >
+                {/* sliding fluid pill indicator */}
+                <div
+                    className="absolute pointer-events-none rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 shadow-[0_0_20px_rgba(251,191,36,0.4)] z-0 top-0 bottom-0 left-0 my-auto h-9 md:h-10 will-change-transform"
+                    style={{
+                        transform: `translateX(${indicatorStyle.left}px)`,
+                        width: `${indicatorStyle.width}px`,
+                        opacity: indicatorStyle.opacity,
+                        transition: isNavInitialized
+                            ? 'transform 260ms cubic-bezier(0.16, 1, 0.3, 1), width 260ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease-out'
+                            : 'opacity 180ms ease-out'
+                    }}
+                />
+
                 {NAV_ITEMS.map((item) => {
                     const isSelected = currentTab === item.id;
+                    const isLiveItem = item.id === 'matches' && hasLiveMatches;
                     return (
                         <button
                             key={item.id}
@@ -162,13 +149,30 @@ export default function PublicNavbar({
                             type="button"
                             onMouseEnter={() => setHoveredTab(item.id)}
                             onClick={(e) => handleItemClick(e, item.id)}
-                            className={`relative z-10 h-10 md:h-11 px-3.5 md:px-5 rounded-full flex items-center justify-center text-xs md:text-sm font-bold tracking-wider uppercase transition-colors duration-250 ease-out select-none cursor-pointer ${
+                            className={`relative z-10 h-9 md:h-10 px-3.5 md:px-5 rounded-full flex items-center justify-center text-xs md:text-sm font-bold tracking-wider uppercase transition-colors duration-200 select-none cursor-pointer ${
                                 isSelected
-                                    ? 'text-[#070B14]'
+                                    ? 'text-slate-950 font-black'
                                     : 'text-neutral-300 hover:text-white'
                             }`}
                         >
-                            {item.label}
+                            <span className="flex items-center gap-1.5">
+                                <span>{item.label}</span>
+                                {isLiveItem && (
+                                    <span
+                                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase transition-colors select-none ${
+                                            isSelected
+                                                ? 'bg-slate-950 text-red-400'
+                                                : 'bg-red-500/15 border border-red-500/35 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.25)]'
+                                        }`}
+                                    >
+                                        <span className="relative flex h-1.5 w-1.5">
+                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                                        </span>
+                                        <span className="font-mono leading-none">LIVE</span>
+                                    </span>
+                                )}
+                            </span>
                         </button>
                     );
                 })}
@@ -177,23 +181,21 @@ export default function PublicNavbar({
             {/* center-right vertical glass divider */}
             <div className="h-5 w-[1px] bg-white/10 mx-1.5 md:mx-4" />
 
-            {/* far right: interactive action buttons */}
+            {/* far right: action buttons with clean, subtle circle hovers */}
             <div className="flex items-center space-x-1 md:space-x-1.5">
                 {/* notification bell button */}
                 <div className="relative">
                     <button
-                        ref={(el) => (navRefs.current['notifications'] = el)}
+                        ref={bellRef}
                         type="button"
-                        onMouseEnter={() => setHoveredTab('notifications')}
                         onClick={(e) => {
                             e.preventDefault();
                             setIsNotificationsOpen((prev) => !prev);
-                            setHoveredTab(null);
                         }}
-                        className={`relative z-10 flex items-center justify-center h-10 w-10 md:h-11 md:w-11 rounded-full transition-colors duration-250 ease-out cursor-pointer ${
-                            isNotificationsOpen || currentTab === 'notifications'
-                                ? 'text-[#070B14]'
-                                : 'text-neutral-300 hover:text-white'
+                        className={`relative z-10 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 rounded-full transition-all duration-200 cursor-pointer ${
+                            isNotificationsOpen
+                                ? 'bg-amber-400 text-slate-950 shadow-[0_0_15px_rgba(251,191,36,0.4)]'
+                                : 'text-neutral-300 hover:text-white hover:bg-white/[0.08]'
                         }`}
                         aria-label="Notifications"
                     >
@@ -210,23 +212,17 @@ export default function PublicNavbar({
                     <Notification
                         isOpen={isNotificationsOpen}
                         onClose={() => setIsNotificationsOpen(false)}
-                        anchorRef={{ current: navRefs.current['notifications'] }}
+                        anchorRef={bellRef}
                     />
                 </div>
 
                 {/* user profile / login button */}
                 <button
-                    ref={(el) => (navRefs.current['profile'] = el)}
                     type="button"
-                    onMouseEnter={() => setHoveredTab('profile')}
                     onClick={(e) => handleItemClick(e, 'profile')}
-                    className={`relative z-10 flex items-center justify-center h-10 w-10 md:h-11 md:w-11 rounded-full transition-colors duration-250 ease-out cursor-pointer ${
-                        currentTab === 'profile'
-                            ? 'text-[#070B14]'
-                            : 'text-neutral-300 hover:text-white'
-                    }`}
-                    aria-label="Sign In"
-                    title="Sign In"
+                    className="relative z-10 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 rounded-full text-neutral-300 hover:text-white hover:bg-white/[0.08] transition-all duration-200 cursor-pointer"
+                    aria-label="Log In"
+                    title="Log In"
                 >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />

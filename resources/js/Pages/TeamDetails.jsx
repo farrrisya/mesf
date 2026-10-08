@@ -411,7 +411,7 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
                                                 {team.contact_email ? (
                                                     <a
                                                         href={`mailto:${team.contact_email}`} // redirect
-                                                        className="text-white hover:text-amber-400 flex items-center gap-1.5 transition-colors break-all"
+                                                        className="text-white hover:underline flex items-center gap-1.5 transition-colors break-all"
                                                     >
                                                         <Mail className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
                                                         <span>{team.contact_email}</span>
@@ -471,7 +471,7 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
                                             </div>
                                             <Link
                                                 href="/teams" // redirect
-                                                className="text-[11px] font-mono text-neutral-400 hover:text-amber-400 transition-colors"
+                                                className="text-[11px] font-mono text-neutral-400 hover:text-white transition-colors"
                                             >
                                                 View All
                                             </Link>
@@ -498,7 +498,7 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
                                                             )}
                                                         </div>
                                                         <div className="min-w-0 flex-1">
-                                                            <div className="font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                            <div className="font-bold text-white transition-colors truncate">
                                                                 {t.name || ''}
                                                             </div>
                                                             <div className="text-[10px] font-mono text-neutral-500 truncate">

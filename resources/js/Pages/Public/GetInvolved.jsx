@@ -120,13 +120,7 @@ export default function GetInvolved() {
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
             <Head title="Get Involved & Inquiries - MESF" />
 
-            {/* Background SVG grain texture */}
-            <div
-                className="pointer-events-none fixed inset-0 opacity-[0.04] mix-blend-overlay z-10"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* Custom Background Glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
@@ -179,7 +173,7 @@ export default function GetInvolved() {
                                 <div className="space-y-7 relative z-10">
                                     {/* Icon and Eyebrow */}
                                     <div className="flex items-center justify-between gap-4">
-                                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:scale-110 group-hover:border-amber-400/40 transition-all duration-300 shadow-inner">
+                                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:border-amber-400/40 group-hover:bg-amber-400/10 transition-all duration-300 shadow-inner">
                                             <IconComponent className="w-7 h-7 text-amber-400" />
                                         </div>
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${option.badgeBg}`}>
@@ -189,7 +183,7 @@ export default function GetInvolved() {
 
                                     {/* Title and Description */}
                                     <div className="space-y-3">
-                                        <h2 className="text-xl sm:text-2xl font-black text-white group-hover:text-amber-300 transition-colors tracking-wide uppercase">
+                                        <h2 className="text-xl sm:text-2xl font-black text-white transition-colors tracking-wide uppercase">
                                             {option.title}
                                         </h2>
                                         <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-normal">

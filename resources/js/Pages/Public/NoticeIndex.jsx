@@ -70,7 +70,7 @@ export default function NoticeIndex({ notices }) {
                   <a 
                       href="#terkini" 
                       onClick={(e) => handleSmoothScroll(e, 'terkini')}
-                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-amber-400 transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-amber-400 hover:after:w-full after:transition-all after:duration-300"
+                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-200 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-200"
                   >
                       Terkini
                   </a>
@@ -78,7 +78,7 @@ export default function NoticeIndex({ notices }) {
                   <a 
                       href="#lalu" 
                       onClick={(e) => handleSmoothScroll(e, 'lalu')}
-                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-amber-400 transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-amber-400 hover:after:w-full after:transition-all after:duration-300"
+                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-200 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-200"
                   >
                       Lalu
                   </a>

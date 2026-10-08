@@ -91,10 +91,7 @@ export default function Create() {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title="Schedule Match - MESF Admin"
-            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
-        >
+        <AdminLayout title="Schedule Match - MESF Admin">
             <Head title="Schedule Match - Admin" />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">

@@ -14,10 +14,10 @@ use App\Http\Controllers\SecretaryController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Admin\InquiryManagementController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
-use App\Http\Controllers\Admin\DocumentController as AdminDocumentController;
 use App\Http\Controllers\Admin\LeagueController as AdminLeagueController;
 use App\Http\Controllers\Admin\TeamController as AdminTeamController;
 use App\Http\Controllers\Admin\MatchController as AdminMatchController;
+use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\PublicNewsController;
 use App\Models\Gallery;
 use App\Models\League;
@@ -1034,18 +1034,16 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::post('/teams/{team}', [AdminTeamController::class, 'update'])->name('teams.update-post'); // save
         Route::delete('/teams/{team}', [AdminTeamController::class, 'destroy'])->name('teams.destroy'); // save
 
-        Route::get('/library', function () {
-            return Inertia::render('Admin/Library'); // screen
-        })->name('library');
+        Route::get('/library', [AdminMediaController::class, 'index'])->name('library'); // screen
+        Route::get('/library/upload', [AdminMediaController::class, 'create'])->name('library.create'); // screen
+        Route::post('/library', [AdminMediaController::class, 'store'])->name('library.store'); // save
+        Route::delete('/library/{medium}', [AdminMediaController::class, 'destroy'])->name('library.destroy'); // save
+        Route::post('/library/bulk-delete', [AdminMediaController::class, 'bulkDestroy'])->name('library.bulk-destroy'); // save
+        Route::get('/library/items', [AdminMediaController::class, 'getItems'])->name('library.items'); // screen
     });
 
-    // Documents management (Admin only)
-    Route::middleware('role:admin')->group(function () { // check
-        Route::get('/documents', [AdminDocumentController::class, 'index'])->name('documents'); // screen
-        Route::get('/documents/create', [AdminDocumentController::class, 'create'])->name('documents.create'); // screen
-        Route::post('/documents', [AdminDocumentController::class, 'store'])->name('documents.store'); // save
-        Route::delete('/documents/{document}', [AdminDocumentController::class, 'destroy'])->name('documents.destroy'); // save
-    });
+    // Redirect legacy documents route
+    Route::redirect('/documents', '/admin/news'); // redirect
 
     // Inquiries management (Secretariat, Admin)
     Route::middleware('role:secretariat,admin')->group(function () { // check

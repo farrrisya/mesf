@@ -32,18 +32,8 @@ class PublicNewsController extends Controller
             ->orderBy('created_at', 'desc') // clock
             ->first();
 
-        // grid query
-        $gridQuery = clone $baseQuery; // state
-        if ($activeCategory !== 'ALL') { // check
-            $gridQuery->where('category', $activeCategory); // check
-        }
-
-        // if on ALL category and we have a featured article, exclude it from grid to avoid duplicate
-        if ($activeCategory === 'ALL' && $featuredArticle) { // check
-            $gridQuery->where('id', '!=', $featuredArticle->id); // check
-        }
-
-        $articles = $gridQuery->orderBy('created_at', 'desc') // clock
+        // grid query (returns all published articles matching search; frontend handles category filtering and spotlight deduplication)
+        $articles = $baseQuery->orderBy('created_at', 'desc') // clock
             ->get() // state
             ->map(function ($item) { // convert
                 return [

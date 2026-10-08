@@ -79,10 +79,7 @@ export default function Create() {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title="Upload Document - MESF Admin"
-            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
-        >
+        <AdminLayout title="Upload Document - MESF Admin">
             <Head title="Upload Document - Admin" />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">
@@ -169,11 +166,10 @@ export default function Create() {
                                         <button
                                             type="button"
                                             onClick={() => setData('media_type', 'file')} // trigger
-                                            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                                                data.media_type === 'file'
+                                            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${data.media_type === 'file'
                                                     ? 'bg-amber-400/10 border-amber-400 text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]'
                                                     : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
-                                            }`}
+                                                }`}
                                         >
                                             <FileText className={`w-5 h-5 ${data.media_type === 'file' ? 'text-amber-400' : 'text-slate-400'}`} />
                                             <div>
@@ -185,11 +181,10 @@ export default function Create() {
                                         <button
                                             type="button"
                                             onClick={() => setData('media_type', 'link')} // trigger
-                                            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${
-                                                data.media_type === 'link'
+                                            className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer flex items-center gap-3 ${data.media_type === 'link'
                                                     ? 'bg-amber-400/10 border-amber-400 text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]'
                                                     : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
-                                            }`}
+                                                }`}
                                         >
                                             <LinkIcon className={`w-5 h-5 ${data.media_type === 'link' ? 'text-amber-400' : 'text-slate-400'}`} />
                                             <div>

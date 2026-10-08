@@ -136,7 +136,7 @@ export default function Notification({ isOpen, onClose, anchorRef }) {
                     <button
                         type="button"
                         onClick={markAllAsRead} // trigger
-                        className="text-[11px] font-semibold text-neutral-400 hover:text-amber-300 transition-colors cursor-pointer"
+                        className="text-[11px] font-semibold text-neutral-400 hover:text-white transition-colors cursor-pointer"
                     >
                         Mark all read
                     </button>
@@ -152,7 +152,7 @@ export default function Notification({ isOpen, onClose, anchorRef }) {
                             onClick={() => markItemAsRead(item.id)} // trigger
                             className={`group relative p-3.5 rounded-xl transition-all duration-200 cursor-pointer ${
                                 item.isUnread
-                                    ? 'bg-white/[0.04] hover:bg-white/[0.08] border border-amber-400/20'
+                                    ? 'bg-white/[0.04] hover:bg-white/[0.08] border border-white/10'
                                     : 'hover:bg-white/[0.03] border border-transparent'
                             }`}
                         >
@@ -173,7 +173,7 @@ export default function Notification({ isOpen, onClose, anchorRef }) {
                                         </span>
                                     </div>
 
-                                    <h4 className="text-xs font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
+                                    <h4 className="text-xs font-bold text-white group-hover:text-white transition-colors leading-snug">
                                         {item.title}
                                     </h4>
 
@@ -190,7 +190,7 @@ export default function Notification({ isOpen, onClose, anchorRef }) {
                                                     e.stopPropagation();
                                                     onClose(); // trigger
                                                 }}
-                                                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-amber-400 hover:text-amber-300 group-hover:underline transition-all"
+                                                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-white/80 hover:text-white group-hover:underline transition-all"
                                             >
                                                 <span>{item.linkText || 'View Details'}</span>
                                                 <svg className="w-3 h-3 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -223,7 +223,7 @@ export default function Notification({ isOpen, onClose, anchorRef }) {
                 <Link
                     href="/news"
                     onClick={onClose} // trigger
-                    className="text-[11px] font-semibold text-neutral-400 hover:text-amber-300 transition-colors inline-flex items-center gap-1"
+                    className="text-[11px] font-semibold text-neutral-400 hover:text-white transition-colors inline-flex items-center gap-1"
                 >
                     <span>View All Announcements</span>
                     <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">

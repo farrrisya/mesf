@@ -8,7 +8,6 @@ import {
     Users,
     Calendar,
     Image,
-    FileText,
     Settings as SettingsIcon,
     UserCheck,
     MessageSquare,
@@ -34,7 +33,6 @@ const NAV_CATEGORIES = [
             { label: 'Teams', href: '/admin/teams', icon: Users, roles: ['admin', 'editor'] },
             { label: 'Matches', href: '/admin/matches', icon: Calendar, roles: ['admin', 'editor'] },
             { label: 'Library', href: '/admin/library', icon: Image, roles: ['admin', 'editor'] },
-            { label: 'Documents', href: '/admin/documents', icon: FileText, roles: ['admin'] },
         ],
     },
     {
@@ -208,13 +206,7 @@ export default function AdminLayout({
                 </div>
             )}
 
-            {/* texture effect */}
-            <div
-                className="pointer-events-none fixed inset-0 z-0 opacity-[0.05] mix-blend-overlay"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* background wallpaper and gradients */}
             <div
@@ -288,13 +280,7 @@ export default function AdminLayout({
                 className={`fixed top-4 left-4 bottom-4 w-64 z-40 flex flex-col rounded-3xl bg-[#090D18]/85 backdrop-blur-2xl backdrop-saturate-150 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)] md:translate-x-0'
                     }`}
             >
-                {/* inner grain texture */}
-                <div
-                    className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-overlay rounded-3xl overflow-hidden"
-                    style={{
-                        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                    }}
-                />
+
 
                 {/* logo banner */}
                 <div className="relative z-10 h-20 flex items-center justify-center gap-3.5 px-4 border-b border-white/10 shrink-0">
@@ -436,7 +422,7 @@ export default function AdminLayout({
                     </div>
                 </header>
 
-                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10'}`}>
+                <div className={`flex-1 flex flex-col min-w-0 ${contentClassName || 'px-4 pt-4 pb-8 sm:px-8 sm:pt-8 sm:pb-10'}`}>
                     {children}
                 </div>
             </main>

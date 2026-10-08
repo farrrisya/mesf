@@ -17,9 +17,11 @@ import {
     Move,
     Shield,
     Sparkles,
-    CheckCircle2
+    CheckCircle2,
+    FolderOpen
 } from 'lucide-react';
 import ImagePositionerModal from '@/Components/ImagePositionerModal';
+import MediaPickerModal from '@/Components/MediaPickerModal';
 
 // --2. properties--
 const LEAGUE_TIERS = [
@@ -64,6 +66,7 @@ export default function Create() {
     const [bannerPreview, setBannerPreview] = useState(null); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
     const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
+    const [isLibraryOpen, setIsLibraryOpen] = useState(false); // state
     const [positionerSource, setPositionerSource] = useState(null); // state
     const [rawFileName, setRawFileName] = useState('banner.jpg'); // state
 
@@ -83,7 +86,8 @@ export default function Create() {
         registration_status: 'REGISTRATION OPEN',
         display_options: ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'format', 'location'],
         description: '',
-        banner: null
+        banner: null,
+        library_banner_path: null
     });
 
     // --4. actions--
@@ -92,22 +96,48 @@ export default function Create() {
         if (file) { // check
             setRawFileName(file.name); // state
             setPositionerSource(file); // state
-            setIsPositionerOpen(true); // state
             const reader = new FileReader(); // convert
             reader.onloadend = () => setBannerPreview(reader.result); // state
             reader.readAsDataURL(file); // convert
-            setData('banner', file); // state
+            setData((prev) => ({
+                ...prev,
+                banner: file,
+                library_banner_path: null
+            })); // state
         }
     };
 
+    const handleSelectFromLibrary = (mediaItem) => { // trigger
+        setBannerPreview(mediaItem.url); // state
+        setData((prev) => ({
+            ...prev,
+            library_banner_path: mediaItem.file_path,
+            banner: null
+        })); // state
+        setPositionerSource(mediaItem.url); // state
+        setRawFileName(mediaItem.file_name); // state
+        if (fileInputRef.current) { // check
+            fileInputRef.current.value = ''; // state
+        }
+        setIsLibraryOpen(false); // toggle
+    };
+
     const handlePositionerComplete = (croppedFile, previewUrl) => { // save
-        setData('banner', croppedFile); // state
+        setData((prev) => ({
+            ...prev,
+            banner: croppedFile,
+            library_banner_path: null
+        })); // state
         setBannerPreview(previewUrl); // state
         setPositionerSource(croppedFile); // state
     };
 
     const handleRemoveBanner = () => { // trigger
-        setData('banner', null); // state
+        setData((prev) => ({
+            ...prev,
+            banner: null,
+            library_banner_path: null
+        })); // state
         setBannerPreview(null); // state
         setPositionerSource(null); // state
         if (fileInputRef.current) { // check
@@ -139,10 +169,7 @@ export default function Create() {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title="Create League - MESF Admin"
-            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
-        >
+        <AdminLayout title="Create League - MESF Admin">
             <Head title="Create League - Admin" />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">
@@ -216,11 +243,12 @@ export default function Create() {
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div className="sm:col-span-2 space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Tournament / League Title <span className="text-amber-400">*</span>
+                                            League Name / Title <span className="text-amber-400">*</span>
                                         </label>
                                         <input
                                             type="text"
                                             required
+                                            placeholder="e.g. Malaysia Esports League 2026"
                                             value={data.name} // state
                                             onChange={(e) => setData('name', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
@@ -246,15 +274,14 @@ export default function Create() {
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Game Title <span className="text-amber-400">*</span>
+                                            Game Title <span className="text-slate-500 font-normal normal-case ml-1">(Optional)</span>
                                         </label>
                                         <select
-                                            required
                                             value={data.game_title} // state
                                             onChange={(e) => setData('game_title', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-[#0d1424] border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
                                         >
-                                            <option value="">Choose Game Title</option>
+                                            <option value="">All Games / Multi-Title (Optional)</option>
                                             {GAME_DISCIPLINES.map((game) => (
                                                 <option key={game} value={game}>
                                                     {game}
@@ -566,59 +593,71 @@ export default function Create() {
                                         Official Banner Artwork
                                     </h2>
                                     <p className="text-[11px] text-slate-400 mt-0.5">
-                                        Recommended ratio 16:9 for event banners and cards.
+                                        Upload full poster or banner artwork (full size preserved, no auto-cropping).
                                     </p>
                                 </div>
 
                                 {bannerPreview ? (
-                                    <div className="relative group rounded-2xl overflow-hidden border border-white/15 bg-black/40 aspect-video flex items-center justify-center">
+                                    <div className="relative group rounded-2xl overflow-hidden border border-white/15 bg-black/40 min-h-[220px] max-h-[360px] flex items-center justify-center p-2">
                                         <img
                                             src={bannerPreview} // state
                                             alt="League Banner Preview"
-                                            className="w-full h-full object-cover"
+                                            className="max-h-[340px] max-w-full object-contain rounded-xl"
                                         />
-                                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setPositionerSource(bannerPreview); // state
-                                                    setIsPositionerOpen(true); // trigger
-                                                }}
-                                                className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
-                                            >
-                                                <Move className="w-3.5 h-3.5" />
-                                                <span>Reposition</span>
-                                            </button>
+                                        <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity flex flex-wrap items-center justify-center gap-2 p-2">
                                             <button
                                                 type="button"
                                                 onClick={() => fileInputRef.current?.click()} // trigger
-                                                className="px-3 py-1.5 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                                className="px-3 py-1.5 rounded-xl bg-white text-black text-[11px] font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
                                             >
-                                                Change
+                                                Change Image
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLibraryOpen(true)} // trigger
+                                                className="px-3 py-1.5 rounded-xl bg-amber-400 text-black text-[11px] font-bold hover:bg-amber-300 transition-all cursor-pointer shadow-lg flex items-center gap-1"
+                                            >
+                                                <FolderOpen className="w-3 h-3" />
+                                                <span>Library</span>
                                             </button>
                                             <button
                                                 type="button"
                                                 onClick={handleRemoveBanner} // trigger
-                                                className="px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                                className="px-3 py-1.5 rounded-xl bg-rose-500 text-white text-[11px] font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
                                             >
                                                 Remove
                                             </button>
                                         </div>
                                     </div>
                                 ) : (
-                                    <div
-                                        onClick={() => fileInputRef.current?.click()} // trigger
-                                        className="border-2 border-dashed border-white/15 hover:border-amber-400/50 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all bg-white/[0.02] hover:bg-amber-400/[0.03] group"
-                                    >
-                                        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 group-hover:text-amber-400 transition-all mb-3">
-                                            <UploadCloud className="w-6 h-6" />
+                                    <div className="border-2 border-dashed border-white/15 rounded-2xl p-5 flex flex-col items-center justify-center text-center bg-white/[0.02]">
+                                        <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400 mb-2.5">
+                                            <UploadCloud className="w-5 h-5" />
                                         </div>
-                                        <p className="text-xs font-semibold text-slate-300 group-hover:text-white transition-colors">
-                                            Upload tournament banner
+                                        <p className="text-xs font-semibold text-slate-200">
+                                            Select Tournament Banner
                                         </p>
-                                        <p className="text-[10px] text-slate-500 mt-1">
-                                            JPG, PNG, WEBP up to 8MB
+                                        <p className="text-[10px] text-slate-500 mt-0.5 mb-3.5">
+                                            JPG, PNG, WEBP up to 8MB (16:9)
                                         </p>
+                                        <div className="flex items-center gap-2 w-full">
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()} // trigger
+                                                className="flex-1 py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                            >
+                                                <UploadCloud className="w-3.5 h-3.5 text-amber-400" />
+                                                <span>Upload</span>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                onClick={() => setIsLibraryOpen(true)} // trigger
+                                                className="flex-1 py-2 px-2.5 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/35 text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                            >
+                                                <FolderOpen className="w-3.5 h-3.5" />
+                                                <span>From Library</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
 
@@ -653,7 +692,7 @@ export default function Create() {
                                     <div className="flex items-center justify-between text-slate-400">
                                         <span>Game:</span>
                                         <span className="font-semibold text-white truncate max-w-[170px]">
-                                            {data.game_title || 'Pending game'}
+                                            {data.game_title || 'All Games / Multi-Title'}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between text-slate-400">
@@ -696,6 +735,13 @@ export default function Create() {
                 aspectRatioLabel="16:9 Banner"
                 title="Reposition Tournament Banner"
                 onComplete={handlePositionerComplete}
+            />
+
+            {/* media library picker modal */}
+            <MediaPickerModal
+                isOpen={isLibraryOpen}
+                onClose={() => setIsLibraryOpen(false)}
+                onSelect={handleSelectFromLibrary}
             />
         </AdminLayout>
     );

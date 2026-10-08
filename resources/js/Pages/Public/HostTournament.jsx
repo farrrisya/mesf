@@ -58,13 +58,7 @@ export default function HostTournament() {
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
             <Head title="Host a Tournament - MESF" />
 
-            {/* Background SVG grain texture */}
-            <div
-                className="pointer-events-none fixed inset-0 opacity-[0.04] mix-blend-overlay z-10"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* Custom Background Glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
@@ -102,14 +96,14 @@ export default function HostTournament() {
                         <div className="flex flex-wrap items-center gap-2 shrink-0">
                             <Link
                                 href="/join-tournament" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all hover:scale-105"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
                             >
                                 <Users className="w-3.5 h-3.5" />
                                 <span>Join Tournament</span>
                             </Link>
                             <Link
                                 href="/partnership" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all hover:scale-105"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
                             >
                                 <Handshake className="w-3.5 h-3.5" />
                                 <span>Partnership</span>
@@ -386,7 +380,7 @@ export default function HostTournament() {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_25px_rgba(251,191,36,0.35)] hover:scale-105 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-105 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                                 >
                                     {processing ? 'Submitting Application...' : 'Submit Hosting Application'}
                                 </button>
@@ -480,24 +474,24 @@ export default function HostTournament() {
                             <div className="space-y-2 pt-1">
                                 <Link
                                     href="/join-tournament" // redirect
-                                    className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-amber-400/40 text-neutral-300 hover:text-white transition-all text-xs group"
+                                    className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 hover:bg-white/[0.06] text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
                                     <div className="flex items-center gap-2.5">
                                         <Users className="w-4 h-4 text-purple-400" />
                                         <span>Join Tournament</span>
                                     </div>
-                                    <span className="text-neutral-500 group-hover:text-amber-400 transition-colors">&rarr;</span>
+                                    <span className="text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">&rarr;</span>
                                 </Link>
 
                                 <Link
                                     href="/partnership" // redirect
-                                    className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-amber-400/40 text-neutral-300 hover:text-white transition-all text-xs group"
+                                    className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 hover:bg-white/[0.06] text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
                                     <div className="flex items-center gap-2.5">
                                         <Handshake className="w-4 h-4 text-emerald-400" />
                                         <span>Become a Partner</span>
                                     </div>
-                                    <span className="text-neutral-500 group-hover:text-amber-400 transition-colors">&rarr;</span>
+                                    <span className="text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">&rarr;</span>
                                 </Link>
                             </div>
                         </div>

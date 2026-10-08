@@ -117,6 +117,8 @@ class NewsController extends Controller
             'published_at' => 'nullable', // validate
             'image' => 'nullable|image|max:10240', // validate
             'poster' => 'nullable|image|max:10240', // validate
+            'library_image_path' => 'nullable|string', // validate
+            'library_poster_path' => 'nullable|string', // validate
             'video_url' => 'nullable|string|max:500', // validate
         ]);
 
@@ -134,10 +136,14 @@ class NewsController extends Controller
 
         if ($request->hasFile('image')) { // check
             $imagePath = $request->file('image')->store('news', 'public'); // save
+        } elseif ($request->filled('library_image_path')) { // check
+            $imagePath = $request->input('library_image_path'); // state
         }
 
         if ($request->hasFile('poster')) { // check
             $posterPath = $request->file('poster')->store('news/posters', 'public'); // save
+        } elseif ($request->filled('library_poster_path')) { // check
+            $posterPath = $request->input('library_poster_path'); // state
         } elseif ($imagePath) {
             $posterPath = $imagePath; // fallback
         }
@@ -239,6 +245,8 @@ class NewsController extends Controller
             'published_at' => 'nullable', // validate
             'image' => 'nullable|image|max:10240', // validate
             'poster' => 'nullable|image|max:10240', // validate
+            'library_image_path' => 'nullable|string', // validate
+            'library_poster_path' => 'nullable|string', // validate
             'remove_image' => 'nullable|boolean', // validate
             'video_url' => 'nullable|string|max:500', // validate
         ]);
@@ -255,10 +263,10 @@ class NewsController extends Controller
         $posterPath = $news->poster_path; // state
 
         if ($request->boolean('remove_image')) { // check
-            if ($imagePath && Storage::disk('public')->exists($imagePath)) { // check
+            if ($imagePath && !Str::startsWith($imagePath, 'media/') && Storage::disk('public')->exists($imagePath)) { // check
                 Storage::disk('public')->delete($imagePath); // save
             }
-            if ($posterPath && $posterPath !== $imagePath && Storage::disk('public')->exists($posterPath)) { // check
+            if ($posterPath && $posterPath !== $imagePath && !Str::startsWith($posterPath, 'media/') && Storage::disk('public')->exists($posterPath)) { // check
                 Storage::disk('public')->delete($posterPath); // save
             }
             $imagePath = null; // state
@@ -266,17 +274,21 @@ class NewsController extends Controller
         }
 
         if ($request->hasFile('image')) { // check
-            if ($imagePath && Storage::disk('public')->exists($imagePath)) { // check
+            if ($imagePath && !Str::startsWith($imagePath, 'media/') && Storage::disk('public')->exists($imagePath)) { // check
                 Storage::disk('public')->delete($imagePath); // save
             }
             $imagePath = $request->file('image')->store('news', 'public'); // save
+        } elseif ($request->filled('library_image_path')) { // check
+            $imagePath = $request->input('library_image_path'); // state
         }
 
         if ($request->hasFile('poster')) { // check
-            if ($posterPath && $posterPath !== $news->image_path && Storage::disk('public')->exists($posterPath)) { // check
+            if ($posterPath && $posterPath !== $news->image_path && !Str::startsWith($posterPath, 'media/') && Storage::disk('public')->exists($posterPath)) { // check
                 Storage::disk('public')->delete($posterPath); // save
             }
             $posterPath = $request->file('poster')->store('news/posters', 'public'); // save
+        } elseif ($request->filled('library_poster_path')) { // check
+            $posterPath = $request->input('library_poster_path'); // state
         }
 
         if (!$posterPath && $imagePath) {

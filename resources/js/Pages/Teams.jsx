@@ -7,20 +7,21 @@ import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
 const STATE_AFFILIATES = [
-    { id: 'johor', code: 'JHR', name: 'Johor', title: 'Persatuan Sukan Elektronik Negeri Johor', region: 'Peninsular', image: '/images/states/johor_transparent.png' },
-    { id: 'kedah', code: 'KDH', name: 'Kedah', title: 'Persatuan Sukan Elektronik Negeri Kedah', region: 'Peninsular', image: '/images/states/kedah_transparent.png' },
-    { id: 'kelantan', code: 'KTN', name: 'Kelantan', title: 'Persatuan Sukan Elektronik Negeri Kelantan', region: 'Peninsular', image: '/images/states/kelantan_transparent.png' },
-    { id: 'melaka', code: 'MLK', name: 'Melaka', title: 'Persatuan Sukan Elektronik Negeri Melaka', region: 'Peninsular', image: '/images/states/melaka_transparent.png' },
-    { id: 'negeri_sembilan', code: 'NSN', name: 'Negeri Sembilan', title: 'Persatuan Sukan Elektronik Negeri Sembilan', region: 'Peninsular', image: '/images/states/negeri_sembilan_transparent.png' },
-    { id: 'pahang', code: 'PHG', name: 'Pahang', title: 'Persatuan Sukan Elektronik Negeri Pahang', region: 'Peninsular', image: '/images/states/pahang_transparent.png' },
-    { id: 'penang', code: 'PNG', name: 'Pulau Pinang', title: 'Persatuan Sukan Elektronik Pulau Pinang', region: 'Peninsular', image: '/images/states/penang_transparent.png' },
-    { id: 'perak', code: 'PRK', name: 'Perak', title: 'Persatuan Sukan Elektronik Perak', region: 'Peninsular', image: '/images/states/perak_transparent.png' },
-    { id: 'perlis', code: 'PLS', name: 'Perlis', title: 'Persatuan Sukan Elektronik Negeri Perlis', region: 'Peninsular', image: '/images/states/perlis_transparent.png' },
-    { id: 'selangor', code: 'SGR', name: 'Selangor', title: 'Persatuan Sukan Elektronik Negeri Selangor', region: 'Peninsular', image: '/images/states/selangor_transparent.png' },
-    { id: 'terengganu', code: 'TRG', name: 'Terengganu', title: 'Persatuan Sukan Elektronik Negeri Terengganu', region: 'Peninsular', image: '/images/states/terengganu_transparent.png' },
-    { id: 'sabah', code: 'SBH', name: 'Sabah', title: 'Persatuan Sukan Elektronik Negeri Sabah', region: 'East Malaysia', image: '/images/states/sabah_transparent.png' },
-    { id: 'sarawak', code: 'SWK', name: 'Sarawak', title: 'Persatuan Sukan Elektronik Sarawak', region: 'East Malaysia', image: '/images/states/sarawak_transparent.png' },
-    { id: 'labuan', code: 'LBN', name: 'WP Labuan', title: 'Persatuan Sukan Elektronik WP Labuan', region: 'East Malaysia', image: '/images/states/labuan_transparent.png' }
+    { id: 'johor', code: 'JHR', name: 'Johor', title: 'Persatuan Sukan Elektronik Negeri Johor', region: 'Peninsular', image: '/images/states/johor_transparent.png', glowColor: '#3B82F6', glowRgba: 'rgba(59, 130, 246, 0.75)' },
+    { id: 'kedah', code: 'KDH', name: 'Kedah', title: 'Persatuan Sukan Elektronik Negeri Kedah', region: 'Peninsular', image: '/images/states/kedah_transparent.png', glowColor: '#10B981', glowRgba: 'rgba(16, 185, 129, 0.75)' },
+    { id: 'kelantan', code: 'KTN', name: 'Kelantan', title: 'Persatuan Sukan Elektronik Negeri Kelantan', region: 'Peninsular', image: '/images/states/kelantan_transparent.png', glowColor: '#EF4444', glowRgba: 'rgba(239, 68, 68, 0.75)' },
+    { id: 'kl', code: 'KUL', name: 'Kuala Lumpur', title: 'Persatuan Sukan Elektronik Kuala Lumpur', region: 'Peninsular', image: '/images/states/kl_transparent.png', glowColor: '#6366F1', glowRgba: 'rgba(99, 102, 241, 0.75)' },
+    { id: 'labuan', code: 'LBN', name: 'WP Labuan', title: 'Persatuan Sukan Elektronik WP Labuan', region: 'East Malaysia', image: '/images/states/labuan_transparent.png', glowColor: '#3B82F6', glowRgba: 'rgba(59, 130, 246, 0.75)' },
+    { id: 'melaka', code: 'MLK', name: 'Melaka', title: 'Persatuan Sukan Elektronik Negeri Melaka', region: 'Peninsular', image: '/images/states/melaka_transparent.png', glowColor: '#2563EB', glowRgba: 'rgba(37, 99, 235, 0.75)' },
+    { id: 'negeri_sembilan', code: 'NSN', name: 'Negeri Sembilan', title: 'Persatuan Sukan Elektronik Negeri Sembilan', region: 'Peninsular', image: '/images/states/negeri_sembilan_transparent.png', glowColor: '#F59E0B', glowRgba: 'rgba(245, 158, 11, 0.75)' },
+    { id: 'pahang', code: 'PHG', name: 'Pahang', title: 'Persatuan Sukan Elektronik Negeri Pahang', region: 'Peninsular', image: '/images/states/pahang_transparent.png', glowColor: '#38BDF8', glowRgba: 'rgba(56, 189, 248, 0.75)' },
+    { id: 'penang', code: 'PNG', name: 'Penang', title: 'Persatuan Sukan Elektronik Pulau Pinang', region: 'Peninsular', image: '/images/states/penang_transparent.png', glowColor: '#0EA5E9', glowRgba: 'rgba(14, 165, 233, 0.75)' },
+    { id: 'perak', code: 'PRK', name: 'Perak', title: 'Persatuan Sukan Elektronik Perak', region: 'Peninsular', image: '/images/states/perak_transparent.png', glowColor: '#FBBF24', glowRgba: 'rgba(251, 191, 36, 0.75)' },
+    { id: 'perlis', code: 'PLS', name: 'Perlis', title: 'Persatuan Sukan Elektronik Negeri Perlis', region: 'Peninsular', image: '/images/states/perlis_transparent.png', glowColor: '#F59E0B', glowRgba: 'rgba(245, 158, 11, 0.75)' },
+    { id: 'sabah', code: 'SBH', name: 'Sabah', title: 'Persatuan Sukan Elektronik Negeri Sabah', region: 'East Malaysia', image: '/images/states/sabah_transparent.png', glowColor: '#06B6D4', glowRgba: 'rgba(6, 182, 212, 0.75)' },
+    { id: 'sarawak', code: 'SWK', name: 'Sarawak', title: 'Persatuan Sukan Elektronik Sarawak', region: 'East Malaysia', image: '/images/states/sarawak_transparent.png', glowColor: '#EF4444', glowRgba: 'rgba(239, 68, 68, 0.75)' },
+    { id: 'selangor', code: 'SGR', name: 'Selangor', title: 'Persatuan Sukan Elektronik Negeri Selangor', region: 'Peninsular', image: '/images/states/selangor_transparent.png', glowColor: '#DC2626', glowRgba: 'rgba(220, 38, 38, 0.75)' },
+    { id: 'terengganu', code: 'TRG', name: 'Terengganu', title: 'Persatuan Sukan Elektronik Negeri Terengganu', region: 'Peninsular', image: '/images/states/terengganu_transparent.png', glowColor: '#F1F5F9', glowRgba: 'rgba(241, 245, 249, 0.85)' }
 ];
 
 function getTeamInitials(name = '', tag = '') { // convert
@@ -45,14 +46,19 @@ export default function Teams({ uploadedTeams = [] }) {
     }, [uploadedTeams]);
 
     const allStateAffiliates = useMemo(() => { // filter
-        const uploadedStates = uploadedTeams.filter(t => t.type === 'state').map(t => ({
-            id: t.slug || t.id,
-            code: (t.tag || t.name.slice(0, 3)).toUpperCase(),
-            name: t.name,
-            title: t.motto || `Persatuan Sukan Elektronik ${t.name}`,
-            region: (t.region && t.region.toLowerCase().includes('east')) || ['sabah', 'sarawak', 'labuan'].some(s => (t.name || '').toLowerCase().includes(s)) ? 'East Malaysia' : 'Peninsular',
-            image: t.logo || `/images/states/${t.slug ? t.slug.replace('-', '_') : 'johor'}_transparent.png`,
-        }));
+        const uploadedStates = uploadedTeams.filter(t => t.type === 'state').map(t => {
+            const fallback = STATE_AFFILIATES.find(s => s.id === t.slug || s.name.toLowerCase() === t.name.toLowerCase()) || {};
+            return {
+                id: t.slug || t.id,
+                code: (t.tag || t.name.slice(0, 3)).toUpperCase(),
+                name: t.name,
+                title: t.motto || `Persatuan Sukan Elektronik ${t.name}`,
+                region: (t.region && t.region.toLowerCase().includes('east')) || ['sabah', 'sarawak', 'labuan'].some(s => (t.name || '').toLowerCase().includes(s)) ? 'East Malaysia' : 'Peninsular',
+                image: t.logo || `/images/states/${t.slug ? t.slug.replace('-', '_') : 'johor'}_transparent.png`,
+                glowColor: fallback.glowColor || '#38BDF8',
+                glowRgba: fallback.glowRgba || 'rgba(56, 189, 248, 0.75)'
+            };
+        });
         return uploadedStates.length > 0 ? uploadedStates : STATE_AFFILIATES;
     }, [uploadedTeams]);
 
@@ -215,7 +221,7 @@ export default function Teams({ uploadedTeams = [] }) {
                             </svg>
                         </div>
                         <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight">
-                            14
+                            {allStateAffiliates.length}
                         </div>
                         <div className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-[0.18em] text-neutral-400">
                             States & FT
@@ -304,8 +310,8 @@ export default function Teams({ uploadedTeams = [] }) {
                                 <MapPin className="w-3 h-3" /> Region:
                             </span>
                             {[
-                                { id: 'All', label: 'All Regions (14)' },
-                                { id: 'Peninsular', label: 'Peninsular (11)' },
+                                { id: 'All', label: `All Regions (${allStateAffiliates.length})` },
+                                { id: 'Peninsular', label: 'Peninsular (12)' },
                                 { id: 'East Malaysia', label: 'East Malaysia (3)' }
                             ].map(reg => (
                                 <button
@@ -387,7 +393,7 @@ export default function Teams({ uploadedTeams = [] }) {
                                                 </div>
 
                                                 <div className="space-y-0.5 min-w-0 flex-1">
-                                                    <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors truncate">
+                                                    <h3 className="text-base font-bold text-white transition-colors truncate">
                                                         {team.name}
                                                     </h3>
                                                     <div className="flex items-center gap-1.5 text-xs text-neutral-400">
@@ -419,7 +425,7 @@ export default function Teams({ uploadedTeams = [] }) {
                                                     onClick={() => {
                                                         router.visit(team.slug ? `/teams/${team.slug}` : '/teams/details'); // redirect
                                                     }}
-                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:text-amber-400 transition-colors cursor-pointer"
+                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:text-neutral-300 transition-colors cursor-pointer"
                                                 >
                                                     <span>Profile</span>
                                                     <ArrowUpRight className="w-3.5 h-3.5" />
@@ -434,12 +440,12 @@ export default function Teams({ uploadedTeams = [] }) {
 
                     {/* SECTION 2: STATE ASSOCIATIONS */}
                     {showStateSection && (
-                        <section className="space-y-4">
+                        <section id="affiliates" className="space-y-6 pt-4">
                             <div className="flex items-center justify-between border-b border-white/10 pb-3">
                                 <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-white">
                                     State Affiliates
                                 </h2>
-                                <span className="text-xs font-mono text-neutral-400">
+                                <span className="text-xs font-mono text-neutral-400 shrink-0">
                                     {filteredStates.length} STATES
                                 </span>
                             </div>
@@ -451,63 +457,42 @@ export default function Teams({ uploadedTeams = [] }) {
                                     </p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                    {filteredStates.map(state => (
-                                        <div
+                                <div className="w-full grid grid-cols-3 sm:grid-cols-5 gap-y-12 sm:gap-y-16 gap-x-6 sm:gap-x-10 items-center justify-items-center py-6">
+                                    {filteredStates.map((state) => (
+                                        <Link
                                             key={state.id}
-                                            className="group relative p-5 rounded-2xl border border-white/10 bg-[#0A0F1D] hover:border-white/25 hover:bg-[#0D1426] transition-colors duration-200 flex flex-col justify-between space-y-4"
+                                            href={`/teams/state/${state.id}`} // redirect
+                                            style={{
+                                                '--state-glow': state.glowRgba || 'rgba(245, 158, 11, 0.75)',
+                                                '--state-color': state.glowColor || '#F59E0B'
+                                            }}
+                                            className="group relative flex flex-col items-center justify-center cursor-pointer select-none"
                                         >
-                                            {/* top badge */}
-                                            <div className="flex items-center justify-between">
-                                                <span className="px-2 py-0.5 rounded bg-white/[0.06] border border-white/10 font-mono text-[10px] font-bold text-neutral-300">
-                                                    {state.code}
-                                                </span>
-                                                <span className="text-[10px] font-mono text-neutral-400">
-                                                    {state.region === 'Peninsular' ? 'Peninsular' : 'Borneo / FT'}
-                                                </span>
-                                            </div>
-
-                                            {/* state crest & details */}
-                                            <div className="flex items-center gap-3.5 py-1">
-                                                <div className="h-14 w-14 rounded-xl bg-black/60 border border-white/15 p-2 flex items-center justify-center shrink-0">
-                                                    <img
-                                                        src={state.image}
-                                                        alt={state.name}
-                                                        onError={(e) => {
-                                                            e.currentTarget.style.display = 'none';
-                                                        }}
-                                                        className="h-full w-full object-contain"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-0.5 min-w-0 flex-1">
-                                                    <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors truncate">
-                                                        {state.name}
-                                                    </h3>
-                                                    <p className="text-[11px] text-neutral-400 line-clamp-1">
-                                                        {state.title}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {/* affiliate verification badge */}
-                                            <div className="pt-3 border-t border-white/5 flex items-center justify-between">
-                                                <div className="flex items-center gap-1.5 text-[11px] text-neutral-400">
-                                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                                    <span>Affiliate</span>
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        router.visit(`/teams/state/${state.id}`); // redirect
+                                            {/* raw floating logo/crest: zero background colors, zero borders, grayscale and opacity-60 by default */}
+                                            <div className="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
+                                                <img
+                                                    src={state.image}
+                                                    alt={state.name}
+                                                    className="max-h-full max-w-full object-contain filter transition-all duration-300 group-hover:[filter:drop-shadow(0_0_14px_var(--state-glow))_drop-shadow(0_0_28px_var(--state-glow))]"
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = 'none'; // fallback
                                                     }}
-                                                    className="inline-flex items-center gap-1 text-xs font-bold text-white hover:text-amber-400 transition-colors cursor-pointer"
-                                                >
-                                                    <span>Details</span>
-                                                    <ArrowUpRight className="w-3.5 h-3.5" />
-                                                </button>
+                                                />
                                             </div>
-                                        </div>
+
+                                            {/* tiny glowing text label drops down just below on hover */}
+                                            <div className="pointer-events-none absolute -bottom-8 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 -translate-y-1 group-hover:translate-y-0 transition-all duration-200 z-30 whitespace-nowrap">
+                                                <span
+                                                    className="text-[11px] sm:text-xs font-semibold tracking-wider transition-colors duration-200"
+                                                    style={{
+                                                        color: state.glowColor || '#F59E0B',
+                                                        textShadow: `0 0 10px ${state.glowRgba || 'rgba(245, 158, 11, 0.75)'}`
+                                                    }}
+                                                >
+                                                    {state.name}
+                                                </span>
+                                            </div>
+                                        </Link>
                                     ))}
                                 </div>
                             )}

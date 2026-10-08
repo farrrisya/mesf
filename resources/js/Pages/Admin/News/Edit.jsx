@@ -13,10 +13,12 @@ import {
     Tag,
     Globe,
     Video,
-    Move
+    Move,
+    FolderOpen
 } from 'lucide-react';
 import NewsVideoPlayer, { parseVideoInfo } from '@/Components/NewsVideoPlayer';
 import ImagePositionerModal from '@/Components/ImagePositionerModal';
+import MediaPickerModal from '@/Components/MediaPickerModal';
 
 // --2. properties--
 const DEFAULT_CATEGORIES = [
@@ -35,6 +37,7 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
     const [originalFile, setOriginalFile] = useState(null); // state
     const [hasCustomCrop, setHasCustomCrop] = useState(false); // state
     const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
+    const [isLibraryOpen, setIsLibraryOpen] = useState(false); // state
     const [positionerSource, setPositionerSource] = useState(null); // state
     const [rawFileName, setRawFileName] = useState('cover.jpg'); // state
     const [processing, setProcessing] = useState(false); // state
@@ -54,6 +57,8 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         video_url: article.video_url || '',
         image: null,
         poster: null,
+        library_image_path: null,
+        library_poster_path: null,
         remove_image: false,
     }); // state
 
@@ -78,6 +83,8 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                 ...prev,
                 poster: file, // full original poster
                 image: file, // initial cover
+                library_image_path: null,
+                library_poster_path: null,
                 remove_image: false
             })); // state
             const reader = new FileReader(); // convert
@@ -87,10 +94,32 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         }
     };
 
+    const handleSelectFromLibrary = (mediaItem) => { // trigger
+        setImagePreview(mediaItem.url); // state
+        setOriginalSource(mediaItem.url); // state
+        setOriginalFile(null); // state
+        setPositionerSource(mediaItem.url); // state
+        setRawFileName(mediaItem.file_name); // state
+        setFormData((prev) => ({
+            ...prev,
+            library_image_path: mediaItem.file_path,
+            library_poster_path: mediaItem.file_path,
+            image: null,
+            poster: null,
+            remove_image: false
+        })); // state
+        setHasCustomCrop(false); // state
+        if (fileInputRef.current) { // check
+            fileInputRef.current.value = ''; // state
+        }
+        setIsLibraryOpen(false); // toggle
+    };
+
     const handlePositionerComplete = (croppedFile, previewUrl) => { // save
         setFormData((prev) => ({
             ...prev,
             image: croppedFile, // 16:9 framed cover
+            library_image_path: null, // cropped binary overrides library cover
             remove_image: false
         })); // state
         setImagePreview(previewUrl); // state
@@ -108,20 +137,27 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
 
     const handleResetFraming = () => { // trigger
         if (originalFile) { // check
-            setFormData((prev) => ({ ...prev, image: originalFile })); // state
+            setFormData((prev) => ({ ...prev, image: originalFile, library_image_path: null })); // state
             const reader = new FileReader(); // convert
             reader.onloadend = () => setImagePreview(reader.result); // state
             reader.readAsDataURL(originalFile); // convert
             setHasCustomCrop(false); // state
         } else if (originalSource) {
-            setFormData((prev) => ({ ...prev, image: null })); // state
+            setFormData((prev) => ({ ...prev, image: null, library_image_path: formData.library_poster_path })); // state
             setImagePreview(originalSource); // state
             setHasCustomCrop(false); // state
         }
     };
 
     const handleRemoveImage = () => { // trigger
-        setFormData((prev) => ({ ...prev, image: null, poster: null, remove_image: true })); // state
+        setFormData((prev) => ({
+            ...prev,
+            image: null,
+            poster: null,
+            library_image_path: null,
+            library_poster_path: null,
+            remove_image: true
+        })); // state
         setImagePreview(null); // state
         setOriginalSource(null); // state
         setOriginalFile(null); // state
@@ -153,6 +189,12 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
         if (formData.remove_image) { // check
             submission.append('remove_image', '1'); // state
         }
+        if (formData.library_image_path) { // check
+            submission.append('library_image_path', formData.library_image_path); // state
+        }
+        if (formData.library_poster_path) { // check
+            submission.append('library_poster_path', formData.library_poster_path); // state
+        }
         if (formData.image instanceof File) { // check
             submission.append('image', formData.image); // state
         }
@@ -173,10 +215,7 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
 
     // --5. UI--
     return (
-        <AdminLayout
-            title={`Edit: ${article.title || 'Article'} - MESF Admin`}
-            contentClassName="px-4 py-4 sm:px-8 sm:py-5"
-        >
+        <AdminLayout title={`Edit: ${article.title || 'Article'} - MESF Admin`}>
             <Head title={`Edit News: ${article.title || ''} - Admin`} />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">
@@ -266,21 +305,21 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                                     </span>
                                                 </div>
 
-                                                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2.5">
+                                                <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity flex flex-wrap items-center justify-center gap-2 p-3">
                                                     <button
                                                         type="button"
                                                         onClick={handleOpenPositioner} // trigger
-                                                        className="px-3.5 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
+                                                        className="px-3 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-xs font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1.5"
                                                         title="Reposition cover framing"
                                                     >
                                                         <Move className="w-3.5 h-3.5" />
-                                                        <span>Reposition</span>
+                                                        <span>Crop</span>
                                                     </button>
                                                     {hasCustomCrop && (
                                                         <button
                                                             type="button"
                                                             onClick={handleResetFraming} // trigger
-                                                            className="px-3.5 py-2 rounded-xl bg-white/15 hover:bg-white/25 text-neutral-200 text-xs font-mono transition-all cursor-pointer shadow-lg"
+                                                            className="px-3 py-1.5 rounded-xl bg-white/15 hover:bg-white/25 text-neutral-200 text-xs font-mono transition-all cursor-pointer shadow-lg"
                                                             title="Use original framing"
                                                         >
                                                             Reset Crop
@@ -289,14 +328,22 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                                     <button
                                                         type="button"
                                                         onClick={() => fileInputRef.current?.click()} // trigger
-                                                        className="px-3.5 py-2 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
+                                                        className="px-3 py-1.5 rounded-xl bg-white text-black text-xs font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
                                                     >
-                                                        Change
+                                                        Upload
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsLibraryOpen(true)} // trigger
+                                                        className="px-3 py-1.5 rounded-xl bg-amber-400 text-black text-xs font-bold hover:bg-amber-300 transition-all cursor-pointer shadow-lg flex items-center gap-1.5"
+                                                    >
+                                                        <FolderOpen className="w-3.5 h-3.5" />
+                                                        <span>Library</span>
                                                     </button>
                                                     <button
                                                         type="button"
                                                         onClick={handleRemoveImage} // trigger
-                                                        className="px-3.5 py-2 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
+                                                        className="px-3 py-1.5 rounded-xl bg-rose-500 text-white text-xs font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
                                                     >
                                                         Remove
                                                     </button>
@@ -308,24 +355,51 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                                                 <p className="text-[11px] text-slate-400 font-mono">
                                                     Original full poster will be displayed in full-screen poster view.
                                                 </p>
-                                                <button
-                                                    type="button"
-                                                    onClick={handleOpenPositioner} // trigger
-                                                    className="text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1.5 cursor-pointer font-bold"
-                                                >
-                                                    <Move className="w-3 h-3" />
-                                                    <span>Adjust Cover Crop (Re-position)</span>
-                                                </button>
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsLibraryOpen(true)} // trigger
+                                                        className="text-xs font-mono text-slate-400 hover:text-white flex items-center gap-1.5 cursor-pointer font-medium"
+                                                    >
+                                                        <FolderOpen className="w-3.5 h-3.5 text-amber-400" />
+                                                        <span>Change from Library</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleOpenPositioner} // trigger
+                                                        className="text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1.5 cursor-pointer font-bold"
+                                                    >
+                                                        <Move className="w-3.5 h-3.5" />
+                                                        <span>Adjust Crop</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     ) : (
-                                        <div
-                                            onClick={() => fileInputRef.current?.click()} // trigger
-                                            className="w-full py-10 border-2 border-dashed border-white/15 hover:border-amber-400/50 rounded-2xl bg-white/[0.02] flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors"
-                                        >
-                                            <UploadCloud className="w-8 h-8 text-amber-400" />
-                                            <p className="text-xs font-semibold text-slate-200">Upload Featured Cover Image</p>
-                                            <p className="text-[11px] text-slate-500">PNG, JPG, WEBP up to 10MB</p>
+                                        <div className="w-full py-9 px-4 border-2 border-dashed border-white/15 rounded-2xl bg-white/[0.02] flex flex-col items-center justify-center text-center">
+                                            <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400 mb-2.5">
+                                                <UploadCloud className="w-6 h-6" />
+                                            </div>
+                                            <p className="text-xs font-semibold text-slate-200">Select Featured Cover Image</p>
+                                            <p className="text-[11px] text-slate-500 mt-0.5 mb-4">PNG, JPG, WEBP up to 10MB (16:9 recommended)</p>
+                                            <div className="flex items-center gap-2.5 w-full max-w-sm">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => fileInputRef.current?.click()} // trigger
+                                                    className="flex-1 py-2.5 px-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                                >
+                                                    <UploadCloud className="w-4 h-4 text-amber-400" />
+                                                    <span>Upload File</span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setIsLibraryOpen(true)} // trigger
+                                                    className="flex-1 py-2.5 px-3 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/35 text-amber-300 text-xs font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                                                >
+                                                    <FolderOpen className="w-4 h-4" />
+                                                    <span>From Library</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     )}
                                     <input
@@ -577,6 +651,13 @@ export default function Edit({ article = {}, categories = DEFAULT_CATEGORIES }) 
                 aspectRatioLabel="16:9 Landscape Cover"
                 title="Reposition Cover Image"
                 onComplete={handlePositionerComplete}
+            />
+
+            {/* media library picker modal */}
+            <MediaPickerModal
+                isOpen={isLibraryOpen}
+                onClose={() => setIsLibraryOpen(false)}
+                onSelect={handleSelectFromLibrary}
             />
         </AdminLayout>
     );

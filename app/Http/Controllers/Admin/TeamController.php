@@ -59,6 +59,7 @@ class TeamController extends Controller
             'roster_size' => 'nullable|integer|min:1',
             'status' => 'nullable|string|max:50',
             'logo' => 'nullable|image|max:10240', // 10MB
+            'library_logo_path' => 'nullable|string',
         ]);
 
         $baseSlug = Str::slug($request->name); // convert
@@ -72,6 +73,8 @@ class TeamController extends Controller
         $logoPath = null; // state
         if ($request->hasFile('logo')) { // check
             $logoPath = $request->file('logo')->store('teams', 'public'); // save
+        } elseif ($request->filled('library_logo_path')) { // check
+            $logoPath = $request->input('library_logo_path'); // state
         }
 
         Team::create([ // save
@@ -129,21 +132,24 @@ class TeamController extends Controller
             'roster_size' => 'nullable|integer|min:1',
             'status' => 'nullable|string|max:50',
             'logo' => 'nullable|image|max:10240', // 10MB
+            'library_logo_path' => 'nullable|string',
         ]);
 
         $logoPath = $team->logo_path; // state
         if ($request->boolean('remove_logo') || $request->input('remove_logo') === 'true' || $request->input('remove_logo') === '1') { // check
-            if ($logoPath && Storage::disk('public')->exists($logoPath)) { // check
+            if ($logoPath && !Str::startsWith($logoPath, 'media/') && Storage::disk('public')->exists($logoPath)) { // check
                 Storage::disk('public')->delete($logoPath); // save
             }
             $logoPath = null; // state
         }
 
         if ($request->hasFile('logo')) { // check
-            if ($logoPath && Storage::disk('public')->exists($logoPath)) { // check
+            if ($logoPath && !Str::startsWith($logoPath, 'media/') && Storage::disk('public')->exists($logoPath)) { // check
                 Storage::disk('public')->delete($logoPath); // save
             }
             $logoPath = $request->file('logo')->store('teams', 'public'); // save
+        } elseif ($request->filled('library_logo_path')) { // check
+            $logoPath = $request->input('library_logo_path'); // state
         }
 
         $team->update([ // save

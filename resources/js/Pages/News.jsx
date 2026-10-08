@@ -1,18 +1,19 @@
 // --1. imports--
 import { Head, Link } from '@inertiajs/react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import NewsVideoPlayer from '@/Components/NewsVideoPlayer';
 import {
     Play,
     Search,
     X,
     ArrowRight,
     Calendar,
-    MapPin,
-    Sparkles,
     Newspaper,
-    Video
+    Video,
+    Film,
+    ExternalLink
 } from 'lucide-react';
 
 // --2. properties--
@@ -30,11 +31,31 @@ export default function News({
     const [activeCategory, setActiveCategory] = useState(initialCategory); // state
     const [searchQuery, setSearchQuery] = useState(initialSearch); // state
     const [onlyVideos, setOnlyVideos] = useState(false); // state
+    const [videoModalArticle, setVideoModalArticle] = useState(null); // state
+    const [heroInlineVideo, setHeroInlineVideo] = useState(false); // state
+
+    // lock background scroll when video modal is active
+    useEffect(() => {
+        if (!videoModalArticle) return; // check
+        const originalOverflow = document.body.style.overflow; // state
+        document.body.style.overflow = 'hidden'; // state
+
+        const handleKeyDown = (e) => { // trigger
+            if (e.key === 'Escape') setVideoModalArticle(null); // state
+        };
+        window.addEventListener('keydown', handleKeyDown); // trigger
+
+        return () => {
+            document.body.style.overflow = originalOverflow; // state
+            window.removeEventListener('keydown', handleKeyDown); // trigger
+        };
+    }, [videoModalArticle]);
 
     // filter articles by category, video toggle, and search keyword
     const filteredArticles = useMemo(() => { // filter
         return articles.filter((article) => {
-            const matchesCat = activeCategory === 'ALL' || article.category === activeCategory; // check
+            const matchesCat = activeCategory === 'ALL' ||
+                (article.category && article.category.toUpperCase().trim() === activeCategory.toUpperCase().trim()); // check
             if (!matchesCat) return false;
 
             if (onlyVideos && !article.video_url) return false; // check
@@ -52,6 +73,11 @@ export default function News({
         });
     }, [articles, activeCategory, onlyVideos, searchQuery]);
 
+    // count total available video articles
+    const videoCount = useMemo(() => { // convert
+        return articles.filter((a) => Boolean(a.video_url)).length;
+    }, [articles]);
+
     // reset all active filters
     const handleResetFilters = () => { // trigger
         setActiveCategory('ALL'); // state
@@ -62,226 +88,276 @@ export default function News({
     // fallback featured article if none provided
     const displayHero = featuredArticle || (articles.length > 0 ? articles[0] : null); // state
 
-    // determine whether to show spotlight hero card
-    const showSpotlight = !searchQuery && !onlyVideos && displayHero && (activeCategory === 'ALL' || displayHero.category === activeCategory); // check
+    // determine whether to show spotlight hero card: ONLY when viewing ALL categories
+    const showSpotlight = !searchQuery && !onlyVideos && displayHero && activeCategory === 'ALL'; // check
+
+    // grid articles: exclude hero from grid on ALL category to prevent duplication; show all articles in normal grid when filtered by category
+    const displayGridArticles = useMemo(() => { // filter
+        if (showSpotlight && displayHero) { // check
+            return filteredArticles.filter((article) => article.id !== displayHero.id); // filter
+        }
+        return filteredArticles; // state
+    }, [filteredArticles, showSpotlight, displayHero]);
 
     // --5. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
-            <Head title="News & Announcements - MESF" />
+            <Head title="News & Media - MESF" />
 
-            {/* custom animations & glow styles matching about page */}
-            <style>{`
-                @keyframes pulseGlow {
-                    0%, 100% { opacity: 0.35; transform: scale(1); }
-                    50% { opacity: 0.6; transform: scale(1.05); }
-                }
-                .pulse-glow {
-                    animation: pulseGlow 7s ease-in-out infinite;
-                }
-            `}</style>
-
-            {/* ambient background glows matching about page */}
-            <div className="pointer-events-none absolute -top-40 left-1/4 h-[550px] w-[550px] rounded-full bg-amber-500/10 blur-[150px] pulse-glow" />
-            <div className="pointer-events-none absolute top-[40%] right-10 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[160px]" />
-            <div className="pointer-events-none absolute top-[75%] left-10 h-[450px] w-[450px] rounded-full bg-amber-400/5 blur-[150px]" />
-
-            {/* fixed grain overlay matching about page */}
-            <div
-                className="pointer-events-none fixed inset-0 z-40 opacity-[0.025]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+            {/* static ambient background glows */}
+            <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
+                <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-blue-600/10 blur-[130px]" />
+                <div className="absolute top-1/2 -right-48 w-96 h-96 rounded-full bg-amber-600/10 blur-[140px]" />
+                <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[160px]" />
+            </div>
 
             {/* floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                 <PublicNavbar activeTab="news" />
             </div>
 
-            {/* typographic hero header matching about page top spacing */}
-            <header className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-32 md:pt-40 pb-6">
-                <div className="space-y-3 sm:space-y-4">
-                    <span className="text-[11px] sm:text-xs font-mono font-bold tracking-[0.28em] text-amber-400 uppercase block">
-                        Malaysia Esports Federation
-                    </span>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-2 border-b border-white/10">
-                        <div>
-                            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight uppercase text-white">
-                                News
-                            </h1>
-                            <p className="text-xs sm:text-sm md:text-base text-neutral-400 font-normal leading-relaxed mt-2 max-w-2xl">
-                                Official federation announcements, tournament recaps, and national team dispatches.
-                            </p>
+            {/* 1. distinct editorial header (clean, organized, no photo banner) */}
+            <header className="relative z-20 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-32 sm:pt-36 pb-6 text-left">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-white/10">
+                    <div className="space-y-3 max-w-2xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono font-semibold tracking-widest text-amber-400 uppercase">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            <span>Official Federation Dispatches</span>
+                        </div>
+                        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight uppercase text-white drop-shadow-sm">
+                            News & Media
+                        </h1>
+                        <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed">
+                            Official announcements, tournament bulletins, and video broadcasts from the Malaysia Esports Federation.
+                        </p>
+                    </div>
+
+                    {/* quick summary statistics chips */}
+                    <div className="flex items-center gap-3 shrink-0">
+                        <div className="px-4 py-3 rounded-2xl bg-[#090F1E] border border-white/10 flex flex-col items-start min-w-[110px]">
+                            <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Total Stories</span>
+                            <span className="text-lg sm:text-xl font-bold font-mono text-white">{articles.length}</span>
+                        </div>
+                        <div className="px-4 py-3 rounded-2xl bg-[#090F1E] border border-white/10 flex flex-col items-start min-w-[110px]">
+                            <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">Video Bulletins</span>
+                            <span className="text-lg sm:text-xl font-bold font-mono text-amber-400">{videoCount}</span>
                         </div>
                     </div>
                 </div>
             </header>
 
-            {/* main content area */}
+            {/* 2. search & filter toolbar */}
+            <div className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 text-left">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-3 sm:p-4 rounded-2xl bg-[#090F1E]/90 border border-white/10 backdrop-blur-xl shadow-lg">
+                    {/* category filter pills */}
+                    <div className="flex items-center gap-2 overflow-x-auto pb-1 lg:pb-0 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
+                        {categories.map((cat) => {
+                            const isActive = activeCategory === cat; // check
+                            return (
+                                <button
+                                    key={cat}
+                                    type="button"
+                                    onClick={() => setActiveCategory(cat)} // state
+                                    className={`px-3.5 py-2 rounded-xl text-xs font-bold tracking-wider uppercase whitespace-nowrap transition-colors duration-200 cursor-pointer select-none ${
+                                        isActive
+                                            ? 'bg-white text-black shadow-[0_4px_16px_rgba(255,255,255,0.2)] border border-white'
+                                            : 'border border-white/10 bg-[#0E162B] text-neutral-300 hover:text-white hover:border-white/30'
+                                    }`}
+                                >
+                                    {cat}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    {/* right controls: search, video toggle & counter */}
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-3">
+                        {/* search input */}
+                        <div className="relative w-full sm:w-60 md:w-72">
+                            <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={searchQuery} // state
+                                onChange={(e) => setSearchQuery(e.target.value)} // trigger
+                                placeholder="Search dispatches..."
+                                className="w-full pl-9 pr-8 py-2 rounded-xl bg-[#0E162B] border border-white/15 focus:border-amber-400/50 text-xs text-white placeholder-neutral-500 outline-none backdrop-blur-md transition-colors"
+                            />
+                            {searchQuery && (
+                                <button
+                                    type="button"
+                                    onClick={() => setSearchQuery('')} // trigger
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* video filter toggle */}
+                        <button
+                            type="button"
+                            onClick={() => setOnlyVideos((prev) => !prev)} // state
+                            className={`px-3.5 py-2 rounded-xl text-xs font-mono tracking-wider uppercase transition-colors duration-200 cursor-pointer flex items-center gap-1.5 shrink-0 ${
+                                onlyVideos
+                                    ? 'bg-rose-500/20 border border-rose-500/50 text-rose-300'
+                                    : 'bg-[#0E162B] border border-white/15 text-neutral-300 hover:text-white hover:border-white/30'
+                            }`}
+                        >
+                            <Video className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Only Videos</span>
+                        </button>
+
+                        {/* counter chip */}
+                        <span className="text-[11px] font-mono text-neutral-400 whitespace-nowrap px-3 py-2 rounded-xl bg-white/5 border border-white/10 shrink-0">
+                            {filteredArticles.length} {filteredArticles.length === 1 ? 'Story' : 'Stories'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            {/* 3. main editorial content */}
             <div className="flex-1">
-                {/* content wrapper with spacious layout matching standard page spacing */}
-                <main className="relative z-20 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-10 sm:space-y-12 pt-6 sm:pt-8">
-                    {/* editorial hero spotlight (2-column featured story) */}
+                <main className="relative z-20 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                    {/* editorial hero spotlight */}
                     {showSpotlight && (
-                        <section className="relative w-full rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.6)]">
-                            {/* top luminous highlight beam */}
-                            <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/25 to-transparent opacity-70 z-20" />
+                        <div className="mb-10 sm:mb-12">
+                            <div className="group relative block w-full rounded-2xl md:rounded-3xl border border-white/10 hover:border-amber-400/40 bg-[#090F1E]/90 hover:bg-[#0E162B] backdrop-blur-xl overflow-hidden shadow-[0_16px_40px_rgba(0,0,0,0.55)] transition-colors duration-300">
+                                <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
+                                    {/* media column: if playing video inline, show player; otherwise show image */}
+                                    <div className="lg:col-span-7 relative aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] lg:min-h-[400px] bg-[#060A14] overflow-hidden flex items-center justify-center">
+                                        {heroInlineVideo && displayHero.video_url ? (
+                                            <div className="w-full h-full p-4 flex flex-col justify-center bg-black">
+                                                <div className="flex items-center justify-between pb-2">
+                                                    <span className="text-xs font-mono text-amber-400 uppercase">Live Playback</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setHeroInlineVideo(false)} // trigger
+                                                        className="text-xs font-mono text-neutral-400 hover:text-white flex items-center gap-1 cursor-pointer"
+                                                    >
+                                                        <X className="w-3.5 h-3.5" />
+                                                        <span>Close Player</span>
+                                                    </button>
+                                                </div>
+                                                <NewsVideoPlayer url={displayHero.video_url} title={displayHero.title} className="my-0" />
+                                            </div>
+                                        ) : (
+                                            <>
+                                                {displayHero.image ? (
+                                                    <img
+                                                        src={displayHero.image}
+                                                        alt={displayHero.title}
+                                                        className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-300"
+                                                    />
+                                                ) : (
+                                                    <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 p-8">
+                                                        <Newspaper className="w-10 h-10 opacity-40 text-neutral-400" />
+                                                        <span className="text-xs font-mono uppercase text-neutral-400">Official Release</span>
+                                                    </div>
+                                                )}
 
-                            <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
-                                {/* media column (7 cols) */}
-                                <div className="lg:col-span-7 relative min-h-[260px] sm:min-h-[340px] lg:min-h-[420px] bg-[#070B14] overflow-hidden flex items-center justify-center">
-                                    {displayHero.image ? (
-                                        <img
-                                            src={displayHero.image}
-                                            alt={displayHero.title}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <div className="flex flex-col items-center justify-center gap-3 text-neutral-600 p-8">
-                                            <Newspaper className="w-12 h-12 opacity-40 text-neutral-400" />
-                                            <span className="text-xs font-mono uppercase text-neutral-400">Official Release</span>
-                                        </div>
-                                    )}
+                                                {/* gradient overlay */}
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
-                                    {/* subtle inner gradients for contrast */}
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-[#0d1424]/60 hidden lg:block pointer-events-none" />
+                                                {/* badges on image */}
+                                                <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
+                                                    <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase bg-amber-400 text-black shadow-sm">
+                                                        Lead Story
+                                                    </span>
+                                                    <span className="px-2.5 py-1 rounded-md text-[10px] font-mono font-semibold uppercase bg-[#070B14]/85 backdrop-blur-md border border-white/20 text-neutral-200">
+                                                        {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
+                                                    </span>
+                                                </div>
 
-                                    {/* badges on image */}
-                                    <div className="absolute top-4 left-4 flex items-center gap-2">
-                                        <span className="px-3 py-1 rounded-lg text-xs font-mono font-bold uppercase bg-amber-400 text-black shadow-md">
-                                            Featured Story
-                                        </span>
-                                        <span className="px-3 py-1 rounded-lg text-xs font-mono font-medium uppercase bg-[#070B14]/80 backdrop-blur-md border border-white/20 text-neutral-200 shadow-sm">
-                                            {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
-                                        </span>
-                                    </div>
-
-                                    {displayHero.video_url && (
-                                        <div className="absolute top-4 right-4">
-                                            <span className="px-3 py-1 rounded-lg text-xs font-mono font-semibold uppercase bg-rose-500/90 text-white backdrop-blur-md flex items-center gap-1.5 shadow-md">
-                                                <Play className="w-3 h-3 fill-white text-white" />
-                                                <span>Video</span>
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-
-                                {/* editorial content column (5 cols) */}
-                                <div className="lg:col-span-5 p-6 sm:p-8 lg:p-10 flex flex-col justify-between space-y-6 text-left border-t lg:border-t-0 lg:border-l border-white/10">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
-                                            {displayHero.date && <span>{displayHero.date}</span>}
-                                            {displayHero.detail && (
-                                                <>
-                                                    <span className="text-neutral-600">•</span>
-                                                    <span className="truncate">{displayHero.detail}</span>
-                                                </>
-                                            )}
-                                        </div>
-
-                                        <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white uppercase tracking-tight leading-tight">
-                                            {displayHero.title}
-                                        </h2>
-
-                                        {displayHero.excerpt && (
-                                            <p className="text-xs sm:text-sm text-neutral-300 font-normal leading-relaxed line-clamp-4">
-                                                {displayHero.excerpt}
-                                            </p>
+                                                {/* video play action overlay if spotlight has video */}
+                                                {displayHero.video_url && (
+                                                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => setHeroInlineVideo(true)} // trigger
+                                                            className="flex items-center gap-2 px-4 py-2.5 rounded-full bg-amber-400 hover:bg-amber-300 text-black font-bold text-xs font-mono tracking-wider uppercase transition-colors shadow-2xl cursor-pointer"
+                                                        >
+                                                            <Play className="w-4 h-4 fill-black" />
+                                                            <span>Watch Video Here</span>
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </>
                                         )}
                                     </div>
 
-                                    <div className="pt-4 border-t border-white/10 flex items-center justify-between">
-                                        <Link
-                                            href={displayHero.slug ? `/news/${displayHero.slug}` : '/news/article'}
-                                            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-black font-extrabold text-xs tracking-wider uppercase transition-colors shadow-md cursor-pointer"
-                                        >
-                                            <span>Read Full Story</span>
-                                            <ArrowRight className="w-3.5 h-3.5" />
-                                        </Link>
+                                    {/* content column */}
+                                    <div className="lg:col-span-5 p-6 sm:p-8 lg:p-9 flex flex-col justify-between space-y-4 text-left border-t lg:border-t-0 lg:border-l border-white/10">
+                                        <div className="space-y-3">
+                                            <div className="flex items-center gap-2 text-xs font-mono text-neutral-400">
+                                                <Calendar className="w-3.5 h-3.5 text-neutral-500" />
+                                                <span>{displayHero.date}</span>
+                                                {displayHero.detail && displayHero.detail !== 'OFFICIAL' && (
+                                                    <>
+                                                        <span className="text-neutral-600">•</span>
+                                                        <span className="truncate">{displayHero.detail}</span>
+                                                    </>
+                                                )}
+                                            </div>
+
+                                            <h2 className="text-xl sm:text-2xl font-black text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug">
+                                                {displayHero.title}
+                                            </h2>
+
+                                            {displayHero.excerpt && (
+                                                <p className="text-xs sm:text-sm text-neutral-300/90 font-normal leading-relaxed line-clamp-3 lg:line-clamp-4">
+                                                    {displayHero.excerpt}
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* spotlight actions */}
+                                        <div className="pt-4 border-t border-white/10 flex items-center justify-between gap-3">
+                                            {displayHero.video_url ? (
+                                                <div className="flex items-center gap-3 w-full justify-between">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setHeroInlineVideo(true)} // trigger
+                                                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                                                    >
+                                                        <Play className="w-3.5 h-3.5 fill-black" />
+                                                        <span>Play Video</span>
+                                                    </button>
+                                                    {displayHero.slug && (
+                                                        <Link
+                                                            href={`/news/${displayHero.slug}`} // redirect
+                                                            className="text-xs text-neutral-400 hover:text-white uppercase font-mono tracking-wider transition-colors"
+                                                        >
+                                                            Full Article &rarr;
+                                                        </Link>
+                                                    )}
+                                                </div>
+                                            ) : (
+                                                displayHero.slug && (
+                                                    <Link
+                                                        href={`/news/${displayHero.slug}`} // redirect
+                                                        className="inline-flex items-center gap-2 text-xs font-bold text-amber-400 hover:text-amber-300 uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
+                                                    >
+                                                        <span>Read Full Story</span>
+                                                        <ArrowRight className="w-3.5 h-3.5" />
+                                                    </Link>
+                                                )
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </section>
+                        </div>
                     )}
-
-                    {/* search & filter control hub */}
-                    <section className="w-full space-y-6 pt-4">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            {/* search input */}
-                            <div className="relative w-full md:max-w-md">
-                                <Search className="w-4 h-4 text-neutral-400 absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none" />
-                                <input
-                                    type="text"
-                                    value={searchQuery} // state
-                                    onChange={(e) => setSearchQuery(e.target.value)} // trigger
-                                    placeholder="Search articles, tournaments, announcements..."
-                                    className="w-full pl-11 pr-10 py-3 rounded-xl bg-[#0e1628] border border-white/15 focus:border-white/40 text-xs sm:text-sm text-white placeholder-neutral-500 outline-none backdrop-blur-md transition-colors shadow-inner"
-                                />
-                                {searchQuery && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setSearchQuery('')} // trigger
-                                        className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white p-1 rounded-full transition-colors cursor-pointer"
-                                    >
-                                        <X className="w-3.5 h-3.5" />
-                                    </button>
-                                )}
-                            </div>
-
-                            {/* quick video toggle & counter */}
-                            <div className="flex items-center gap-3">
-                                <button
-                                    type="button"
-                                    onClick={() => setOnlyVideos((prev) => !prev)} // state
-                                    className={`px-4 py-2.5 rounded-xl text-xs font-mono tracking-wide uppercase transition-colors duration-200 cursor-pointer flex items-center gap-2 ${
-                                        onlyVideos
-                                            ? 'bg-rose-500/20 border border-rose-500/40 text-rose-300'
-                                            : 'bg-[#0e1628] border border-white/15 text-neutral-300 hover:text-white hover:border-white/30'
-                                    }`}
-                                >
-                                    <Video className="w-3.5 h-3.5" />
-                                    <span>Videos Only</span>
-                                </button>
-
-                                <span className="text-xs font-mono text-neutral-400 whitespace-nowrap px-3 py-2 rounded-xl bg-white/5 border border-white/10">
-                                    {filteredArticles.length} {filteredArticles.length === 1 ? 'Story' : 'Stories'}
-                                </span>
-                            </div>
-                        </div>
-
-                        {/* category filter pill tabs */}
-                        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
-                            {categories.map((cat) => {
-                                const isActive = activeCategory === cat; // check
-                                return (
-                                    <button
-                                        key={cat}
-                                        type="button"
-                                        onClick={() => setActiveCategory(cat)} // state
-                                        className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wider uppercase whitespace-nowrap transition-all duration-200 cursor-pointer select-none ${
-                                            isActive
-                                                ? 'bg-white text-black border border-white shadow-md font-extrabold'
-                                                : 'border border-white/15 bg-[#0e1628] text-neutral-300 hover:text-white hover:border-white/30 hover:bg-[#131d33]'
-                                        }`}
-                                    >
-                                        {cat}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </section>
 
                     {/* editorial article cards grid */}
                     <section className="w-full">
                         {filteredArticles.length === 0 ? (
-                            <div className="py-20 text-center rounded-3xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] backdrop-blur-xl p-8 space-y-4 max-w-xl mx-auto shadow-xl">
+                            <div className="py-20 text-center rounded-2xl border border-white/15 bg-[#0e1628]/90 backdrop-blur-xl p-8 space-y-4 max-w-xl mx-auto shadow-xl">
                                 <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/15 mx-auto flex items-center justify-center text-neutral-400 shadow-inner">
                                     <Newspaper className="w-6 h-6" />
                                 </div>
                                 <div className="space-y-1">
-                                    <p className="text-base font-bold text-white">No matching stories found</p>
+                                    <p className="text-base font-bold text-white">No matching dispatches found</p>
                                     <p className="text-xs text-neutral-400">
                                         Try adjusting your search keywords or switching category filters.
                                     </p>
@@ -296,99 +372,203 @@ export default function News({
                                     </button>
                                 </div>
                             </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-                                {filteredArticles.map((article) => (
-                                    <Link
-                                        key={article.id}
-                                        href={article.slug ? `/news/${article.slug}` : '/news/article'}
-                                        className="group relative flex flex-col justify-between rounded-2xl border border-white/15 bg-gradient-to-br from-[#101728] via-[#0d1424] to-[#090e1a] hover:border-white/30 hover:bg-[#121b30] backdrop-blur-xl overflow-hidden cursor-pointer transition-all duration-300 shadow-[0_16px_40px_rgba(0,0,0,0.65)]"
-                                    >
-                                        {/* top luminous highlight beam */}
-                                        <div className="absolute inset-x-0 top-0 h-[1.5px] bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:via-white/40 opacity-70 z-10" />
+                        ) : displayGridArticles.length > 0 ? (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 lg:gap-8">
+                                {displayGridArticles.map((article) => {
+                                    const cleanCategory = (article.tag || article.category || 'News')
+                                        .replace(/^\[\s*|\s*\]$/g, '')
+                                        .trim(); // convert
+                                    const hasVideo = Boolean(article.video_url); // check
 
-                                        {/* top: image container & content */}
-                                        <div>
-                                            {/* 16:9 framed photo box */}
-                                            <div className="aspect-video w-full overflow-hidden relative bg-[#070B14] flex items-center justify-center border-b border-white/10">
-                                                {article.image ? (
-                                                    <img
-                                                        src={article.image}
-                                                        alt={article.title}
-                                                        onError={(e) => {
-                                                            e.target.style.opacity = '0'; // fallback
-                                                        }}
-                                                        className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-300"
-                                                    />
-                                                ) : (
-                                                    <div className="flex flex-col items-center justify-center gap-2 text-neutral-600">
-                                                        <Newspaper className="w-8 h-8 opacity-40" />
-                                                        <span className="text-[10px] font-mono uppercase text-neutral-500">Official Release</span>
-                                                    </div>
-                                                )}
+                                    // card container content
+                                    const CardContent = (
+                                        <div className="group flex flex-col justify-between h-full rounded-2xl bg-[#090F1E]/90 hover:bg-[#0E162B] border border-white/10 hover:border-amber-400/40 backdrop-blur-xl overflow-hidden cursor-pointer transition-colors duration-300 shadow-[0_12px_32px_rgba(0,0,0,0.5)]">
+                                            <div>
+                                                {/* 16:10 aspect ratio thumbnail box (static geometry, no zoom) */}
+                                                <div className="aspect-[16/10] w-full overflow-hidden relative bg-[#060A14] flex items-center justify-center border-b border-white/[0.08] shrink-0">
+                                                    {article.image ? (
+                                                        <img
+                                                            src={article.image}
+                                                            alt={article.title}
+                                                            className="w-full h-full object-cover opacity-85 group-hover:opacity-100 transition-opacity duration-300"
+                                                            onError={(e) => {
+                                                                e.target.style.opacity = '0'; // error
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <div className="flex flex-col items-center justify-center gap-2 text-neutral-600">
+                                                            <Newspaper className="w-8 h-8 opacity-40 text-neutral-500" />
+                                                            <span className="text-[10px] font-mono uppercase text-neutral-500">Official Release</span>
+                                                        </div>
+                                                    )}
 
-                                                {/* subtle bottom gradient overlay */}
-                                                <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/60 to-transparent pointer-events-none" />
+                                                    <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/50 to-transparent pointer-events-none" />
 
-                                                {/* category badge */}
-                                                <div className="absolute top-3.5 left-3.5">
-                                                    <span className="inline-flex items-center px-3 py-1 rounded-lg text-[10px] font-mono font-medium uppercase bg-[#070B14]/85 backdrop-blur-md border border-white/20 text-neutral-200 shadow-sm">
-                                                        {(article.tag || article.category || '').replace(/^\[\s*|\s*\]$/g, '').trim()}
-                                                    </span>
-                                                </div>
-
-                                                {/* video indicator badge */}
-                                                {article.video_url && (
-                                                    <div className="absolute top-3.5 right-3.5">
-                                                        <span className="px-2.5 py-1 rounded-lg text-[10px] font-mono font-semibold uppercase bg-rose-500/20 backdrop-blur-md border border-rose-500/40 text-rose-300 flex items-center gap-1 shadow-sm">
-                                                            <Play className="w-2.5 h-2.5 fill-rose-400 text-rose-400" />
-                                                            <span>Video</span>
+                                                    {/* category badge */}
+                                                    <div className="absolute top-3 left-3 z-10">
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase bg-[#070B14]/90 backdrop-blur-md border border-white/20 text-neutral-200">
+                                                            {cleanCategory}
                                                         </span>
                                                     </div>
-                                                )}
-                                            </div>
 
-                                            {/* text content padding */}
-                                            <div className="p-6 sm:p-7 space-y-3">
-                                                {/* meta row: date & location */}
-                                                <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-400">
-                                                    <span>{article.date}</span>
-                                                    {article.detail && (
-                                                        <>
-                                                            <span className="text-neutral-600">•</span>
-                                                            <span className="truncate">{article.detail}</span>
-                                                        </>
+                                                    {/* prominent video badge / play overlay */}
+                                                    {hasVideo && (
+                                                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                                                            <span className="w-11 h-11 rounded-full bg-amber-400/90 group-hover:bg-amber-400 text-black flex items-center justify-center shadow-lg transition-colors">
+                                                                <Play className="w-5 h-5 fill-black translate-x-0.5" />
+                                                            </span>
+                                                        </div>
                                                     )}
                                                 </div>
 
-                                                {/* title headline */}
-                                                <h3 className="text-base sm:text-lg font-black text-white tracking-tight leading-snug line-clamp-2">
-                                                    {article.title}
-                                                </h3>
+                                                {/* card text details */}
+                                                <div className="p-5 sm:p-6 space-y-2.5 text-left">
+                                                    {/* meta */}
+                                                    <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-400">
+                                                        <Calendar className="w-3 h-3 text-neutral-500" />
+                                                        <span>{article.date}</span>
+                                                        {article.detail && article.detail !== 'OFFICIAL' && (
+                                                            <>
+                                                                <span className="text-neutral-600">•</span>
+                                                                <span className="truncate">{article.detail}</span>
+                                                            </>
+                                                        )}
+                                                    </div>
 
-                                                {/* excerpt summary */}
-                                                {article.excerpt && (
-                                                    <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-normal line-clamp-3">
-                                                        {article.excerpt}
-                                                    </p>
+                                                    {/* title headline: stays static in size, shifts color to amber on hover */}
+                                                    <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem]">
+                                                        {article.title}
+                                                    </h3>
+
+                                                    {/* excerpt */}
+                                                    {article.excerpt && (
+                                                        <p className="text-xs text-neutral-400 line-clamp-3 leading-relaxed font-normal">
+                                                            {article.excerpt}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* bottom action footer */}
+                                            <div className="px-5 sm:px-6 pb-5 pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
+                                                <span className="text-[11px] font-mono text-neutral-500 uppercase tracking-wider">
+                                                    {hasVideo ? 'Video Broadcast' : 'Official Story'}
+                                                </span>
+
+                                                {hasVideo ? (
+                                                    <span className="font-semibold text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                                                        <Play className="w-3 h-3 fill-amber-400 group-hover:fill-amber-300" />
+                                                        <span>Watch Video</span>
+                                                    </span>
+                                                ) : (
+                                                    <span className="font-semibold text-neutral-300 group-hover:text-white transition-colors duration-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                                                        <span>Read Story</span>
+                                                        <ArrowRight className="w-3 h-3 text-neutral-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200" />
+                                                    </span>
                                                 )}
                                             </div>
                                         </div>
+                                    );
 
-                                        {/* bottom action footer */}
-                                        <div className="px-6 sm:px-7 pb-6 pt-3 border-t border-white/5 flex items-center justify-end text-xs">
-                                            <span className="font-bold text-neutral-300 group-hover:text-white transition-colors duration-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
-                                                <span>Read Story</span>
-                                                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform duration-200" />
-                                            </span>
-                                        </div>
-                                    </Link>
-                                ))}
+                                    // if article has a video, click shows the video in-page without navigating away!
+                                    if (hasVideo) {
+                                        return (
+                                            <div
+                                                key={article.id}
+                                                onClick={() => setVideoModalArticle(article)} // modal
+                                                role="button"
+                                                tabIndex={0}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter' || e.key === ' ') {
+                                                        e.preventDefault();
+                                                        setVideoModalArticle(article); // modal
+                                                    }
+                                                }}
+                                                className="text-left select-none focus:outline-none"
+                                            >
+                                                {CardContent}
+                                            </div>
+                                        );
+                                    }
+
+                                    // standard text article: navigates to article page
+                                    return (
+                                        <Link
+                                            key={article.id}
+                                            href={article.slug ? `/news/${article.slug}` : '/news'} // redirect
+                                            className="text-left select-none focus:outline-none"
+                                        >
+                                            {CardContent}
+                                        </Link>
+                                    );
+                                })}
                             </div>
-                        )}
+                        ) : null}
                     </section>
                 </main>
             </div>
+
+            {/* 4. in-page video theater modal (plays video right here without redirecting!) */}
+            {videoModalArticle && (
+                <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={videoModalArticle.title}
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md"
+                    onClick={() => setVideoModalArticle(null)} // trigger
+                >
+                    <div
+                        className="relative w-full max-w-4xl rounded-2xl bg-[#090F1E] border border-white/20 shadow-2xl overflow-hidden"
+                        onClick={(e) => e.stopPropagation()} // trigger
+                    >
+                        {/* modal top bar */}
+                        <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10 bg-[#0E162B]">
+                            <div className="flex items-center gap-2.5 min-w-0 pr-4">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-amber-400 text-black shrink-0">
+                                    {(videoModalArticle.tag || videoModalArticle.category || 'Video').replace(/^\[\s*|\s*\]$/g, '').trim()}
+                                </span>
+                                <h3 className="text-xs sm:text-sm font-bold text-white truncate">
+                                    {videoModalArticle.title}
+                                </h3>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => setVideoModalArticle(null)} // trigger
+                                className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+                                aria-label="Close video"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
+                        </div>
+
+                        {/* video player body */}
+                        <div className="p-4 sm:p-6 bg-black">
+                            <NewsVideoPlayer
+                                url={videoModalArticle.video_url} // state
+                                title={videoModalArticle.title} // state
+                                className="my-0"
+                            />
+                        </div>
+
+                        {/* modal bottom action bar */}
+                        <div className="flex items-center justify-between p-4 border-t border-white/10 bg-[#0E162B] text-xs">
+                            <span className="text-neutral-400 font-mono text-[11px]">
+                                {videoModalArticle.date}
+                            </span>
+                            {videoModalArticle.slug && (
+                                <Link
+                                    href={`/news/${videoModalArticle.slug}`} // redirect
+                                    className="inline-flex items-center gap-1.5 text-neutral-300 hover:text-amber-400 font-mono uppercase text-[11px] transition-colors"
+                                >
+                                    <span>Read Full Article & Details</span>
+                                    <ExternalLink className="w-3 h-3" />
+                                </Link>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* footer */}
             <Footer />

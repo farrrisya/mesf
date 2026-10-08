@@ -22,8 +22,8 @@ const ACTION_BADGE_STYLES = {
     'Create': 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
     'Update': 'bg-amber-400/15 text-amber-300 border-amber-400/30',
     'Delete': 'bg-rose-500/15 text-rose-300 border-rose-500/30',
-    'Sign In': 'bg-sky-400/15 text-sky-300 border-sky-400/30',
-    'Sign Out': 'bg-slate-400/15 text-slate-300 border-slate-400/30',
+    'Log In': 'bg-sky-400/15 text-sky-300 border-sky-400/30',
+    'Log Out': 'bg-slate-400/15 text-slate-300 border-slate-400/30',
     'Start Impersonation': 'bg-purple-500/15 text-purple-300 border-purple-500/30',
     'End Impersonation': 'bg-indigo-500/15 text-indigo-300 border-indigo-500/30',
     'Status Change': 'bg-teal-400/15 text-teal-300 border-teal-400/30',
@@ -32,7 +32,7 @@ const ACTION_BADGE_STYLES = {
 
 const ACTION_TABS = [
     { id: 'all', label: 'All Activities' },
-    { id: 'sign_in', label: 'Sign Ins', icon: LogIn },
+    { id: 'sign_in', label: 'Logins', icon: LogIn },
     { id: 'create', label: 'Creations', icon: PlusCircle },
     { id: 'update', label: 'Updates', icon: Edit3 },
     { id: 'delete', label: 'Deletions', icon: Trash2 },
@@ -51,10 +51,10 @@ const formatEnglishAction = (action) => { // convert
         'Hapus': 'Delete',
         'delete': 'Delete',
         'Delete': 'Delete',
-        'Log Masuk': 'Sign In',
-        'login': 'Sign In',
-        'Sign In': 'Sign In',
-        'logout': 'Sign Out',
+        'Log Masuk': 'Log In',
+        'login': 'Log In',
+        'Sign In': 'Log In',
+        'logout': 'Log Out',
         'impersonation_start': 'Start Impersonation',
         'impersonation_end': 'End Impersonation',
         'toggle_status': 'Status Change',
@@ -78,7 +78,7 @@ const formatEnglishDescription = (desc) => { // convert
     text = text.replace(/Slider/gi, 'Banner Slider');
     text = text.replace(/Tetapan Sistem/gi, 'System Settings');
     text = text.replace(/Pengguna \(Staff & Admin\)/gi, 'Staff User Account');
-    text = text.replace(/log masuk/gi, 'sign in');
+    text = text.replace(/log masuk/gi, 'log in');
     return text;
 };
 
@@ -143,108 +143,10 @@ export default function Index({
 
     // --5. UI--
     return (
-        <AdminLayout
-            title="Activity Logs - MESF Admin"
-            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
-        >
+        <AdminLayout title="Activity Logs - MESF Admin">
             <Head title="Activity & Audit Logs - Admin" />
 
-            <div className="space-y-4 sm:space-y-5 max-w-7xl">
-                {/* stats summary cards: starts immediately at the top */}
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                    {/* card 1: total activities */}
-                    <div
-                        onClick={() => handleFilter('all', searchQuery)} // trigger
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                            currentActionType === 'all'
-                                ? 'bg-amber-400/10 border-amber-400/50 shadow-[0_0_20px_rgba(251,191,36,0.12)]'
-                                : 'bg-[#090D18]/85 border-white/10 hover:border-white/20'
-                        }`}
-                    >
-                        <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                                Total Events
-                            </span>
-                            <div className="w-7 h-7 rounded-lg bg-white/5 flex items-center justify-center text-slate-300">
-                                <Activity className="w-3.5 h-3.5" />
-                            </div>
-                        </div>
-                        <div className="text-2xl font-black text-white font-mono mt-2">
-                            {metrics.total ?? 0}
-                        </div>
-                        <p className="text-[10px] text-slate-500 mt-0.5">All administrative audit logs</p>
-                    </div>
-
-                    {/* card 2: sign ins */}
-                    <div
-                        onClick={() => handleFilter('sign_in', searchQuery)} // trigger
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                            currentActionType === 'sign_in'
-                                ? 'bg-sky-500/10 border-sky-400/50 shadow-[0_0_20px_rgba(56,189,248,0.12)]'
-                                : 'bg-[#090D18]/85 border-white/10 hover:border-white/20'
-                        }`}
-                    >
-                        <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-sky-400">
-                                User Sign Ins
-                            </span>
-                            <div className="w-7 h-7 rounded-lg bg-sky-500/10 flex items-center justify-center text-sky-400">
-                                <LogIn className="w-3.5 h-3.5" />
-                            </div>
-                        </div>
-                        <div className="text-2xl font-black text-white font-mono mt-2">
-                            {metrics.sign_ins ?? 0}
-                        </div>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Staff portal authentications</p>
-                    </div>
-
-                    {/* card 3: content updates */}
-                    <div
-                        onClick={() => handleFilter('update', searchQuery)} // trigger
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                            currentActionType === 'update'
-                                ? 'bg-amber-400/10 border-amber-400/50 shadow-[0_0_20px_rgba(251,191,36,0.12)]'
-                                : 'bg-[#090D18]/85 border-white/10 hover:border-white/20'
-                        }`}
-                    >
-                        <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">
-                                Modifications
-                            </span>
-                            <div className="w-7 h-7 rounded-lg bg-amber-400/10 flex items-center justify-center text-amber-300">
-                                <Edit3 className="w-3.5 h-3.5" />
-                            </div>
-                        </div>
-                        <div className="text-2xl font-black text-white font-mono mt-2">
-                            {metrics.updates ?? 0}
-                        </div>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Records updated & adjusted</p>
-                    </div>
-
-                    {/* card 4: deletions */}
-                    <div
-                        onClick={() => handleFilter('delete', searchQuery)} // trigger
-                        className={`p-4 rounded-2xl border transition-all cursor-pointer ${
-                            currentActionType === 'delete'
-                                ? 'bg-rose-500/10 border-rose-400/50 shadow-[0_0_20px_rgba(244,63,94,0.12)]'
-                                : 'bg-[#090D18]/85 border-white/10 hover:border-white/20'
-                        }`}
-                    >
-                        <div className="flex items-center justify-between">
-                            <span className="text-[11px] font-bold uppercase tracking-wider text-rose-400">
-                                Record Deletions
-                            </span>
-                            <div className="w-7 h-7 rounded-lg bg-rose-500/10 flex items-center justify-center text-rose-400">
-                                <Trash2 className="w-3.5 h-3.5" />
-                            </div>
-                        </div>
-                        <div className="text-2xl font-black text-white font-mono mt-2">
-                            {metrics.deletes ?? 0}
-                        </div>
-                        <p className="text-[10px] text-slate-500 mt-0.5">Removed data items</p>
-                    </div>
-                </div>
-
+            <div className="space-y-6 max-w-7xl pb-16">
                 {/* search & category filter toolbar */}
                 <div className="p-4 sm:p-5 rounded-2xl bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 shadow-xl space-y-4">
                     <form onSubmit={handleSearchSubmit} className="flex flex-col md:flex-row items-stretch md:items-center gap-3">

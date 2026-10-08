@@ -51,13 +51,7 @@ export default function Leagues({ leagues = [] }) {
                 <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[160px]" />
             </div>
 
-            {/* background SVG grain texture */}
-            <div
-                className="pointer-events-none fixed inset-0 opacity-[0.035] mix-blend-overlay z-10"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`
-                }}
-            />
+
 
             {/* 1. floating glass navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
@@ -223,7 +217,7 @@ export default function Leagues({ leagues = [] }) {
 
                                         <Link
                                             href={tournament.slug ? `/leagues/${tournament.slug}` : '/leagues/details'} // redirect
-                                            className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-amber-400 hover:text-amber-300 transition-colors cursor-pointer"
+                                            className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-neutral-300 hover:text-white transition-colors cursor-pointer"
                                         >
                                             <span>View Details</span>
                                             <ArrowRight className="w-3.5 h-3.5" />

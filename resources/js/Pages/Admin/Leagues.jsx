@@ -135,7 +135,7 @@ export default function Leagues({ leagues = [] }) {
 
                                         <div className="absolute top-3 left-3 z-10">
                                             <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/15 text-white">
-                                                {league.game_title}
+                                                {league.game_title || 'All Games'}
                                             </span>
                                         </div>
                                     </div>

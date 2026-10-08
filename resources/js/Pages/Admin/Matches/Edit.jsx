@@ -94,10 +94,7 @@ export default function Edit({ match = {} }) {
 
     // --5. UI--
     return (
-        <AdminLayout
-            title={`Edit Match - MESF Admin`}
-            contentClassName="px-4 pt-1.5 pb-8 sm:px-8 sm:pt-2 sm:pb-10"
-        >
+        <AdminLayout title={`Edit Match - MESF Admin`}>
             <Head title={`Edit Match #${match.id} - Admin`} />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">

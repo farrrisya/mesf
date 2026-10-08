@@ -53,7 +53,7 @@ export default function HubungiKami({ auth, settings = {} }) {
                   <a 
                       href="#talian-hubungan" 
                       onClick={(e) => handleSmoothScroll(e, 'talian-hubungan')}
-                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-amber-400 transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-amber-400 hover:after:w-full after:transition-all after:duration-300"
+                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-200 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-200"
                   >
                       Talian Hubungan
                   </a>
@@ -61,7 +61,7 @@ export default function HubungiKami({ auth, settings = {} }) {
                   <a 
                       href="#direktori" 
                       onClick={(e) => handleSmoothScroll(e, 'direktori')}
-                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-amber-400 transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-amber-400 hover:after:w-full after:transition-all after:duration-300"
+                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-200 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-200"
                   >
                       Direktori Kakitangan
                   </a>
@@ -69,7 +69,7 @@ export default function HubungiKami({ auth, settings = {} }) {
                   <a 
                       href="#lokasi" 
                       onClick={(e) => handleSmoothScroll(e, 'lokasi')}
-                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-amber-400 transition-colors duration-300 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-amber-400 hover:after:w-full after:transition-all after:duration-300"
+                      className="text-[10px] md:text-xs font-bold tracking-widest uppercase text-white/70 hover:text-white transition-colors duration-200 relative after:content-[''] after:absolute after:-bottom-1.5 after:left-0 after:w-0 after:h-[2px] after:bg-white hover:after:w-full after:transition-all after:duration-200"
                   >
                       Lokasi
                   </a>
