@@ -90,13 +90,13 @@ export default function News({
 
     // --5. UI--
     return (
-        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden antialiased flex flex-col justify-between">
+        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden antialiased flex flex-col justify-between">
             <Head title="News & Media - MESF" />
 
             {/* static ambient background glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
                 <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-blue-600/10 blur-[130px]" />
-                <div className="absolute top-1/2 -right-48 w-96 h-96 rounded-full bg-amber-600/10 blur-[140px]" />
+                <div className="absolute top-1/2 -right-48 w-96 h-96 rounded-full bg-slate-600/10 blur-[140px]" />
                 <div className="absolute bottom-1/4 left-1/3 w-[500px] h-[500px] rounded-full bg-indigo-500/5 blur-[160px]" />
             </div>
 
@@ -177,7 +177,7 @@ export default function News({
                                         {heroInlineVideo && displayHero.video_url ? (
                                             <div className="w-full h-full p-4 flex flex-col justify-center bg-black">
                                                 <div className="flex items-center justify-between pb-2">
-                                                    <span className="text-xs font-mono text-amber-400 uppercase">Live Playback</span>
+                                                    <span className="text-xs font-mono text-neutral-300 uppercase">Live Playback</span>
                                                     <button
                                                         type="button"
                                                         onClick={() => setHeroInlineVideo(false)} // trigger
@@ -210,16 +210,6 @@ export default function News({
                                                         {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
                                                     </span>
                                                 </div>
-
-                                                {/* video indicator badge */}
-                                                {displayHero.video_url && (
-                                                    <div className="absolute top-4 right-4 z-10">
-                                                        <span className="px-2.5 py-1 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-amber-300 flex items-center gap-1.5">
-                                                            <Play className="w-2.5 h-2.5 fill-amber-300" />
-                                                            <span>Video</span>
-                                                        </span>
-                                                    </div>
-                                                )}
                                             </>
                                         )}
                                     </div>
@@ -238,7 +228,7 @@ export default function News({
                                                 )}
                                             </div>
 
-                                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug">
+                                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-white transition-colors duration-200 tracking-tight leading-snug">
                                                 {displayHero.title}
                                             </h2>
 
@@ -256,7 +246,7 @@ export default function News({
                                                     <button
                                                         type="button"
                                                         onClick={() => setHeroInlineVideo(true)} // trigger
-                                                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                                                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white hover:bg-neutral-200 text-black text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer"
                                                     >
                                                         <Play className="w-3 h-3 fill-black" />
                                                         <span>Play Video</span>
@@ -274,7 +264,7 @@ export default function News({
                                                 displayHero.slug && (
                                                     <Link
                                                         href={`/news/${displayHero.slug}`} // redirect
-                                                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300 group-hover:text-amber-400 uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
+                                                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300 group-hover:text-white uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
                                                     >
                                                         <span>Read Full Story</span>
                                                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -348,15 +338,6 @@ export default function News({
                                                         </span>
                                                     </div>
 
-                                                    {/* clean video pill badge */}
-                                                    {hasVideo && (
-                                                        <div className="absolute top-3 right-3 z-10">
-                                                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-amber-300">
-                                                                <Play className="w-2.5 h-2.5 fill-amber-300" />
-                                                                <span>Video</span>
-                                                            </span>
-                                                        </div>
-                                                    )}
                                                 </div>
 
                                                 {/* card text details */}
@@ -373,8 +354,8 @@ export default function News({
                                                         )}
                                                     </div>
 
-                                                    {/* headline: crisp, stable typography, shifts to amber on hover */}
-                                                    <h3 className="text-base font-bold text-white group-hover:text-amber-400 transition-colors duration-200 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem]">
+                                                    {/* headline: crisp, stable typography, brightens on hover without yellow shift */}
+                                                    <h3 className="text-base font-bold text-neutral-200 group-hover:text-white transition-colors duration-200 tracking-tight leading-snug line-clamp-2 min-h-[2.5rem]">
                                                         {article.title}
                                                     </h3>
 
@@ -394,14 +375,14 @@ export default function News({
                                                 </span>
 
                                                 {hasVideo ? (
-                                                    <span className="font-semibold text-amber-400 group-hover:text-amber-300 transition-colors flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
-                                                        <Play className="w-2.5 h-2.5 fill-amber-400 group-hover:fill-amber-300" />
+                                                    <span className="font-semibold text-neutral-300 group-hover:text-white transition-colors flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
+                                                        <Play className="w-2.5 h-2.5 fill-current" />
                                                         <span>Watch Video</span>
                                                     </span>
                                                 ) : (
                                                     <span className="font-semibold text-neutral-400 group-hover:text-white transition-colors duration-200 flex items-center gap-1.5 uppercase tracking-wider text-[11px]">
                                                         <span>Read Story</span>
-                                                        <ArrowRight className="w-3 h-3 text-neutral-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200" />
+                                                        <ArrowRight className="w-3 h-3 text-neutral-500 group-hover:text-white group-hover:translate-x-1 transition-all duration-200" />
                                                     </span>
                                                 )}
                                             </div>
@@ -462,7 +443,7 @@ export default function News({
                         {/* modal top bar */}
                         <div className="flex items-center justify-between p-4 sm:p-5 border-b border-white/10 bg-[#0E162B]">
                             <div className="flex items-center gap-2.5 min-w-0 pr-4">
-                                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-amber-400 text-black shrink-0">
+                                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-white text-black shrink-0">
                                     {(videoModalArticle.tag || videoModalArticle.category || 'Video').replace(/^\[\s*|\s*\]$/g, '').trim()}
                                 </span>
                                 <h3 className="text-xs sm:text-sm font-bold text-white truncate">
@@ -497,7 +478,7 @@ export default function News({
                             {videoModalArticle.slug && (
                                 <Link
                                     href={`/news/${videoModalArticle.slug}`} // redirect
-                                    className="inline-flex items-center gap-1.5 text-neutral-300 hover:text-amber-400 font-mono uppercase text-[11px] transition-colors"
+                                    className="inline-flex items-center gap-1.5 text-neutral-400 hover:text-white font-mono uppercase text-[11px] transition-colors"
                                 >
                                     <span>Read Full Article & Details</span>
                                     <ExternalLink className="w-3 h-3" />
