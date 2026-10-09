@@ -1397,7 +1397,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                                 GAME NAME
                                             </span>
                                             <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-                                                {squad.name || squad.game}
+                                                TEAM NAME
                                             </h3>
                                             <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
                                                 {squad.division}
