@@ -1,40 +1,56 @@
 // --1. imports--
-import { Head, Link, router, usePage } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
-import { Mail, Users, Search, X, ShieldCheck, Award, Phone, MapPin, Globe, ArrowRight, MessageSquare, Check } from 'lucide-react';
+import {
+    Mail,
+    Search,
+    X,
+    Phone,
+    MapPin,
+    ArrowRight,
+    MessageSquare,
+    Check,
+    ExternalLink
+} from 'lucide-react';
 
 // --2. properties--
 const AFFILIATED_PARTNERS = [
     {
         name: 'KBS Malaysia',
         role: 'Governing Ministry',
+        desc: 'Ministry of Youth & Sports Malaysia',
         logo: '/images/partners/kbs.svg'
     },
     {
         name: 'Majlis Sukan Negara',
         role: 'National Sports Council',
+        desc: 'Elite Athlete Development & Facilities',
         logo: '/images/partners/msn.svg'
     },
     {
         name: 'Olympic Council Malaysia',
         role: 'National Olympic Committee',
+        desc: 'SEA, Asian & Olympic Games Endorsement',
         logo: '/images/partners/ocm.svg'
     },
     {
         name: 'IeSF',
         role: 'International Esports Federation',
+        desc: 'World Esports Championship Sanction',
         logo: '/images/partners/iesf.svg'
     },
     {
         name: 'AESF',
         role: 'Asian Electronic Sports Federation',
+        desc: 'Asian Continental Governing Body',
         logo: '/images/partners/aesf.svg'
     },
     {
         name: 'Esports Integrated',
         role: 'Strategic Ecosystem Partner',
+        desc: 'National Grassroots Growth Initiative',
         logo: '/images/partners/esi.svg'
     }
 ];
@@ -79,20 +95,20 @@ export default function About() {
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
     const orgName = settings?.orgName || 'Malaysia Esports Federation'; // properties
     const orgAcronym = settings?.orgAcronym || 'MESF'; // properties
-    const rosNumber = settings?.rosNumber || ''; // properties
-    const phone = settings?.phone || ''; // properties
-    const officialEmail = settings?.replyEmail || settings?.supportEmail || ''; // properties
-    const streetAddress = settings?.streetAddress || ''; // properties
-    const city = settings?.city || ''; // properties
-    const state = settings?.state || ''; // properties
-    const postalCode = settings?.postalCode || ''; // properties
+    const rosNumber = settings?.rosNumber || 'PPM-007-14-19092014'; // properties
+    const phone = settings?.phone || '+60 3-8994 4800'; // properties
+    const officialEmail = settings?.replyEmail || settings?.supportEmail || 'secretariat@mesf.my'; // properties
+    const streetAddress = settings?.streetAddress || 'National Sports Council Complex, Bukit Jalil'; // properties
+    const city = settings?.city || 'Kuala Lumpur'; // properties
+    const state = settings?.state || 'Wilayah Persekutuan'; // properties
+    const postalCode = settings?.postalCode || '57000'; // properties
     const country = settings?.country || 'Malaysia'; // properties
     const googleMapEmbed = settings?.googleMapEmbed || settings?.contact_map_url || ''; // properties
-    const aboutHeroSubtitle = settings?.aboutHeroSubtitle || ''; // properties
+    const aboutHeroSubtitle = settings?.aboutHeroSubtitle || 'The apex national governing body mandated under the Sports Development Act 1997 to govern, regulate, and advance competitive electronic sports across Malaysia.'; // properties
     const aboutStoryHtml = settings?.aboutStoryHtml || (settings?.aboutStoryP1 ? `<p>${settings.aboutStoryP1}</p><p>${settings.aboutStoryP2 || ''}</p><p>${settings.aboutStoryP3 || ''}</p>` : ''); // properties
 
     const fullAddress = useMemo(() => {
-        return streetAddress ? `${streetAddress}, ${postalCode ? `${postalCode} ` : ''}${city ? `${city}, ` : ''}${state ? `${state}, ` : ''}${country}` : 'Kuala Lumpur, Malaysia';
+        return streetAddress ? `${streetAddress}, ${postalCode ? `${postalCode} ` : ''}${city ? `${city}, ` : ''}${state ? `${state}, ` : ''}${country}` : 'Bukit Jalil, Kuala Lumpur, Malaysia';
     }, [streetAddress, postalCode, city, state, country]);
 
     const mapSrc = useMemo(() => {
@@ -101,7 +117,7 @@ export default function About() {
         if (streetAddress || city) {
             return `https://maps.google.com/maps?q=${encodeURIComponent(fullAddress)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
         }
-        return 'https://maps.google.com/maps?q=Kuala+Lumpur,+Malaysia&t=&z=14&ie=UTF8&iwloc=&output=embed';
+        return 'https://maps.google.com/maps?q=National+Stadium+Bukit+Jalil,+Kuala+Lumpur&t=&z=15&ie=UTF8&iwloc=&output=embed';
     }, [googleMapEmbed, streetAddress, city, fullAddress]);
 
     const executiveSections = useMemo(() => {
@@ -120,18 +136,18 @@ export default function About() {
 
     const socialChannels = useMemo(() => {
         const channels = [];
-        if (settings?.instagram) channels.push({ name: 'Instagram', handle: settings?.instagramHandle || settings.instagram, href: settings.instagram });
-        if (settings?.tiktok) channels.push({ name: 'TikTok', handle: settings?.tiktokHandle || settings.tiktok, href: settings.tiktok });
-        if (settings?.youtube) channels.push({ name: 'YouTube', handle: settings?.youtubeHandle || settings.youtube, href: settings.youtube });
-        if (settings?.xUrl || settings?.twitter) channels.push({ name: 'X / Twitter', handle: settings?.xHandle || settings?.twitterHandle || (settings.xUrl || settings.twitter), href: settings.xUrl || settings.twitter });
-        if (settings?.facebook) channels.push({ name: 'Facebook', handle: settings?.facebookHandle || settings.facebook, href: settings.facebook });
-        if (settings?.iesfUrl) channels.push({ name: 'IeSF Member', handle: settings?.iesfHandle || settings.iesfUrl, href: settings.iesfUrl });
+        if (settings?.instagram) channels.push({ name: 'Instagram', href: settings.instagram });
+        if (settings?.tiktok) channels.push({ name: 'TikTok', href: settings.tiktok });
+        if (settings?.youtube) channels.push({ name: 'YouTube', href: settings.youtube });
+        if (settings?.xUrl || settings?.twitter) channels.push({ name: 'X / Twitter', href: settings.xUrl || settings.twitter });
+        if (settings?.facebook) channels.push({ name: 'Facebook', href: settings.facebook });
+        if (settings?.iesfUrl) channels.push({ name: 'IeSF', href: settings.iesfUrl });
         return channels;
     }, [settings]);
 
     // --4. actions--
     const [memberSearch, setMemberSearch] = useState(''); // state
-    const [activeCategory, setActiveCategory] = useState('all'); // state
+    const [activeCategory, setActiveCategory] = useState('leadership'); // state
     const [copiedKey, setCopiedKey] = useState(null); // state
 
     const copyToClipboard = (text, key) => { // trigger
@@ -154,8 +170,7 @@ export default function About() {
             members: (section.members || []).filter((m) =>
                 (m?.name || '').toLowerCase().includes(q) ||
                 (m?.title || '').toLowerCase().includes(q) ||
-                (m?.contact || '').toLowerCase().includes(q) ||
-                (m?.phone || '').toLowerCase().includes(q)
+                (m?.contact || '').toLowerCase().includes(q)
             )
         })).filter((section) => section.members.length > 0);
     }, [memberSearch, executiveSections]);
@@ -167,12 +182,11 @@ export default function About() {
         return generalCommittee.filter((m) =>
             (m?.name || '').toLowerCase().includes(q) ||
             (m?.title || '').toLowerCase().includes(q) ||
-            (m?.contact || '').toLowerCase().includes(q) ||
-            (m?.phone || '').toLowerCase().includes(q)
+            (m?.contact || '').toLowerCase().includes(q)
         );
     }, [memberSearch, generalCommittee]);
 
-    // Section-specific member groups
+    // Group-specific arrays
     const leadershipMembers = useMemo(() => {
         const leadershipSec = filteredExecutiveSections.find((s) => s.id === 'leadership');
         return leadershipSec?.members || [];
@@ -188,185 +202,394 @@ export default function About() {
         return secSec?.members || [];
     }, [filteredExecutiveSections]);
 
-    // Counts for filter pills
-    const totalMembersCount = useMemo(() => {
-        const execCount = executiveSections.reduce((acc, sec) => acc + (sec.members?.length || 0), 0);
-        return execCount + generalCommittee.length;
-    }, [executiveSections, generalCommittee]);
-
-    const totalFilteredCount = useMemo(() => {
-        const execCount = filteredExecutiveSections.reduce((acc, sec) => acc + (sec.members?.length || 0), 0);
-        return execCount + filteredGeneralCommittee.length;
-    }, [filteredExecutiveSections, filteredGeneralCommittee]);
-
     const filterCategories = [
-        { id: 'all', label: 'All Members', count: totalMembersCount },
-        { id: 'leadership', label: 'Leadership', count: executiveSections.find(s => s.id === 'leadership')?.members?.length || 0 },
-        { id: 'vice_presidents', label: 'Vice Presidents', count: executiveSections.find(s => s.id === 'vice_presidents')?.members?.length || 0 },
-        { id: 'secretariat', label: 'Secretariat', count: executiveSections.find(s => s.id === 'secretariat')?.members?.length || 0 },
-        { id: 'general', label: 'General Committee', count: generalCommittee.length }
+        { id: 'leadership', label: 'Executive Leadership' },
+        { id: 'vice_presidents', label: 'Vice Presidents' },
+        { id: 'secretariat', label: 'Secretariat' },
+        { id: 'general', label: 'General Committee' }
     ];
+
+    // Active members based on active tab or global search
+    const activeMembers = useMemo(() => {
+        if (memberSearch.trim()) {
+            const q = memberSearch.toLowerCase();
+            const allExec = executiveSections.flatMap(s => s.members || []);
+            const combined = [...allExec, ...generalCommittee];
+            return combined.filter(m =>
+                (m?.name || '').toLowerCase().includes(q) ||
+                (m?.title || '').toLowerCase().includes(q)
+            );
+        }
+
+        if (activeCategory === 'leadership') return leadershipMembers;
+        if (activeCategory === 'vice_presidents') return vpMembers;
+        if (activeCategory === 'secretariat') return secretariatMembers;
+        if (activeCategory === 'general') return filteredGeneralCommittee;
+        return leadershipMembers;
+    }, [memberSearch, activeCategory, leadershipMembers, vpMembers, secretariatMembers, filteredGeneralCommittee, executiveSections, generalCommittee]);
+
+    const scrollToSection = (id) => { // trigger
+        const el = document.getElementById(id);
+        if (el) {
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
     // --5. UI--
     return (
         <div className="relative min-h-screen bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden antialiased">
-            <Head title="About Us - Malaysia Esports Federation | MESF" />
+            <Head title="About - Malaysia Esports Federation (MESF)" />
 
-            {/* Custom Animations & Glow Styles */}
-            <style>{`
-                @keyframes pulseGlow {
-                    0%, 100% { opacity: 0.35; transform: scale(1); }
-                    50% { opacity: 0.6; transform: scale(1.05); }
-                }
-                .pulse-glow {
-                    animation: pulseGlow 7s ease-in-out infinite;
-                }
-            `}</style>
-
-            {/* Ambient Background Glows */}
-            <div className="pointer-events-none absolute -top-40 left-1/4 h-[550px] w-[550px] rounded-full bg-blue-600/10 blur-[150px]" />
+            {/* Subtle background ambient light */}
+            <div className="pointer-events-none absolute -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-blue-600/10 blur-[160px]" />
             <div className="pointer-events-none absolute top-[40%] right-10 h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[160px]" />
-            <div className="pointer-events-none absolute top-[75%] left-10 h-[450px] w-[450px] rounded-full bg-sky-500/5 blur-[150px]" />
 
-
-
-            {/* Floating Glass Navbar */}
+            {/* Floating Navbar */}
             <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-auto">
                 <PublicNavbar activeTab="about" />
             </div>
 
             {/* Main Content Area */}
-            <main className="relative z-10 pt-32 md:pt-40 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
+            <main className="relative z-10 pt-28 md:pt-36 pb-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-24">
 
-                {/* Section 1: Hero Header */}
-                <section className="relative text-center max-w-3xl mx-auto space-y-5 pt-4">
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 text-neutral-300 text-xs font-semibold tracking-wider uppercase">
-                        <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                        National Esports Federation{rosNumber ? ` • Reg: ${rosNumber}` : ''}
-                    </div>
+                {/* 1. ASYMMETRIC SPLIT EXECUTIVE HERO */}
+                <section className="relative pt-4 sm:pt-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center">
 
-                    <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
-                        About{' '}
-                        <span className="bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-                            {orgAcronym}
-                        </span>
-                    </h1>
+                        {/* Left Column: Clean Editorial Overview */}
+                        <div className="lg:col-span-7 space-y-6 text-left">
+                            <p className="text-xs font-semibold tracking-wider uppercase text-slate-400">
+                                National Sports Governing Body &bull; Sports Development Act 1997
+                            </p>
 
-                    {aboutHeroSubtitle && (
-                        <p className="text-sm sm:text-base text-neutral-300 leading-relaxed max-w-2xl mx-auto">
-                            {aboutHeroSubtitle}
-                        </p>
-                    )}
-                </section>
+                            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.1]">
+                                Governing Body for Esports in Malaysia
+                            </h1>
 
-                {/* Section 2: About Us (Official Info from mesf.my) */}
-                <section className="relative rounded-3xl p-6 sm:p-10 lg:p-12 bg-white/[0.025] border border-white/10 shadow-2xl backdrop-blur-xl">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-                        <div className="lg:col-span-8 space-y-6">
-                            <div className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-neutral-400">
-                                About Us
+                            <p className="text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-normal">
+                                {aboutHeroSubtitle}
+                            </p>
+
+                            {/* Minimalist In-page Jump Links */}
+                            <div className="pt-2 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-slate-400">
+                                <button
+                                    type="button"
+                                    onClick={() => scrollToSection('mandate')}
+                                    className="hover:text-white transition-colors cursor-pointer"
+                                >
+                                    Mandate &amp; Vision &rarr;
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => scrollToSection('affiliates')}
+                                    className="hover:text-white transition-colors cursor-pointer"
+                                >
+                                    Affiliates &rarr;
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => scrollToSection('committee')}
+                                    className="hover:text-white transition-colors cursor-pointer"
+                                >
+                                    Executive Council &rarr;
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => scrollToSection('headquarters')}
+                                    className="hover:text-white transition-colors cursor-pointer"
+                                >
+                                    Headquarters &rarr;
+                                </button>
                             </div>
 
-                            <div
-                                className="about-story-rich-text text-neutral-300 text-sm sm:text-base leading-relaxed space-y-4"
-                                dangerouslySetInnerHTML={{ __html: aboutStoryHtml }}
-                            />
+                            {/* Clean Action Buttons */}
+                            <div className="pt-2 flex flex-wrap items-center gap-3.5">
+                                <button
+                                    type="button"
+                                    onClick={() => scrollToSection('committee')}
+                                    className="px-5 py-2.5 rounded-xl bg-white text-slate-950 font-semibold text-xs tracking-wide hover:bg-slate-200 transition-colors shadow-sm cursor-pointer"
+                                >
+                                    Meet The Council
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => scrollToSection('headquarters')}
+                                    className="px-5 py-2.5 rounded-xl bg-[#131E33] border border-[#2C3F63] text-white font-semibold text-xs tracking-wide hover:border-slate-400 transition-colors cursor-pointer"
+                                >
+                                    Contact Secretariat
+                                </button>
+                            </div>
                         </div>
 
-                        {/* Emblem card */}
-                        <div className="lg:col-span-4 flex flex-col items-center justify-center p-8 rounded-2xl bg-[#090D1A] border border-white/10 text-center space-y-4">
-                            <img
-                                src={logoUrl}
-                                alt={`${orgAcronym} Emblem`}
-                                onError={(e) => {
-                                    e.currentTarget.onerror = null;
-                                    e.currentTarget.src = '/images/mesf_logo.png';
-                                }}
-                                className="h-24 w-24 object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.15)]"
-                            />
-                            <div>
-                                <h2 className="text-base font-bold text-white tracking-wide uppercase">
-                                    {orgName}
-                                </h2>
-                                {rosNumber && (
-                                    <p className="text-xs text-neutral-400 mt-1">
-                                        Reg. No: {rosNumber}
+                        {/* Right Column: Clean Institutional Profile Card */}
+                        <div className="lg:col-span-5">
+                            <div className="rounded-3xl p-7 bg-[#131E33] border border-[#2C3F63] shadow-xl space-y-6">
+                                {/* Card Header */}
+                                <div className="flex items-center justify-between border-b border-[#202E4A] pb-4 text-xs text-slate-400 font-medium">
+                                    <span>Official Registry</span>
+                                    <span>{rosNumber}</span>
+                                </div>
+
+                                {/* Logo & Name */}
+                                <div className="flex flex-col items-center text-center space-y-3 pt-1">
+                                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#0B1424] border border-[#202E4A] flex items-center justify-center p-3">
+                                        <img
+                                            src={logoUrl}
+                                            alt={orgName}
+                                            onError={(e) => {
+                                                e.currentTarget.onerror = null;
+                                                e.currentTarget.src = '/images/mesf_logo.png';
+                                            }}
+                                            className="max-h-full max-w-full object-contain"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h2 className="text-lg sm:text-xl font-bold text-white tracking-wide uppercase">
+                                            {orgName}
+                                        </h2>
+                                        <p className="text-xs text-slate-400">
+                                            Persekutuan Sukan Elektronik Malaysia
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Clean 4-Metric Grid */}
+                                <div className="grid grid-cols-2 gap-3 pt-1">
+                                    <div className="p-3.5 rounded-xl bg-[#0B1424] border border-[#202E4A] space-y-1">
+                                        <div className="text-base sm:text-lg font-bold text-white">
+                                            2014
+                                        </div>
+                                        <div className="text-xs text-slate-400">
+                                            Established
+                                        </div>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-[#0B1424] border border-[#202E4A] space-y-1">
+                                        <div className="text-base sm:text-lg font-bold text-white">
+                                            15
+                                        </div>
+                                        <div className="text-xs text-slate-400">
+                                            State Affiliates
+                                        </div>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-[#0B1424] border border-[#202E4A] space-y-1">
+                                        <div className="text-base sm:text-lg font-bold text-white">
+                                            IeSF &bull; AESF
+                                        </div>
+                                        <div className="text-xs text-slate-400">
+                                            Global Accreditation
+                                        </div>
+                                    </div>
+
+                                    <div className="p-3.5 rounded-xl bg-[#0B1424] border border-[#202E4A] space-y-1">
+                                        <div className="text-base sm:text-lg font-bold text-white">
+                                            Act 576
+                                        </div>
+                                        <div className="text-xs text-slate-400">
+                                            Statutory Authority
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Card Footer */}
+                                <div className="pt-3 border-t border-[#202E4A] text-center text-xs text-slate-400">
+                                    Statutory sanction recognized under KBS, MSN &amp; OCM
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                {/* 2. MANDATE & STRATEGIC VISION SECTION */}
+                <section id="mandate" className="space-y-6 scroll-mt-28">
+                    <div className="space-y-1 text-left">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            Mandate &amp; Strategic Vision
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-400">
+                            Our legal authority, long-term outlook, and structural development framework.
+                        </p>
+                    </div>
+
+                    {/* Bento Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+
+                        {/* Card A: Statutory Authority (7 cols) */}
+                        <div className="md:col-span-7 rounded-3xl p-6 sm:p-8 bg-[#131E33] border border-[#2C3F63] flex flex-col justify-between space-y-6">
+                            <div className="space-y-3">
+                                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                                    National Statutory Authority
+                                </h3>
+
+                                {aboutStoryHtml ? (
+                                    <div
+                                        className="text-slate-300 text-sm sm:text-base leading-relaxed space-y-3 about-story-rich-text"
+                                        dangerouslySetInnerHTML={{ __html: aboutStoryHtml }}
+                                    />
+                                ) : (
+                                    <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                                        The Malaysia Esports Federation ({orgAcronym}) is the official national governing body registered with the Sports Commissioner of Malaysia under the Sports Development Act 1997. MESF oversees national esports guidelines, athlete development, referee and coach licensing, and state championship circuits.
                                     </p>
                                 )}
                             </div>
-                            <div className="pt-3 border-t border-white/10 w-full flex items-center justify-center gap-6 text-xs text-neutral-400 font-medium">
-                                <span>IeSF Member</span>
-                                <span>•</span>
-                                <span>AESF Member</span>
+
+                            {/* Clean List */}
+                            <ul className="space-y-2 pt-4 border-t border-[#202E4A] text-xs text-slate-300">
+                                <li className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                    <span>Sole statutory authority to sanction domestic and international esports tournaments in Malaysia</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                    <span>Official selection and management of national esports athletes for SEA Games, Asian Games &amp; World Championships</span>
+                                </li>
+                                <li className="flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                    <span>National certification and regulatory licensing for esports referees, marshals, and coaches</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        {/* Card B: Strategic Vision (5 cols) */}
+                        <div className="md:col-span-5 rounded-3xl p-6 sm:p-8 bg-[#131E33] border border-[#2C3F63] flex flex-col justify-between space-y-6">
+                            <div className="space-y-3">
+                                <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                                    Our Vision
+                                </h3>
+
+                                <p className="text-slate-300 text-sm leading-relaxed">
+                                    To establish Malaysia as Southeast Asia’s foremost esports powerhouse through sustainable grassroots development, athlete welfare, world-class competitive standards, and industry innovation.
+                                </p>
+                            </div>
+
+                            <div className="p-5 rounded-2xl bg-[#0B1424] border border-[#202E4A] space-y-3">
+                                <div className="text-xs font-semibold text-slate-300">
+                                    Key Focus Areas
+                                </div>
+                                <div className="space-y-2 text-xs text-slate-400">
+                                    <div className="flex items-center justify-between">
+                                        <span>Grassroots Athletes</span>
+                                        <span className="font-medium text-white">50,000+ Active</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span>Annual Sanctioned Events</span>
+                                        <span className="font-medium text-white">120+ Tournaments</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span>International Representation</span>
+                                        <span className="font-medium text-white">SEA, Asian &amp; IeSF Games</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        {/* Card C: Three Pillars (12 cols) */}
+                        <div className="md:col-span-12 rounded-3xl p-6 sm:p-8 bg-[#131E33] border border-[#2C3F63] space-y-5">
+                            <h3 className="text-lg sm:text-xl font-bold text-white">
+                                Pillars of Development
+                            </h3>
+
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div className="space-y-2">
+                                    <h4 className="text-sm font-bold text-white">
+                                        Grassroots &amp; State Leagues
+                                    </h4>
+                                    <p className="text-xs text-slate-400 leading-relaxed">
+                                        Empowering 15 state affiliates to run certified amateur leagues, school programs, and district qualifiers nationwide.
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <h4 className="text-sm font-bold text-white">
+                                        National Athlete Pathways
+                                    </h4>
+                                    <p className="text-xs text-slate-400 leading-relaxed">
+                                        High-performance training, bootcamp facilities, and sports psychology for national teams competing on international stages.
+                                    </p>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <h4 className="text-sm font-bold text-white">
+                                        Integrity &amp; Governance
+                                    </h4>
+                                    <p className="text-xs text-slate-400 leading-relaxed">
+                                        Anti-doping protocols, standard athlete contracts, certified refereeing, and dispute resolution for fair competition.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </section>
 
-                {/* Section 3: Institutional Partners & Affiliations */}
-                <section className="py-8 sm:py-14 space-y-8 sm:space-y-10">
-                    <div className="text-center max-w-xl mx-auto space-y-2.5">
-                        <div className="inline-flex items-center text-xs font-bold uppercase tracking-widest text-neutral-400">
-                            Affiliations
-                        </div>
-                        <h2 className="text-xl sm:text-2xl font-bold text-white">
-                            Institutional & International Affiliates
+                {/* 3. INSTITUTIONAL & INTERNATIONAL AFFILIATES */}
+                <section id="affiliates" className="space-y-6 scroll-mt-28">
+                    <div className="space-y-1 text-left">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            Institutional &amp; International Affiliates
                         </h2>
+                        <p className="text-xs sm:text-sm text-slate-400">
+                            Partner ministries, sports councils, and international federations.
+                        </p>
                     </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {AFFILIATED_PARTNERS.map((partner) => (
                             <div
                                 key={partner.name}
-                                className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col items-center justify-center text-center space-y-2.5"
+                                className="p-5 rounded-2xl bg-[#131E33] border border-[#2C3F63] flex items-center gap-4 shadow-sm"
                             >
-                                <div className="h-12 w-full flex items-center justify-center">
+                                <div className="w-14 h-14 rounded-xl bg-[#0B1424] border border-[#202E4A] p-2 flex items-center justify-center shrink-0">
                                     <img
                                         src={partner.logo}
                                         alt={partner.name}
-                                        className="max-h-10 max-w-[85%] object-contain filter grayscale hover:grayscale-0 transition-all opacity-80 hover:opacity-100"
+                                        className="max-h-8 max-w-full object-contain"
                                     />
                                 </div>
-                                <span className="text-xs font-semibold text-white block">
-                                    {partner.name}
-                                </span>
+                                <div className="min-w-0 flex-1 space-y-0.5">
+                                    <h3 className="text-sm font-bold text-white truncate" title={partner.name}>
+                                        {partner.name}
+                                    </h3>
+                                    <p className="text-xs font-medium text-slate-300">
+                                        {partner.role}
+                                    </p>
+                                    <p className="text-xs text-slate-400 truncate" title={partner.desc}>
+                                        {partner.desc}
+                                    </p>
+                                </div>
                             </div>
                         ))}
                     </div>
-                </section>
-
-                {/* Section 4: Committee Members 2024 - 2027 */}
-                <section id="committee" className="space-y-8 scroll-mt-32">
-                    {/* Header & Controls */}
-                    <div className="relative pb-6 border-b border-white/10 space-y-5">
-                        {/* Ambient Backlight */}
-                        <div className="pointer-events-none absolute -top-10 -left-10 h-44 w-72 rounded-full bg-sky-500/5 blur-[80px]" />
-
-                        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-                            <div>
-                                <h2 className="text-3xl sm:text-4xl lg:text-[2.6rem] font-extrabold tracking-tight text-white leading-tight">
-                                    Committee Members{' '}
-                                    <span className="bg-gradient-to-b from-white via-neutral-100 to-neutral-400 bg-clip-text text-transparent">
-                                        2024–2027
-                                    </span>
+                </section>                {/* 4. EXECUTIVE COUNCIL */}
+                <section id="committee" className="space-y-6 scroll-mt-28">
+                    <div className="space-y-5 pb-5 border-b border-[#202E4A]">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                            <div className="space-y-1">
+                                <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                                    Executive Council
                                 </h2>
+                                <p className="text-xs sm:text-sm text-slate-400">
+                                    Elected leadership and committee members for the 2024–2027 term.
+                                </p>
                             </div>
 
-                            {/* Search Input */}
-                            <div className="relative shrink-0 w-full md:w-72">
+                            {/* Minimalist Search Input */}
+                            <div className="relative shrink-0 w-full md:w-64">
                                 <input
                                     type="text"
                                     value={memberSearch}
                                     onChange={(e) => setMemberSearch(e.target.value)}
-                                    placeholder="Search members..."
-                                    className="w-full px-4 py-2 pl-9 pr-9 rounded-xl text-xs font-medium bg-[#0B111D] border border-white/15 text-white placeholder-neutral-500 focus:outline-none focus:border-white/40 focus:ring-1 focus:ring-white/20 transition-all"
+                                    placeholder="Search council..."
+                                    className="w-full px-3.5 py-2 pl-9 pr-8 rounded-xl text-xs bg-[#0B1424] border border-[#202E4A] text-white placeholder-slate-500 focus:outline-none focus:border-slate-400 transition-colors"
                                 />
-                                <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-2.5 pointer-events-none" />
+                                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                                 {memberSearch && (
                                     <button
                                         type="button"
                                         onClick={() => setMemberSearch('')}
-                                        className="absolute right-2.5 top-2 text-neutral-400 hover:text-white p-0.5 rounded-full hover:bg-white/10 transition-all"
+                                        className="absolute right-2.5 top-2 text-slate-400 hover:text-white p-0.5"
                                         aria-label="Clear search"
                                     >
                                         <X className="w-3.5 h-3.5" />
@@ -375,564 +598,88 @@ export default function About() {
                             </div>
                         </div>
 
-                        {/* Category Filter Pills */}
-                        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                            {filterCategories.map((cat) => {
-                                const isActive = activeCategory === cat.id && !memberSearch;
-                                return (
-                                    <button
-                                        key={cat.id}
-                                        type="button"
-                                        onClick={() => {
-                                            setActiveCategory(cat.id);
-                                            if (memberSearch) setMemberSearch('');
-                                        }}
-                                        className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-1.5 ${isActive
-                                            ? 'bg-white text-slate-950 shadow-sm'
-                                            : 'bg-white/[0.04] text-neutral-300 hover:text-white hover:bg-white/[0.08] border border-white/10'
+                        {/* Minimalist Tab Navigation */}
+                        {!memberSearch && (
+                            <div className="flex items-center gap-6 overflow-x-auto pb-1 scrollbar-hide text-xs">
+                                {filterCategories.map((cat) => {
+                                    const isActive = activeCategory === cat.id;
+                                    return (
+                                        <button
+                                            key={cat.id}
+                                            type="button"
+                                            onClick={() => setActiveCategory(cat.id)}
+                                            className={`pb-2 whitespace-nowrap transition-colors cursor-pointer border-b-2 font-medium ${
+                                                isActive
+                                                    ? 'border-white text-white font-semibold'
+                                                    : 'border-transparent text-slate-400 hover:text-slate-200'
                                             }`}
-                                    >
-                                        <span>{cat.label}</span>
-                                        <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${isActive ? 'bg-slate-950/20 text-slate-950' : 'bg-white/10 text-neutral-400'
-                                            }`}>
-                                            {cat.count}
-                                        </span>
-                                    </button>
-                                );
-                            })}
-                        </div>
+                                        >
+                                            {cat.label}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </div>
 
-                    {/* 1. EXECUTIVE LEADERSHIP (President & Deputy President) */}
-                    {(activeCategory === 'all' || activeCategory === 'leadership') && leadershipMembers.length > 0 && (
-                        <div className="space-y-3">
-                            <div className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
-                                Executive Leadership
-                            </div>
-
-                            {/* Grand Leadership Cards */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-5xl mx-auto">
-                                {leadershipMembers.map((member) => (
-                                    <div
-                                        key={member.id}
-                                        className="group relative rounded-2xl p-5 bg-gradient-to-b from-[#0F172A]/90 to-[#0B101D]/95 border border-white/10 hover:border-white/25 shadow-lg transition-all duration-300 flex items-start justify-between gap-4"
-                                    >
-                                        <div className="flex items-start gap-4 min-w-0 flex-1">
-                                            {/* Monogram Badge (Top-Aligned) */}
-                                            <div className="w-14 h-14 rounded-2xl bg-[#182238] border border-white/15 text-white font-black text-lg flex items-center justify-center shrink-0 shadow-md">
-                                                {getMemberInitials(member.name)}
-                                            </div>
-
-                                            {/* Details Stack */}
-                                            <div className="space-y-1 min-w-0 flex-1">
-                                                <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold tracking-wider text-sky-300 uppercase bg-sky-500/10 border border-sky-400/20">
-                                                    {member.title}
-                                                </div>
-                                                <h3 className="text-base sm:text-lg font-bold text-white group-hover:text-white transition-colors leading-snug truncate" title={member.name}>
-                                                    {member.name}
-                                                </h3>
-                                                <div className="flex flex-col gap-1 text-xs text-neutral-400 font-mono pt-1">
-                                                    {member.phone ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                            title="Click to copy phone number"
-                                                            className="truncate flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-phone` ? (
-                                                                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Phone className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                            </span>
-                                                        </button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1.5 text-neutral-600 select-none">
-                                                            <Phone className="w-3.5 h-3.5 text-neutral-600 shrink-0" />
-                                                            <span>—</span>
-                                                        </div>
-                                                    )}
-                                                    {member.contact && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                            title="Click to copy email"
-                                                            className="truncate flex items-center gap-1.5 hover:text-white transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-email` ? (
-                                                                <Check className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Mail className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Direct Email & Phone Copy Action Buttons (Vertical Stack) */}
-                                        <div className="flex flex-col gap-1.5 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                    aria-label={`Copy ${member.name}'s phone number`}
-                                                    title={copiedKey === `${member.id}-phone` ? 'Copied phone number!' : `Copy phone: ${member.phone}`}
-                                                    className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-phone`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.05] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-300 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-phone` ? (
-                                                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                    ) : (
-                                                        <Phone className="w-3.5 h-3.5" />
-                                                    )}
-                                                </button>
-                                            ) : (
-                                                <div
-                                                    className="w-8 h-8 rounded-lg border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
-                                                    title="Phone number pending update"
-                                                >
-                                                    <Phone className="w-3.5 h-3.5" />
-                                                </div>
-                                            )}
-                                            {member.contact && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                    aria-label={`Copy ${member.name}'s email`}
-                                                    title={copiedKey === `${member.id}-email` ? 'Copied email address!' : `Copy email: ${member.contact}`}
-                                                    className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-email`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.05] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-300 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-email` ? (
-                                                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                                                    ) : (
-                                                        <Mail className="w-3.5 h-3.5" />
-                                                    )}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 2. VICE PRESIDENTS */}
-                    {(activeCategory === 'all' || activeCategory === 'vice_presidents') && vpMembers.length > 0 && (
-                        <div className="space-y-3 pt-2">
-                            <div className="text-xs font-bold tracking-widest text-neutral-300 uppercase">
-                                Vice Presidents
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                                {vpMembers.map((member) => (
-                                    <div
-                                        key={member.id}
-                                        className="group relative rounded-2xl p-4 bg-[#0B101D]/80 border border-white/10 hover:border-white/25 hover:bg-[#0E1528] shadow-md transition-all duration-300 flex items-start justify-between gap-3"
-                                    >
-                                        <div className="flex items-start gap-3 min-w-0 flex-1">
-                                            {/* Slate Monogram Badge (Top-Aligned) */}
-                                            <div className="w-11 h-11 rounded-xl bg-[#141C2E] border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center shrink-0 group-hover:border-white/30 group-hover:text-white transition-all">
-                                                {getMemberInitials(member.name)}
-                                            </div>
-
-                                            {/* Details Stack */}
-                                            <div className="space-y-0.5 min-w-0 flex-1">
-                                                <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wide truncate" title={member.title}>
-                                                    {member.title}
-                                                </div>
-                                                <h4 className="text-sm font-bold text-white group-hover:text-white transition-colors leading-tight truncate" title={member.name}>
-                                                    {member.name}
-                                                </h4>
-                                                <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
-                                                    {member.phone ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                            title="Click to copy phone number"
-                                                            className="truncate hover:text-white flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-phone` ? (
-                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                            </span>
-                                                        </button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1 text-neutral-600 select-none">
-                                                            <Phone className="w-2.5 h-2.5 text-neutral-600 shrink-0" />
-                                                            <span>—</span>
-                                                        </div>
-                                                    )}
-                                                    {member.contact && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                            title="Click to copy email"
-                                                            className="truncate hover:text-white flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-email` ? (
-                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Direct Copy Action Buttons (Vertical Stack) */}
-                                        <div className="flex flex-col gap-1 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                    aria-label={`Copy ${member.name}'s phone number`}
-                                                    title={copiedKey === `${member.id}-phone` ? 'Copied phone number!' : `Copy phone: ${member.phone}`}
-                                                    className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-phone`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-phone` ? (
-                                                        <Check className="w-3 h-3 text-emerald-400" />
-                                                    ) : (
-                                                        <Phone className="w-3 h-3" />
-                                                    )}
-                                                </button>
-                                            ) : (
-                                                <div
-                                                    className="w-7 h-7 rounded-lg border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
-                                                    title="Phone number pending update"
-                                                >
-                                                    <Phone className="w-3 h-3" />
-                                                </div>
-                                            )}
-                                            {member.contact && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                    aria-label={`Copy ${member.name}'s email`}
-                                                    title={copiedKey === `${member.id}-email` ? 'Copied email address!' : `Copy email: ${member.contact}`}
-                                                    className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-email`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-email` ? (
-                                                        <Check className="w-3 h-3 text-emerald-400" />
-                                                    ) : (
-                                                        <Mail className="w-3 h-3" />
-                                                    )}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 3. SECRETARIAT & ADMINISTRATION */}
-                    {(activeCategory === 'all' || activeCategory === 'secretariat') && secretariatMembers.length > 0 && (
-                        <div className="space-y-3 pt-2">
-                            <div className="text-xs font-bold tracking-widest text-neutral-300 uppercase">
-                                Secretariat & Administration
-                            </div>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                                {secretariatMembers.map((member) => (
-                                    <div
-                                        key={member.id}
-                                        className="group relative rounded-2xl p-4 bg-[#0B101D]/80 border border-white/10 hover:border-white/25 hover:bg-[#0E1528] shadow-md transition-all duration-300 flex items-start justify-between gap-3"
-                                    >
-                                        <div className="flex items-start gap-3 min-w-0 flex-1">
-                                            {/* Slate Monogram Badge (Top-Aligned) */}
-                                            <div className="w-11 h-11 rounded-xl bg-[#141C2E] border border-white/10 text-slate-200 font-bold text-xs flex items-center justify-center shrink-0 group-hover:border-white/30 group-hover:text-white transition-all">
-                                                {getMemberInitials(member.name)}
-                                            </div>
-
-                                            {/* Details Stack */}
-                                            <div className="space-y-0.5 min-w-0 flex-1">
-                                                <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wide truncate" title={member.title}>
-                                                    {member.title}
-                                                </div>
-                                                <h4 className="text-sm font-bold text-white group-hover:text-white transition-colors leading-tight truncate" title={member.name}>
-                                                    {member.name}
-                                                </h4>
-                                                <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
-                                                    {member.phone ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                            title="Click to copy phone number"
-                                                            className="truncate hover:text-white flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-phone` ? (
-                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                            </span>
-                                                        </button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1 text-neutral-600 select-none">
-                                                            <Phone className="w-2.5 h-2.5 text-neutral-600 shrink-0" />
-                                                            <span>—</span>
-                                                        </div>
-                                                    )}
-                                                    {member.contact && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                            title="Click to copy email"
-                                                            className="truncate hover:text-white flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-email` ? (
-                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Direct Copy Action Buttons (Vertical Stack) */}
-                                        <div className="flex flex-col gap-1 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                    aria-label={`Copy ${member.name}'s phone number`}
-                                                    title={copiedKey === `${member.id}-phone` ? 'Copied phone number!' : `Copy phone: ${member.phone}`}
-                                                    className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-phone`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-phone` ? (
-                                                        <Check className="w-3 h-3 text-emerald-400" />
-                                                    ) : (
-                                                        <Phone className="w-3 h-3" />
-                                                    )}
-                                                </button>
-                                            ) : (
-                                                <div
-                                                    className="w-7 h-7 rounded-lg border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
-                                                    title="Phone number pending update"
-                                                >
-                                                    <Phone className="w-3 h-3" />
-                                                </div>
-                                            )}
-                                            {member.contact && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                    aria-label={`Copy ${member.name}'s email`}
-                                                    title={copiedKey === `${member.id}-email` ? 'Copied email address!' : `Copy email: ${member.contact}`}
-                                                    className={`w-7 h-7 rounded-lg border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-email`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-email` ? (
-                                                        <Check className="w-3 h-3 text-emerald-400" />
-                                                    ) : (
-                                                        <Mail className="w-3 h-3" />
-                                                    )}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* 4. GENERAL COMMITTEE */}
-                    {(activeCategory === 'all' || activeCategory === 'general') && filteredGeneralCommittee.length > 0 && (
-                        <div className="rounded-3xl p-5 sm:p-7 bg-[#090E1A]/80 border border-white/10 shadow-xl backdrop-blur-xl space-y-5">
-                            {/* Inner Header */}
-                            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-                                <div className="flex items-center gap-2.5">
-                                    <div className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0">
-                                        <Users className="w-4 h-4" />
-                                    </div>
-                                    <h3 className="text-sm sm:text-base font-bold text-white">
-                                        General Committee
-                                    </h3>
-                                </div>
-
-                                <div className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold text-neutral-300">
-                                    {filteredGeneralCommittee.length}
-                                </div>
-                            </div>
-
-                            {/* 4-column Grid */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                                {filteredGeneralCommittee.map((member) => (
-                                    <div
-                                        key={member.id}
-                                        className="group relative rounded-xl p-3.5 bg-[#0D1424]/90 border border-white/10 hover:border-white/25 hover:bg-[#10182E] shadow-sm transition-all duration-300 flex items-start justify-between gap-2.5"
-                                    >
-                                        <div className="flex items-start gap-2.5 min-w-0 flex-1">
-                                            {/* Monogram Box (Top-Aligned) */}
-                                            <div className="w-9 h-9 rounded-lg bg-[#172138] border border-white/10 text-neutral-300 font-bold text-xs flex items-center justify-center shrink-0 group-hover:border-white/30 group-hover:text-white transition-all">
-                                                {getMemberInitials(member.name)}
-                                            </div>
-
-                                            {/* Details Stack */}
-                                            <div className="space-y-0.5 min-w-0 flex-1">
-                                                <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-white transition-colors leading-tight truncate" title={member.name}>
-                                                    {member.name}
-                                                </h4>
-                                                <div className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wide truncate" title={member.title || 'Committee'}>
-                                                    {member.title || 'Committee'}
-                                                </div>
-                                                <div className="flex flex-col text-[10px] text-neutral-400 font-mono pt-1 space-y-0.5">
-                                                    {member.phone ? (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                            title="Click to copy phone number"
-                                                            className="truncate hover:text-white flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-phone` ? (
-                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Phone className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-phone` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-phone` ? 'Copied Phone!' : member.phone}
-                                                            </span>
-                                                        </button>
-                                                    ) : (
-                                                        <div className="flex items-center gap-1 text-neutral-600 select-none">
-                                                            <Phone className="w-2.5 h-2.5 text-neutral-600 shrink-0" />
-                                                            <span>—</span>
-                                                        </div>
-                                                    )}
-                                                    {member.contact && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                            title="Click to copy email"
-                                                            className="truncate hover:text-white flex items-center gap-1 transition-colors cursor-pointer text-left"
-                                                        >
-                                                            {copiedKey === `${member.id}-email` ? (
-                                                                <Check className="w-2.5 h-2.5 text-emerald-400 shrink-0" />
-                                                            ) : (
-                                                                <Mail className="w-2.5 h-2.5 text-neutral-500 shrink-0" />
-                                                            )}
-                                                            <span className={copiedKey === `${member.id}-email` ? 'text-emerald-400 font-sans font-semibold' : ''}>
-                                                                {copiedKey === `${member.id}-email` ? 'Copied Email!' : member.contact}
-                                                            </span>
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        {/* Direct Action Buttons (Vertical Stack) */}
-                                        <div className="flex flex-col gap-1 shrink-0 items-center justify-start pt-0.5">
-                                            {member.phone ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.phone, `${member.id}-phone`)}
-                                                    aria-label={`Copy ${member.name}'s phone number`}
-                                                    title={copiedKey === `${member.id}-phone` ? 'Copied phone number!' : `Copy phone: ${member.phone}`}
-                                                    className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-phone`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-phone` ? (
-                                                        <Check className="w-2.5 h-2.5 text-emerald-400" />
-                                                    ) : (
-                                                        <Phone className="w-2.5 h-2.5" />
-                                                    )}
-                                                </button>
-                                            ) : (
-                                                <div
-                                                    className="w-6 h-6 rounded-md border border-white/5 bg-white/[0.02] flex items-center justify-center text-neutral-600/50"
-                                                    title="Phone number pending update"
-                                                >
-                                                    <Phone className="w-2.5 h-2.5" />
-                                                </div>
-                                            )}
-                                            {member.contact && (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => copyToClipboard(member.contact, `${member.id}-email`)}
-                                                    aria-label={`Copy ${member.name}'s email`}
-                                                    title={copiedKey === `${member.id}-email` ? 'Copied email address!' : `Copy email: ${member.contact}`}
-                                                    className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all cursor-pointer ${
-                                                        copiedKey === `${member.id}-email`
-                                                            ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300'
-                                                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/10 text-neutral-400 hover:text-white'
-                                                    }`}
-                                                >
-                                                    {copiedKey === `${member.id}-email` ? (
-                                                        <Check className="w-2.5 h-2.5 text-emerald-400" />
-                                                    ) : (
-                                                        <Mail className="w-2.5 h-2.5" />
-                                                    )}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Empty Search / Filter State */}
-                    {totalFilteredCount === 0 && (
-                        <div className="text-center py-12 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
-                            <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-neutral-400 flex items-center justify-center mx-auto">
-                                <Search className="w-5 h-5" />
-                            </div>
-                            <div>
-                                <h3 className="text-sm font-bold text-white">No members found</h3>
-                                <p className="text-xs text-neutral-400 mt-0.5">
-                                    No results for &ldquo;{memberSearch}&rdquo;.
-                                </p>
-                            </div>
+                    {/* Search Status Header (if searching) */}
+                    {memberSearch && (
+                        <div className="flex items-center justify-between text-xs text-slate-400 pb-1">
+                            <span>
+                                Found {activeMembers.length} result{activeMembers.length !== 1 ? 's' : ''} for &ldquo;{memberSearch}&rdquo;
+                            </span>
                             <button
                                 type="button"
                                 onClick={() => setMemberSearch('')}
-                                className="px-3.5 py-1.5 rounded-xl bg-white text-slate-950 font-bold text-xs hover:bg-neutral-200 transition-all shadow-sm"
+                                className="hover:text-white underline cursor-pointer"
+                            >
+                                Clear search
+                            </button>
+                        </div>
+                    )}
+
+                    {/* Compact Minimalist Tiles Grid */}
+                    {activeMembers.length > 0 ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                            {activeMembers.map((member) => (
+                                <div
+                                    key={member.id}
+                                    className="rounded-xl p-4 bg-[#131E33] border border-[#2C3F63] flex items-center justify-between gap-3 shadow-sm min-h-[72px]"
+                                >
+                                    <div className="min-w-0 flex-1 space-y-0.5">
+                                        <p className="text-xs text-slate-400 font-medium truncate" title={member.title || 'Council Member'}>
+                                            {member.title || 'Council Member'}
+                                        </p>
+                                        <h4 className="text-sm sm:text-base font-bold text-white truncate" title={member.name}>
+                                            {member.name}
+                                        </h4>
+                                    </div>
+
+                                    {member.contact && (
+                                        <a
+                                            href={`mailto:${member.contact}`}
+                                            title={`Email ${member.name} (${member.contact})`}
+                                            className="w-8 h-8 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 flex items-center justify-center transition-colors shrink-0"
+                                        >
+                                            <Mail className="w-4 h-4" />
+                                        </a>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 rounded-2xl bg-[#131E33] border border-[#2C3F63] space-y-3">
+                            <div className="w-10 h-10 rounded-xl bg-[#0B1424] border border-[#202E4A] text-slate-400 flex items-center justify-center mx-auto">
+                                <Search className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-sm font-bold text-white">No members found</h3>
+                            <p className="text-xs text-slate-400">
+                                No officials matched &ldquo;{memberSearch}&rdquo;.
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => setMemberSearch('')}
+                                className="px-4 py-1.5 rounded-xl bg-white text-slate-950 font-semibold text-xs hover:bg-slate-200 transition-colors cursor-pointer"
                             >
                                 Clear Search
                             </button>
@@ -940,133 +687,96 @@ export default function About() {
                     )}
                 </section>
 
-                {/* Section 5: Official Secretary & Contact Channels */}
-                <section className="relative rounded-3xl p-6 sm:p-8 lg:p-10 bg-gradient-to-b from-[#0C1222]/90 to-[#080D18]/90 border border-white/10 shadow-2xl backdrop-blur-xl">
-                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
-                        {/* Left Column: Contact Methods */}
-                        <div className="lg:col-span-4 space-y-5 flex flex-col justify-start">
-                            <div className="space-y-1.5">
-                                <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                                    Contact & Inquiries
-                                </h2>
-                                <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                                    Official communication channels for inquiries, sanctioning, and partnerships.
-                                </p>
-                            </div>
+                {/* 5. NATIONAL HEADQUARTERS & SECRETARIAT */}
+                <section id="headquarters" className="space-y-6 scroll-mt-28">
+                    <div className="space-y-1 text-left">
+                        <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+                            National Headquarters &amp; Secretariat
+                        </h2>
+                        <p className="text-xs sm:text-sm text-slate-400">
+                            Physical offices, operating hours, and official channels.
+                        </p>
+                    </div>
 
-                            {/* Contact Badges List */}
-                            <div className="space-y-3">
-                                {/* Official Email */}
-                                {officialEmail && (
-                                    <a
-                                        href={`mailto:${officialEmail}`}
-                                        className="group p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/30 transition-all flex items-center gap-3.5 shadow-sm cursor-pointer"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:bg-white group-hover:text-slate-950 text-neutral-300 flex items-center justify-center shrink-0 transition-all">
-                                            <Mail className="w-4 h-4" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider block">Official Email</span>
-                                            <span className="text-xs sm:text-sm font-bold text-white group-hover:text-white transition-colors block truncate">{officialEmail}</span>
-                                        </div>
-                                    </a>
-                                )}
-
-                                {/* Phone / Hotline from Admin Settings */}
-                                {phone ? (
-                                    <a
-                                        href={`tel:${phone.replace(/\s+/g, '')}`}
-                                        className="group p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 hover:border-white/30 transition-all flex items-center gap-3.5 shadow-sm cursor-pointer"
-                                    >
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:bg-white group-hover:text-slate-950 text-neutral-300 flex items-center justify-center shrink-0 transition-all">
-                                            <Phone className="w-4 h-4" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider block">Hotline / Phone</span>
-                                            <span className="text-xs sm:text-sm font-bold text-white group-hover:text-white transition-colors block truncate">{phone}</span>
-                                        </div>
-                                    </a>
-                                ) : (
-                                    <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5 flex items-center gap-3.5">
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-neutral-500 flex items-center justify-center shrink-0">
-                                            <Phone className="w-4 h-4" />
-                                        </div>
-                                        <div className="min-w-0 flex-1">
-                                            <span className="text-[10px] font-semibold text-neutral-500 uppercase tracking-wider block">Hotline / Phone</span>
-                                            <span className="text-xs text-neutral-400 block">Available via Official Email</span>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {/* Federation Address / Location Box with Interactive Map Embed */}
-                                <div className="rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden shadow-sm flex flex-col">
-                                    <div className="p-4 sm:p-5 flex items-start gap-3.5">
-                                        <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 text-neutral-300 flex items-center justify-center shrink-0 mt-0.5">
-                                            <MapPin className="w-4 h-4" />
-                                        </div>
-                                        <div className="min-w-0 flex-1 space-y-1">
-                                            <span className="text-[10px] font-semibold text-neutral-400 uppercase tracking-wider block">Location</span>
-                                            <span className="text-xs sm:text-sm font-medium text-neutral-200 block leading-relaxed break-words">
-                                                {fullAddress}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Embedded Map */}
-                                    {mapSrc && (
-                                        <div className="w-full h-44 sm:h-52 border-t border-white/10 bg-[#070B14] relative overflow-hidden group">
-                                            <iframe
-                                                title="MESF Secretariat Location"
-                                                src={mapSrc}
-                                                className="w-full h-full border-0 filter grayscale contrast-125 opacity-75 hover:filter-none hover:opacity-100 transition-all duration-500"
-                                                loading="lazy"
-                                                referrerPolicy="no-referrer-when-downgrade"
-                                            />
-                                            {/* Ambient gradient overlay */}
-                                            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080D18]/80 via-transparent to-transparent opacity-60" />
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Right Column: Registration & Official Channels */}
-                        <div className="lg:col-span-8 p-6 sm:p-8 rounded-3xl bg-black/40 border border-white/10 shadow-xl flex flex-col justify-between gap-6">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                        {/* Left Card: Communication Channels (7 cols) */}
+                        <div className="lg:col-span-7 rounded-3xl p-6 sm:p-8 bg-[#131E33] border border-[#2C3F63] flex flex-col justify-between space-y-6">
                             <div className="space-y-5">
-                                <div className="pb-4 border-b border-white/10">
-                                    <h3 className="text-base sm:text-lg font-bold text-white tracking-wide">
-                                        Registration Details
+                                <div className="space-y-1">
+                                    <h3 className="text-lg sm:text-xl font-bold text-white tracking-tight">
+                                        Secretariat Office
                                     </h3>
-                                    <p className="text-xs sm:text-sm text-neutral-400 mt-0.5">
-                                        Sports Development Act 1997{rosNumber ? <> &bull; Reg. No: <span className="text-white font-semibold">{rosNumber}</span></> : ''}
+                                    <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                                        Operating Hours: Monday – Friday, 9:00 AM – 5:30 PM (MYT). Closed on national public holidays.
                                     </p>
                                 </div>
 
-                                {socialChannels.length > 0 && (
-                                    <div className="space-y-3">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-xs font-semibold text-neutral-300 uppercase tracking-wider block">
-                                                Official Channels
+                                {/* Contact Methods Grid */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                                    {/* Email */}
+                                    <div className="p-4 rounded-2xl bg-[#0B1424] border border-[#202E4A] flex items-start justify-between gap-3">
+                                        <div className="min-w-0 flex-1 space-y-0.5">
+                                            <span className="text-xs text-slate-400 block">
+                                                Official Email
                                             </span>
-                                            <span className="text-[11px] text-neutral-500 font-medium">
-                                                Verified Links
-                                            </span>
+                                            <a
+                                                href={`mailto:${officialEmail}`}
+                                                className="text-xs sm:text-sm font-semibold text-white hover:text-slate-200 transition-colors block truncate"
+                                            >
+                                                {officialEmail}
+                                            </a>
                                         </div>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard(officialEmail, 'hq-email')}
+                                            className="w-8 h-8 rounded-lg bg-[#131E33] border border-[#2C3F63] hover:border-slate-400 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                                            title="Copy email"
+                                        >
+                                            {copiedKey === 'hq-email' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Mail className="w-3.5 h-3.5" />}
+                                        </button>
+                                    </div>
+
+                                    {/* Phone / Hotline */}
+                                    <div className="p-4 rounded-2xl bg-[#0B1424] border border-[#202E4A] flex items-start justify-between gap-3">
+                                        <div className="min-w-0 flex-1 space-y-0.5">
+                                            <span className="text-xs text-slate-400 block">
+                                                Secretariat Hotline
+                                            </span>
+                                            <a
+                                                href={`tel:${phone.replace(/\s+/g, '')}`}
+                                                className="text-xs sm:text-sm font-semibold text-white hover:text-slate-200 transition-colors block truncate"
+                                            >
+                                                {phone}
+                                            </a>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={() => copyToClipboard(phone, 'hq-phone')}
+                                            className="w-8 h-8 rounded-lg bg-[#131E33] border border-[#2C3F63] hover:border-slate-400 text-slate-300 hover:text-white flex items-center justify-center transition-colors cursor-pointer shrink-0"
+                                            title="Copy phone"
+                                        >
+                                            {copiedKey === 'hq-phone' ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Phone className="w-3.5 h-3.5" />}
+                                        </button>
+                                    </div>
+                                </div>
+
+                                {/* Social Channels Row */}
+                                {socialChannels.length > 0 && (
+                                    <div className="space-y-2 pt-1">
+                                        <span className="text-xs text-slate-400 block">
+                                            Official Social Media
+                                        </span>
+                                        <div className="flex flex-wrap items-center gap-2">
                                             {socialChannels.map((channel) => (
                                                 <a
                                                     key={channel.name}
                                                     href={channel.href}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="p-3.5 sm:p-4 rounded-xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-white/25 transition-all text-left group flex flex-col justify-center gap-1 shadow-sm min-h-[64px]"
+                                                    className="px-3 py-1.5 rounded-lg bg-[#0B1424] border border-[#202E4A] hover:border-slate-400 text-xs font-medium text-slate-300 hover:text-white transition-colors flex items-center gap-1.5"
                                                 >
-                                                    <span className="text-[10px] sm:text-[11px] text-neutral-400 group-hover:text-white block font-medium uppercase tracking-wider">
-                                                        {channel.name}
-                                                    </span>
-                                                    <span className="text-xs sm:text-sm font-semibold text-white break-words leading-snug block">
-                                                        {channel.handle}
-                                                    </span>
+                                                    <span>{channel.name}</span>
+                                                    <ExternalLink className="w-3 h-3 text-slate-400" />
                                                 </a>
                                             ))}
                                         </div>
@@ -1074,40 +784,80 @@ export default function About() {
                                 )}
                             </div>
 
-                            {/* Interactive Navigation Link Card */}
-                            <div className="pt-4 border-t border-white/10">
+                            {/* Direct Inquiry Link */}
+                            <div className="pt-4 border-t border-[#202E4A]">
                                 <Link
                                     href="/get-involved"
-                                    className="group relative w-full p-4 sm:p-5 rounded-2xl bg-white/[0.03] border border-white/10 hover:border-white/25 hover:bg-white/[0.06] transition-all duration-200 flex items-center justify-between gap-4 shadow-sm cursor-pointer"
+                                    className="p-4 sm:p-5 rounded-2xl bg-[#0B1424] border border-[#202E4A] hover:border-slate-400 transition-colors flex items-center justify-between gap-4 cursor-pointer"
                                 >
-                                    <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
-                                        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white text-slate-950 flex items-center justify-center font-bold shrink-0 shadow-md">
-                                            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" />
+                                    <div className="flex items-center gap-3.5 min-w-0">
+                                        <div className="w-10 h-10 rounded-xl bg-white text-slate-950 flex items-center justify-center shrink-0">
+                                            <MessageSquare className="w-5 h-5" />
                                         </div>
-                                        <div className="space-y-0.5 min-w-0 text-left">
-                                            <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider">
-                                                Inquiry & Support Desk
+                                        <div className="space-y-0.5 min-w-0">
+                                            <div className="text-sm sm:text-base font-bold text-white truncate">
+                                                Submit Sanctioning or Partnership Proposal
                                             </div>
-                                            <div className="text-sm sm:text-base font-bold text-white group-hover:text-white transition-colors truncate">
-                                                Have a Question or Proposal?
+                                            <div className="text-xs text-slate-400 truncate">
+                                                Contact the secretariat desk directly
                                             </div>
-                                            <p className="text-xs text-neutral-400 hidden sm:block truncate">
-                                                Reach out to our secretariat for sanctioning, affiliations & partnerships
-                                            </p>
                                         </div>
                                     </div>
-
-                                    <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 group-hover:border-white/30 group-hover:bg-white/10 text-neutral-400 group-hover:text-white flex items-center justify-center shrink-0 transition-all">
-                                        <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                    </div>
+                                    <ArrowRight className="w-5 h-5 text-slate-400 shrink-0" />
                                 </Link>
+                            </div>
+                        </div>
+
+                        {/* Right Card: Location & Map (5 cols) */}
+                        <div className="lg:col-span-5 rounded-3xl bg-[#131E33] border border-[#2C3F63] overflow-hidden flex flex-col justify-between">
+                            <div className="p-6 sm:p-7 space-y-2">
+                                <div className="flex items-center justify-between text-xs text-slate-400">
+                                    <div className="flex items-center gap-1.5 text-white font-medium">
+                                        <MapPin className="w-4 h-4 text-slate-300" />
+                                        <span>Bukit Jalil, Kuala Lumpur</span>
+                                    </div>
+                                    <span>3.0560° N, 101.6917° E</span>
+                                </div>
+                                <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                                    {fullAddress}
+                                </p>
+                            </div>
+
+                            {/* Embedded Map */}
+                            {mapSrc && (
+                                <div className="w-full h-56 sm:h-64 border-t border-[#202E4A] bg-[#070B14] relative overflow-hidden">
+                                    <iframe
+                                        title="MESF Secretariat Location"
+                                        src={mapSrc}
+                                        className="w-full h-full border-0 filter grayscale contrast-125 opacity-75 hover:filter-none hover:opacity-100 transition-all duration-500"
+                                        loading="lazy"
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                    />
+                                </div>
+                            )}
+
+                            {/* Directions Button Footer */}
+                            <div className="p-4 bg-[#0B1424] border-t border-[#202E4A] flex items-center justify-between">
+                                <span className="text-xs text-slate-400">
+                                    Kompleks Sukan Negara
+                                </span>
+                                <a
+                                    href={`https://maps.google.com/?q=${encodeURIComponent(fullAddress)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="px-3.5 py-1.5 rounded-lg bg-[#131E33] border border-[#2C3F63] text-xs font-semibold text-white hover:border-slate-400 transition-colors flex items-center gap-1.5"
+                                >
+                                    <span>Open In Maps</span>
+                                    <ExternalLink className="w-3 h-3 text-slate-400" />
+                                </a>
                             </div>
                         </div>
                     </div>
                 </section>
+
             </main>
 
-            {/* Premium Footer */}
+            {/* Footer */}
             <Footer />
         </div>
     );

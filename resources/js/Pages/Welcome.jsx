@@ -128,13 +128,6 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
         window.scrollTo({ top: 230, behavior: 'smooth' }); // scroll
     };
 
-    const navItems = [
-        { id: 'news', label: 'NEWS', href: '/news' },
-        { id: 'leagues', label: 'LEAGUES' },
-        { id: 'matches', label: 'MATCHES' },
-        { id: 'teams', label: 'TEAMS' },
-        { id: 'about', label: 'ABOUT' }
-    ];
 
     const sanctionedGameLogos = [
         {
@@ -253,6 +246,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'mlbb-open',
             code: 'MAS-MLBB-M',
             monogram: 'MLBB',
+            name: "Men's National Squad",
             game: 'Mobile Legends: Bang Bang',
             division: "Men's Open Division",
             format: '5v5 MOBA',
@@ -266,6 +260,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'mlbb-women',
             code: 'MAS-MLBB-W',
             monogram: 'MLBB',
+            name: "Women's National Squad",
             game: 'Mobile Legends: Bang Bang',
             division: "Women's Division",
             format: '5v5 MOBA',
@@ -279,6 +274,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'pubgm',
             code: 'MAS-PUBGM',
             monogram: 'PUBGM',
+            name: "National Battle Royale Squad",
             game: 'PUBG Mobile',
             division: 'Open National Squad',
             format: '4-Player Squad',
@@ -292,6 +288,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'cs2-open',
             code: 'MAS-CS2-M',
             monogram: 'CS2',
+            name: "Men's Tactical FPS Squad",
             game: 'Counter-Strike 2',
             division: "Men's Open Division",
             format: '5v5 Tactical FPS',
@@ -305,6 +302,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'cs2-women',
             code: 'MAS-CS2-W',
             monogram: 'CS2',
+            name: "Women's Tactical FPS Squad",
             game: 'Counter-Strike 2',
             division: "Women's Division",
             format: '5v5 Tactical FPS',
@@ -318,6 +316,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'dota2',
             code: 'MAS-DOTA-M',
             monogram: 'DOTA2',
+            name: "Commonwealth Gold Contingent",
             game: 'Dota 2',
             division: "Men's Open Division",
             format: '5v5 MOBA',
@@ -331,6 +330,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'dota2-women',
             code: 'MAS-DOTA-W',
             monogram: 'DOTA2',
+            name: "Women's Dota 2 Squad",
             game: 'Dota 2',
             division: "Women's Division",
             format: '5v5 MOBA',
@@ -344,6 +344,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'valorant',
             code: 'MAS-VAL',
             monogram: 'VAL',
+            name: "National Valorant Squad",
             game: 'VALORANT',
             division: 'Open National Squad',
             format: '5v5 Tactical FPS',
@@ -357,6 +358,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'hok',
             code: 'MAS-HOK',
             monogram: 'HOK',
+            name: "SEA Games National Delegation",
             game: 'Honor of Kings',
             division: 'Open National Squad',
             format: '5v5 MOBA',
@@ -370,6 +372,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'efootball',
             code: 'MAS-EFT',
             monogram: 'eFT',
+            name: "National Virtual Football Duo",
             game: 'eFootball',
             division: 'Sports Simulation',
             format: 'Individual & Co-Op',
@@ -383,6 +386,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
             id: 'tekken',
             code: 'MAS-TK8',
             monogram: 'TK8',
+            name: "National FGC Representative",
             game: 'Tekken 8',
             division: 'Fighting Games (FGC)',
             format: 'Individual 1v1',
@@ -982,7 +986,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                         <div className="relative z-10 w-full py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
                             {/* section header */}
                         <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 reveal-on-scroll">
-                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase font-sans">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
                             OFFICIAL LEAGUES
                         </h2>
                         <Link
@@ -1122,199 +1126,27 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                 );
                             })
                         ) : (
-                            <>
-                                {/* circuit card 1 fallback */}
-                                <Link
-                                    href="/leagues"
-                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
-                                >
-                                    <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
-                                        <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
-                                            MESF National Championship 2026
-                                        </h3>
-                                    </div>
-                                    <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
-                                        <img
-                                            src="/images/leagues_hero_banner_hd.jpg"
-                                            alt="MESF National Championship 2026"
-                                            className="w-full h-full object-contain object-center"
-                                        />
-                                        <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
-                                            <div className="space-y-5 sm:space-y-6">
-                                                <div className="space-y-1.5">
-                                                    <span className="text-xs sm:text-sm font-mono font-bold text-neutral-400 block tracking-wider">
-                                                        01
-                                                    </span>
-                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
-                                                        REGISTRATION OPEN • TIER 1 NATIONAL CHAMPIONSHIP
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2.5">
-                                                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
-                                                        MESF National Championship 2026
-                                                    </h4>
-                                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
-                                                        Official nationwide championship circuit open for registered state esports teams across Malaysia.
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2.5 pt-1">
-                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
-                                                        CIRCUIT HIGHLIGHTS
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-2.5">
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
-                                                            RM 50,000 Prize Pool
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            Closes 31 Oct 2026
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            32 Slots
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            Free Entry
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
-                                                <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
-                                                    <span>View League</span>
-                                                    <ArrowUpRight className="w-4 h-4" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-
-                                {/* circuit card 2 fallback */}
-                                <Link
-                                    href="/leagues"
-                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
-                                >
-                                    <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
-                                        <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
-                                            State Circuit Season 4
-                                        </h3>
-                                    </div>
-                                    <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
-                                        <img
-                                            src="/images/matches_hero_banner_hd.jpg"
-                                            alt="State Circuit Season 4"
-                                            className="w-full h-full object-contain object-center"
-                                        />
-                                        <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
-                                            <div className="space-y-5 sm:space-y-6">
-                                                <div className="space-y-1.5">
-                                                    <span className="text-xs font-mono font-bold text-neutral-400 block tracking-wider">
-                                                        02
-                                                    </span>
-                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
-                                                        LIVE SEASON • TIER 2 STATE CIRCUIT
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2.5">
-                                                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
-                                                        State Circuit Season 4
-                                                    </h4>
-                                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
-                                                        Battle royale premier state circuit streaming live on official federation broadcast channels.
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2.5 pt-1">
-                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
-                                                        CIRCUIT HIGHLIGHTS
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-2.5">
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
-                                                            RM 25,000 Prize Pool
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            10 Nov - 05 Dec
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            16 Slots
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            Official Broadcast
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
-                                                <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
-                                                    <span>View League</span>
-                                                    <ArrowUpRight className="w-4 h-4" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-
-                                {/* circuit card 3 fallback */}
-                                <Link
-                                    href="/leagues"
-                                    className="rounded-2xl md:rounded-3xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl overflow-hidden group shadow-[0_15px_35px_rgba(0,0,0,0.5)] flex flex-col h-[540px] sm:h-[580px] cursor-pointer transition-colors duration-300 hover:border-amber-400/40 block relative"
-                                >
-                                    <div className="py-3.5 px-4 sm:px-5 bg-amber-400 text-slate-950 shrink-0 z-10 flex items-center justify-center text-center shadow-sm">
-                                        <h3 className="text-sm sm:text-base font-black tracking-wider uppercase truncate">
-                                            Grassroots Community Cup
-                                        </h3>
-                                    </div>
-                                    <div className="flex-1 relative overflow-hidden bg-[#070B16] flex items-center justify-center p-3 sm:p-4">
-                                        <img
-                                            src="/images/news_hero_banner_hd.jpg"
-                                            alt="Grassroots Community Cup"
-                                            className="w-full h-full object-contain object-center"
-                                        />
-                                        <div className="absolute inset-0 bg-[#060913]/95 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-6 sm:p-8 flex flex-col justify-between z-20 text-left">
-                                            <div className="space-y-5 sm:space-y-6">
-                                                <div className="space-y-1.5">
-                                                    <span className="text-xs sm:text-sm font-mono font-bold text-neutral-400 block tracking-wider">
-                                                        03
-                                                    </span>
-                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold uppercase tracking-widest text-amber-400">
-                                                        REGISTRATION OPEN • AMATEUR COMMUNITY CUP
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2.5">
-                                                    <h4 className="text-lg sm:text-xl md:text-2xl font-black text-white uppercase tracking-tight leading-snug line-clamp-2">
-                                                        Grassroots Community Cup
-                                                    </h4>
-                                                    <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed line-clamp-3 sm:line-clamp-4">
-                                                        Open amateur series fostering emerging tactical shooter talent across Malaysia.
-                                                    </p>
-                                                </div>
-                                                <div className="space-y-2.5 pt-1">
-                                                    <p className="text-[10px] sm:text-[11px] font-mono font-bold tracking-widest text-neutral-400 uppercase">
-                                                        CIRCUIT HIGHLIGHTS
-                                                    </p>
-                                                    <div className="flex flex-wrap gap-2.5">
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-mono font-bold text-amber-300">
-                                                            RM 10,000 Prize Pool
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            16 Teams
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            Open Qualifier
-                                                        </span>
-                                                        <span className="px-3.5 py-1.5 rounded-full border border-white/20 bg-white/5 text-[11px] sm:text-xs font-medium text-neutral-200">
-                                                            Free Entry
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="pt-5 sm:pt-6 border-t border-white/10 flex items-center justify-start">
-                                                <span className="inline-flex items-center gap-2.5 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-white text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg group-hover:bg-amber-400 transition-colors">
-                                                    <span>View League</span>
-                                                    <ArrowUpRight className="w-4 h-4" />
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Link>
-                            </>
+                            <div className="col-span-full py-16 text-center rounded-2xl border border-white/10 bg-[#0A0F1D]/80 backdrop-blur-xl p-8 space-y-4 max-w-xl mx-auto">
+                                <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto text-neutral-400">
+                                    <Trophy className="w-6 h-6" />
+                                </div>
+                                <div className="space-y-1">
+                                    <p className="text-white font-bold text-base">
+                                        No Active Leagues Scheduled
+                                    </p>
+                                    <p className="text-neutral-400 text-xs max-w-sm mx-auto leading-relaxed">
+                                        There are currently no active leagues published by administration. Check back soon for upcoming tournaments.
+                                    </p>
+                                </div>
+                                <div className="pt-2">
+                                    <Link
+                                        href="/leagues"
+                                        className="px-5 py-2 rounded-xl bg-white text-black text-xs font-semibold tracking-wider uppercase transition-colors cursor-pointer hover:bg-neutral-200"
+                                    >
+                                        Explore Leagues
+                                    </Link>
+                                </div>
+                            </div>
                         )}
                     </div>
                         </div>
@@ -1413,10 +1245,17 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
 
                         <div className="relative z-10 w-full py-12 sm:py-14 md:py-16 px-4 sm:px-6 md:px-10 max-w-7xl mx-auto">
                             {/* section header */}
-                        <div className="w-full mb-6 sm:mb-8 reveal-on-scroll">
+                        <div className="w-full flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8 reveal-on-scroll">
                         <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
                             TEAM MALAYSIA
                         </h2>
+                        <Link
+                            href="/teams" // redirect
+                            className="group inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 hover:border-amber-400/40 bg-white/[0.03] hover:bg-white/[0.07] text-xs font-semibold tracking-wider uppercase text-neutral-300 hover:text-white transition-all duration-200 shrink-0 cursor-pointer self-start sm:self-auto"
+                        >
+                            <span>View Directory</span>
+                            <ArrowRight className="w-3.5 h-3.5 text-neutral-400 group-hover:text-amber-400 group-hover:translate-x-1 transition-all duration-200" />
+                        </Link>
                     </div>
 
                     {/* cover flow carousel stage */}
@@ -1558,7 +1397,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                                 {squad.game}
                                             </span>
                                             <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-                                                NAME
+                                                {squad.name || squad.game}
                                             </h3>
                                             <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
                                                 {squad.division}

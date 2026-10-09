@@ -157,13 +157,13 @@ export default function Teams({ uploadedTeams = [] }) {
             {/* 2. clean stats summary dock */}
             <section className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#090E1A]/95 border border-white/[0.08] backdrop-blur-xl shadow-2xl">
-                    {/* stat 1: esports clubs */}
+                    {/* stat 1: national teams */}
                     <div className="flex flex-col items-center text-center p-2 space-y-1.5">
                         <div className="text-xl sm:text-2xl font-black font-mono text-white tracking-tight">
                             {nationalTeams.length}
                         </div>
                         <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-neutral-400">
-                            Esports Clubs
+                            National Teams
                         </div>
                     </div>
 
@@ -208,7 +208,7 @@ export default function Teams({ uploadedTeams = [] }) {
                         <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
                             {[
                                 { id: 'All', label: 'All Teams' },
-                                { id: 'Pro', label: `Clubs (${nationalTeams.length})` },
+                                { id: 'Pro', label: `National Teams (${nationalTeams.length})` },
                                 { id: 'States', label: `State Affiliates (${allStateAffiliates.length})` }
                             ].map(tab => {
                                 const isActive = directoryTab === tab.id; // check
@@ -306,46 +306,47 @@ export default function Teams({ uploadedTeams = [] }) {
 
                 {/* directory sections */}
                 <div className="space-y-12">
-                    {/* SECTION 1: ESPORTS CLUBS */}
+                    {/* SECTION 1: NATIONAL TEAMS */}
                     {showProSection && (
                         <section className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
+                            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
                                 <h2 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase">
-                                    Esports Clubs
+                                    National Teams
                                 </h2>
-                                <span className="text-xs font-mono text-neutral-500">
-                                    {filteredNationalTeams.length} {filteredNationalTeams.length === 1 ? 'Club' : 'Clubs'}
+                                <span className="text-xs font-mono text-slate-400">
+                                    {filteredNationalTeams.length} {filteredNationalTeams.length === 1 ? 'Team' : 'Teams'}
                                 </span>
                             </div>
 
                             {filteredNationalTeams.length === 0 ? (
-                                <div className="py-12 text-center rounded-xl border border-white/10 bg-[#090E1A]/60">
-                                    <p className="text-neutral-400 text-xs font-medium">
-                                        {searchQuery ? `No teams match "${searchQuery}".` : 'No clubs found in this category.'}
+                                <div className="py-10 text-center rounded-xl border border-[#2C3F63] bg-[#131E33]">
+                                    <p className="text-slate-300 text-xs font-medium">
+                                        {searchQuery ? `No national teams match "${searchQuery}".` : 'No national teams found in this category.'}
                                     </p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
                                     {filteredNationalTeams.map(team => (
                                         <Link
                                             key={team.id}
-                                            href={team.slug ? `/teams/${team.slug}` : '/teams/details'} // redirect
-                                            className="group flex flex-col justify-between rounded-xl bg-[#090E1A]/90 hover:bg-[#0D1527] border border-white/[0.08] hover:border-white/20 backdrop-blur-xl p-5 space-y-4 transition-colors duration-200 cursor-pointer"
+                                            href={team.slug ? `/teams/${team.slug}` : `/teams/details?slug=${team.slug || team.id}`} // redirect
+                                            className="group rounded-2xl bg-[#131E33] border border-[#2C3F63] overflow-hidden shadow-lg shadow-black/30 flex flex-col justify-between cursor-pointer"
                                         >
-                                            {/* tag and active status */}
-                                            <div className="flex items-center justify-between">
-                                                <span className="px-2 py-0.5 rounded-md bg-white/[0.04] border border-white/10 font-mono text-[11px] font-bold text-neutral-300">
+                                            {/* top bar: tag + status */}
+                                            <div className="px-4 py-2.5 bg-[#0B1424] border-b border-[#202E4A] flex items-center justify-between">
+                                                <span className="px-2 py-0.5 rounded bg-[#070D18] border border-[#253757] font-mono text-[10px] font-bold text-sky-300 tracking-wider">
                                                     [{team.tag || getTeamInitials(team.name, team.tag)}]
                                                 </span>
-                                                <span className="inline-flex items-center gap-1.5 text-[11px] font-mono text-neutral-300">
+                                                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-medium">
                                                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                                                     {team.status || 'Active'}
                                                 </span>
                                             </div>
 
-                                            {/* logo and title */}
-                                            <div className="flex items-center gap-3.5 py-1">
-                                                <div className="h-12 w-12 rounded-lg bg-[#050810] border border-white/10 p-1.5 flex items-center justify-center shrink-0">
+                                            {/* center stage: crest + title + region + game */}
+                                            <div className="p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
+                                                {/* crest */}
+                                                <div className="h-16 w-16 rounded-xl bg-[#080E1A] border border-[#253757] p-2 flex items-center justify-center shrink-0 shadow-inner my-1">
                                                     {team.logo ? (
                                                         <img
                                                             src={team.logo}
@@ -354,7 +355,7 @@ export default function Teams({ uploadedTeams = [] }) {
                                                                 e.target.style.display = 'none'; // error
                                                                 if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
                                                             }}
-                                                            className="h-full w-full object-contain"
+                                                            className="h-full w-full object-contain filter drop-shadow-sm"
                                                         />
                                                     ) : null}
                                                     <div
@@ -365,37 +366,38 @@ export default function Teams({ uploadedTeams = [] }) {
                                                     </div>
                                                 </div>
 
-                                                <div className="space-y-0.5 min-w-0 flex-1 text-left">
-                                                    <h3 className="text-base font-bold text-neutral-100 group-hover:text-white transition-colors truncate leading-snug">
-                                                        {team.name}
-                                                    </h3>
-                                                    <div className="flex items-center gap-1.5 text-xs text-neutral-400 font-mono">
-                                                        <MapPin className="w-3 h-3 shrink-0 text-neutral-500" />
-                                                        <span className="truncate">{team.region || 'Malaysia'}</span>
-                                                    </div>
+                                                {/* team name */}
+                                                <h3 className="font-bold text-base text-white uppercase tracking-tight truncate w-full group-hover:text-sky-300 transition-colors">
+                                                    {team.name}
+                                                </h3>
+
+                                                {/* region */}
+                                                <div className="flex items-center justify-center gap-1 text-xs text-slate-400 font-mono">
+                                                    <MapPin className="w-3 h-3 text-sky-400 shrink-0" />
+                                                    <span className="truncate">{team.region || 'Malaysia'}</span>
+                                                </div>
+
+                                                {/* discipline pills */}
+                                                <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1.5">
+                                                    {(team.rosters && team.rosters.length > 0 ? team.rosters : [team.game || 'National Squad']).map((r, idx) => (
+                                                        <span
+                                                            key={idx}
+                                                            className="px-2.5 py-0.5 rounded-full bg-[#0A111F] border border-[#202E4A] text-[10px] font-mono text-slate-300"
+                                                        >
+                                                            {r}
+                                                        </span>
+                                                    ))}
                                                 </div>
                                             </div>
 
-                                            {/* game roster tags */}
-                                            <div className="flex flex-wrap gap-1.5 pt-1">
-                                                {(team.rosters || [team.game || 'Esports Squad']).map((r, idx) => (
-                                                    <span
-                                                        key={idx}
-                                                        className="px-2 py-0.5 rounded bg-white/[0.03] border border-white/10 text-[10px] font-mono text-neutral-400"
-                                                    >
-                                                        {r}
-                                                    </span>
-                                                ))}
-                                            </div>
-
-                                            {/* card footer */}
-                                            <div className="pt-3 border-t border-white/[0.06] flex items-center justify-between text-xs">
-                                                <span className="text-[10px] text-neutral-500 font-mono uppercase tracking-wider">
-                                                    Official Club
+                                            {/* bottom bar: sanctioned mark + view action */}
+                                            <div className="px-4 py-2.5 bg-[#0B1424] border-t border-[#202E4A] flex items-center justify-between text-xs">
+                                                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+                                                    MESF Sanctioned
                                                 </span>
-                                                <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-neutral-400 group-hover:text-white transition-colors">
+                                                <span className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-300 group-hover:text-white transition-colors">
                                                     <span>View Profile</span>
-                                                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                                                 </span>
                                             </div>
                                         </Link>
