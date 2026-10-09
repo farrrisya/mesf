@@ -1,6 +1,6 @@
 // --1. imports--
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 import {
@@ -241,162 +241,42 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
     ];
 
 
-    const teamRoster = [
-        {
-            id: 'mlbb-open',
-            code: 'MAS-MLBB-M',
-            monogram: 'MLBB',
-            name: "Men's National Squad",
-            game: 'Mobile Legends: Bang Bang',
-            division: "Men's Open Division",
-            format: '5v5 MOBA',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/mlbb-open.jpg',
-            accolade: 'SEA Games Representatives',
-            status: 'Active Roster',
-            desc: 'Official national squad representing Malaysia in the SEA Games and global invitationals.'
-        },
-        {
-            id: 'mlbb-women',
-            code: 'MAS-MLBB-W',
-            monogram: 'MLBB',
-            name: "Women's National Squad",
-            game: 'Mobile Legends: Bang Bang',
-            division: "Women's Division",
-            format: '5v5 MOBA',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/mlbb-women.jpg',
-            accolade: 'IESF World Contenders',
-            status: 'Active Roster',
-            desc: "Premier women's national delegation contending in global IESF World Championships."
-        },
-        {
-            id: 'pubgm',
-            code: 'MAS-PUBGM',
-            monogram: 'PUBGM',
-            name: "National Battle Royale Squad",
-            game: 'PUBG Mobile',
-            division: 'Open National Squad',
-            format: '4-Player Squad',
-            athletes: '4 Starters • 1 Sub',
-            image: '/images/squads/pubgm.jpg',
-            accolade: 'Asian Games Medalists',
-            status: 'Active Roster',
-            desc: 'Decorated battle royale contingent representing Malaysia in Asian Games and global circuits.'
-        },
-        {
-            id: 'cs2-open',
-            code: 'MAS-CS2-M',
-            monogram: 'CS2',
-            name: "Men's Tactical FPS Squad",
-            game: 'Counter-Strike 2',
-            division: "Men's Open Division",
-            format: '5v5 Tactical FPS',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/cs2-open.jpg',
-            accolade: 'IESF World Contenders',
-            status: 'Active Roster',
-            desc: 'National tactical FPS squad competing across Asian continental qualifiers and world stages.'
-        },
-        {
-            id: 'cs2-women',
-            code: 'MAS-CS2-W',
-            monogram: 'CS2',
-            name: "Women's Tactical FPS Squad",
-            game: 'Counter-Strike 2',
-            division: "Women's Division",
-            format: '5v5 Tactical FPS',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/cs2-women.jpg',
-            accolade: 'IESF World Contenders',
-            status: 'Active Roster',
-            desc: "National women's CS2 delegation representing the flag at global federated tournaments."
-        },
-        {
-            id: 'dota2',
-            code: 'MAS-DOTA-M',
-            monogram: 'DOTA2',
-            name: "Commonwealth Gold Contingent",
-            game: 'Dota 2',
-            division: "Men's Open Division",
-            format: '5v5 MOBA',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/dota2.jpg',
-            accolade: 'Commonwealth Gold Medalists',
-            status: 'Active Roster',
-            desc: 'Historic gold medal powerhouse representing Malaysia in premier international multi-sport events.'
-        },
-        {
-            id: 'dota2-women',
-            code: 'MAS-DOTA-W',
-            monogram: 'DOTA2',
-            name: "Women's Dota 2 Squad",
-            game: 'Dota 2',
-            division: "Women's Division",
-            format: '5v5 MOBA',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/dota2-women.jpg',
-            accolade: 'National Squad',
-            status: 'Active Roster',
-            desc: "Dedicated national women's Dota 2 squad developing for international championships."
-        },
-        {
-            id: 'valorant',
-            code: 'MAS-VAL',
-            monogram: 'VAL',
-            name: "National Valorant Squad",
-            game: 'VALORANT',
-            division: 'Open National Squad',
-            format: '5v5 Tactical FPS',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/valorant.jpg',
-            accolade: 'National Squad',
-            status: 'Active Roster',
-            desc: 'Selected through MESF national qualifiers to represent the federation in regional competitions.'
-        },
-        {
-            id: 'hok',
-            code: 'MAS-HOK',
-            monogram: 'HOK',
-            name: "SEA Games National Delegation",
-            game: 'Honor of Kings',
-            division: 'Open National Squad',
-            format: '5v5 MOBA',
-            athletes: '5 Starters • 1 Sub',
-            image: '/images/squads/hok.jpg',
-            accolade: 'SEA Games Representatives',
-            status: 'Active Roster',
-            desc: 'National Honor of Kings delegation competing in regional championships and the SEA Games.'
-        },
-        {
-            id: 'efootball',
-            code: 'MAS-EFT',
-            monogram: 'eFT',
-            name: "National Virtual Football Duo",
-            game: 'eFootball',
-            division: 'Sports Simulation',
-            format: 'Individual & Co-Op',
-            athletes: '2 National Athletes',
-            image: '/images/squads/efootball.jpg',
-            accolade: 'National Champion',
-            status: 'Active Roster',
-            desc: "Malaysia's virtual football athletes competing in Asian & world federated tournaments."
-        },
-        {
-            id: 'tekken',
-            code: 'MAS-TK8',
-            monogram: 'TK8',
-            name: "National FGC Representative",
-            game: 'Tekken 8',
-            division: 'Fighting Games (FGC)',
-            format: 'Individual 1v1',
-            athletes: '1 Athlete • 1 Reserve',
-            image: '/images/squads/tekken.jpg',
-            accolade: 'National Champion',
-            status: 'Active Roster',
-            desc: "Malaysia's premier fighting game representative at global IESF and multi-sport championships."
+    const adminNationalTeams = (teams || []).filter((t) => t.type === 'national'); // filter
+    const TOTAL_SLOTS = 7; // properties
+    const teamRoster = useMemo(() => { // convert
+        if (adminNationalTeams.length > 0) {
+            return adminNationalTeams.map((team, idx) => ({
+                id: team.slug || `national-team-${team.id}`,
+                code: team.tag || `MAS-NAT-${idx + 1}`,
+                monogram: team.tag || 'MAS',
+                name: team.name || 'TEAM NAME',
+                game: team.game || 'GAME NAME',
+                division: team.motto || team.region || 'National Division',
+                format: 'National Representation',
+                athletes: `${team.roster_size || 5} Athletes`,
+                image: team.logo || null,
+                accolade: 'National Squad',
+                status: team.status || 'Active Roster',
+                desc: team.motto || 'Official national squad representing Malaysia.'
+            }));
         }
-    ];
+
+        // fallback unassigned placeholder cards (amount preserved, clean placeholder state)
+        return Array.from({ length: TOTAL_SLOTS }, (_, i) => ({
+            id: `national-slot-${i + 1}`,
+            code: `MAS-SLOT-${i + 1}`,
+            monogram: 'MAS',
+            name: 'TEAM NAME',
+            game: 'GAME NAME',
+            division: 'DIVISION',
+            format: 'TBD',
+            athletes: 'TBD',
+            image: null,
+            accolade: 'National Squad',
+            status: 'UNASSIGNED',
+            desc: 'National team profile pending federation registration.'
+        }));
+    }, [adminNationalTeams]);
 
     const handlePrevSquad = () => { // action
         setSquadIndex((prev) => (prev - 1 + teamRoster.length) % teamRoster.length);
@@ -1394,10 +1274,10 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                         {/* poster bottom: game discipline & name placeholder */}
                                         <div className="relative z-10 space-y-1 text-left">
                                             <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400">
-                                                GAME NAME
+                                                {squad.game}
                                             </span>
                                             <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-                                                TEAM NAME
+                                                {squad.name}
                                             </h3>
                                             <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
                                                 {squad.division}
@@ -1417,7 +1297,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                         key={squad.id}
                                         type="button"
                                         onClick={() => setSquadIndex(dotIdx)} // state
-                                        aria-label={`Jump to ${squad.game}`}
+                                        aria-label={`Jump to ${squad.name || squad.game}`}
                                         className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                                             dotIdx === squadIndex
                                                 ? 'w-6 sm:w-7 bg-amber-400'

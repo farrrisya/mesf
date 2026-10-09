@@ -159,8 +159,8 @@ Route::get('/', function () {
         });
 
     $teams = Team::where('is_active', true) // state
+        ->orderByRaw("CASE WHEN type = 'national' THEN 0 ELSE 1 END")
         ->orderBy('name', 'asc')
-        ->limit(16)
         ->get()
         ->map(function ($t) {
             return [ // convert

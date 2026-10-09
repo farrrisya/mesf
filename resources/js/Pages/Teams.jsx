@@ -42,8 +42,28 @@ export default function Teams({ uploadedTeams = [] }) {
     const [searchQuery, setSearchQuery] = useState(''); // state
 
     const nationalTeams = useMemo(() => { // filter
-        return uploadedTeams.filter(t => t.type === 'national' || t.type === 'pro');
+        return uploadedTeams.filter((t) => t.type === 'national' || t.type === 'pro');
     }, [uploadedTeams]);
+
+    const placeholderNationalTeams = useMemo(() => { // properties
+        return Array.from({ length: 7 }, (_, i) => ({
+            id: `national-placeholder-${i + 1}`,
+            name: 'TEAM NAME',
+            slug: null,
+            tag: 'MAS',
+            type: 'national',
+            region: 'DIVISION',
+            game: 'GAME NAME',
+            status: 'UNASSIGNED',
+            logo: null,
+            isPlaceholder: true,
+            rosters: ['GAME NAME']
+        }));
+    }, []);
+
+    const effectiveNationalTeams = useMemo(() => { // filter
+        return nationalTeams.length > 0 ? nationalTeams : placeholderNationalTeams;
+    }, [nationalTeams, placeholderNationalTeams]);
 
     const allStateAffiliates = useMemo(() => { // filter
         const uploadedStates = uploadedTeams.filter(t => t.type === 'state').map(t => {
@@ -77,7 +97,7 @@ export default function Teams({ uploadedTeams = [] }) {
 
     const filteredNationalTeams = useMemo(() => { // filter
         const query = searchQuery.trim().toLowerCase();
-        return nationalTeams.filter(t => {
+        return effectiveNationalTeams.filter((t) => {
             const matchesGame = selectedGame === 'All' || 
                 t.game === selectedGame || 
                 (t.rosters || []).includes(selectedGame);
@@ -89,7 +109,7 @@ export default function Teams({ uploadedTeams = [] }) {
             const regionMatch = (t.region || '').toLowerCase().includes(query);
             return nameMatch || tagMatch || regionMatch;
         });
-    }, [nationalTeams, searchQuery, selectedGame]);
+    }, [effectiveNationalTeams, searchQuery, selectedGame]);
 
     const filteredStates = useMemo(() => { // filter
         const query = searchQuery.trim().toLowerCase();
@@ -160,7 +180,7 @@ export default function Teams({ uploadedTeams = [] }) {
                     {/* stat 1: national teams */}
                     <div className="flex flex-col items-center text-center p-2 space-y-1.5">
                         <div className="text-xl sm:text-2xl font-black font-mono text-white tracking-tight">
-                            {nationalTeams.length}
+                            {effectiveNationalTeams.length}
                         </div>
                         <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-neutral-400">
                             National Teams
@@ -208,7 +228,7 @@ export default function Teams({ uploadedTeams = [] }) {
                         <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
                             {[
                                 { id: 'All', label: 'All Teams' },
-                                { id: 'Pro', label: `National Teams (${nationalTeams.length})` },
+                                { id: 'Pro', label: `National Teams (${effectiveNationalTeams.length})` },
                                 { id: 'States', label: `State Affiliates (${allStateAffiliates.length})` }
                             ].map(tab => {
                                 const isActive = directoryTab === tab.id; // check
@@ -326,22 +346,26 @@ export default function Teams({ uploadedTeams = [] }) {
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-                                    {filteredNationalTeams.map(team => (
-                                        <Link
-                                            key={team.id}
-                                            href={team.slug ? `/teams/${team.slug}` : `/teams/details?slug=${team.slug || team.id}`} // redirect
-                                            className="group rounded-2xl bg-[#131E33] border border-[#2C3F63] overflow-hidden shadow-lg shadow-black/30 flex flex-col justify-between cursor-pointer"
-                                        >
-                                            {/* top bar: tag + status */}
-                                            <div className="px-4 py-2.5 bg-[#0B1424] border-b border-[#202E4A] flex items-center justify-between">
-                                                <span className="px-2 py-0.5 rounded bg-[#070D18] border border-[#253757] font-mono text-[10px] font-bold text-sky-300 tracking-wider">
-                                                    [{team.tag || getTeamInitials(team.name, team.tag)}]
-                                                </span>
-                                                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-medium">
-                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                                                    {team.status || 'Active'}
-                                                </span>
-                                            </div>
+                                    {filteredNationalTeams.map((team) => {
+                                        const CardWrapper = team.isPlaceholder ? 'div' : Link;
+                                        const wrapperProps = team.isPlaceholder
+                                            ? { className: 'group rounded-2xl bg-[#131E33] border border-[#2C3F63] overflow-hidden shadow-lg shadow-black/30 flex flex-col justify-between' }
+                                            : {
+                                                href: team.slug ? `/teams/${team.slug}` : `/teams/details?slug=${team.slug || team.id}`,
+                                                className: 'group rounded-2xl bg-[#131E33] border border-[#2C3F63] overflow-hidden shadow-lg shadow-black/30 flex flex-col justify-between cursor-pointer'
+                                            };
+                                        return (
+                                            <CardWrapper key={team.id} {...wrapperProps}>
+                                                {/* top bar: tag + status */}
+                                                <div className="px-4 py-2.5 bg-[#0B1424] border-b border-[#202E4A] flex items-center justify-between">
+                                                    <span className="px-2 py-0.5 rounded bg-[#070D18] border border-[#253757] font-mono text-[10px] font-bold text-sky-300 tracking-wider">
+                                                        [{team.tag || getTeamInitials(team.name, team.tag)}]
+                                                    </span>
+                                                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-medium ${team.isPlaceholder ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                                        <span className={`w-1.5 h-1.5 rounded-full ${team.isPlaceholder ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+                                                        {team.status || 'Active'}
+                                                    </span>
+                                                </div>
 
                                             {/* center stage: crest + title + region + game */}
                                             <div className="p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
@@ -393,15 +417,16 @@ export default function Teams({ uploadedTeams = [] }) {
                                             {/* bottom bar: sanctioned mark + view action */}
                                             <div className="px-4 py-2.5 bg-[#0B1424] border-t border-[#202E4A] flex items-center justify-between text-xs">
                                                 <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                                                    MESF Sanctioned
+                                                    {team.isPlaceholder ? 'Slot Unassigned' : 'MESF Sanctioned'}
                                                 </span>
                                                 <span className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-300 group-hover:text-white transition-colors">
-                                                    <span>View Profile</span>
-                                                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                                                    <span>{team.isPlaceholder ? 'Pending Registration' : 'View Profile'}</span>
+                                                    {!team.isPlaceholder && <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />}
                                                 </span>
                                             </div>
-                                        </Link>
-                                    ))}
+                                        </CardWrapper>
+                                    );
+                                })}
                                 </div>
                             )}
                         </section>
