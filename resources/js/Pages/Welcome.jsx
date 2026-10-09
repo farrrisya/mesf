@@ -1394,7 +1394,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                         {/* poster bottom: game discipline & name placeholder */}
                                         <div className="relative z-10 space-y-1 text-left">
                                             <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400">
-                                                {squad.game}
+                                                GAME NAME
                                             </span>
                                             <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
                                                 {squad.name || squad.game}
