@@ -55,14 +55,14 @@ export default function HostTournament() {
 
     // --4. UI--
     return (
-        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
+        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden">
             <Head title="Host a Tournament - MESF" />
 
 
 
             {/* Custom Background Glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-                <div className="absolute top-[12%] left-[8%] w-[520px] h-[520px] bg-amber-500/10 rounded-full blur-[140px]" />
+                <div className="absolute top-[12%] left-[8%] w-[520px] h-[520px] bg-blue-600/10 rounded-full blur-[140px]" />
                 <div className="absolute bottom-[20%] right-[8%] w-[520px] h-[520px] bg-purple-600/10 rounded-full blur-[160px]" />
             </div>
 
@@ -81,7 +81,7 @@ export default function HostTournament() {
                 <div className="pb-6 border-b border-white/10 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 font-mono">
+                            <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono">
                                 Official Tournament Hosting
                             </span>
                             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-white mt-1">
@@ -96,19 +96,19 @@ export default function HostTournament() {
                         <div className="flex flex-wrap items-center gap-2 shrink-0">
                             <Link
                                 href="/join-tournament" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 transition-all"
                             >
                                 <Users className="w-3.5 h-3.5" />
                                 <span>Join Tournament</span>
                             </Link>
                             <Link
                                 href="/partnership" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 transition-all"
                             >
                                 <Handshake className="w-3.5 h-3.5" />
                                 <span>Partnership</span>
                             </Link>
-                            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400 text-black shadow-[0_0_18px_rgba(251,191,36,0.3)]">
+                            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-black shadow-md font-bold">
                                 <Trophy className="w-3.5 h-3.5" />
                                 <span>Host a Tournament</span>
                             </span>
@@ -139,7 +139,7 @@ export default function HostTournament() {
                             {/* Card 1: Organizing Body Information */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl">
                                 <div className="flex items-center gap-3 pb-4 mb-6 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         01
                                     </span>
                                     <div>
@@ -156,7 +156,7 @@ export default function HostTournament() {
                                     {/* Organizing Entity */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Organizing Entity / Organization <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Organizing Entity / Organization <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -164,7 +164,7 @@ export default function HostTournament() {
                                             value={data.organization} // state
                                             onChange={(e) => setData('organization', e.target.value)} // trigger
                                             placeholder="e.g. Organization / Event Organizer / Esports Club"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.organization && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -176,7 +176,7 @@ export default function HostTournament() {
                                     {/* Organizing Lead */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Organizing Lead / Contact Person <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Organizing Lead / Contact Person <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -184,7 +184,7 @@ export default function HostTournament() {
                                             value={data.name} // state
                                             onChange={(e) => setData('name', e.target.value)} // trigger
                                             placeholder="e.g. Full Name"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.name && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -196,7 +196,7 @@ export default function HostTournament() {
                                     {/* Email */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Official Email Address <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Official Email Address <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="email"
@@ -204,7 +204,7 @@ export default function HostTournament() {
                                             value={data.email} // state
                                             onChange={(e) => setData('email', e.target.value)} // trigger
                                             placeholder="e.g. contact@example.com"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.email && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -216,7 +216,7 @@ export default function HostTournament() {
                                     {/* Phone */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Phone / Mobile WhatsApp <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Phone / Mobile WhatsApp <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="tel"
@@ -224,7 +224,7 @@ export default function HostTournament() {
                                             value={data.phone} // state
                                             onChange={(e) => setData('phone', e.target.value)} // trigger
                                             placeholder="e.g. +60 12-345 6789"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.phone && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -238,7 +238,7 @@ export default function HostTournament() {
                             {/* Card 2: Event Specifications */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl">
                                 <div className="flex items-center gap-3 pb-4 mb-6 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         02
                                     </span>
                                     <div>
@@ -255,7 +255,7 @@ export default function HostTournament() {
                                     {/* Proposed Event Name */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Proposed Event / League Name <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Proposed Event / League Name <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -263,7 +263,7 @@ export default function HostTournament() {
                                             value={data.proposed_event_name} // state
                                             onChange={(e) => setData('proposed_event_name', e.target.value)} // trigger
                                             placeholder="e.g. Tournament Title / Championship Series"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.proposed_event_name && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -275,7 +275,7 @@ export default function HostTournament() {
                                     {/* Expected Teams */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Expected Teams / Participant Slots <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Expected Teams / Participant Slots <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -283,7 +283,7 @@ export default function HostTournament() {
                                             value={data.expected_teams} // state
                                             onChange={(e) => setData('expected_teams', e.target.value)} // trigger
                                             placeholder="e.g. 32 Teams / 160 Players"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.expected_teams && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -295,7 +295,7 @@ export default function HostTournament() {
                                     {/* Proposed Dates */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Proposed Dates / Timeline <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Proposed Dates / Timeline <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -303,7 +303,7 @@ export default function HostTournament() {
                                             value={data.proposed_dates} // state
                                             onChange={(e) => setData('proposed_dates', e.target.value)} // trigger
                                             placeholder="e.g. DD/MM/YYYY or Proposed Date Range"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.proposed_dates && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -315,7 +315,7 @@ export default function HostTournament() {
                                     {/* Venue & Format */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Venue &amp; Competition Format <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Venue &amp; Competition Format <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -323,7 +323,7 @@ export default function HostTournament() {
                                             value={data.venue} // state
                                             onChange={(e) => setData('venue', e.target.value)} // trigger
                                             placeholder="e.g. Online Qualifiers + LAN Finals (Venue / City)"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.venue && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -337,7 +337,7 @@ export default function HostTournament() {
                             {/* Card 3: Additional Event Information */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl space-y-5">
                                 <div className="flex items-center gap-3 pb-4 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         03
                                     </span>
                                     <div>
@@ -360,7 +360,7 @@ export default function HostTournament() {
                                         value={data.message} // state
                                         onChange={(e) => setData('message', e.target.value)} // trigger
                                         placeholder="e.g. Prize pool breakdown, tournament rulebook link, requested certified marshals, broadcast technical requirements..."
-                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
+                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
                                     />
                                     {errors.message && (
                                         <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -373,14 +373,14 @@ export default function HostTournament() {
                             {/* Submit & Security Card */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div className="flex items-center gap-2.5 text-xs text-neutral-400 text-left">
-                                    <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span>Event endorsement is issued in compliance with National Sports Council guidelines.</span>
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-105 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-neutral-100 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-white/10 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                                 >
                                     {processing ? 'Submitting Application...' : 'Submit Hosting Application'}
                                 </button>
@@ -393,7 +393,7 @@ export default function HostTournament() {
                         {/* Hosting Process Card */}
                         <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-5">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-amber-400" />
+                                <Clock className="w-4 h-4 text-neutral-400" />
                                 <span>Hosting Application Process</span>
                             </h3>
 
@@ -439,7 +439,7 @@ export default function HostTournament() {
                         {/* Direct Competitions Desk Contact Card */}
                         <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-4">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <HelpCircle className="w-4 h-4 text-amber-400" />
+                                <HelpCircle className="w-4 h-4 text-neutral-400" />
                                 <span>Competitions Desk</span>
                             </h3>
 
@@ -452,7 +452,7 @@ export default function HostTournament() {
                                     href={`mailto:${replyEmail}`}
                                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
-                                    <Mail className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span className="truncate">{replyEmail}</span>
                                 </a>
 
@@ -460,7 +460,7 @@ export default function HostTournament() {
                                     href={`tel:${contactPhone.replace(/[^0-9+]/g, '')}`}
                                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
-                                    <Phone className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span>{contactPhone}</span>
                                 </a>
                             </div>

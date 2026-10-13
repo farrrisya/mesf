@@ -102,7 +102,7 @@ export default function JoinTournament() {
 
     // --5. UI--
     return (
-        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
+        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden">
             <Head title="Join Tournament Registration - MESF" />
 
 
@@ -110,7 +110,7 @@ export default function JoinTournament() {
             {/* Custom Background Glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
                 <div className="absolute top-[12%] left-[8%] w-[520px] h-[520px] bg-purple-600/10 rounded-full blur-[140px]" />
-                <div className="absolute bottom-[20%] right-[8%] w-[520px] h-[520px] bg-amber-500/10 rounded-full blur-[160px]" />
+                <div className="absolute bottom-[20%] right-[8%] w-[520px] h-[520px] bg-blue-600/10 rounded-full blur-[160px]" />
             </div>
 
             {/* Floating Glass Navbar */}
@@ -128,7 +128,7 @@ export default function JoinTournament() {
                 <div className="pb-6 border-b border-white/10 space-y-4">
                     <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                         <div>
-                            <span className="text-[11px] font-bold uppercase tracking-widest text-amber-400 font-mono">
+                            <span className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 font-mono">
                                 Official Registration Desk
                             </span>
                             <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight uppercase text-white mt-1">
@@ -141,20 +141,20 @@ export default function JoinTournament() {
 
                         {/* Subnav switcher between the 3 inquiry forms */}
                         <div className="flex flex-wrap items-center gap-2 shrink-0">
-                            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400 text-black shadow-[0_0_18px_rgba(251,191,36,0.3)]">
+                            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-black shadow-md font-bold">
                                 <Users className="w-3.5 h-3.5" />
                                 <span>Join Tournament</span>
                             </span>
                             <Link
                                 href="/partnership" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 transition-all"
                             >
                                 <Handshake className="w-3.5 h-3.5" />
                                 <span>Partnership</span>
                             </Link>
                             <Link
                                 href="/host-tournament" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 transition-all"
                             >
                                 <Trophy className="w-3.5 h-3.5" />
                                 <span>Host Event</span>
@@ -186,7 +186,7 @@ export default function JoinTournament() {
                             {/* Card 1: Team & Game Specifications */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl">
                                 <div className="flex items-center gap-3 pb-4 mb-6 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         01
                                     </span>
                                     <div>
@@ -203,7 +203,7 @@ export default function JoinTournament() {
                                     {/* Team Name */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Team / Squad Name <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Team / Squad Name <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -211,7 +211,7 @@ export default function JoinTournament() {
                                             value={data.team_name} // state
                                             onChange={(e) => setData('team_name', e.target.value)} // trigger
                                             placeholder="e.g. Team Alpha / Shadow Squad"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.team_name && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -223,7 +223,7 @@ export default function JoinTournament() {
                                     {/* State Origin */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>State / Region Origin <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>State / Region Origin <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <div className="relative">
                                             <select
@@ -235,7 +235,7 @@ export default function JoinTournament() {
                                                         setCustomState(''); // state
                                                     }
                                                 }}
-                                                className="w-full appearance-none px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all pr-10 hover:border-white/20"
+                                                className="w-full appearance-none px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all pr-10 hover:border-white/20"
                                             >
                                                 <option value="" disabled className="bg-[#090D18] text-neutral-400">Select state of origin</option>
                                                 {MALAYSIA_STATES.map((st) => (
@@ -251,9 +251,9 @@ export default function JoinTournament() {
                                         )}
 
                                         {data.state === 'Other / International' && (
-                                            <div className="mt-3 p-3 rounded-xl bg-amber-400/[0.04] border border-amber-400/20">
-                                                <label className="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-1.5">
-                                                    Specify Region / Country <span className="text-amber-400">*</span>
+                                            <div className="mt-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                                                <label className="block text-[11px] font-bold text-neutral-300 uppercase tracking-wider mb-1.5">
+                                                    Specify Region / Country <span className="text-rose-400">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -261,7 +261,7 @@ export default function JoinTournament() {
                                                     value={customState} // state
                                                     onChange={(e) => setCustomState(e.target.value)} // trigger
                                                     placeholder="e.g. Country / Regional Area"
-                                                    className="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-amber-400/40 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-500"
+                                                    className="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 focus:border-white/40 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500"
                                                 />
                                             </div>
                                         )}
@@ -270,7 +270,7 @@ export default function JoinTournament() {
                                     {/* Game Title */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Game Title <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Game Title <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <div className="relative">
                                             <select
@@ -282,7 +282,7 @@ export default function JoinTournament() {
                                                         setCustomGameTitle(''); // state
                                                     }
                                                 }}
-                                                className="w-full appearance-none px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all pr-10 hover:border-white/20"
+                                                className="w-full appearance-none px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all pr-10 hover:border-white/20"
                                             >
                                                 <option value="" disabled className="bg-[#090D18] text-neutral-400">Select game title</option>
                                                 {SANCTIONED_GAMES.map((game) => (
@@ -298,9 +298,9 @@ export default function JoinTournament() {
                                         )}
 
                                         {data.game_title === 'Other / Open Title' && (
-                                            <div className="mt-3 p-3 rounded-xl bg-amber-400/[0.04] border border-amber-400/20">
-                                                <label className="block text-[11px] font-bold text-amber-400 uppercase tracking-wider mb-1.5">
-                                                    Specify Game Title <span className="text-amber-400">*</span>
+                                            <div className="mt-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                                                <label className="block text-[11px] font-bold text-neutral-300 uppercase tracking-wider mb-1.5">
+                                                    Specify Game Title <span className="text-rose-400">*</span>
                                                 </label>
                                                 <input
                                                     type="text"
@@ -308,7 +308,7 @@ export default function JoinTournament() {
                                                     value={customGameTitle} // state
                                                     onChange={(e) => setCustomGameTitle(e.target.value)} // trigger
                                                     placeholder="e.g. Game Title / Competitive Discipline"
-                                                    className="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-amber-400/40 focus:border-amber-400 focus:ring-1 focus:ring-amber-400 text-white text-sm outline-none transition-all placeholder:text-neutral-500"
+                                                    className="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 focus:border-white/40 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500"
                                                 />
                                             </div>
                                         )}
@@ -317,7 +317,7 @@ export default function JoinTournament() {
                                     {/* Number of Players */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Squad Size <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Squad Size <span className="text-rose-400 font-bold">*</span></span>
                                             <span className="text-[11px] text-neutral-400 font-normal">incl. subs</span>
                                         </label>
                                         <input
@@ -327,7 +327,7 @@ export default function JoinTournament() {
                                             required
                                             value={data.player_count} // state
                                             onChange={(e) => setData('player_count', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all hover:border-white/20"
                                         />
                                         {errors.player_count && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -341,7 +341,7 @@ export default function JoinTournament() {
                             {/* Card 2: Captain / Manager Contact */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl">
                                 <div className="flex items-center gap-3 pb-4 mb-6 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         02
                                     </span>
                                     <div>
@@ -358,7 +358,7 @@ export default function JoinTournament() {
                                     {/* Contact Person Name */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Contact Person Name <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Contact Person Name <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -366,7 +366,7 @@ export default function JoinTournament() {
                                             value={data.name} // state
                                             onChange={(e) => setData('name', e.target.value)} // trigger
                                             placeholder="e.g. Full Name"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.name && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -386,7 +386,7 @@ export default function JoinTournament() {
                                             value={data.organization} // state
                                             onChange={(e) => setData('organization', e.target.value)} // trigger
                                             placeholder="e.g. Organization / Gaming Club Name"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.organization && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -398,7 +398,7 @@ export default function JoinTournament() {
                                     {/* Email */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Email Address <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Email Address <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="email"
@@ -406,7 +406,7 @@ export default function JoinTournament() {
                                             value={data.email} // state
                                             onChange={(e) => setData('email', e.target.value)} // trigger
                                             placeholder="e.g. contact@example.com"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.email && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -418,7 +418,7 @@ export default function JoinTournament() {
                                     {/* Phone / WhatsApp */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Phone / WhatsApp Number <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Phone / WhatsApp Number <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="tel"
@@ -426,7 +426,7 @@ export default function JoinTournament() {
                                             value={data.phone} // state
                                             onChange={(e) => setData('phone', e.target.value)} // trigger
                                             placeholder="e.g. +60 12-345 6789"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.phone && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -440,7 +440,7 @@ export default function JoinTournament() {
                             {/* Card 3: Roster & Additional Notes */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl">
                                 <div className="flex items-center gap-3 pb-4 mb-6 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         03
                                     </span>
                                     <div>
@@ -463,7 +463,7 @@ export default function JoinTournament() {
                                         value={data.message} // state
                                         onChange={(e) => setData('message', e.target.value)} // trigger
                                         placeholder="e.g. Player 1: IGN (ID), Player 2: IGN (ID), Player 3: IGN (ID)..."
-                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
+                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
                                     />
                                     {errors.message && (
                                         <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -476,14 +476,14 @@ export default function JoinTournament() {
                             {/* Submit & Security Card */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div className="flex items-center gap-2.5 text-xs text-neutral-400 text-left">
-                                    <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0" />
+                                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span>Submissions are strictly processed under official MESF regulations.</span>
                                 </div>
 
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-105 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-neutral-100 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-white/10 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                                 >
                                     {processing ? 'Submitting Registration...' : 'Submit Tournament Entry'}
                                 </button>
@@ -496,7 +496,7 @@ export default function JoinTournament() {
                         {/* What Happens Next Card */}
                         <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-5">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <Clock className="w-4 h-4 text-amber-400" />
+                                <Clock className="w-4 h-4 text-neutral-400" />
                                 <span>What Happens Next?</span>
                             </h3>
 
@@ -542,7 +542,7 @@ export default function JoinTournament() {
                         {/* Direct Secretariat Contact Card */}
                         <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 backdrop-blur-xl shadow-xl space-y-4">
                             <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
-                                <HelpCircle className="w-4 h-4 text-amber-400" />
+                                <HelpCircle className="w-4 h-4 text-neutral-400" />
                                 <span>Need Assistance?</span>
                             </h3>
 
@@ -555,7 +555,7 @@ export default function JoinTournament() {
                                     href={`mailto:${replyEmail}`}
                                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
-                                    <Mail className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span className="truncate">{replyEmail}</span>
                                 </a>
 
@@ -563,7 +563,7 @@ export default function JoinTournament() {
                                     href={`tel:${contactPhone.replace(/[^0-9+]/g, '')}`}
                                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
-                                    <Phone className="w-4 h-4 text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span>{contactPhone}</span>
                                 </a>
                             </div>
@@ -591,7 +591,7 @@ export default function JoinTournament() {
                                     className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 hover:bg-white/[0.06] text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
                                     <div className="flex items-center gap-2.5">
-                                        <Trophy className="w-4 h-4 text-amber-400" />
+                                        <Trophy className="w-4 h-4 text-neutral-400" />
                                         <span>Host a Tournament</span>
                                     </div>
                                     <span className="text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">&rarr;</span>

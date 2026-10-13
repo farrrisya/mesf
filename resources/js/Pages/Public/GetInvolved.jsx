@@ -62,9 +62,9 @@ const INQUIRY_OPTIONS = [
         description: 'Apply for official MESF endorsement, certified referees, national circuit points, technical assistance, and event scheduling.',
         href: '/host-tournament',
         icon: Trophy,
-        badgeBg: 'bg-amber-400/10 text-amber-300 border-amber-400/25',
-        accentGlow: 'group-hover:bg-amber-400/20',
-        hoverBorder: 'hover:border-amber-400/50',
+        badgeBg: 'bg-white/10 text-neutral-200 border-white/20',
+        accentGlow: 'group-hover:bg-white/10',
+        hoverBorder: 'hover:border-white/30',
         actionLabel: 'Apply to Host',
         highlights: [
             'Official federation endorsement & support',
@@ -117,14 +117,14 @@ export default function GetInvolved() {
 
     // --5. UI--
     return (
-        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
+        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden">
             <Head title="Get Involved & Inquiries - MESF" />
 
 
 
             {/* Custom Background Glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
-                <div className="absolute top-[15%] left-[10%] w-[550px] h-[550px] bg-amber-500/10 rounded-full blur-[150px]" />
+                <div className="absolute top-[15%] left-[10%] w-[550px] h-[550px] bg-blue-600/10 rounded-full blur-[150px]" />
                 <div className="absolute top-[50%] right-[10%] w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[160px]" />
                 <div className="absolute bottom-[10%] left-[20%] w-[450px] h-[450px] bg-purple-600/10 rounded-full blur-[150px]" />
             </div>
@@ -144,7 +144,7 @@ export default function GetInvolved() {
                 {/* Hero Header Section */}
                 <header className="pb-12 border-b border-white/10 mb-14 sm:mb-16 space-y-3">
                     <div className="mb-2">
-                        <span className="text-xs font-bold tracking-widest text-amber-400 uppercase drop-shadow-[0_0_10px_rgba(251,191,36,0.4)]">
+                        <span className="text-xs font-bold tracking-widest text-neutral-400 uppercase">
                             [ FEDERATION ENGAGEMENT &amp; INQUIRIES ]
                         </span>
                     </div>
@@ -173,8 +173,8 @@ export default function GetInvolved() {
                                 <div className="space-y-7 relative z-10">
                                     {/* Icon and Eyebrow */}
                                     <div className="flex items-center justify-between gap-4">
-                                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:border-amber-400/40 group-hover:bg-amber-400/10 transition-all duration-300 shadow-inner">
-                                            <IconComponent className="w-7 h-7 text-amber-400" />
+                                        <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:border-white/30 group-hover:bg-white/10 transition-all duration-300 shadow-inner">
+                                            <IconComponent className="w-7 h-7 text-neutral-300 group-hover:text-white" />
                                         </div>
                                         <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${option.badgeBg}`}>
                                             {option.eyebrow}
@@ -199,7 +199,7 @@ export default function GetInvolved() {
                                         <ul className="space-y-2.5">
                                             {option.highlights.map((item, idx) => (
                                                 <li key={idx} className="flex items-center gap-2.5 text-xs text-neutral-300">
-                                                    <CheckCircle2 className="w-3.5 h-3.5 text-amber-400/80 shrink-0" />
+                                                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400/90 shrink-0" />
                                                     <span>{item}</span>
                                                 </li>
                                             ))}
@@ -209,7 +209,7 @@ export default function GetInvolved() {
 
                                 {/* Bottom Action Button */}
                                 <div className="pt-10 relative z-10">
-                                    <div className="w-full py-3.5 px-6 rounded-2xl bg-white/5 group-hover:bg-gradient-to-r group-hover:from-amber-400 group-hover:via-amber-300 group-hover:to-amber-500 border border-white/10 group-hover:border-amber-400/50 text-white group-hover:text-black font-extrabold text-xs tracking-wider uppercase flex items-center justify-between transition-all duration-300 shadow-sm group-hover:shadow-[0_0_20px_rgba(251,191,36,0.35)]">
+                                    <div className="w-full py-3.5 px-6 rounded-2xl bg-white/5 group-hover:bg-white border border-white/10 group-hover:border-white text-white group-hover:text-black font-extrabold text-xs tracking-wider uppercase flex items-center justify-between transition-all duration-300 shadow-sm group-hover:shadow-lg">
                                         <span>{option.actionLabel}</span>
                                         <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                                     </div>
@@ -222,7 +222,7 @@ export default function GetInvolved() {
                 {/* Direct Secretary Contact Row */}
                 <div className="mt-16 sm:mt-20 p-8 sm:p-10 md:p-12 rounded-3xl bg-white/[0.02] border border-white/10 backdrop-blur-xl text-left flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
                     <div className="flex items-center gap-4 min-w-0 flex-1">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0 shadow-inner">
+                        <div className="w-12 h-12 rounded-2xl bg-white/[0.05] border border-white/10 flex items-center justify-center text-neutral-300 shrink-0 shadow-inner">
                             <ShieldCheck className="w-6 h-6" />
                         </div>
                         <div className="space-y-0.5 min-w-0">
@@ -236,7 +236,7 @@ export default function GetInvolved() {
                                         type="button"
                                         onClick={handleCopyEmailOnly} // trigger
                                         title="Click to copy email address"
-                                        className="text-amber-400 hover:text-amber-300 font-mono font-semibold underline underline-offset-2 decoration-amber-400/40 hover:decoration-amber-300 cursor-pointer inline-flex items-center gap-1"
+                                        className="text-white hover:text-neutral-300 font-mono font-semibold underline underline-offset-2 decoration-white/40 hover:decoration-white cursor-pointer inline-flex items-center gap-1"
                                     >
                                         <span>{officialEmail}</span>
                                         {copiedEmailText ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 opacity-60" />}
@@ -257,7 +257,7 @@ export default function GetInvolved() {
                                                 type="button"
                                                 onClick={handleCopyPhone} // trigger
                                                 title="Click to copy phone number"
-                                                className="text-amber-400 hover:text-amber-300 font-mono font-semibold underline underline-offset-2 decoration-amber-400/40 hover:decoration-amber-300 cursor-pointer inline-flex items-center gap-1"
+                                                className="text-white hover:text-neutral-300 font-mono font-semibold underline underline-offset-2 decoration-white/40 hover:decoration-white cursor-pointer inline-flex items-center gap-1"
                                             >
                                                 <span>{phone}</span>
                                                 {copiedPhoneText ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 opacity-60" />}
@@ -285,7 +285,7 @@ export default function GetInvolved() {
                             className={`flex-1 sm:flex-none px-5 py-2.5 rounded-full border text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm ${
                                 gmailLaunched
                                     ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 scale-105 shadow-[0_0_15px_rgba(52,211,153,0.3)]'
-                                    : 'bg-amber-400 hover:bg-amber-300 border-amber-400 text-slate-950 font-extrabold shadow-[0_0_20px_rgba(251,191,36,0.35)] hover:shadow-[0_0_25px_rgba(251,191,36,0.5)]'
+                                    : 'bg-white hover:bg-neutral-100 border-white text-black font-extrabold shadow-lg'
                             }`}
                         >
                             {gmailLaunched ? (

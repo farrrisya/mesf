@@ -66,7 +66,7 @@ export default function Partnership() {
 
     // --5. UI--
     return (
-        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans overflow-x-hidden">
+        <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden">
             <Head title="Partnership & Sponsorship - MESF" />
 
 
@@ -74,7 +74,7 @@ export default function Partnership() {
             {/* Custom Background Glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
                 <div className="absolute top-[12%] right-[8%] w-[520px] h-[520px] bg-emerald-600/10 rounded-full blur-[140px]" />
-                <div className="absolute bottom-[20%] left-[8%] w-[520px] h-[520px] bg-amber-500/10 rounded-full blur-[160px]" />
+                <div className="absolute bottom-[20%] left-[8%] w-[520px] h-[520px] bg-blue-600/10 rounded-full blur-[160px]" />
             </div>
 
             {/* Floating Glass Navbar */}
@@ -107,18 +107,18 @@ export default function Partnership() {
                         <div className="flex flex-wrap items-center gap-2 shrink-0">
                             <Link
                                 href="/join-tournament" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 transition-all"
                             >
                                 <Users className="w-3.5 h-3.5" />
                                 <span>Join Tournament</span>
                             </Link>
-                            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-400 text-black shadow-[0_0_18px_rgba(251,191,36,0.3)]">
+                            <span className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-bold uppercase tracking-wider bg-white text-black shadow-md font-bold">
                                 <Handshake className="w-3.5 h-3.5" />
                                 <span>Partnership</span>
                             </span>
                             <Link
                                 href="/host-tournament" // redirect
-                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-amber-400/40 transition-all"
+                                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full text-xs font-semibold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 transition-all"
                             >
                                 <Trophy className="w-3.5 h-3.5" />
                                 <span>Host Event</span>
@@ -150,7 +150,7 @@ export default function Partnership() {
                             {/* Card 1: Organization & Contact Details */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl">
                                 <div className="flex items-center gap-3 pb-4 mb-6 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         01
                                     </span>
                                     <div>
@@ -167,7 +167,7 @@ export default function Partnership() {
                                     {/* Company Name */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Company / Organization Name <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Company / Organization Name <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -175,7 +175,7 @@ export default function Partnership() {
                                             value={data.organization} // state
                                             onChange={(e) => setData('organization', e.target.value)} // trigger
                                             placeholder="e.g. Company Name / Brand Agency / Partner Entity"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.organization && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -187,14 +187,14 @@ export default function Partnership() {
                                     {/* Partnership Scope */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Partnership Scope / Category <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Partnership Scope / Category <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <div className="relative">
                                             <select
                                                 required
                                                 value={data.partnership_type} // state
                                                 onChange={(e) => setData('partnership_type', e.target.value)} // trigger
-                                                className="w-full appearance-none px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all pr-10 hover:border-white/20"
+                                                className="w-full appearance-none px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all pr-10 hover:border-white/20"
                                             >
                                                 <option value="" disabled className="bg-[#090D18] text-neutral-400">Select partnership scope</option>
                                                 {PARTNERSHIP_TYPES.map((type) => (
@@ -213,7 +213,7 @@ export default function Partnership() {
                                     {/* Contact Person Name */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Contact Person Name <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Contact Person Name <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="text"
@@ -221,7 +221,7 @@ export default function Partnership() {
                                             value={data.name} // state
                                             onChange={(e) => setData('name', e.target.value)} // trigger
                                             placeholder="e.g. Full Name"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.name && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -233,7 +233,7 @@ export default function Partnership() {
                                     {/* Official Business Email */}
                                     <div>
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Official Business Email <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Official Business Email <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="email"
@@ -241,7 +241,7 @@ export default function Partnership() {
                                             value={data.email} // state
                                             onChange={(e) => setData('email', e.target.value)} // trigger
                                             placeholder="e.g. partner@example.com"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.email && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -253,7 +253,7 @@ export default function Partnership() {
                                     {/* Phone / Mobile */}
                                     <div className="md:col-span-2">
                                         <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                            <span>Direct Phone / Mobile WhatsApp <span className="text-amber-400 font-bold">*</span></span>
+                                            <span>Direct Phone / Mobile WhatsApp <span className="text-rose-400 font-bold">*</span></span>
                                         </label>
                                         <input
                                             type="tel"
@@ -261,7 +261,7 @@ export default function Partnership() {
                                             value={data.phone} // state
                                             onChange={(e) => setData('phone', e.target.value)} // trigger
                                             placeholder="e.g. +60 12-345 6789"
-                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
+                                            className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20"
                                         />
                                         {errors.phone && (
                                             <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -275,7 +275,7 @@ export default function Partnership() {
                             {/* Card 2: Proposal Summary & Objectives */}
                             <div className="bg-[#090D18]/90 border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-xl space-y-5">
                                 <div className="flex items-center gap-3 pb-4 border-b border-white/5">
-                                    <span className="w-7 h-7 rounded-lg bg-amber-400/10 border border-amber-400/25 text-amber-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
+                                    <span className="w-7 h-7 rounded-lg bg-white/[0.06] border border-white/15 text-neutral-400 font-mono text-xs font-bold flex items-center justify-center shrink-0">
                                         02
                                     </span>
                                     <div>
@@ -290,7 +290,7 @@ export default function Partnership() {
 
                                 <div>
                                     <label className="flex items-center justify-between text-xs font-semibold text-neutral-300 tracking-wide mb-2">
-                                        <span>Proposal Executive Summary <span className="text-amber-400 font-bold">*</span></span>
+                                        <span>Proposal Executive Summary <span className="text-rose-400 font-bold">*</span></span>
                                     </label>
                                     <textarea
                                         rows="4"
@@ -298,7 +298,7 @@ export default function Partnership() {
                                         value={data.proposal_summary} // state
                                         onChange={(e) => setData('proposal_summary', e.target.value)} // trigger
                                         placeholder="e.g. Outline your proposed collaboration, sponsorship terms, brand activation goals, or targeted initiatives..."
-                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
+                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
                                     />
                                     {errors.proposal_summary && (
                                         <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -317,7 +317,7 @@ export default function Partnership() {
                                         value={data.message} // state
                                         onChange={(e) => setData('message', e.target.value)} // trigger
                                         placeholder="e.g. Link to cloud presentation deck, official website, or proposed timeline notes..."
-                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-amber-400/80 focus:ring-2 focus:ring-amber-400/15 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
+                                        className="w-full px-4 py-3 rounded-xl bg-black/50 border border-white/10 focus:border-white/30 focus:ring-1 focus:ring-white/10 text-white text-sm outline-none transition-all placeholder:text-neutral-500 hover:border-white/20 leading-relaxed"
                                     />
                                     {errors.message && (
                                         <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
@@ -337,7 +337,7 @@ export default function Partnership() {
                                 <button
                                     type="submit"
                                     disabled={processing}
-                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-105 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                                    className="w-full sm:w-auto px-8 py-3.5 rounded-full bg-white hover:bg-neutral-100 text-black font-extrabold text-xs sm:text-sm tracking-wider uppercase shadow-lg shadow-white/10 transition-all duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                                 >
                                     {processing ? 'Submitting Proposal...' : 'Submit Partnership Proposal'}
                                 </button>
@@ -409,7 +409,7 @@ export default function Partnership() {
                                     href={`mailto:${replyEmail}`}
                                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
-                                    <Mail className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <Mail className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span className="truncate">{replyEmail}</span>
                                 </a>
 
@@ -417,7 +417,7 @@ export default function Partnership() {
                                     href={`tel:${contactPhone.replace(/[^0-9+]/g, '')}`}
                                     className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
-                                    <Phone className="w-4 h-4 text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                                    <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
                                     <span>{contactPhone}</span>
                                 </a>
                             </div>
@@ -445,7 +445,7 @@ export default function Partnership() {
                                     className="flex items-center justify-between p-3 rounded-xl bg-white/[0.03] border border-white/5 hover:border-white/20 hover:bg-white/[0.06] text-neutral-300 hover:text-white transition-all text-xs group"
                                 >
                                     <div className="flex items-center gap-2.5">
-                                        <Trophy className="w-4 h-4 text-amber-400" />
+                                        <Trophy className="w-4 h-4 text-neutral-400" />
                                         <span>Host a Tournament</span>
                                     </div>
                                     <span className="text-neutral-500 group-hover:text-white group-hover:translate-x-0.5 transition-all">&rarr;</span>
