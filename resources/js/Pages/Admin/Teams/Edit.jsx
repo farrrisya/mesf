@@ -201,11 +201,28 @@ export default function Edit({ team }) {
                     </div>
                 </div>
 
-                {/* success banner */}
+                {/* success popup modal */}
                 {showSuccess && (
-                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center gap-3 animate-fadeIn">
-                        <Check className="w-5 h-5 text-emerald-400 shrink-0" />
-                        <span className="font-semibold">Team profile successfully updated! Redirecting to teams directory...</span>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                        <div className="w-full max-w-md bg-[#0B0F1C] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-left">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <CheckCircle2 className="w-6 h-6" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <h3 className="text-lg font-bold text-white">Successfully Saved!</h3>
+                                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                                    Team profile changes have been saved successfully. Redirecting to teams directory...
+                                </p>
+                            </div>
+                            <div className="flex items-center justify-end gap-3 pt-2">
+                                <Link
+                                    href={route('admin.teams')} // redirect
+                                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black text-xs font-bold transition-all cursor-pointer shadow-lg shadow-amber-400/20"
+                                >
+                                    Continue
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 )}
 

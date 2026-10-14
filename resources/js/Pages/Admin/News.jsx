@@ -393,7 +393,8 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                         <div className="space-y-1.5">
                             <h3 className="text-lg font-bold text-white">Delete News Article?</h3>
                             <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                                Are you sure you want to delete <span className="text-white font-semibold">"{deleteModalState.article?.title}"</span>? This action cannot be undone.
+                                Are you sure you want to delete <span className="text-white font-semibold">"{deleteModalState.article?.title}"</span>?
+                                <span className="block text-slate-400 text-xs mt-1.5">This action cannot be undone.</span>
                             </p>
                         </div>
                         <div className="flex items-center justify-end gap-3 pt-2">
@@ -409,7 +410,7 @@ export default function News({ articles = [], categories = DEFAULT_CATEGORIES, f
                                 onClick={handleDelete} // trigger
                                 className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-rose-500/20"
                             >
-                                Delete Permanently
+                                Delete
                             </button>
                         </div>
                     </div>

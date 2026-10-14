@@ -7,31 +7,30 @@ import {
     Users,
     UploadCloud,
     X,
-    AlertCircle,
     Flag,
     MapPin,
     Gamepad2,
     Shield,
-    Sparkles,
     Check,
+    CheckCircle2,
     Move,
     Mail,
-    FileText,
-    CheckCircle2,
-    FolderOpen
+    Globe,
+    Share2,
+    FolderOpen,
+    Image as ImageIcon
 } from 'lucide-react';
 import ImagePositionerModal from '@/Components/ImagePositionerModal';
 import MediaPickerModal from '@/Components/MediaPickerModal';
 
 // --2. properties--
 const TEAM_TYPES = [
-    { id: 'national', label: 'National Team', desc: 'Official national squad representing Malaysia in global championships.' },
-    { id: 'state', label: 'State Affiliate', desc: 'State-level esports association or state representation team.' },
-    { id: 'pro', label: 'Club / Pro Team', desc: 'Registered competitive esports club, academy, or grassroots squad.' }
+    { id: 'national', label: 'National Team', desc: 'Official squad representing Malaysia in international esports tournaments.' },
+    { id: 'state', label: 'State Affiliate', desc: 'Official state esports association or state representation team.' },
+    { id: 'pro', label: 'Club / Pro Team', desc: 'Registered competitive esports club or professional team.' }
 ];
 
 const MALAYSIA_STATES = [
-    'National / All Malaysia',
     'Johor',
     'Kedah',
     'Kelantan',
@@ -60,16 +59,21 @@ const GAME_DISCIPLINES = [
     'Tekken 8',
     'Apex Legends',
     'Counter-Strike 2',
-    'Other / Multi-Discipline'
+    'Free Fire'
 ];
 
 // --3. main component--
 export default function Create() {
-    const fileInputRef = useRef(null); // properties
+    const fileInputLogoRef = useRef(null); // properties
+    const fileInputPicRef = useRef(null); // properties
+
     const [logoPreview, setLogoPreview] = useState(null); // state
+    const [teamPicPreview, setTeamPicPreview] = useState(null); // state
     const [showSuccess, setShowSuccess] = useState(false); // state
+
     const [isPositionerOpen, setIsPositionerOpen] = useState(false); // state
-    const [isLibraryOpen, setIsLibraryOpen] = useState(false); // state
+    const [isLogoLibraryOpen, setIsLogoLibraryOpen] = useState(false); // state
+    const [isPicLibraryOpen, setIsPicLibraryOpen] = useState(false); // state
     const [positionerSource, setPositionerSource] = useState(null); // state
     const [rawFileName, setRawFileName] = useState('logo.jpg'); // state
 
@@ -79,16 +83,46 @@ export default function Create() {
         type: 'national',
         region: 'National / All Malaysia',
         game_title: '',
+        games: ['Mobile Legends: Bang Bang (MLBB)'],
         manager_name: '',
         contact_email: '',
+        website_url: '',
+        social_links: {
+            facebook: '',
+            instagram: '',
+            twitter: '',
+            youtube: '',
+            tiktok: '',
+            discord: ''
+        },
         motto: '',
         roster_size: 5,
         status: 'ACTIVE',
+        image_display_mode: 'both',
         logo: null,
-        library_logo_path: null
+        library_logo_path: null,
+        team_pic: null,
+        library_team_pic_path: null
     });
 
     // --4. actions--
+    const handleTypeChange = (newType) => { // trigger
+        setData((prev) => ({
+            ...prev,
+            type: newType,
+            region: newType === 'national' ? 'National / All Malaysia' : (prev.region === 'National / All Malaysia' ? 'Selangor' : prev.region)
+        })); // state
+    };
+
+    const toggleGame = (game) => { // trigger
+        const currentGames = data.games || []; // state
+        if (currentGames.includes(game)) { // check
+            setData('games', currentGames.filter((g) => g !== game)); // state
+        } else {
+            setData('games', [...currentGames, game]); // state
+        }
+    };
+
     const handleLogoChange = (e) => { // trigger
         const file = e.target.files?.[0]; // state
         if (file) { // check
@@ -106,7 +140,21 @@ export default function Create() {
         }
     };
 
-    const handleSelectFromLibrary = (mediaItem) => { // trigger
+    const handleTeamPicChange = (e) => { // trigger
+        const file = e.target.files?.[0]; // state
+        if (file) { // check
+            const reader = new FileReader(); // convert
+            reader.onloadend = () => setTeamPicPreview(reader.result); // state
+            reader.readAsDataURL(file); // convert
+            setData((prev) => ({
+                ...prev,
+                team_pic: file,
+                library_team_pic_path: null
+            })); // state
+        }
+    };
+
+    const handleSelectLogoFromLibrary = (mediaItem) => { // trigger
         setLogoPreview(mediaItem.url); // state
         setData((prev) => ({
             ...prev,
@@ -115,10 +163,23 @@ export default function Create() {
         })); // state
         setPositionerSource(mediaItem.url); // state
         setRawFileName(mediaItem.file_name); // state
-        if (fileInputRef.current) { // check
-            fileInputRef.current.value = ''; // state
+        if (fileInputLogoRef.current) { // check
+            fileInputLogoRef.current.value = ''; // state
         }
-        setIsLibraryOpen(false); // toggle
+        setIsLogoLibraryOpen(false); // toggle
+    };
+
+    const handleSelectPicFromLibrary = (mediaItem) => { // trigger
+        setTeamPicPreview(mediaItem.url); // state
+        setData((prev) => ({
+            ...prev,
+            library_team_pic_path: mediaItem.file_path,
+            team_pic: null
+        })); // state
+        if (fileInputPicRef.current) { // check
+            fileInputPicRef.current.value = ''; // state
+        }
+        setIsPicLibraryOpen(false); // toggle
     };
 
     const handlePositionerComplete = (croppedFile, previewUrl) => { // save
@@ -138,9 +199,20 @@ export default function Create() {
             library_logo_path: null
         })); // state
         setLogoPreview(null); // state
-        setPositionerSource(null); // state
-        if (fileInputRef.current) { // check
-            fileInputRef.current.value = ''; // state
+        if (fileInputLogoRef.current) { // check
+            fileInputLogoRef.current.value = ''; // state
+        }
+    };
+
+    const handleRemoveTeamPic = () => { // trigger
+        setData((prev) => ({
+            ...prev,
+            team_pic: null,
+            library_team_pic_path: null
+        })); // state
+        setTeamPicPreview(null); // state
+        if (fileInputPicRef.current) { // check
+            fileInputPicRef.current.value = ''; // state
         }
     };
 
@@ -172,7 +244,7 @@ export default function Create() {
                                 Register New Team
                             </h1>
                             <p className="text-xs text-slate-400 mt-0.5">
-                                Configure team classification, competitive roster details, and official esports branding.
+                                Add team info, game disciplines, and media for public and homepage displays.
                             </p>
                         </div>
                     </div>
@@ -190,54 +262,68 @@ export default function Create() {
                             disabled={processing} // check
                             className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.3)] cursor-pointer disabled:opacity-50"
                         >
-                            {processing ? 'Registering...' : 'Create Team Profile'}
+                            {processing ? 'Registering...' : 'Save Team Profile'}
                         </button>
                     </div>
                 </div>
 
-                {/* success banner */}
+                {/* success popup modal */}
                 {showSuccess && (
-                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center gap-3 animate-fadeIn">
-                        <Check className="w-5 h-5 text-emerald-400 shrink-0" />
-                        <span className="font-semibold">Team profile successfully created! Redirecting to teams directory...</span>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                        <div className="w-full max-w-md bg-[#0B0F1C] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-left">
+                            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                                <CheckCircle2 className="w-6 h-6" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <h3 className="text-lg font-bold text-white">Successfully Created!</h3>
+                                <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                                    Team profile has been created successfully. Redirecting to teams directory...
+                                </p>
+                            </div>
+                            <div className="flex items-center justify-end gap-3 pt-2">
+                                <Link
+                                    href={route('admin.teams')} // redirect
+                                    className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 text-black text-xs font-bold transition-all cursor-pointer shadow-lg shadow-amber-400/20"
+                                >
+                                    Continue
+                                </Link>
+                            </div>
+                        </div>
                     </div>
                 )}
 
                 {/* main form */}
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                        {/* left column: team information (8 cols) */}
-                        <div className="lg:col-span-8 space-y-6">
-                            {/* Card 1: Team Classification */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                        {/* left column: team information (7 cols) */}
+                        <div className="lg:col-span-7 space-y-6">
+                            {/* Card 1: Team Class Selection */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+                                <div className="border-b border-white/10 pb-3">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
                                             <Shield className="w-4 h-4" />
                                         </div>
                                         <div>
                                             <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Team Classification
+                                                Team Class
                                             </h2>
                                             <p className="text-xs text-slate-400">
-                                                Select affiliation status and operational representation level
+                                                Choose which category this team belongs to
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 1
-                                    </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                     {TEAM_TYPES.map((t) => {
                                         const isSelected = data.type === t.id;
                                         return (
                                             <button
                                                 key={t.id}
                                                 type="button"
-                                                onClick={() => setData('type', t.id)} // trigger
-                                                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                                                onClick={() => handleTypeChange(t.id)} // trigger
+                                                className={`p-3.5 rounded-2xl border text-left transition-colors cursor-pointer ${
                                                     isSelected
                                                         ? 'bg-amber-400/10 border-amber-400 text-white shadow-[0_0_20px_rgba(251,191,36,0.15)]'
                                                         : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
@@ -256,33 +342,30 @@ export default function Create() {
                                 </div>
                             </div>
 
-                            {/* Card 2: Identity & Discipline */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
-                                            <Users className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Team Identity & Discipline
-                                            </h2>
-                                            <p className="text-xs text-slate-400">
-                                                Official team name, tag, discipline title, and state affiliation
-                                            </p>
+                            {/* Card 2: Dynamic Form Fields based on Team Class */}
+                            {data.type === 'national' && (
+                                <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5 animate-fadeIn">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
+                                                <Flag className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                    National Squad Details
+                                                </h2>
+                                                <p className="text-xs text-slate-400">
+                                                    Official Malaysia national lineup details and games played
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 2
-                                    </span>
-                                </div>
 
-                                <div className="space-y-4">
-                                    {/* team name and tag */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                        <div className="sm:col-span-2 space-y-1.5">
+                                    <div className="space-y-4">
+                                        {/* Team Name */}
+                                        <div className="space-y-1.5">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                                Team Full Name <span className="text-amber-400">*</span>
+                                                Team Name <span className="text-amber-400">*</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -291,266 +374,603 @@ export default function Create() {
                                                 onChange={(e) => setData('name', e.target.value)} // trigger
                                                 className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
                                             />
-                                            {errors.name && (
-                                                <p className="text-xs text-rose-400 mt-1">{errors.name}</p>
-                                            )}
+                                            {errors.name && <p className="text-xs text-rose-400 mt-1">{errors.name}</p>}
                                         </div>
+
+                                        {/* Multi-select Games for National Team */}
+                                        <div className="space-y-2 pt-1">
+                                            <div className="flex items-center justify-between">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    Games Played <span className="text-amber-400">*</span>
+                                                </label>
+                                                <span className="text-[11px] text-amber-400 font-mono">
+                                                    {data.games?.length || 0} Games Selected
+                                                </span>
+                                            </div>
+                                            <p className="text-[11px] text-slate-400">
+                                                National teams can compete in multiple games. Click to toggle all titles played.
+                                            </p>
+
+                                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                                                {GAME_DISCIPLINES.map((game) => {
+                                                    const isChecked = (data.games || []).includes(game);
+                                                    return (
+                                                        <button
+                                                            key={game}
+                                                            type="button"
+                                                            onClick={() => toggleGame(game)} // trigger
+                                                            className={`p-2.5 rounded-xl border text-xs font-medium flex items-center justify-between transition-colors cursor-pointer ${
+                                                                isChecked
+                                                                    ? 'bg-amber-400/15 border-amber-400/60 text-white shadow-sm'
+                                                                    : 'bg-white/[0.02] border-white/10 text-slate-400 hover:text-slate-300'
+                                                            }`}
+                                                        >
+                                                            <span className="truncate">{game}</span>
+                                                            <span className={`w-4 h-4 rounded-md border flex items-center justify-center text-[10px] shrink-0 ml-2 ${
+                                                                isChecked
+                                                                    ? 'bg-amber-400 border-amber-400 text-black font-extrabold'
+                                                                    : 'border-white/20'
+                                                            }`}>
+                                                                {isChecked && '✓'}
+                                                            </span>
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        {/* Website & Email */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                                    <Globe className="w-3.5 h-3.5 text-amber-400" />
+                                                    <span>Official Website</span>
+                                                </label>
+                                                <input
+                                                    type="url"
+                                                    value={data.website_url || ''} // state
+                                                    onChange={(e) => setData('website_url', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                                    <Mail className="w-3.5 h-3.5 text-amber-400" />
+                                                    <span>Official Email</span>
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    value={data.contact_email} // state
+                                                    onChange={(e) => setData('contact_email', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Motto & Manager */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    Team Motto
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={data.motto} // state
+                                                    onChange={(e) => setData('motto', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    Team Manager / Coach
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={data.manager_name} // state
+                                                    onChange={(e) => setData('manager_name', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {data.type === 'state' && (
+                                <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5 animate-fadeIn">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+                                                <MapPin className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                    State Affiliate Association
+                                                </h2>
+                                                <p className="text-xs text-slate-400">
+                                                    State esports association identity and official representation
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {/* Association Name */}
                                         <div className="space-y-1.5">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                                Tag / Acronym <span className="text-amber-400">*</span>
+                                                Association Name <span className="text-amber-400">*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 required
-                                                maxLength={6}
-                                                value={data.tag} // state
-                                                onChange={(e) => setData('tag', e.target.value.toUpperCase())} // trigger
-                                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-bold uppercase tracking-wider outline-none transition-all font-sans"
+                                                value={data.name} // state
+                                                onChange={(e) => setData('name', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
                                             />
-                                            {errors.tag && (
-                                                <p className="text-xs text-rose-400 mt-1">{errors.tag}</p>
-                                            )}
+                                            {errors.name && <p className="text-xs text-rose-400 mt-1">{errors.name}</p>}
                                         </div>
-                                    </div>
 
-                                    {/* game discipline & region */}
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    State / Territory <span className="text-amber-400">*</span>
+                                                </label>
+                                                <select
+                                                    value={data.region} // state
+                                                    onChange={(e) => setData('region', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
+                                                >
+                                                    {MALAYSIA_STATES.map((state) => (
+                                                        <option key={state} value={state}>
+                                                            {state}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    President / Liaison Person
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={data.manager_name} // state
+                                                    onChange={(e) => setData('manager_name', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                                    <Globe className="w-3.5 h-3.5 text-amber-400" />
+                                                    <span>Official Website</span>
+                                                </label>
+                                                <input
+                                                    type="url"
+                                                    value={data.website_url || ''} // state
+                                                    onChange={(e) => setData('website_url', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                                    <Mail className="w-3.5 h-3.5 text-amber-400" />
+                                                    <span>Official Email</span>
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    value={data.contact_email} // state
+                                                    onChange={(e) => setData('contact_email', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+                                        </div>
+
                                         <div className="space-y-1.5">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                                Primary Discipline <span className="text-amber-400">*</span>
+                                                State Motto / Slogan
                                             </label>
-                                            <select
-                                                value={data.game_title} // state
-                                                onChange={(e) => setData('game_title', e.target.value)} // trigger
-                                                required
-                                                className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
-                                            >
-                                                <option value="">Select Discipline</option>
-                                                {GAME_DISCIPLINES.map((game) => (
-                                                    <option key={game} value={game}>
-                                                        {game}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {errors.game_title && (
-                                                <p className="text-xs text-rose-400 mt-1">{errors.game_title}</p>
-                                            )}
+                                            <input
+                                                type="text"
+                                                value={data.motto} // state
+                                                onChange={(e) => setData('motto', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                            />
                                         </div>
-
-                                        <div className="space-y-1.5">
-                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                                State / Territory <span className="text-amber-400">*</span>
-                                            </label>
-                                            <select
-                                                value={data.region} // state
-                                                onChange={(e) => setData('region', e.target.value)} // trigger
-                                                className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
-                                            >
-                                                {MALAYSIA_STATES.map((state) => (
-                                                    <option key={state} value={state}>
-                                                        {state}
-                                                    </option>
-                                                ))}
-                                            </select>
-                                            {errors.region && (
-                                                <p className="text-xs text-rose-400 mt-1">{errors.region}</p>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* motto / tagline */}
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Team Motto / Tagline
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.motto} // state
-                                            onChange={(e) => setData('motto', e.target.value)} // trigger
-                                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
-                                        />
-                                        {errors.motto && (
-                                            <p className="text-xs text-rose-400 mt-1">{errors.motto}</p>
-                                        )}
                                     </div>
                                 </div>
-                            </div>
+                            )}
 
-                            {/* Card 3: Management & Contacts */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                            {data.type === 'pro' && (
+                                <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5 animate-fadeIn">
+                                    <div className="border-b border-white/10 pb-3">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
+                                                <Users className="w-4 h-4" />
+                                            </div>
+                                            <div>
+                                                <h2 className="text-sm font-bold uppercase tracking-wider text-white">
+                                                    Club / Pro Team Details
+                                                </h2>
+                                                <p className="text-xs text-slate-400">
+                                                    Competitive esports organization profile
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {/* Club / Team Name */}
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                Club / Team Name <span className="text-amber-400">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                required
+                                                value={data.name} // state
+                                                onChange={(e) => setData('name', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
+                                            />
+                                            {errors.name && <p className="text-xs text-rose-400 mt-1">{errors.name}</p>}
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    Game Discipline <span className="text-amber-400">*</span>
+                                                </label>
+                                                <select
+                                                    value={data.game_title} // state
+                                                    onChange={(e) => setData('game_title', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
+                                                >
+                                                    <option value="">Select Primary Game</option>
+                                                    {GAME_DISCIPLINES.map((game) => (
+                                                        <option key={game} value={game}>
+                                                            {game}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    Home State / Region
+                                                </label>
+                                                <select
+                                                    value={data.region} // state
+                                                    onChange={(e) => setData('region', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
+                                                >
+                                                    {MALAYSIA_STATES.map((state) => (
+                                                        <option key={state} value={state}>
+                                                            {state}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                                    Manager / Team Leader
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={data.manager_name} // state
+                                                    onChange={(e) => setData('manager_name', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+
+                                            <div className="space-y-1.5">
+                                                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                                    <Globe className="w-3.5 h-3.5 text-amber-400" />
+                                                    <span>Official Website</span>
+                                                </label>
+                                                <input
+                                                    type="url"
+                                                    value={data.website_url || ''} // state
+                                                    onChange={(e) => setData('website_url', e.target.value)} // trigger
+                                                    className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1.5">
+                                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+                                                <Mail className="w-3.5 h-3.5 text-amber-400" />
+                                                <span>Official Email</span>
+                                            </label>
+                                            <input
+                                                type="email"
+                                                value={data.contact_email} // state
+                                                onChange={(e) => setData('contact_email', e.target.value)} // trigger
+                                                className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Card 3: Social Media Channels (For All Team Classes) */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
+                                <div className="border-b border-white/10 pb-3">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-                                            <Mail className="w-4 h-4" />
+                                        <div className="w-9 h-9 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center text-pink-400 shrink-0">
+                                            <Share2 className="w-4 h-4" />
                                         </div>
                                         <div>
                                             <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Management & Correspondence
+                                                Social Media
                                             </h2>
                                             <p className="text-xs text-slate-400">
-                                                Liaison contact details for federation correspondence
+                                                Official accounts and social channels
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 3
-                                    </span>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Team Manager / Captain
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Instagram URL / Handle
                                         </label>
                                         <input
                                             type="text"
-                                            value={data.manager_name} // state
-                                            onChange={(e) => setData('manager_name', e.target.value)} // trigger
+                                            value={data.social_links?.instagram || ''} // state
+                                            onChange={(e) => setData('social_links', { ...data.social_links, instagram: e.target.value })} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
-                                        {errors.manager_name && (
-                                            <p className="text-xs text-rose-400 mt-1">{errors.manager_name}</p>
-                                        )}
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Official Contact Email
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Facebook Page URL
                                         </label>
                                         <input
-                                            type="email"
-                                            value={data.contact_email} // state
-                                            onChange={(e) => setData('contact_email', e.target.value)} // trigger
+                                            type="text"
+                                            value={data.social_links?.facebook || ''} // state
+                                            onChange={(e) => setData('social_links', { ...data.social_links, facebook: e.target.value })} // trigger
                                             className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
-                                        {errors.contact_email && (
-                                            <p className="text-xs text-rose-400 mt-1">{errors.contact_email}</p>
-                                        )}
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            X / Twitter URL
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.social_links?.twitter || ''} // state
+                                            onChange={(e) => setData('social_links', { ...data.social_links, twitter: e.target.value })} // trigger
+                                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            YouTube / TikTok / Discord
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.social_links?.youtube || ''} // state
+                                            onChange={(e) => setData('social_links', { ...data.social_links, youtube: e.target.value })} // trigger
+                                            className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* right column: emblem & status (4 cols) */}
-                        <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
-                            {/* emblem / logo upload card */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
-                                <div className="border-b border-white/10 pb-3">
-                                    <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                                        Official Team Emblem
+                        {/* right column: emblem, team picture & status (5 cols, bigger and spacious) */}
+                        <div className="lg:col-span-5 space-y-6 lg:sticky lg:top-8">
+                            {/* image mode selector card - made bigger and spacious */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
+                                <div className="border-b border-white/10 pb-3.5">
+                                    <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+                                        Team Images & Display
                                     </h3>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">
-                                        PNG or SVG with transparent background recommended.
+                                    <p className="text-xs text-slate-400 mt-1">
+                                        Choose if you want to upload a Logo, a Team Picture, or Both.
                                     </p>
                                 </div>
 
-                                {logoPreview ? (
-                                    <div className="relative group rounded-2xl overflow-hidden border border-white/15 bg-black/40 p-6 flex items-center justify-center">
-                                        <img
-                                            src={logoPreview} // state
-                                            alt="Team Logo Preview"
-                                            className="w-32 h-32 object-contain"
+                                {/* display options: Both, Logo, Team Pic */}
+                                <div className="grid grid-cols-3 gap-2 bg-white/5 p-1.5 rounded-2xl border border-white/10 text-xs">
+                                    <button
+                                        type="button"
+                                        onClick={() => setData('image_display_mode', 'both')} // trigger
+                                        className={`py-2.5 px-2 rounded-xl font-bold transition-colors cursor-pointer text-center ${
+                                            data.image_display_mode === 'both'
+                                                ? 'bg-amber-400 text-black shadow-sm'
+                                                : 'text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        Both
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData('image_display_mode', 'logo')} // trigger
+                                        className={`py-2.5 px-2 rounded-xl font-bold transition-colors cursor-pointer text-center ${
+                                            data.image_display_mode === 'logo'
+                                                ? 'bg-amber-400 text-black shadow-sm'
+                                                : 'text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        Logo
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setData('image_display_mode', 'pic')} // trigger
+                                        className={`py-2.5 px-2 rounded-xl font-bold transition-colors cursor-pointer text-center ${
+                                            data.image_display_mode === 'pic'
+                                                ? 'bg-amber-400 text-black shadow-sm'
+                                                : 'text-slate-400 hover:text-white'
+                                        }`}
+                                    >
+                                        Team Pic
+                                    </button>
+                                </div>
+
+                                <div className="p-3.5 rounded-2xl bg-white/[0.02] border border-white/10 text-xs text-slate-400 space-y-1.5 leading-relaxed">
+                                    <p>• <span className="text-slate-200 font-semibold">Logo</span> appears on public teams directory card.</p>
+                                    <p>• <span className="text-slate-200 font-semibold">Team Picture</span> appears on homepage roster (national teams) and detail page.</p>
+                                </div>
+
+                                {/* 1. Logo upload slot */}
+                                {(data.image_display_mode === 'both' || data.image_display_mode === 'logo') && (
+                                    <div className="space-y-3 pt-3 border-t border-white/10">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                                Team Logo
+                                            </span>
+                                            <span className="text-[11px] text-slate-500 font-mono">1:1 Square</span>
+                                        </div>
+
+                                        {logoPreview ? (
+                                            <div className="relative rounded-2xl overflow-hidden border border-white/15 bg-black/40 p-5 flex items-center justify-center">
+                                                <img src={logoPreview} alt="Logo Preview" className="w-28 h-28 object-contain" />
+                                                <div className="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setPositionerSource(logoPreview); // state
+                                                            setIsPositionerOpen(true); // trigger
+                                                        }}
+                                                        className="p-2 rounded-xl bg-black/70 hover:bg-black text-white text-xs border border-white/20 cursor-pointer shadow-md"
+                                                        title="Crop"
+                                                    >
+                                                        <Move className="w-4 h-4" />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleRemoveLogo} // trigger
+                                                        className="p-2 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white text-xs cursor-pointer shadow-md"
+                                                        title="Remove"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="border border-dashed border-white/15 rounded-2xl p-5 text-center bg-white/[0.02] space-y-2.5">
+                                                <div className="flex items-center justify-center gap-2.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => fileInputLogoRef.current?.click()} // trigger
+                                                        className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                                    >
+                                                        <UploadCloud className="w-4 h-4 text-amber-400" />
+                                                        <span>Upload</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsLogoLibraryOpen(true)} // trigger
+                                                        className="px-4 py-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                                    >
+                                                        <FolderOpen className="w-4 h-4" />
+                                                        <span>Library</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <input
+                                            ref={fileInputLogoRef} // properties
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleLogoChange} // trigger
+                                            className="hidden"
                                         />
-                                        <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-opacity flex flex-wrap items-center justify-center gap-1.5 p-2">
-                                            <button
-                                                type="button"
-                                                onClick={() => {
-                                                    setPositionerSource(logoPreview); // state
-                                                    setIsPositionerOpen(true); // trigger
-                                                }}
-                                                className="px-2.5 py-1.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-[11px] font-bold transition-all cursor-pointer shadow-lg backdrop-blur-md flex items-center gap-1"
-                                            >
-                                                <Move className="w-3 h-3" />
-                                                <span>Crop</span>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => fileInputRef.current?.click()} // trigger
-                                                className="px-2.5 py-1.5 rounded-xl bg-white text-black text-[11px] font-bold hover:bg-slate-200 transition-all cursor-pointer shadow-lg"
-                                            >
-                                                Upload
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsLibraryOpen(true)} // trigger
-                                                className="px-2.5 py-1.5 rounded-xl bg-amber-400 text-black text-[11px] font-bold hover:bg-amber-300 transition-all cursor-pointer shadow-lg flex items-center gap-1"
-                                            >
-                                                <FolderOpen className="w-3 h-3" />
-                                                <span>Library</span>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={handleRemoveLogo} // trigger
-                                                className="px-2.5 py-1.5 rounded-xl bg-rose-500 text-white text-[11px] font-bold hover:bg-rose-600 transition-all cursor-pointer shadow-lg"
-                                            >
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="border-2 border-dashed border-white/15 rounded-2xl p-5 flex flex-col items-center justify-center text-center bg-white/[0.02]">
-                                        <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400 mb-2.5">
-                                            <UploadCloud className="w-5 h-5" />
-                                        </div>
-                                        <p className="text-xs font-semibold text-slate-200">
-                                            Select Team Emblem
-                                        </p>
-                                        <p className="text-[10px] text-slate-500 mt-0.5 mb-3.5">
-                                            PNG, WEBP, SVG up to 5MB
-                                        </p>
-                                        <div className="flex items-center gap-2 w-full">
-                                            <button
-                                                type="button"
-                                                onClick={() => fileInputRef.current?.click()} // trigger
-                                                className="flex-1 py-2 px-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                                            >
-                                                <UploadCloud className="w-3.5 h-3.5 text-amber-400" />
-                                                <span>Upload</span>
-                                            </button>
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsLibraryOpen(true)} // trigger
-                                                className="flex-1 py-2 px-2.5 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 border border-amber-400/35 text-amber-300 text-[11px] font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                                            >
-                                                <FolderOpen className="w-3.5 h-3.5" />
-                                                <span>From Library</span>
-                                            </button>
-                                        </div>
                                     </div>
                                 )}
 
-                                <input
-                                    ref={fileInputRef} // properties
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleLogoChange} // trigger
-                                    className="hidden"
-                                />
-                                {errors.logo && (
-                                    <p className="text-xs text-rose-400 text-center mt-1">{errors.logo}</p>
+                                {/* 2. Team Picture upload slot */}
+                                {(data.image_display_mode === 'both' || data.image_display_mode === 'pic') && (
+                                    <div className="space-y-3 pt-3 border-t border-white/10">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-bold text-white uppercase tracking-wider">
+                                                Team Picture
+                                            </span>
+                                            <span className="text-[11px] text-slate-500 font-mono">16:9 Landscape</span>
+                                        </div>
+
+                                        {teamPicPreview ? (
+                                            <div className="relative rounded-2xl overflow-hidden border border-white/15 bg-black/40 aspect-[16/9] flex items-center justify-center">
+                                                <img src={teamPicPreview} alt="Team Photo Preview" className="w-full h-full object-cover" />
+                                                <div className="absolute top-2.5 right-2.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={handleRemoveTeamPic} // trigger
+                                                        className="p-2 rounded-xl bg-rose-500/80 hover:bg-rose-600 text-white text-xs cursor-pointer shadow-lg"
+                                                        title="Remove"
+                                                    >
+                                                        <X className="w-4 h-4" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="border border-dashed border-white/15 rounded-2xl p-5 text-center bg-white/[0.02] space-y-2.5">
+                                                <div className="flex items-center justify-center gap-2.5">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => fileInputPicRef.current?.click()} // trigger
+                                                        className="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                                    >
+                                                        <UploadCloud className="w-4 h-4 text-amber-400" />
+                                                        <span>Upload</span>
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setIsPicLibraryOpen(true)} // trigger
+                                                        className="px-4 py-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                                                    >
+                                                        <FolderOpen className="w-4 h-4" />
+                                                        <span>Library</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <input
+                                            ref={fileInputPicRef} // properties
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleTeamPicChange} // trigger
+                                            className="hidden"
+                                        />
+                                    </div>
                                 )}
                             </div>
 
-                            {/* roster & status card */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
+                            {/* Status & Registration Card */}
+                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-4">
                                 <div className="border-b border-white/10 pb-3">
                                     <h3 className="text-xs font-bold uppercase tracking-wider text-white">
                                         Status & Registration
                                     </h3>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">
-                                        Sanctioning state and active roster size.
+                                    <p className="text-[11px] text-slate-400 mt-0.5">
+                                        Current team standing and active roster size.
                                     </p>
                                 </div>
 
-                                <div className="space-y-3">
+                                <div className="space-y-3.5">
                                     <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
-                                            Affiliation Status
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Status
                                         </label>
                                         <select
                                             value={data.status} // state
                                             onChange={(e) => setData('status', e.target.value)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all cursor-pointer font-sans"
+                                            className="w-full px-3.5 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
                                         >
                                             <option value="ACTIVE">Active & Sanctioned</option>
                                             <option value="PENDING">Pending Verification</option>
@@ -559,16 +979,16 @@ export default function Create() {
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
-                                            Registered Roster Size
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Player Count
                                         </label>
                                         <input
                                             type="number"
                                             min={1}
-                                            max={20}
+                                            max={25}
                                             value={data.roster_size} // state
                                             onChange={(e) => setData('roster_size', parseInt(e.target.value) || 5)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
+                                            className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all font-sans"
                                         />
                                     </div>
                                 </div>
@@ -579,7 +999,7 @@ export default function Create() {
                                         disabled={processing} // check
                                         className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
                                     >
-                                        {processing ? 'Registering Team...' : 'Create Team Profile'}
+                                        {processing ? 'Registering Team...' : 'Save Team Profile'}
                                     </button>
 
                                     <Link
@@ -608,11 +1028,18 @@ export default function Create() {
                 onComplete={handlePositionerComplete}
             />
 
-            {/* media library picker modal */}
+            {/* media library picker modal for logo */}
             <MediaPickerModal
-                isOpen={isLibraryOpen}
-                onClose={() => setIsLibraryOpen(false)}
-                onSelect={handleSelectFromLibrary}
+                isOpen={isLogoLibraryOpen}
+                onClose={() => setIsLogoLibraryOpen(false)}
+                onSelect={handleSelectLogoFromLibrary}
+            />
+
+            {/* media library picker modal for team pic */}
+            <MediaPickerModal
+                isOpen={isPicLibraryOpen}
+                onClose={() => setIsPicLibraryOpen(false)}
+                onSelect={handleSelectPicFromLibrary}
             />
         </AdminLayout>
     );

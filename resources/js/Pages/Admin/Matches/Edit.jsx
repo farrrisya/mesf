@@ -11,6 +11,7 @@ import {
     MapPin,
     Tv,
     Check,
+    CheckCircle2,
     Layers,
     Shield,
     Sparkles
@@ -31,27 +32,27 @@ const GAME_DISCIPLINES = [
 ];
 
 const MATCH_FORMATS = [
-    { value: 'BO1', label: 'Best of 1 (BO1)', short: 'BO1' },
-    { value: 'BO3', label: 'Best of 3 (BO3)', short: 'BO3' },
-    { value: 'BO5', label: 'Best of 5 (BO5)', short: 'BO5' },
-    { value: 'BO7', label: 'Best of 7 (BO7)', short: 'BO7' }
+    { value: 'BO1', label: 'Best of 1', short: 'BO1' },
+    { value: 'BO3', label: 'Best of 3', short: 'BO3' },
+    { value: 'BO5', label: 'Best of 5', short: 'BO5' },
+    { value: 'BO7', label: 'Best of 7', short: 'BO7' }
 ];
 
 const MATCH_ROUNDS = [
-    'Regular Season / Group Stage',
+    'Group Stage',
     'Round of 16',
     'Quarter-Finals',
     'Semi-Finals',
     'Third Place Playoff',
     'Grand Finals',
-    'Exhibition / Showmatch'
+    'Showmatch'
 ];
 
 const STATUS_OPTIONS = [
-    { value: 'UPCOMING', label: 'Upcoming Fixture', desc: 'Match scheduled for future broadcast' },
-    { value: 'LIVE', label: 'Live In Progress', desc: 'Game currently being played live' },
-    { value: 'COMPLETED', label: 'Completed', desc: 'Match finished with final scores recorded' },
-    { value: 'CANCELLED', label: 'Cancelled', desc: 'Fixture called off or postponed' }
+    { value: 'UPCOMING', label: 'Upcoming', desc: 'Not started yet' },
+    { value: 'LIVE', label: 'Live Now', desc: 'Playing right now' },
+    { value: 'COMPLETED', label: 'Finished', desc: 'Match has ended' },
+    { value: 'CANCELLED', label: 'Cancelled', desc: 'Called off or postponed' }
 ];
 
 // --3. main component--
@@ -61,7 +62,7 @@ export default function Edit({ match = {} }) {
     const { data, setData, put, processing, errors } = useForm({ // state
         tournament_name: match.tournament_name || '',
         game_title: match.game_title || '',
-        round: match.round || 'Regular Season / Group Stage',
+        round: match.round || 'Group Stage',
         format: match.format || 'BO3',
         team_a_name: match.team_a_name || '',
         team_a_tag: match.team_a_tag || '',
@@ -83,14 +84,11 @@ export default function Edit({ match = {} }) {
         put(route('admin.matches.update', match.id), { // save
             onSuccess: () => { // trigger
                 setShowSuccess(true); // state
-                setTimeout(() => { // clock
-                    router.visit(route('admin.matches')); // redirect
-                }, 800);
             },
         });
     };
 
-    const matchupHeadline = `${data.team_a_tag || data.team_a_name || 'Team A'} vs ${data.team_b_tag || data.team_b_name || 'Team B'}`;
+    const matchupHeadline = `${data.team_a_tag || data.team_a_name || 'Team 1'} vs ${data.team_b_tag || data.team_b_name || 'Team 2'}`;
 
     // --5. UI--
     return (
@@ -98,7 +96,7 @@ export default function Edit({ match = {} }) {
             <Head title={`Edit Match #${match.id} - Admin`} />
 
             <div className="w-full max-w-6xl pb-16 space-y-5">
-                {/* header bar: tightly positioned with inline back button */}
+                {/* header bar: clean and simple */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                         <BackButton href={route('admin.matches')} label="Back" />
@@ -107,7 +105,7 @@ export default function Edit({ match = {} }) {
                                 Edit Match: {matchupHeadline}
                             </h1>
                             <p className="text-xs text-slate-400 mt-0.5">
-                                Update tournament stage, competitor scores, schedule timing, and live broadcast link.
+                                Update match details, teams, scores, date, and time.
                             </p>
                         </div>
                     </div>
@@ -130,11 +128,29 @@ export default function Edit({ match = {} }) {
                     </div>
                 </div>
 
-                {/* success banner */}
+                {/* unified saved popup modal */}
                 {showSuccess && (
-                    <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-sm flex items-center gap-3 animate-fadeIn">
-                        <Check className="w-5 h-5 text-emerald-400 shrink-0" />
-                        <span className="font-semibold">Match fixture updated successfully! Redirecting to matches dashboard...</span>
+                    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                        <div className="w-full max-w-sm bg-[#0B0F1C] border border-white/15 rounded-3xl p-6 shadow-2xl space-y-5 text-center">
+                            <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 flex items-center justify-center text-emerald-400 mx-auto">
+                                <CheckCircle2 className="w-7 h-7" />
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-lg font-bold text-white">Successfully Saved!</h3>
+                                <p className="text-xs text-slate-400">
+                                    Match changes have been saved.
+                                </p>
+                            </div>
+                            <div className="pt-2">
+                                <button
+                                    type="button"
+                                    onClick={() => router.visit(route('admin.matches'))}
+                                    className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-emerald-500/20"
+                                >
+                                    OK
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
 
@@ -143,32 +159,29 @@ export default function Edit({ match = {} }) {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                         {/* left column: match details cards (8 cols) */}
                         <div className="lg:col-span-8 space-y-6">
-                            {/* Card 1: Tournament & Series Details */}
+                            {/* Card 1: Match Details */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="border-b border-white/10 pb-3">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 shrink-0">
                                             <Trophy className="w-4 h-4" />
                                         </div>
                                         <div>
                                             <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Tournament & Series Details
+                                                Match Details
                                             </h2>
                                             <p className="text-xs text-slate-400">
-                                                Tournament name, game discipline, bracket round, and format
+                                                Tournament name, game, round, and format
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 1
-                                    </span>
                                 </div>
 
                                 <div className="space-y-4">
                                     {/* tournament name */}
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Tournament / League Title <span className="text-amber-400">*</span>
+                                            Tournament Name <span className="text-amber-400">*</span>
                                         </label>
                                         <input
                                             type="text"
@@ -187,7 +200,7 @@ export default function Edit({ match = {} }) {
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-1.5">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                                Game Discipline <span className="text-amber-400">*</span>
+                                                Game <span className="text-amber-400">*</span>
                                             </label>
                                             <select
                                                 value={data.game_title} // state
@@ -195,7 +208,7 @@ export default function Edit({ match = {} }) {
                                                 required
                                                 className="w-full px-4 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all cursor-pointer font-sans"
                                             >
-                                                <option value="">Select Game Discipline</option>
+                                                <option value="">Select Game</option>
                                                 {GAME_DISCIPLINES.map((game) => (
                                                     <option key={game} value={game}>
                                                         {game}
@@ -209,7 +222,7 @@ export default function Edit({ match = {} }) {
 
                                         <div className="space-y-1.5">
                                             <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                                Tournament Bracket / Stage
+                                                Round / Stage
                                             </label>
                                             <select
                                                 value={data.round} // state
@@ -228,7 +241,7 @@ export default function Edit({ match = {} }) {
                                     {/* match series format pills */}
                                     <div className="space-y-2 pt-1">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Match Series Format
+                                            Game Format
                                         </label>
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                                             {MATCH_FORMATS.map((f) => {
@@ -238,10 +251,10 @@ export default function Edit({ match = {} }) {
                                                         key={f.value}
                                                         type="button"
                                                         onClick={() => setData('format', f.value)} // trigger
-                                                        className={`p-3 rounded-xl border text-center transition-all cursor-pointer ${
+                                                        className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                                                             isSelected
-                                                                ? 'bg-amber-400/10 border-amber-400 text-amber-300 shadow-[0_0_16px_rgba(251,191,36,0.15)] font-bold'
-                                                                : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
+                                                                ? 'bg-amber-400/15 border-amber-400 text-amber-300 font-bold'
+                                                                : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
                                                         }`}
                                                     >
                                                         <div className="text-xs font-bold">{f.short}</div>
@@ -254,50 +267,44 @@ export default function Edit({ match = {} }) {
                                 </div>
                             </div>
 
-                            {/* Card 2: Head-to-Head Competitors & Matchup */}
+                            {/* Card 2: Competing Teams & Scores */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="border-b border-white/10 pb-3">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400 shrink-0">
                                             <Swords className="w-4 h-4" />
                                         </div>
                                         <div>
                                             <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Head-to-Head Competitors & Scores
+                                                Teams & Score
                                             </h2>
                                             <p className="text-xs text-slate-400">
-                                                Participating teams, acronym tags, and live series score tallies
+                                                Update team names, tags, and match score
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 2
-                                    </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 relative">
-                                    {/* Team A (Blue Side / HOME) */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    {/* Team 1 */}
                                     <div className="p-4 sm:p-5 rounded-2xl bg-sky-500/[0.03] border border-sky-500/25 space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <span className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_8px_rgba(56,189,248,0.6)]" />
-                                                <span className="text-[11px] font-bold tracking-widest text-sky-400 uppercase">
-                                                    Team A (Blue Side)
-                                                </span>
-                                            </div>
+                                            <span className="text-xs font-bold tracking-wider text-sky-400 uppercase">
+                                                Team 1
+                                            </span>
                                             <span className="text-[10px] font-mono font-bold text-sky-400/80 px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20">
-                                                HOME
+                                                FIRST TEAM
                                             </span>
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <label className="block text-[11px] font-semibold text-slate-300">
-                                                Team Full Name <span className="text-amber-400">*</span>
+                                            <label className="block text-xs font-semibold text-slate-300">
+                                                Team 1 Name <span className="text-amber-400">*</span>
                                             </label>
                                             <input
                                                 type="text"
                                                 required
-                                                placeholder="e.g. Todak Esports"
+                                                placeholder="e.g. Todak"
                                                 value={data.team_a_name} // state
                                                 onChange={(e) => setData('team_a_name', e.target.value)} // trigger
                                                 className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/10 focus:border-sky-400/60 focus:ring-1 focus:ring-sky-400/30 text-white text-xs font-semibold outline-none transition-all font-sans"
@@ -310,7 +317,7 @@ export default function Edit({ match = {} }) {
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
                                                 <label className="block text-[11px] font-semibold text-slate-300">
-                                                    Tag / Acronym
+                                                    Team Tag (Optional)
                                                 </label>
                                                 <input
                                                     type="text"
@@ -324,7 +331,7 @@ export default function Edit({ match = {} }) {
 
                                             <div className="space-y-1.5">
                                                 <label className="block text-[11px] font-semibold text-slate-300">
-                                                    Game Score
+                                                    Score (Optional)
                                                 </label>
                                                 <input
                                                     type="number"
@@ -338,23 +345,20 @@ export default function Edit({ match = {} }) {
                                         </div>
                                     </div>
 
-                                    {/* Team B (Red Side / AWAY) */}
+                                    {/* Team 2 */}
                                     <div className="p-4 sm:p-5 rounded-2xl bg-rose-500/[0.03] border border-rose-500/25 space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex items-center gap-2">
-                                                <span className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.6)]" />
-                                                <span className="text-[11px] font-bold tracking-widest text-rose-400 uppercase">
-                                                    Team B (Red Side)
-                                                </span>
-                                            </div>
+                                            <span className="text-xs font-bold tracking-wider text-rose-400 uppercase">
+                                                Team 2
+                                            </span>
                                             <span className="text-[10px] font-mono font-bold text-rose-400/80 px-2 py-0.5 rounded bg-rose-500/10 border border-rose-500/20">
-                                                AWAY
+                                                SECOND TEAM
                                             </span>
                                         </div>
 
                                         <div className="space-y-1.5">
-                                            <label className="block text-[11px] font-semibold text-slate-300">
-                                                Team Full Name <span className="text-amber-400">*</span>
+                                            <label className="block text-xs font-semibold text-slate-300">
+                                                Team 2 Name <span className="text-amber-400">*</span>
                                             </label>
                                             <input
                                                 type="text"
@@ -372,7 +376,7 @@ export default function Edit({ match = {} }) {
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="space-y-1.5">
                                                 <label className="block text-[11px] font-semibold text-slate-300">
-                                                    Tag / Acronym
+                                                    Team Tag (Optional)
                                                 </label>
                                                 <input
                                                     type="text"
@@ -386,7 +390,7 @@ export default function Edit({ match = {} }) {
 
                                             <div className="space-y-1.5">
                                                 <label className="block text-[11px] font-semibold text-slate-300">
-                                                    Game Score
+                                                    Score (Optional)
                                                 </label>
                                                 <input
                                                     type="number"
@@ -401,120 +405,102 @@ export default function Edit({ match = {} }) {
                                     </div>
                                 </div>
                             </div>
-
-                            {/* Card 3: Broadcast & Coverage */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-7 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shrink-0">
-                                            <Tv className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Livestream & Broadcast
-                                            </h2>
-                                            <p className="text-xs text-slate-400">
-                                                Official digital transmission URL for spectator coverage
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 3
-                                    </span>
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                        Livestream URL (YouTube / Twitch / Facebook Gaming)
-                                    </label>
-                                    <input
-                                        type="url"
-                                        placeholder="https://youtube.com/watch?v=... or https://twitch.tv/..."
-                                        value={data.stream_url} // state
-                                        onChange={(e) => setData('stream_url', e.target.value)} // trigger
-                                        className="w-full px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs sm:text-sm outline-none transition-all font-sans"
-                                    />
-                                    {errors.stream_url && (
-                                        <p className="text-xs text-rose-400">{errors.stream_url}</p>
-                                    )}
-                                    <p className="text-[11px] text-slate-400">
-                                        Provide a valid stream link to enable the direct video player embed on the public match view.
-                                    </p>
-                                </div>
-                            </div>
                         </div>
 
                         {/* right column: schedule, venue & status (4 cols, sticky) */}
                         <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
-                            {/* Card 4: Schedule & Venue */}
+                            {/* Card 3: Date, Time & Location */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
                                 <div className="border-b border-white/10 pb-3">
                                     <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                                        Schedule & Venue
+                                        Date, Time & Location
                                     </h3>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">
-                                        Timing and arena logistics
+                                    <p className="text-[11px] text-slate-400 mt-0.5">
+                                        Set when and where this match is played
                                     </p>
                                 </div>
 
                                 <div className="space-y-3.5">
+                                    {/* Date with white calendar icon */}
                                     <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
+                                        <label className="block text-xs font-semibold text-slate-300">
                                             Match Date <span className="text-amber-400">*</span>
                                         </label>
-                                        <input
-                                            type="date"
-                                            required
-                                            value={data.scheduled_date} // state
-                                            onChange={(e) => setData('scheduled_date', e.target.value)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
-                                        />
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                required
+                                                value={data.scheduled_date} // state
+                                                onChange={(e) => setData('scheduled_date', e.target.value)} // trigger
+                                                style={{ colorScheme: 'dark' }}
+                                                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                                            />
+                                            <Calendar className="w-4 h-4 text-white absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                        </div>
                                         {errors.scheduled_date && (
                                             <p className="text-xs text-rose-400">{errors.scheduled_date}</p>
                                         )}
                                     </div>
 
+                                    {/* Time with white clock icon */}
                                     <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
-                                            Start Time (MYT)
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Match Time
                                         </label>
-                                        <input
-                                            type="time"
-                                            value={data.scheduled_time} // state
-                                            onChange={(e) => setData('scheduled_time', e.target.value)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
-                                        />
-                                        {errors.scheduled_time && (
-                                            <p className="text-xs text-rose-400">{errors.scheduled_time}</p>
-                                        )}
+                                        <div className="relative">
+                                            <input
+                                                type="time"
+                                                value={data.scheduled_time} // state
+                                                onChange={(e) => setData('scheduled_time', e.target.value)} // trigger
+                                                style={{ colorScheme: 'dark' }}
+                                                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-[#0d1424] border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+                                            />
+                                            <Clock className="w-4 h-4 text-white absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                        </div>
                                     </div>
 
                                     <div className="space-y-1.5">
-                                        <label className="block text-[11px] font-semibold text-slate-300">
-                                            Venue / Arena
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Location / Venue
                                         </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Online Arena"
-                                            value={data.venue} // state
-                                            onChange={(e) => setData('venue', e.target.value)} // trigger
-                                            className="w-full px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
-                                        />
-                                        {errors.venue && (
-                                            <p className="text-xs text-rose-400">{errors.venue}</p>
-                                        )}
+                                        <div className="relative">
+                                            <input
+                                                type="text"
+                                                placeholder="e.g. Online Arena / Sunway Pyramid"
+                                                value={data.venue} // state
+                                                onChange={(e) => setData('venue', e.target.value)} // trigger
+                                                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
+                                            />
+                                            <MapPin className="w-4 h-4 text-white absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-semibold text-slate-300">
+                                            Live Stream Link <span className="text-slate-500 font-normal">(Optional)</span>
+                                        </label>
+                                        <div className="relative">
+                                            <input
+                                                type="url"
+                                                placeholder="https://youtube.com/watch?v=..."
+                                                value={data.stream_url} // state
+                                                onChange={(e) => setData('stream_url', e.target.value)} // trigger
+                                                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-white/5 border border-white/10 focus:border-amber-400/60 text-white text-xs outline-none transition-all font-sans"
+                                            />
+                                            <Tv className="w-4 h-4 text-white absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Card 5: Match Status & Publishing */}
+                            {/* Card 4: Match Status */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
                                 <div className="border-b border-white/10 pb-3">
                                     <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                                        Match Status & Visibility
+                                        Match Status
                                     </h3>
-                                    <p className="text-[10px] text-slate-400 mt-0.5">
-                                        Current competitive state of fixture
+                                    <p className="text-[11px] text-slate-400 mt-0.5">
+                                        Select current status of this match
                                     </p>
                                 </div>
 
@@ -526,10 +512,10 @@ export default function Edit({ match = {} }) {
                                                 key={st.value}
                                                 type="button"
                                                 onClick={() => setData('status', st.value)} // trigger
-                                                className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer ${
+                                                className={`w-full p-2.5 rounded-xl border text-left transition-colors cursor-pointer ${
                                                     isSelected
                                                         ? 'bg-amber-400/10 border-amber-400 text-white shadow-[0_0_12px_rgba(251,191,36,0.15)]'
-                                                        : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:border-white/20'
+                                                        : 'bg-white/5 border-white/10 text-slate-400 hover:text-white'
                                                 }`}
                                             >
                                                 <div className="flex items-center justify-between text-xs font-bold">
@@ -553,7 +539,7 @@ export default function Edit({ match = {} }) {
                                             className="w-4 h-4 rounded border-white/20 bg-black/40 text-amber-400 focus:ring-amber-400/30"
                                         />
                                         <span className="text-xs font-semibold text-slate-300">
-                                            Active Fixture Listing
+                                            Active Match Listing
                                         </span>
                                     </label>
                                 </div>

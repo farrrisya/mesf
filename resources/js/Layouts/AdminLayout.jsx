@@ -16,7 +16,8 @@ import {
     Menu,
     X,
     ArrowRight,
-    ArrowLeft
+    ArrowLeft,
+    CheckCircle2
 } from 'lucide-react';
 
 // --2. properties--
@@ -81,6 +82,20 @@ export default function AdminLayout({
     const [sidebarOpen, setSidebarOpen] = useState(false); // state
     const [showIdleModal, setShowIdleModal] = useState(false); // state
     const [countdownSeconds, setCountdownSeconds] = useState(60); // state
+    const [actionModal, setActionModal] = useState(null); // state
+
+    const flash = props?.flash; // state
+    useEffect(() => { // trigger
+        if (flash?.success || flash?.created || flash?.saved) { // check
+            const message = flash.success || flash.created || flash.saved; // convert
+            const isCreated = Boolean(flash.created) || /created|registered|published/i.test(message); // check
+            const isSaved = Boolean(flash.saved) || /saved|updated/i.test(message); // check
+            setActionModal({ // state
+                title: isCreated ? 'Successfully Created!' : isSaved ? 'Successfully Saved!' : 'Success!',
+                message: message
+            });
+        }
+    }, [flash?.success, flash?.created, flash?.saved]);
 
     const currentUser = props?.auth?.user; // state
     const userRole = role || currentUser?.role || 'admin'; // state
@@ -468,6 +483,32 @@ export default function AdminLayout({
                                 className="px-4 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white text-xs font-bold border border-white/10 transition-all focus:outline-none cursor-pointer"
                             >
                                 Log Keluar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* action success popup modal (saved / created) */}
+            {actionModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                    <div className="w-full max-w-md bg-[#0B0F1C] border border-white/15 rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 text-left">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+                            <CheckCircle2 className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <h3 className="text-lg font-bold text-white">{actionModal.title}</h3>
+                            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                                {actionModal.message}
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-end gap-3 pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setActionModal(null)} // toggle
+                                className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-bold transition-all cursor-pointer shadow-lg shadow-amber-400/20"
+                            >
+                                Continue
                             </button>
                         </div>
                     </div>

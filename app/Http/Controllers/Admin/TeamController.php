@@ -30,6 +30,8 @@ class TeamController extends Controller
                 'roster_size' => $team->roster_size,
                 'status' => $team->status ?: 'ACTIVE',
                 'logo_url' => $team->logo_path ? Storage::url($team->logo_path) : null,
+                'team_pic_url' => $team->team_pic_path ? Storage::url($team->team_pic_path) : null,
+                'image_display_mode' => $team->image_display_mode ?: 'both',
                 'is_active' => (bool)$team->is_active,
                 'created_at' => $team->created_at ? $team->created_at->format('d M Y') : null,
             ];
@@ -52,14 +54,20 @@ class TeamController extends Controller
             'type' => 'required|string|in:national,state,pro',
             'tag' => 'nullable|string|max:20',
             'region' => 'nullable|string|max:255',
-            'game_title' => 'nullable|string|max:255',
+            'game_title' => 'nullable|string|max:500',
+            'games' => 'nullable|array',
             'manager_name' => 'nullable|string|max:255',
             'contact_email' => 'nullable|email|max:255',
+            'website_url' => 'nullable|string|max:255',
+            'social_links' => 'nullable|array',
             'motto' => 'nullable|string|max:255',
             'roster_size' => 'nullable|integer|min:1',
             'status' => 'nullable|string|max:50',
             'logo' => 'nullable|image|max:10240', // 10MB
+            'team_pic' => 'nullable|image|max:10240', // 10MB
             'library_logo_path' => 'nullable|string',
+            'library_team_pic_path' => 'nullable|string',
+            'image_display_mode' => 'nullable|string|in:logo,pic,team_pic,both',
         ]);
 
         $baseSlug = Str::slug($request->name); // convert
@@ -77,19 +85,35 @@ class TeamController extends Controller
             $logoPath = $request->input('library_logo_path'); // state
         }
 
+        $teamPicPath = null; // state
+        if ($request->hasFile('team_pic')) { // check
+            $teamPicPath = $request->file('team_pic')->store('teams/photos', 'public'); // save
+        } elseif ($request->filled('library_team_pic_path')) { // check
+            $teamPicPath = $request->input('library_team_pic_path'); // state
+        }
+
+        $gameTitle = $request->game_title; // state
+        if ($request->has('games') && is_array($request->games)) { // check
+            $gameTitle = implode(', ', array_filter($request->games)); // convert
+        }
+
         Team::create([ // save
             'name' => $request->name,
             'slug' => $slug,
             'tag' => $request->tag,
             'type' => $request->type,
             'region' => $request->region,
-            'game_title' => $request->game_title,
+            'game_title' => $gameTitle,
             'manager_name' => $request->manager_name,
             'contact_email' => $request->contact_email,
+            'website_url' => $request->website_url,
+            'social_links' => $request->social_links,
             'motto' => $request->motto,
             'roster_size' => $request->roster_size ?: 5,
             'status' => $request->status ?: 'ACTIVE',
             'logo_path' => $logoPath,
+            'team_pic_path' => $teamPicPath,
+            'image_display_mode' => $request->image_display_mode ?: 'both',
             'is_active' => true,
         ]);
 
@@ -109,10 +133,14 @@ class TeamController extends Controller
                 'game_title' => $team->game_title,
                 'manager_name' => $team->manager_name,
                 'contact_email' => $team->contact_email,
+                'website_url' => $team->website_url,
+                'social_links' => $team->social_links ?: [],
                 'motto' => $team->motto,
                 'roster_size' => $team->roster_size,
                 'status' => $team->status ?: 'ACTIVE',
                 'logo_url' => $team->logo_path ? Storage::url($team->logo_path) : null,
+                'team_pic_url' => $team->team_pic_path ? Storage::url($team->team_pic_path) : null,
+                'image_display_mode' => $team->image_display_mode ?: 'both',
                 'is_active' => (bool)$team->is_active,
             ]
         ]);
@@ -125,14 +153,20 @@ class TeamController extends Controller
             'type' => 'required|string|in:national,state,pro',
             'tag' => 'nullable|string|max:20',
             'region' => 'nullable|string|max:255',
-            'game_title' => 'nullable|string|max:255',
+            'game_title' => 'nullable|string|max:500',
+            'games' => 'nullable|array',
             'manager_name' => 'nullable|string|max:255',
             'contact_email' => 'nullable|email|max:255',
+            'website_url' => 'nullable|string|max:255',
+            'social_links' => 'nullable|array',
             'motto' => 'nullable|string|max:255',
             'roster_size' => 'nullable|integer|min:1',
             'status' => 'nullable|string|max:50',
             'logo' => 'nullable|image|max:10240', // 10MB
+            'team_pic' => 'nullable|image|max:10240', // 10MB
             'library_logo_path' => 'nullable|string',
+            'library_team_pic_path' => 'nullable|string',
+            'image_display_mode' => 'nullable|string|in:logo,pic,team_pic,both',
         ]);
 
         $logoPath = $team->logo_path; // state
@@ -152,18 +186,44 @@ class TeamController extends Controller
             $logoPath = $request->input('library_logo_path'); // state
         }
 
+        $teamPicPath = $team->team_pic_path; // state
+        if ($request->boolean('remove_team_pic') || $request->input('remove_team_pic') === 'true' || $request->input('remove_team_pic') === '1') { // check
+            if ($teamPicPath && !Str::startsWith($teamPicPath, 'media/') && Storage::disk('public')->exists($teamPicPath)) { // check
+                Storage::disk('public')->delete($teamPicPath); // save
+            }
+            $teamPicPath = null; // state
+        }
+
+        if ($request->hasFile('team_pic')) { // check
+            if ($teamPicPath && !Str::startsWith($teamPicPath, 'media/') && Storage::disk('public')->exists($teamPicPath)) { // check
+                Storage::disk('public')->delete($teamPicPath); // save
+            }
+            $teamPicPath = $request->file('team_pic')->store('teams/photos', 'public'); // save
+        } elseif ($request->filled('library_team_pic_path')) { // check
+            $teamPicPath = $request->input('library_team_pic_path'); // state
+        }
+
+        $gameTitle = $request->game_title; // state
+        if ($request->has('games') && is_array($request->games)) { // check
+            $gameTitle = implode(', ', array_filter($request->games)); // convert
+        }
+
         $team->update([ // save
             'name' => $request->name,
             'tag' => $request->tag,
             'type' => $request->type,
             'region' => $request->region,
-            'game_title' => $request->game_title,
+            'game_title' => $gameTitle,
             'manager_name' => $request->manager_name,
             'contact_email' => $request->contact_email,
+            'website_url' => $request->website_url,
+            'social_links' => $request->social_links,
             'motto' => $request->motto,
             'roster_size' => $request->roster_size ?: 5,
             'status' => $request->status ?: 'ACTIVE',
             'logo_path' => $logoPath,
+            'team_pic_path' => $teamPicPath,
+            'image_display_mode' => $request->image_display_mode ?: 'both',
         ]);
 
         return redirect()->route('admin.teams')->with('success', 'Team updated successfully.'); // redirect
@@ -173,6 +233,9 @@ class TeamController extends Controller
     {
         if ($team->logo_path && Storage::disk('public')->exists($team->logo_path)) { // check
             Storage::disk('public')->delete($team->logo_path); // save
+        }
+        if ($team->team_pic_path && Storage::disk('public')->exists($team->team_pic_path)) { // check
+            Storage::disk('public')->delete($team->team_pic_path); // save
         }
 
         $team->delete(); // save

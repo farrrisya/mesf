@@ -11,12 +11,10 @@ import {
     Calendar,
     MapPin,
     Tag,
-    Globe,
-    Video,
     Move,
-    FolderOpen
+    FolderOpen,
+    Clock
 } from 'lucide-react';
-import NewsVideoPlayer, { parseVideoInfo } from '@/Components/NewsVideoPlayer';
 import ImagePositionerModal from '@/Components/ImagePositionerModal';
 import MediaPickerModal from '@/Components/MediaPickerModal';
 
@@ -41,9 +39,10 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
     const [rawFileName, setRawFileName] = useState('cover.jpg'); // state
     const initialCategory = categories[0] || 'TOURNAMENTS'; // state
 
+    const todayDate = new Date().toISOString().split('T')[0]; // clock
+
     const { data, setData, post, processing, errors, transform } = useForm({ // state
         title: '',
-        slug: '',
         category: initialCategory,
         tag: `[ ${initialCategory} ]`,
         excerpt: '',
@@ -51,13 +50,14 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
         location: '',
         status: 'published',
         is_featured: false,
-        published_at: new Date().toISOString().split('T')[0],
+        published_at: todayDate,
         image: null,
         poster: null,
         library_image_path: null,
         library_poster_path: null,
-        video_url: '',
     });
+
+    const isScheduled = Boolean(data.published_at && data.published_at > todayDate); // check
 
     // --4. actions--
     const handleCategoryChange = (cat) => { // trigger
@@ -120,7 +120,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
         }));
         setImagePreview(previewUrl); // state
         setHasCustomCrop(true); // state
-        // positionerSource remains originalFile so admin can reposition again anytime
     };
 
     const handleOpenPositioner = () => { // trigger
@@ -171,8 +170,10 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
 
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // check
+        const finalStatus = isScheduled ? 'draft' : data.status; // state
         transform((raw) => ({
             ...raw,
+            status: finalStatus,
             is_featured: raw.is_featured ? 1 : 0,
             category: raw.category || initialCategory,
         }));
@@ -379,54 +380,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         <p className="text-xs text-rose-400 font-medium">{errors.image}</p>
                                     )}
                                 </div>
-
-                                {/* video media link */}
-                                <div className="space-y-3 pt-6 border-t border-white/10">
-                                    <div className="flex items-center justify-between">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
-                                            <Video className="w-4 h-4 text-amber-400" />
-                                            <span>Video Link (YouTube, Facebook, Vimeo)</span>
-                                        </label>
-                                        <span className="text-[10px] text-slate-400">Optional</span>
-                                    </div>
-
-                                    <div className="relative">
-                                        <input
-                                            type="url"
-                                            value={data.video_url} // state
-                                            onChange={(e) => setData('video_url', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm outline-none transition-all font-sans pr-10"
-                                        />
-                                        {data.video_url && (
-                                            <button
-                                                type="button"
-                                                onClick={() => setData('video_url', '')} // trigger
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1 rounded-lg hover:bg-white/10 transition-colors"
-                                            >
-                                                <X className="w-4 h-4" />
-                                            </button>
-                                        )}
-                                    </div>
-                                    {errors.video_url && (
-                                        <p className="text-xs text-rose-400 font-medium">{errors.video_url}</p>
-                                    )}
-
-                                    <p className="text-[11px] text-slate-400 leading-normal">
-                                        Supports YouTube videos, YouTube Shorts, Vimeo, and Public Facebook video posts. Visitors will be able to play the video directly on the article page.
-                                    </p>
-
-                                    {/* live video preview in admin */}
-                                    {data.video_url && parseVideoInfo(data.video_url) && (
-                                        <div className="mt-3 p-3.5 rounded-2xl bg-white/[0.02] border border-amber-400/20">
-                                            <div className="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
-                                                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400">
-                                                    Live Player Preview
-                                                </span>
-                                            </div>
-                                            <NewsVideoPlayer url={data.video_url} title="Video Preview" className="!my-0" />
-                                        </div>
-                                    )}
-                                </div>
                             </div>
                         </div>
 
@@ -447,9 +400,9 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         <button
                                             type="button"
                                             onClick={() => setData('status', 'published')} // trigger
-                                            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                                                data.status === 'published'
-                                                    ? 'bg-emerald-500 text-black shadow-md'
+                                            className={`py-2 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                                                data.status === 'published' && !isScheduled
+                                                    ? 'bg-gradient-to-r from-emerald-400 to-emerald-500 text-black shadow-md shadow-emerald-500/20'
                                                     : 'text-slate-400 hover:text-white'
                                             }`}
                                         >
@@ -458,13 +411,13 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         <button
                                             type="button"
                                             onClick={() => setData('status', 'draft')} // trigger
-                                            className={`py-2 px-3 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                                                data.status === 'draft'
-                                                    ? 'bg-amber-400 text-black shadow-md'
+                                            className={`py-2 px-3 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                                                data.status === 'draft' || isScheduled
+                                                    ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black shadow-md shadow-amber-500/20'
                                                     : 'text-slate-400 hover:text-white'
                                             }`}
                                         >
-                                            Draft
+                                            {isScheduled ? 'Scheduled (Draft)' : 'Draft'}
                                         </button>
                                     </div>
                                 </div>
@@ -492,16 +445,34 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
 
                                 {/* publication date */}
                                 <div className="space-y-1.5 pt-2 border-t border-white/5">
-                                    <label className="block text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                                        <Calendar className="w-3.5 h-3.5 text-amber-400" />
-                                        <span>Publication Date</span>
-                                    </label>
+                                    <div className="flex items-center justify-between">
+                                        <label className="block text-xs font-semibold text-slate-400 flex items-center gap-1.5">
+                                            <Calendar className="w-3.5 h-3.5 text-amber-400" />
+                                            <span>Publication Date</span>
+                                        </label>
+                                        {isScheduled && (
+                                            <span className="text-[10px] font-mono text-sky-400 bg-sky-500/10 border border-sky-500/30 px-2 py-0.5 rounded-full">
+                                                Future Date
+                                            </span>
+                                        )}
+                                    </div>
                                     <input
                                         type="date"
                                         value={data.published_at} // state
                                         onChange={(e) => setData('published_at', e.target.value)} // trigger
                                         className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none"
                                     />
+                                    {isScheduled && (
+                                        <div className="p-3 rounded-2xl bg-sky-500/10 border border-sky-500/25 text-sky-300 text-xs flex items-start gap-2.5 animate-fadeIn mt-2">
+                                            <Clock className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                                            <div>
+                                                <p className="font-bold text-sky-300">Scheduled Post (Draft)</p>
+                                                <p className="text-[11px] text-sky-300/80 leading-relaxed mt-0.5">
+                                                    Because this date is set in the future, this article will be automatically saved as a Draft until publication.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* action buttons & inline notice */}
@@ -516,10 +487,22 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                     <button
                                         type="submit"
                                         disabled={processing} // check
-                                        className="w-full py-3 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-110 text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                                        className={`w-full py-3 rounded-2xl font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 ${
+                                            isScheduled
+                                                ? 'bg-gradient-to-r from-sky-400 via-sky-300 to-sky-500 hover:brightness-110 text-black shadow-[0_0_20px_rgba(56,189,248,0.3)]'
+                                                : data.status === 'published'
+                                                    ? 'bg-gradient-to-r from-emerald-400 via-emerald-300 to-emerald-500 hover:brightness-110 text-black shadow-[0_0_20px_rgba(52,211,153,0.3)]'
+                                                    : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:brightness-110 text-black shadow-[0_0_20px_rgba(251,191,36,0.3)]'
+                                        }`}
                                     >
                                         {processing && <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />}
-                                        <span>{data.status === 'draft' ? 'Save as Draft' : 'Publish Article'}</span>
+                                        <span>
+                                            {isScheduled
+                                                ? 'Schedule Post (Draft)'
+                                                : data.status === 'draft'
+                                                    ? 'Save as Draft'
+                                                    : 'Publish Article'}
+                                        </span>
                                     </button>
 
                                     <Link
@@ -559,7 +542,7 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                     )}
                                 </div>
 
-                                {/* tag badge */}
+                                {/* tag badge display (read only, automatic) */}
                                 <div className="space-y-1.5">
                                     <div className="flex items-center justify-between">
                                         <label className="block text-xs font-semibold text-slate-400">
@@ -567,12 +550,11 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         </label>
                                         <span className="text-[10px] text-amber-400/80 font-mono">Auto by category</span>
                                     </div>
-                                    <input
-                                        type="text"
-                                        value={data.tag} // state
-                                        onChange={(e) => setData('tag', e.target.value)} // trigger
-                                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-amber-300 font-mono text-xs font-bold outline-none"
-                                    />
+                                    <div className="px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/10 flex items-center">
+                                        <span className="px-2.5 py-1 rounded-lg bg-amber-400/15 border border-amber-400/30 text-amber-300 font-mono text-xs font-bold tracking-wider">
+                                            {data.tag || `[ ${data.category} ]`}
+                                        </span>
+                                    </div>
                                 </div>
 
                                 {/* location */}
@@ -586,20 +568,6 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                         value={data.location} // state
                                         onChange={(e) => setData('location', e.target.value)} // trigger
                                         className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-xs outline-none"
-                                    />
-                                </div>
-
-                                {/* custom slug */}
-                                <div className="space-y-1.5">
-                                    <label className="block text-xs font-semibold text-slate-400 flex items-center gap-1.5">
-                                        <Globe className="w-3.5 h-3.5 text-amber-400" />
-                                        <span>URL Slug (Optional)</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        value={data.slug} // state
-                                        onChange={(e) => setData('slug', e.target.value)} // trigger
-                                        className="w-full px-3.5 py-2.5 rounded-xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-slate-300 text-xs font-mono outline-none"
                                     />
                                 </div>
                             </div>

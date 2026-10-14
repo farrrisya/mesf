@@ -26,7 +26,6 @@ import {
 
 // --2. main component--
 export default function Welcome({ latestByCategory = {}, latestUpdates = [], allNews = [], featuredArticle = null, leagues = [], teams = [] }) {
-    // --3. properties--
     const { settings } = usePage().props; // properties
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
     const bannerUrl = settings?.bannerUrl || '/images/mesf_bg_v2.jpg'; // properties
@@ -35,15 +34,15 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
         new URLSearchParams(window.location.search).get('view') === 'dashboard' ||
         window.location.hash === '#dashboard'
     ); // check
-    const lastScrollYRef = useRef(isDashboardRoute ? 230 : 0); // ref
-    const scrollRafRef = useRef(null); // ref
+    const lastScrollYRef = useRef(isDashboardRoute ? 230 : 0); // properties
+    const scrollRafRef = useRef(null); // properties
     const [scrollY, setScrollY] = useState(() => (isDashboardRoute ? 230 : 0)); // state
     const [activeTab, setActiveTab] = useState('home'); // state
     const [squadIndex, setSquadIndex] = useState(0); // state
-    const touchStartX = useRef(null); // ref
+    const touchStartX = useRef(null); // properties
 
-    // --4. actions--
-    useEffect(() => {
+    // --3. actions--
+    useEffect(() => { // trigger
         if (typeof window !== 'undefined') {
             if ('scrollRestoration' in window.history) {
                 window.history.scrollRestoration = 'manual'; // config
@@ -254,7 +253,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                 division: team.motto || team.region || 'National Division',
                 format: 'National Representation',
                 athletes: `${team.roster_size || 5} Athletes`,
-                image: team.logo || null,
+                image: team.team_pic || team.logo || null,
                 accolade: 'National Squad',
                 status: team.status || 'Active Roster',
                 desc: team.motto || 'Official national squad representing Malaysia.'
@@ -298,7 +297,7 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
         touchStartX.current = null;
     };
 
-    // --5. UI--
+    // --4. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-amber-400 selection:text-black font-sans">
             <Head title="MESF - Malaysia Esports Federation" />

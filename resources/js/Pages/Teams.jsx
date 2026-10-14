@@ -1,136 +1,283 @@
 // --1. imports--
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
-import { Search, MapPin, ArrowRight, CheckCircle2, Gamepad2, X } from 'lucide-react';
+import {
+    Search,
+    MapPin,
+    ArrowRight,
+    X,
+    Shield,
+    CheckCircle2,
+    Info,
+    Trophy,
+    Users,
+    Calendar
+} from 'lucide-react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 
 // --2. properties--
 const STATE_AFFILIATES = [
-    { id: 'johor', code: 'JHR', name: 'Johor', title: 'Persatuan Sukan Elektronik Negeri Johor', region: 'Peninsular', image: '/images/states/johor_transparent.png', glowColor: '#3B82F6', glowRgba: 'rgba(59, 130, 246, 0.75)' },
-    { id: 'kedah', code: 'KDH', name: 'Kedah', title: 'Persatuan Sukan Elektronik Negeri Kedah', region: 'Peninsular', image: '/images/states/kedah_transparent.png', glowColor: '#10B981', glowRgba: 'rgba(16, 185, 129, 0.75)' },
-    { id: 'kelantan', code: 'KTN', name: 'Kelantan', title: 'Persatuan Sukan Elektronik Negeri Kelantan', region: 'Peninsular', image: '/images/states/kelantan_transparent.png', glowColor: '#EF4444', glowRgba: 'rgba(239, 68, 68, 0.75)' },
-    { id: 'kl', code: 'KUL', name: 'Kuala Lumpur', title: 'Persatuan Sukan Elektronik Kuala Lumpur', region: 'Peninsular', image: '/images/states/kl_transparent.png', glowColor: '#6366F1', glowRgba: 'rgba(99, 102, 241, 0.75)' },
-    { id: 'labuan', code: 'LBN', name: 'WP Labuan', title: 'Persatuan Sukan Elektronik WP Labuan', region: 'East Malaysia', image: '/images/states/labuan_transparent.png', glowColor: '#3B82F6', glowRgba: 'rgba(59, 130, 246, 0.75)' },
-    { id: 'melaka', code: 'MLK', name: 'Melaka', title: 'Persatuan Sukan Elektronik Negeri Melaka', region: 'Peninsular', image: '/images/states/melaka_transparent.png', glowColor: '#2563EB', glowRgba: 'rgba(37, 99, 235, 0.75)' },
-    { id: 'negeri_sembilan', code: 'NSN', name: 'Negeri Sembilan', title: 'Persatuan Sukan Elektronik Negeri Sembilan', region: 'Peninsular', image: '/images/states/negeri_sembilan_transparent.png', glowColor: '#60A5FA', glowRgba: 'rgba(96, 165, 250, 0.75)' },
-    { id: 'pahang', code: 'PHG', name: 'Pahang', title: 'Persatuan Sukan Elektronik Negeri Pahang', region: 'Peninsular', image: '/images/states/pahang_transparent.png', glowColor: '#38BDF8', glowRgba: 'rgba(56, 189, 248, 0.75)' },
-    { id: 'penang', code: 'PNG', name: 'Penang', title: 'Persatuan Sukan Elektronik Pulau Pinang', region: 'Peninsular', image: '/images/states/penang_transparent.png', glowColor: '#0EA5E9', glowRgba: 'rgba(14, 165, 233, 0.75)' },
-    { id: 'perak', code: 'PRK', name: 'Perak', title: 'Persatuan Sukan Elektronik Perak', region: 'Peninsular', image: '/images/states/perak_transparent.png', glowColor: '#E2E8F0', glowRgba: 'rgba(226, 232, 240, 0.75)' },
-    { id: 'perlis', code: 'PLS', name: 'Perlis', title: 'Persatuan Sukan Elektronik Negeri Perlis', region: 'Peninsular', image: '/images/states/perlis_transparent.png', glowColor: '#38BDF8', glowRgba: 'rgba(56, 189, 248, 0.75)' },
-    { id: 'sabah', code: 'SBH', name: 'Sabah', title: 'Persatuan Sukan Elektronik Negeri Sabah', region: 'East Malaysia', image: '/images/states/sabah_transparent.png', glowColor: '#06B6D4', glowRgba: 'rgba(6, 182, 212, 0.75)' },
-    { id: 'sarawak', code: 'SWK', name: 'Sarawak', title: 'Persatuan Sukan Elektronik Sarawak', region: 'East Malaysia', image: '/images/states/sarawak_transparent.png', glowColor: '#EF4444', glowRgba: 'rgba(239, 68, 68, 0.75)' },
-    { id: 'selangor', code: 'SGR', name: 'Selangor', title: 'Persatuan Sukan Elektronik Negeri Selangor', region: 'Peninsular', image: '/images/states/selangor_transparent.png', glowColor: '#DC2626', glowRgba: 'rgba(220, 38, 38, 0.75)' },
-    { id: 'terengganu', code: 'TRG', name: 'Terengganu', title: 'Persatuan Sukan Elektronik Negeri Terengganu', region: 'Peninsular', image: '/images/states/terengganu_transparent.png', glowColor: '#F1F5F9', glowRgba: 'rgba(241, 245, 249, 0.85)' }
+    // 📍 Federal Territories
+    {
+        id: 'kuala-lumpur',
+        slug: 'kuala-lumpur',
+        code: 'KUL',
+        tag: 'ESKL',
+        name: 'Kuala Lumpur',
+        title: 'Esports Kuala Lumpur Association (ESKL)',
+        zone: 'Federal Territories',
+        zoneLabel: 'Federal Territory',
+        zoneKey: 'ft'
+    },
+    {
+        id: 'putrajaya',
+        slug: 'putrajaya',
+        code: 'PJY',
+        tag: 'PJY',
+        name: 'Putrajaya',
+        title: 'Esports Putrajaya Association (ES Putrajaya)',
+        zone: 'Federal Territories',
+        zoneLabel: 'Federal Territory',
+        zoneKey: 'ft'
+    },
+    {
+        id: 'labuan',
+        slug: 'labuan',
+        code: 'LBN',
+        tag: 'LBN',
+        name: 'Labuan',
+        title: 'Persatuan Esports Labuan (Labuan Esports Association)',
+        zone: 'Federal Territories',
+        zoneLabel: 'Federal Territory',
+        zoneKey: 'ft'
+    },
+
+    // ⛰️ Peninsular Malaysia (West Malaysia)
+    {
+        id: 'selangor',
+        slug: 'selangor',
+        code: 'SGR',
+        tag: 'ESSA',
+        name: 'Selangor',
+        title: 'Esports Selangor Association (ESSA)',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'johor',
+        slug: 'johor',
+        code: 'JHR',
+        tag: 'JDTEA',
+        name: 'Johor',
+        title: "Johor Darul Ta'zim Esports Association (JDTEA)",
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'penang',
+        slug: 'penang',
+        code: 'PNG',
+        tag: 'PNG',
+        name: 'Penang',
+        title: 'Penang Esports Association (Esport Pulau Pinang)',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'perak',
+        slug: 'perak',
+        code: 'PRK',
+        tag: 'PRK',
+        name: 'Perak',
+        title: 'Esports Perak Association',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'melaka',
+        slug: 'melaka',
+        code: 'MLK',
+        tag: 'MLK',
+        name: 'Melaka',
+        title: 'Melaka Esports Association',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'kedah',
+        slug: 'kedah',
+        code: 'KDH',
+        tag: 'ESKED',
+        name: 'Kedah',
+        title: 'Esports Kedah Association (ESKED)',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'terengganu',
+        slug: 'terengganu',
+        code: 'TRG',
+        tag: 'TRG',
+        name: 'Terengganu',
+        title: 'Esports Terengganu Association',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'kelantan',
+        slug: 'kelantan',
+        code: 'KTN',
+        tag: 'KTN',
+        name: 'Kelantan',
+        title: 'Kelantan Esports Association (Persatuan Esports Negeri Kelantan)',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'negeri-sembilan',
+        slug: 'negeri-sembilan',
+        code: 'NSN',
+        tag: 'NSN',
+        name: 'Negeri Sembilan',
+        title: 'Persatuan Esports Negeri Sembilan',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'pahang',
+        slug: 'pahang',
+        code: 'PHG',
+        tag: 'PHG',
+        name: 'Pahang',
+        title: 'Pahang Esports Association',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+    {
+        id: 'perlis',
+        slug: 'perlis',
+        code: 'PLS',
+        tag: 'PLS',
+        name: 'Perlis',
+        title: 'Persatuan E-Sports Perlis',
+        zone: 'Peninsular Malaysia',
+        zoneLabel: 'Peninsular',
+        zoneKey: 'peninsular'
+    },
+
+    // 🌊 East Malaysia
+    {
+        id: 'sarawak',
+        slug: 'sarawak',
+        code: 'SWK',
+        tag: 'SESA',
+        name: 'Sarawak',
+        title: 'Sarawak Esports Association (SESA)',
+        zone: 'East Malaysia',
+        zoneLabel: 'East Malaysia',
+        zoneKey: 'east'
+    },
+    {
+        id: 'sabah',
+        slug: 'sabah',
+        code: 'SBH',
+        tag: 'PESES',
+        name: 'Sabah',
+        title: 'Sabah Esports Association (PESES)',
+        zone: 'East Malaysia',
+        zoneLabel: 'East Malaysia',
+        zoneKey: 'east'
+    }
 ];
 
-function getTeamInitials(name = '', tag = '') { // convert
-    if (tag && tag.length <= 4) return tag;
-    const words = name.trim().split(/\s+/);
-    if (words.length >= 2) {
-        return (words[0][0] + words[1][0]).toUpperCase();
-    }
-    return (name.slice(0, 3) || 'T').toUpperCase();
-}
+const ZONE_METADATA = [
+    { key: 'ft', name: 'Federal Territories', emoji: '📍', label: 'Federal Territories' },
+    { key: 'peninsular', name: 'Peninsular Malaysia', emoji: '⛰️', label: 'Peninsular Malaysia (West Malaysia)' },
+    { key: 'east', name: 'East Malaysia', emoji: '🌊', label: 'East Malaysia' }
+];
 
 // --3. main component--
 export default function Teams({ uploadedTeams = [] }) {
     // --4. actions--
-    const [directoryTab, setDirectoryTab] = useState('All'); // state
-    const [selectedGame, setSelectedGame] = useState('All'); // state
-    const [stateRegionFilter, setStateRegionFilter] = useState('All'); // state
+    const [selectedZone, setSelectedZone] = useState('All'); // state
     const [searchQuery, setSearchQuery] = useState(''); // state
+    const [nationalSearchQuery, setNationalSearchQuery] = useState(''); // state
+    const [previewAffiliate, setPreviewAffiliate] = useState(null); // state
 
     const nationalTeams = useMemo(() => { // filter
         return uploadedTeams.filter((t) => t.type === 'national' || t.type === 'pro');
     }, [uploadedTeams]);
 
-    const placeholderNationalTeams = useMemo(() => { // properties
-        return Array.from({ length: 7 }, (_, i) => ({
-            id: `national-placeholder-${i + 1}`,
-            name: 'TEAM NAME',
-            slug: null,
-            tag: 'MAS',
-            type: 'national',
-            region: 'DIVISION',
-            game: 'GAME NAME',
-            status: 'UNASSIGNED',
-            logo: null,
-            isPlaceholder: true,
-            rosters: ['GAME NAME']
-        }));
-    }, []);
+    const filteredNationalTeams = useMemo(() => { // filter
+        if (!nationalSearchQuery.trim()) return nationalTeams;
+        const q = nationalSearchQuery.toLowerCase();
+        return nationalTeams.filter(
+            (t) =>
+                (t.name && t.name.toLowerCase().includes(q)) ||
+                (t.game && t.game.toLowerCase().includes(q)) ||
+                (t.tag && t.tag.toLowerCase().includes(q))
+        );
+    }, [nationalTeams, nationalSearchQuery]);
 
-    const effectiveNationalTeams = useMemo(() => { // filter
-        return nationalTeams.length > 0 ? nationalTeams : placeholderNationalTeams;
-    }, [nationalTeams, placeholderNationalTeams]);
-
+    // Merge static authoritative affiliates with database uploaded state teams
     const allStateAffiliates = useMemo(() => { // filter
-        const uploadedStates = uploadedTeams.filter(t => t.type === 'state').map(t => {
-            const fallback = STATE_AFFILIATES.find(s => s.id === t.slug || s.name.toLowerCase() === t.name.toLowerCase()) || {};
+        return STATE_AFFILIATES.map((fallback) => {
+            const match = uploadedTeams.find(
+                (t) =>
+                    t.type === 'state' &&
+                    (t.slug === fallback.slug ||
+                        t.id === fallback.slug ||
+                        (t.name && t.name.toLowerCase() === fallback.name.toLowerCase()))
+            );
             return {
-                id: t.slug || t.id,
-                code: (t.tag || t.name.slice(0, 3)).toUpperCase(),
-                name: t.name,
-                title: t.motto || `Persatuan Sukan Elektronik ${t.name}`,
-                region: (t.region && t.region.toLowerCase().includes('east')) || ['sabah', 'sarawak', 'labuan'].some(s => (t.name || '').toLowerCase().includes(s)) ? 'East Malaysia' : 'Peninsular',
-                image: t.logo || `/images/states/${t.slug ? t.slug.replace('-', '_') : 'johor'}_transparent.png`,
-                glowColor: fallback.glowColor || '#38BDF8',
-                glowRgba: fallback.glowRgba || 'rgba(56, 189, 248, 0.75)'
+                ...fallback,
+                dbId: match?.id,
+                name: fallback.name,
+                title: fallback.title,
+                tag: fallback.tag,
+                status: match?.status || 'ACTIVE',
+                logo: match?.logo_path
+                    ? (match.logo_path.startsWith('http') || match.logo_path.startsWith('/')
+                        ? match.logo_path
+                        : `/storage/${match.logo_path}`)
+                    : (match?.logo || null),
+                managerName: match?.manager_name || null,
+                contactEmail: match?.contact_email || null
             };
         });
-        return uploadedStates.length > 0 ? uploadedStates : STATE_AFFILIATES;
     }, [uploadedTeams]);
-
-    const availableGames = useMemo(() => { // filter
-        const games = new Set();
-        nationalTeams.forEach(t => {
-            if (t.game) games.add(t.game);
-            if (Array.isArray(t.rosters)) {
-                t.rosters.forEach(r => {
-                    if (r && r !== 'National Squad') games.add(r);
-                });
-            }
-        });
-        return ['All', ...Array.from(games)];
-    }, [nationalTeams]);
-
-    const filteredNationalTeams = useMemo(() => { // filter
-        const query = searchQuery.trim().toLowerCase();
-        return effectiveNationalTeams.filter((t) => {
-            const matchesGame = selectedGame === 'All' || 
-                t.game === selectedGame || 
-                (t.rosters || []).includes(selectedGame);
-            if (!matchesGame) return false;
-
-            if (!query) return true;
-            const nameMatch = (t.name || '').toLowerCase().includes(query);
-            const tagMatch = (t.tag || '').toLowerCase().includes(query);
-            const regionMatch = (t.region || '').toLowerCase().includes(query);
-            return nameMatch || tagMatch || regionMatch;
-        });
-    }, [effectiveNationalTeams, searchQuery, selectedGame]);
 
     const filteredStates = useMemo(() => { // filter
         const query = searchQuery.trim().toLowerCase();
-        return allStateAffiliates.filter(s => {
-            const regionMatches = stateRegionFilter === 'All' || s.region === stateRegionFilter;
-            if (!regionMatches) return false;
-            if (!query) return true;
-            const nameMatch = (s.name || '').toLowerCase().includes(query);
-            const titleMatch = (s.title || '').toLowerCase().includes(query);
-            const codeMatch = (s.code || '').toLowerCase().includes(query);
-            return nameMatch || titleMatch || codeMatch;
+        return allStateAffiliates.filter((s) => {
+            const matchesZone = selectedZone === 'All' || s.zoneKey === selectedZone;
+            if (!matchesZone) return false; // check
+            if (!query) return true; // check
+            return (
+                (s.name || '').toLowerCase().includes(query) ||
+                (s.title || '').toLowerCase().includes(query) ||
+                (s.tag || '').toLowerCase().includes(query) ||
+                (s.code || '').toLowerCase().includes(query) ||
+                (s.zone || '').toLowerCase().includes(query)
+            );
         });
-    }, [allStateAffiliates, stateRegionFilter, searchQuery]);
-
-    const showProSection = directoryTab === 'All' || directoryTab === 'Pro';
-    const showStateSection = directoryTab === 'All' || directoryTab === 'States';
+    }, [allStateAffiliates, selectedZone, searchQuery]);
 
     // --5. UI--
     return (
         <div className="relative min-h-screen w-full bg-[#070B14] text-white selection:bg-white/20 selection:text-white font-sans overflow-x-hidden antialiased flex flex-col justify-between">
-            <Head title="Teams & Affiliates - MESF" />
+            <Head title="Teams - MESF" />
 
             {/* ambient background glows */}
             <div className="pointer-events-none fixed inset-0 overflow-hidden z-0">
@@ -144,13 +291,12 @@ export default function Teams({ uploadedTeams = [] }) {
                 <PublicNavbar activeTab="teams" />
             </div>
 
-            {/* 1. hero header with championship background (matches Leagues & Matches) */}
+            {/* 1. hero header (exact matching size and style as Matches page) */}
             <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[24/9] max-h-[460px] min-h-[260px] overflow-hidden">
-                {/* pristine zero-grain HD center-focused MSC championship image */}
                 <img
-                    src="/images/teams_msc_center_hd.jpg?v=ultra_clean"
-                    alt="MSC Esports World Cup Champions"
-                    className="absolute inset-0 w-full h-full object-cover object-center filter brightness-[0.94] contrast-[1.05] saturate-[1.08]"
+                    src="/images/teams_header_hero.jpg?v=4k_3803x1007"
+                    alt="MESF Teams"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
                 />
 
                 {/* cinematic gradient overlays */}
@@ -168,96 +314,175 @@ export default function Teams({ uploadedTeams = [] }) {
                             Teams
                         </h1>
                         <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
-                            Official directory of sanctioned esports clubs and accredited state associations.
+                            Official directory of national teams and accredited state associations.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* 2. clean stats summary dock */}
-            <section className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-5 rounded-2xl bg-[#090E1A]/95 border border-white/[0.08] backdrop-blur-xl shadow-2xl">
-                    {/* stat 1: national teams */}
-                    <div className="flex flex-col items-center text-center p-2 space-y-1.5">
-                        <div className="text-xl sm:text-2xl font-black font-mono text-white tracking-tight">
-                            {effectiveNationalTeams.length}
+            {/* 2. clean, simple, premium yellow theme counter box */}
+            <section className="relative z-20 w-full max-w-3xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10">
+                <div className="grid grid-cols-2 gap-4 p-4 sm:p-5 rounded-2xl bg-[#0B1220]/95 border border-amber-400/30 shadow-[0_15px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+                    {/* card 1: national teams (yellow/amber highlight) */}
+                    <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-amber-400/[0.08] border border-amber-400/30 text-left">
+                        <div className="w-12 h-12 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center shrink-0">
+                            <Trophy className="w-6 h-6 text-amber-400" />
                         </div>
-                        <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-neutral-400">
-                            National Teams
-                        </div>
-                    </div>
-
-                    {/* stat 2: state affiliates */}
-                    <div className="flex flex-col items-center text-center p-2 space-y-1.5 border-l border-white/[0.06]">
-                        <div className="text-xl sm:text-2xl font-black font-mono text-white tracking-tight">
-                            {allStateAffiliates.length}
-                        </div>
-                        <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-neutral-400">
-                            State Affiliates
+                        <div className="min-w-0">
+                            <div className="text-3xl sm:text-4xl font-black font-mono text-amber-400 tracking-tight leading-none">
+                                {nationalTeams.length}
+                            </div>
+                            <div className="text-xs font-mono uppercase tracking-wider text-neutral-200 font-bold mt-1.5 truncate">
+                                National Teams
+                            </div>
                         </div>
                     </div>
 
-                    {/* stat 3: roster athletes */}
-                    <div className="flex flex-col items-center text-center p-2 space-y-1.5 border-l border-white/[0.06]">
-                        <div className="text-xl sm:text-2xl font-black font-mono text-white tracking-tight">
-                            150+
+                    {/* card 2: state affiliates */}
+                    <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/10 text-left">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                            <Shield className="w-6 h-6 text-neutral-300" />
                         </div>
-                        <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-neutral-400">
-                            Athletes
-                        </div>
-                    </div>
-
-                    {/* stat 4: nationwide federation */}
-                    <div className="flex flex-col items-center text-center p-2 space-y-1.5 border-l border-white/[0.06]">
-                        <div className="text-xl sm:text-2xl font-black font-mono text-white tracking-tight">
-                            {allStateAffiliates.length}
-                        </div>
-                        <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-neutral-400">
-                            States & FT
+                        <div className="min-w-0">
+                            <div className="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight leading-none">
+                                {allStateAffiliates.length}
+                            </div>
+                            <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold mt-1.5 truncate">
+                                State Affiliates
+                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* 3. directory section */}
-            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-24 space-y-8">
-                {/* minimalist filter toolbar & search */}
-                <div className="flex flex-col gap-4 border-b border-white/10 pb-0">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        {/* minimalist underline directory tabs */}
-                        <div className="flex items-center gap-6 sm:gap-8 overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
-                            {[
-                                { id: 'All', label: 'All Teams' },
-                                { id: 'Pro', label: `National Teams (${effectiveNationalTeams.length})` },
-                                { id: 'States', label: `State Affiliates (${allStateAffiliates.length})` }
-                            ].map(tab => {
-                                const isActive = directoryTab === tab.id; // check
-                                return (
-                                    <button
-                                        key={tab.id}
-                                        type="button"
-                                        onClick={() => setDirectoryTab(tab.id)} // trigger
-                                        className={`text-xs uppercase tracking-wider font-semibold pb-3.5 transition-colors whitespace-nowrap cursor-pointer ${
-                                            isActive
-                                                ? 'text-white border-b-2 border-white'
-                                                : 'text-neutral-400 hover:text-neutral-200 border-b-2 border-transparent'
-                                        }`}
-                                    >
-                                        {tab.label}
-                                    </button>
-                                );
-                            })}
+            {/* 3. main content area with generous, breathing vertical spacing */}
+            <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 pb-32 space-y-24 sm:space-y-32">
+
+                {/* ---------------------------------------------------- */}
+                {/* SECTION 1: NATIONAL TEAMS (SHOWS FIRST - MAIN POINT) */}
+                {/* ---------------------------------------------------- */}
+                <section id="national-teams" className="space-y-8">
+                    {/* section header (clean, no description paragraph, matching right search bar) */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 text-left">
+                        <div className="flex items-center gap-3">
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
+                                National Teams
+                            </h2>
+                            <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-md bg-white/5 border border-white/10 text-neutral-300 shrink-0">
+                                {filteredNationalTeams.length} Teams
+                            </span>
                         </div>
 
-                        {/* minimalist search box */}
-                        <div className="w-full sm:w-56 md:w-64 pb-3.5 sm:pb-3">
+                        {/* search bar matching exact style from Matches & Leagues */}
+                        <div className="w-full sm:w-56 md:w-64">
+                            <div className="relative flex items-center">
+                                <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-2.5 pointer-events-none" />
+                                <input
+                                    type="text"
+                                    value={nationalSearchQuery} // state
+                                    onChange={(e) => setNationalSearchQuery(e.target.value)} // trigger
+                                    placeholder="Search national team..."
+                                    className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
+                                />
+                                {nationalSearchQuery && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setNationalSearchQuery('')} // trigger
+                                        className="absolute right-2 text-neutral-400 hover:text-white p-0.5 rounded-full transition-colors cursor-pointer"
+                                    >
+                                        <X className="w-3.5 h-3.5" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content: Clean Empty State if 0, or Modern National Team Cards */}
+                    {nationalTeams.length === 0 ? (
+                        <div className="rounded-2xl p-10 sm:p-14 bg-[#090E1A]/60 border border-white/10 text-center space-y-4">
+                            <div className="w-14 h-14 rounded-2xl bg-amber-400/10 border border-amber-400/20 text-amber-400 flex items-center justify-center mx-auto shadow-inner">
+                                <Trophy className="w-7 h-7" />
+                            </div>
+                            <div className="space-y-1.5">
+                                <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
+                                    No National Teams Registered Yet
+                                </h3>
+                                <p className="text-xs sm:text-sm text-neutral-400 max-w-md mx-auto leading-relaxed">
+                                    Official Malaysian national squad rosters will be displayed here once sanctioned and registered by the administration.
+                                </p>
+                            </div>
+                        </div>
+                    ) : filteredNationalTeams.length === 0 ? (
+                        <div className="py-14 text-center rounded-2xl border border-white/10 bg-[#090E1A]/60 space-y-3">
+                            <p className="text-neutral-400 text-sm font-medium">
+                                No national teams match "{nationalSearchQuery}".
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => setNationalSearchQuery('')} // trigger
+                                className="px-4 py-2 rounded-lg bg-white/10 text-xs font-semibold text-white transition-colors cursor-pointer"
+                            >
+                                Reset Search
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {filteredNationalTeams.map((team) => (
+                                <NationalTeamCard key={team.id} team={team} />
+                            ))}
+                        </div>
+                    )}
+                </section>
+
+
+                {/* ---------------------------------------------------- */}
+                {/* SECTION 2: STATE AFFILIATES (BELOW NATIONAL TEAMS)  */}
+                {/* ---------------------------------------------------- */}
+                <section id="state-affiliates" className="space-y-8">
+                    {/* section header (clean, no description paragraph, matching right badge) */}
+                    <div className="flex items-center justify-between border-b border-white/[0.08] pb-4 text-left">
+                        <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
+                            State Affiliates
+                        </h2>
+                        <span className="text-xs font-mono font-bold uppercase tracking-wider px-3 py-1 rounded-md bg-white/5 border border-white/10 text-neutral-300 shrink-0">
+                            {filteredStates.length} Teams
+                        </span>
+                    </div>
+
+                    {/* sleek single-line zone filter & standalone search bar */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4">
+                        {/* zone filter box (left) */}
+                        <div className="inline-flex items-center gap-1.5 p-1 rounded-xl bg-[#090E1A]/80 border border-white/10 backdrop-blur-md overflow-x-auto scrollbar-none [scrollbar-width:none] [-ms-overflow-style:none]">
+                            {[
+                                { id: 'All', label: `All (${allStateAffiliates.length})` },
+                                { id: 'ft', label: '📍 Federal Territories (3)' },
+                                { id: 'peninsular', label: '⛰️ Peninsular (11)' },
+                                { id: 'east', label: '🌊 East Malaysia (2)' }
+                            ].map((zone) => (
+                                <button
+                                    key={zone.id}
+                                    type="button"
+                                    onClick={() => setSelectedZone(zone.id)} // filter
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-mono tracking-wider transition-colors cursor-pointer whitespace-nowrap ${
+                                        selectedZone === zone.id
+                                            ? 'bg-white text-slate-950 font-bold shadow-sm'
+                                            : 'text-neutral-400 hover:text-white hover:bg-white/[0.05]'
+                                    }`}
+                                >
+                                    {zone.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* search bar matching exact style from Matches & Leagues (right) */}
+                        <div className="w-full sm:w-56 md:w-64">
                             <div className="relative flex items-center">
                                 <Search className="w-3.5 h-3.5 text-neutral-500 absolute left-2.5 pointer-events-none" />
                                 <input
                                     type="text"
                                     value={searchQuery} // state
                                     onChange={(e) => setSearchQuery(e.target.value)} // trigger
-                                    placeholder="Search club, tag, or state..."
+                                    placeholder="Search state, acronym..."
                                     className="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white/[0.04] border border-white/10 focus:border-white/30 text-xs text-white placeholder-neutral-500 outline-none transition-colors"
                                 />
                                 {searchQuery && (
@@ -273,224 +498,314 @@ export default function Teams({ uploadedTeams = [] }) {
                         </div>
                     </div>
 
-                    {/* secondary game filter chips */}
-                    {directoryTab === 'Pro' && availableGames.length > 2 && (
-                        <div className="flex flex-wrap items-center gap-1.5 pb-4">
-                            <span className="text-[11px] font-mono text-neutral-500 uppercase mr-1 flex items-center gap-1">
-                                <Gamepad2 className="w-3 h-3" /> Game:
-                            </span>
-                            {availableGames.map(game => (
-                                <button
-                                    key={game}
-                                    type="button"
-                                    onClick={() => setSelectedGame(game)} // filter
-                                    className={`px-2.5 py-1 rounded-md text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
-                                        selectedGame === game
-                                            ? 'bg-white text-black font-semibold'
-                                            : 'bg-white/[0.03] hover:bg-white/10 text-neutral-400 hover:text-white border border-white/[0.06]'
-                                    }`}
-                                >
-                                    {game}
-                                </button>
-                            ))}
+                    {/* state teams display: modern horizontal cards with spacious breathing room */}
+                    {filteredStates.length === 0 ? (
+                        <div className="py-20 text-center rounded-2xl border border-white/10 bg-[#090E1A]/60 space-y-3">
+                            <p className="text-neutral-400 text-sm font-medium">
+                                No state associations match "{searchQuery}".
+                            </p>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setSearchQuery(''); // trigger
+                                    setSelectedZone('All'); // filter
+                                }}
+                                className="px-4 py-2 rounded-lg bg-white/10 text-xs font-semibold text-white transition-colors cursor-pointer"
+                            >
+                                Reset Search &amp; Filters
+                            </button>
                         </div>
-                    )}
+                    ) : selectedZone === 'All' && !searchQuery ? (
+                        /* grouped by zone view */
+                        <div className="space-y-16">
+                            {ZONE_METADATA.map((zoneMeta) => {
+                                const zoneAffiliates = filteredStates.filter((s) => s.zoneKey === zoneMeta.key);
+                                if (zoneAffiliates.length === 0) return null; // check
+                                return (
+                                    <div key={zoneMeta.key} className="space-y-5 text-left">
+                                        <div className="flex items-baseline justify-between gap-2 border-b border-white/[0.06] pb-3">
+                                            <h3 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase flex items-center gap-2">
+                                                <span>{zoneMeta.emoji}</span>
+                                                <span>{zoneMeta.label}</span>
+                                            </h3>
+                                            <span className="text-xs font-mono text-neutral-400">
+                                                {zoneAffiliates.length} Teams
+                                            </span>
+                                        </div>
 
-                    {/* secondary region filter chips */}
-                    {directoryTab === 'States' && (
-                        <div className="flex flex-wrap items-center gap-1.5 pb-4">
-                            <span className="text-[11px] font-mono text-neutral-500 uppercase mr-1 flex items-center gap-1">
-                                <MapPin className="w-3 h-3" /> Region:
-                            </span>
-                            {[
-                                { id: 'All', label: `All Regions (${allStateAffiliates.length})` },
-                                { id: 'Peninsular', label: 'Peninsular (12)' },
-                                { id: 'East Malaysia', label: 'East Malaysia (3)' }
-                            ].map(reg => (
-                                <button
-                                    key={reg.id}
-                                    type="button"
-                                    onClick={() => setStateRegionFilter(reg.id)} // filter
-                                    className={`px-2.5 py-1 rounded-md text-[11px] font-mono uppercase tracking-wider transition-colors cursor-pointer ${
-                                        stateRegionFilter === reg.id
-                                            ? 'bg-white text-black font-semibold'
-                                            : 'bg-white/[0.03] hover:bg-white/10 text-neutral-400 hover:text-white border border-white/[0.06]'
-                                    }`}
-                                >
-                                    {reg.label}
-                                </button>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                                            {zoneAffiliates.map((state) => (
+                                                <StateAffiliateCard
+                                                    key={state.id}
+                                                    state={state}
+                                                    onQuickPreview={(aff) => setPreviewAffiliate(aff)}
+                                                />
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        /* continuous grid view */
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+                            {filteredStates.map((state) => (
+                                <StateAffiliateCard
+                                    key={state.id}
+                                    state={state}
+                                    onQuickPreview={(aff) => setPreviewAffiliate(aff)}
+                                />
                             ))}
                         </div>
                     )}
+                </section>
+            </div>
+
+            {/* 4. interactive quick preview modal: clean esports accreditation ID card with 3D spin popup */}
+            {previewAffiliate && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md"
+                    onClick={() => setPreviewAffiliate(null)} // trigger
+                >
+                    <style>{`
+                        @keyframes idCardSpinPop {
+                            0% {
+                                opacity: 0;
+                                transform: perspective(1200px) rotateY(-180deg) scale(0.8);
+                            }
+                            70% {
+                                transform: perspective(1200px) rotateY(6deg) scale(1.01);
+                            }
+                            100% {
+                                opacity: 1;
+                                transform: perspective(1200px) rotateY(0deg) scale(1);
+                            }
+                        }
+                        .animate-card-spin-pop {
+                            animation: idCardSpinPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+                            transform-style: preserve-3d;
+                        }
+                    `}</style>
+
+                    <div
+                        className="animate-card-spin-pop relative w-full max-w-[400px] rounded-3xl bg-gradient-to-b from-[#10192B] via-[#090E1A] to-[#060913] border border-white/15 p-7 sm:p-9 shadow-[0_25px_60px_rgba(0,0,0,0.85)] text-center space-y-6 sm:space-y-7"
+                        onClick={(e) => e.stopPropagation()} // trigger
+                    >
+                        {/* lanyard hole punch cutout */}
+                        <div className="w-14 h-2.5 rounded-full bg-slate-950 border border-white/20 mx-auto shadow-inner" />
+
+                        {/* MESF State Affiliate status pill */}
+                        <div className="flex items-center justify-center">
+                            <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-xs font-mono text-emerald-400 font-semibold tracking-wider uppercase">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                                MESF State Affiliate
+                            </span>
+                        </div>
+
+                        {/* official crest / logo */}
+                        <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#060913] border-2 border-white/15 p-3 flex items-center justify-center mx-auto shadow-2xl">
+                            {previewAffiliate.logo ? (
+                                <img
+                                    src={previewAffiliate.logo}
+                                    alt={previewAffiliate.name}
+                                    className="h-full w-full object-contain filter drop-shadow"
+                                />
+                            ) : (
+                                <div className="flex flex-col items-center justify-center text-center">
+                                    <Shield className="w-8 h-8 text-neutral-400 mb-1" />
+                                    <span className="font-mono font-black text-xs text-white tracking-wider">
+                                        {previewAffiliate.tag || previewAffiliate.code}
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* basic state & association info with larger association name */}
+                        <div className="space-y-2">
+                            <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight uppercase">
+                                {previewAffiliate.name}
+                            </h3>
+                            <p className="text-sm sm:text-base text-neutral-200 font-semibold leading-relaxed max-w-sm mx-auto">
+                                {previewAffiliate.title}
+                            </p>
+                            <span className="text-xs font-mono text-neutral-400 block pt-1 uppercase tracking-wider">
+                                {previewAffiliate.zone}
+                            </span>
+                        </div>
+
+                        {/* footer actions */}
+                        <div className="flex items-center justify-between gap-3 pt-4 border-t border-white/10">
+                            <button
+                                type="button"
+                                onClick={() => setPreviewAffiliate(null)} // trigger
+                                className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold text-neutral-300 transition-colors cursor-pointer"
+                            >
+                                Close
+                            </button>
+                            <Link
+                                href={`/teams/state/${previewAffiliate.slug}`} // redirect
+                                className="flex-1 py-2.5 rounded-xl bg-white hover:bg-neutral-200 text-slate-950 font-bold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+                            >
+                                <span>Open Full Page</span>
+                                <ArrowRight className="w-3.5 h-3.5" />
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* 5. footer */}
+            <Footer />
+        </div>
+    );
+}
+
+// Subcomponent: State Affiliate Card (Displayed differently: modern, spacious horizontal format)
+function StateAffiliateCard({ state, onQuickPreview }) {
+    return (
+        <div className="rounded-2xl bg-[#090E1A]/80 border border-white/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left shadow-lg">
+            {/* left block: crest + identity */}
+            <div className="flex items-start sm:items-center gap-4 min-w-0 flex-1">
+                {/* crest placeholder or uploaded logo */}
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#060913] border border-white/10 p-2 flex items-center justify-center shrink-0 shadow-inner">
+                    {state.logo ? (
+                        <img
+                            src={state.logo}
+                            alt={state.name}
+                            className="h-full w-full object-contain filter drop-shadow"
+                            onError={(e) => {
+                                e.currentTarget.style.display = 'none'; // error
+                                if (e.currentTarget.nextSibling) {
+                                    e.currentTarget.nextSibling.style.display = 'flex'; // toggle
+                                }
+                            }}
+                        />
+                    ) : null}
+                    <div
+                        className="h-full w-full flex flex-col items-center justify-center text-center select-none"
+                        style={{ display: state.logo ? 'none' : 'flex' }}
+                    >
+                        <Shield className="w-5 h-5 text-neutral-400 mb-0.5" />
+                        <span className="font-mono font-black text-xs text-white tracking-wider">
+                            {state.tag || state.code}
+                        </span>
+                    </div>
                 </div>
 
-                {/* directory sections */}
-                <div className="space-y-12">
-                    {/* SECTION 1: NATIONAL TEAMS */}
-                    {showProSection && (
-                        <section className="space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
-                                <h2 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase">
-                                    National Teams
-                                </h2>
-                                <span className="text-xs font-mono text-slate-400">
-                                    {filteredNationalTeams.length} {filteredNationalTeams.length === 1 ? 'Team' : 'Teams'}
-                                </span>
-                            </div>
-
-                            {filteredNationalTeams.length === 0 ? (
-                                <div className="py-10 text-center rounded-xl border border-[#2C3F63] bg-[#131E33]">
-                                    <p className="text-slate-300 text-xs font-medium">
-                                        {searchQuery ? `No national teams match "${searchQuery}".` : 'No national teams found in this category.'}
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
-                                    {filteredNationalTeams.map((team) => {
-                                        const CardWrapper = team.isPlaceholder ? 'div' : Link;
-                                        const wrapperProps = team.isPlaceholder
-                                            ? { className: 'group rounded-2xl bg-[#131E33] border border-[#2C3F63] overflow-hidden shadow-lg shadow-black/30 flex flex-col justify-between' }
-                                            : {
-                                                href: team.slug ? `/teams/${team.slug}` : `/teams/details?slug=${team.slug || team.id}`,
-                                                className: 'group rounded-2xl bg-[#131E33] border border-[#2C3F63] overflow-hidden shadow-lg shadow-black/30 flex flex-col justify-between cursor-pointer'
-                                            };
-                                        return (
-                                            <CardWrapper key={team.id} {...wrapperProps}>
-                                                {/* top bar: tag + status */}
-                                                <div className="px-4 py-2.5 bg-[#0B1424] border-b border-[#202E4A] flex items-center justify-between">
-                                                    <span className="px-2 py-0.5 rounded bg-[#070D18] border border-[#253757] font-mono text-[10px] font-bold text-sky-300 tracking-wider">
-                                                        [{team.tag || getTeamInitials(team.name, team.tag)}]
-                                                    </span>
-                                                    <span className={`inline-flex items-center gap-1.5 text-[10px] font-mono font-medium ${team.isPlaceholder ? 'text-amber-400' : 'text-emerald-400'}`}>
-                                                        <span className={`w-1.5 h-1.5 rounded-full ${team.isPlaceholder ? 'bg-amber-400' : 'bg-emerald-400'}`} />
-                                                        {team.status || 'Active'}
-                                                    </span>
-                                                </div>
-
-                                            {/* center stage: crest + title + region + game */}
-                                            <div className="p-4 sm:p-5 flex flex-col items-center text-center space-y-2">
-                                                {/* crest */}
-                                                <div className="h-16 w-16 rounded-xl bg-[#080E1A] border border-[#253757] p-2 flex items-center justify-center shrink-0 shadow-inner my-1">
-                                                    {team.logo ? (
-                                                        <img
-                                                            src={team.logo}
-                                                            alt={team.name}
-                                                            onError={(e) => {
-                                                                e.target.style.display = 'none'; // error
-                                                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
-                                                            }}
-                                                            className="h-full w-full object-contain filter drop-shadow-sm"
-                                                        />
-                                                    ) : null}
-                                                    <div
-                                                        className="h-full w-full items-center justify-center font-mono font-bold text-white text-xs"
-                                                        style={{ display: team.logo ? 'none' : 'flex' }}
-                                                    >
-                                                        {team.tag || getTeamInitials(team.name, team.tag)}
-                                                    </div>
-                                                </div>
-
-                                                {/* team name */}
-                                                <h3 className="font-bold text-base text-white uppercase tracking-tight truncate w-full group-hover:text-sky-300 transition-colors">
-                                                    {team.name}
-                                                </h3>
-
-                                                {/* region */}
-                                                <div className="flex items-center justify-center gap-1 text-xs text-slate-400 font-mono">
-                                                    <MapPin className="w-3 h-3 text-sky-400 shrink-0" />
-                                                    <span className="truncate">{team.region || 'Malaysia'}</span>
-                                                </div>
-
-                                                {/* discipline pills */}
-                                                <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1.5">
-                                                    {(team.rosters && team.rosters.length > 0 ? team.rosters : [team.game || 'National Squad']).map((r, idx) => (
-                                                        <span
-                                                            key={idx}
-                                                            className="px-2.5 py-0.5 rounded-full bg-[#0A111F] border border-[#202E4A] text-[10px] font-mono text-slate-300"
-                                                        >
-                                                            {r}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            {/* bottom bar: sanctioned mark + view action */}
-                                            <div className="px-4 py-2.5 bg-[#0B1424] border-t border-[#202E4A] flex items-center justify-between text-xs">
-                                                <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wider">
-                                                    {team.isPlaceholder ? 'Slot Unassigned' : 'MESF Sanctioned'}
-                                                </span>
-                                                <span className="inline-flex items-center gap-1 text-xs font-mono font-semibold text-slate-300 group-hover:text-white transition-colors">
-                                                    <span>{team.isPlaceholder ? 'Pending Registration' : 'View Profile'}</span>
-                                                    {!team.isPlaceholder && <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />}
-                                                </span>
-                                            </div>
-                                        </CardWrapper>
-                                    );
-                                })}
-                                </div>
-                            )}
-                        </section>
-                    )}
-
-                    {/* SECTION 2: STATE ASSOCIATIONS */}
-                    {showStateSection && (
-                        <section id="affiliates" className="space-y-6 pt-2">
-                            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
-                                <h2 className="text-base sm:text-lg font-bold tracking-tight text-white uppercase">
-                                    State Affiliates
-                                </h2>
-                                <span className="text-xs font-mono text-neutral-500 shrink-0">
-                                    {filteredStates.length} States
-                                </span>
-                            </div>
-
-                            {filteredStates.length === 0 ? (
-                                <div className="py-12 text-center rounded-xl border border-white/10 bg-[#090E1A]/60">
-                                    <p className="text-neutral-400 text-xs font-medium">
-                                        No state associations match "{searchQuery}".
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="w-full grid grid-cols-3 sm:grid-cols-5 gap-y-10 sm:gap-y-12 gap-x-6 sm:gap-x-10 items-center justify-items-center py-4">
-                                    {filteredStates.map((state) => (
-                                        <Link
-                                            key={state.id}
-                                            href={`/teams/state/${state.id}`} // redirect
-                                            style={{
-                                                '--state-glow': state.glowRgba || 'rgba(56, 189, 248, 0.75)',
-                                                '--state-color': state.glowColor || '#38BDF8'
-                                            }}
-                                            className="group relative flex flex-col items-center justify-center cursor-pointer select-none"
-                                        >
-                                            {/* raw floating logo/crest */}
-                                            <div className="h-16 w-16 sm:h-20 sm:w-20 flex items-center justify-center grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300">
-                                                <img
-                                                    src={state.image}
-                                                    alt={state.name}
-                                                    className="max-h-full max-w-full object-contain filter transition-all duration-300 group-hover:[filter:drop-shadow(0_0_12px_var(--state-glow))]"
-                                                    onError={(e) => {
-                                                        e.currentTarget.style.display = 'none'; // error
-                                                    }}
-                                                />
-                                            </div>
-
-                                            {/* state text label */}
-                                            <div className="mt-2 text-center">
-                                                <span className="text-xs font-medium text-neutral-400 group-hover:text-white transition-colors">
-                                                    {state.name}
-                                                </span>
-                                            </div>
-                                        </Link>
-                                    ))}
-                                </div>
-                            )}
-                        </section>
-                    )}
+                {/* state details */}
+                <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                        <h3 className="font-bold text-base sm:text-lg text-white tracking-tight truncate">
+                            {state.name}
+                        </h3>
+                        <span className="px-2 py-0.5 rounded bg-[#060913] border border-white/10 font-mono text-[10px] font-bold text-sky-300 tracking-wider shrink-0">
+                            [{state.tag}]
+                        </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-neutral-400 font-medium leading-relaxed truncate">
+                        {state.title}
+                    </p>
                 </div>
             </div>
 
-            {/* 4. footer */}
-            <Footer />
+            {/* right block: accreditation status & actions */}
+            <div className="flex items-center justify-between sm:justify-end gap-3 pt-3 sm:pt-0 border-t sm:border-t-0 border-white/[0.06] shrink-0">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono text-emerald-400 font-medium sm:hidden">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    Accredited
+                </span>
+
+                <div className="flex items-center gap-2">
+                    <button
+                        type="button"
+                        onClick={() => onQuickPreview(state)} // trigger
+                        className="p-2 rounded-xl bg-white/5 border border-white/10 text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                        title="Quick Preview"
+                    >
+                        <Info className="w-4 h-4" />
+                    </button>
+                    <Link
+                        href={`/teams/state/${state.slug}`} // redirect
+                        className="px-3.5 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-semibold text-neutral-200 transition-colors flex items-center gap-1.5 cursor-pointer"
+                    >
+                        <span>Details</span>
+                        <ArrowRight className="w-3.5 h-3.5 text-neutral-400" />
+                    </Link>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// Subcomponent: National Team Card (Modern layout with Member and Since boxes)
+function NationalTeamCard({ team }) {
+    return (
+        <div className="rounded-2xl bg-[#090E1A]/80 border border-white/10 p-5 sm:p-6 flex flex-col justify-between shadow-lg text-left space-y-5">
+            {/* top row: tag & status */}
+            <div className="flex items-center justify-between text-xs">
+                <span className="px-2 py-0.5 rounded bg-[#060913] border border-white/10 font-mono text-[10px] font-bold text-amber-300 tracking-wider">
+                    [{team.tag || 'MAS'}]
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-medium text-emerald-400">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                    {team.status || 'Active'}
+                </span>
+            </div>
+
+            {/* center: crest & name */}
+            <div className="flex flex-col items-center text-center space-y-3 pt-1">
+                <div className="w-16 h-16 rounded-2xl bg-[#060913] border border-white/10 p-2.5 flex items-center justify-center shrink-0 shadow-inner">
+                    {team.logo ? (
+                        <img
+                            src={team.logo}
+                            alt={team.name}
+                            onError={(e) => {
+                                e.currentTarget.style.display = 'none'; // error
+                                if (e.currentTarget.nextSibling) {
+                                    e.currentTarget.nextSibling.style.display = 'flex'; // toggle
+                                }
+                            }}
+                            className="h-full w-full object-contain filter drop-shadow-sm"
+                        />
+                    ) : null}
+                    <div
+                        className="h-full w-full flex flex-col items-center justify-center text-center select-none"
+                        style={{ display: team.logo ? 'none' : 'flex' }}
+                    >
+                        <Trophy className="w-5 h-5 text-amber-400 mb-1" />
+                        <span className="font-mono font-black text-xs text-white tracking-wider">
+                            {team.tag || 'MAS'}
+                        </span>
+                    </div>
+                </div>
+
+                <h3 className="font-bold text-base text-white tracking-tight truncate w-full">
+                    {team.name}
+                </h3>
+            </div>
+
+            {/* bottom: member and since boxes */}
+            <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-white/[0.08] text-xs">
+                <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-left space-y-0.5">
+                    <div className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+                        <Users className="w-3 h-3 text-neutral-400" />
+                        <span>Members</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-white block">
+                        {team.roster_size ? `${team.roster_size} Athletes` : '5 Athletes'}
+                    </span>
+                </div>
+
+                <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-left space-y-0.5">
+                    <div className="flex items-center gap-1 text-[10px] font-mono uppercase tracking-wider text-neutral-400">
+                        <Calendar className="w-3 h-3 text-neutral-400" />
+                        <span>Since</span>
+                    </div>
+                    <span className="text-xs font-mono font-bold text-white block">
+                        {team.since || '2024'}
+                    </span>
+                </div>
+            </div>
         </div>
     );
 }

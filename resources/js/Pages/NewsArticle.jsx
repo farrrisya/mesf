@@ -4,7 +4,6 @@ import { useState, useEffect, useMemo } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
 import BackButton from '@/Components/BackButton';
-import NewsVideoPlayer from '@/Components/NewsVideoPlayer';
 import {
     Calendar,
     MapPin,
@@ -243,13 +242,6 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                                 <span className="truncate block">{article.title}</span>
                             </div>
                         </div>
-                    ) : article?.video_url ? (
-                        <div className="rounded-3xl border border-white/15 overflow-hidden shadow-[0_24px_50px_rgba(0,0,0,0.65)]">
-                            <NewsVideoPlayer
-                                url={article.video_url} // state
-                                title={article.title} // state
-                            />
-                        </div>
                     ) : null}
                 </div>
 
@@ -258,15 +250,6 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
                         {/* story narrative column (8 cols) */}
                         <article className="lg:col-span-8 space-y-7">
-                            {/* embedded video player if article has BOTH image and video */}
-                            {article?.image && article?.video_url && (
-                                <div className="rounded-2xl border border-white/15 overflow-hidden shadow-lg mb-8">
-                                    <NewsVideoPlayer
-                                        url={article.video_url} // state
-                                        title={article.title} // state
-                                    />
-                                </div>
-                            )}
 
                             {/* article body paragraphs */}
                             <div className="space-y-6 text-base sm:text-lg text-neutral-200 leading-[1.8] font-normal">

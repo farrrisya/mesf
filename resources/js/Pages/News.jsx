@@ -1,11 +1,9 @@
 // --1. imports--
 import { Head, Link } from '@inertiajs/react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
-import NewsVideoPlayer from '@/Components/NewsVideoPlayer';
 import {
-    Play,
     Search,
     X,
     ArrowRight,
@@ -28,25 +26,6 @@ export default function News({
     // --4. actions--
     const [activeCategory, setActiveCategory] = useState(initialCategory); // state
     const [searchQuery, setSearchQuery] = useState(initialSearch); // state
-    const [videoModalArticle, setVideoModalArticle] = useState(null); // state
-    const [heroInlineVideo, setHeroInlineVideo] = useState(false); // state
-
-    // lock background scroll when video modal is active
-    useEffect(() => {
-        if (!videoModalArticle) return; // check
-        const originalOverflow = document.body.style.overflow; // state
-        document.body.style.overflow = 'hidden'; // state
-
-        const handleKeyDown = (e) => { // trigger
-            if (e.key === 'Escape') setVideoModalArticle(null); // state
-        };
-        window.addEventListener('keydown', handleKeyDown); // trigger
-
-        return () => {
-            document.body.style.overflow = originalOverflow; // state
-            window.removeEventListener('keydown', handleKeyDown); // trigger
-        };
-    }, [videoModalArticle]);
 
     // filter articles by category and search keyword
     const filteredArticles = useMemo(() => { // filter
@@ -174,46 +153,27 @@ export default function News({
                         <div className="mb-10 sm:mb-12">
                             <div className="group relative block w-full rounded-2xl border border-white/[0.08] hover:border-white/20 bg-[#090E1A]/90 hover:bg-[#0D1527] backdrop-blur-xl overflow-hidden transition-colors duration-200">
                                 <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
-                                    {/* media column: if playing video inline, show player; otherwise show image */}
+                                    {/* media column: cover image */}
                                     <div className="lg:col-span-7 relative aspect-[16/9] lg:aspect-auto min-h-[260px] sm:min-h-[320px] lg:min-h-[380px] bg-[#050810] overflow-hidden flex items-center justify-center">
-                                        {heroInlineVideo && displayHero.video_url ? (
-                                            <div className="w-full h-full p-4 flex flex-col justify-center bg-black">
-                                                <div className="flex items-center justify-between pb-2">
-                                                    <span className="text-xs font-mono text-neutral-300 uppercase">Live Playback</span>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setHeroInlineVideo(false)} // trigger
-                                                        className="text-xs font-mono text-neutral-400 hover:text-white flex items-center gap-1 cursor-pointer"
-                                                    >
-                                                        <X className="w-3.5 h-3.5" />
-                                                        <span>Close Player</span>
-                                                    </button>
-                                                </div>
-                                                <NewsVideoPlayer url={displayHero.video_url} title={displayHero.title} className="my-0" />
-                                            </div>
+                                        {displayHero.image ? (
+                                            <img
+                                                src={displayHero.image}
+                                                alt={displayHero.title}
+                                                className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-200"
+                                            />
                                         ) : (
-                                            <>
-                                                {displayHero.image ? (
-                                                    <img
-                                                        src={displayHero.image}
-                                                        alt={displayHero.title}
-                                                        className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity duration-200"
-                                                    />
-                                                ) : (
-                                                    <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 p-8">
-                                                        <Newspaper className="w-10 h-10 opacity-30 text-neutral-400" />
-                                                        <span className="text-xs font-mono uppercase text-neutral-500">Official Release</span>
-                                                    </div>
-                                                )}
-
-                                                {/* category badge */}
-                                                <div className="absolute top-4 left-4 z-10">
-                                                    <span className="px-2.5 py-1 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-neutral-200">
-                                                        {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
-                                                    </span>
-                                                </div>
-                                            </>
+                                            <div className="flex flex-col items-center justify-center gap-2 text-neutral-600 p-8">
+                                                <Newspaper className="w-10 h-10 opacity-30 text-neutral-400" />
+                                                <span className="text-xs font-mono uppercase text-neutral-500">Official Release</span>
+                                            </div>
                                         )}
+
+                                        {/* category badge */}
+                                        <div className="absolute top-4 left-4 z-10">
+                                            <span className="px-2.5 py-1 rounded text-[10px] font-mono font-medium uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/10 text-neutral-200">
+                                                {(displayHero.tag || displayHero.category || 'News').replace(/^\[\s*|\s*\]$/g, '').trim()}
+                                            </span>
+                                        </div>
                                     </div>
 
                                     {/* content column */}
@@ -243,38 +203,17 @@ export default function News({
 
                                         {/* spotlight actions */}
                                         <div className="pt-4 border-t border-white/[0.08] flex items-center justify-between gap-3">
-                                            {displayHero.video_url ? (
-                                                <div className="flex items-center gap-3 w-full justify-between">
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setHeroInlineVideo(true)} // trigger
-                                                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white hover:bg-neutral-200 text-black text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer"
-                                                    >
-                                                        <Play className="w-3 h-3 fill-black" />
-                                                        <span>Play Video</span>
-                                                    </button>
-                                                    {displayHero.slug && (
-                                                        <Link
-                                                            href={`/news/${displayHero.slug}`} // redirect
-                                                            className="text-xs text-neutral-400 hover:text-white uppercase font-mono tracking-wider transition-colors"
-                                                        >
-                                                            Full Article &rarr;
-                                                        </Link>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                displayHero.slug && (
-                                                    <Link
-                                                        href={`/news/${displayHero.slug}`} // redirect
-                                                        className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300 group-hover:text-white uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
-                                                    >
-                                                        <span>Read Full Story</span>
-                                                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                                                    </Link>
-                                                )
+                                            {displayHero.slug && (
+                                                <Link
+                                                    href={`/news/${displayHero.slug}`} // redirect
+                                                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-neutral-300 group-hover:text-white uppercase tracking-wider transition-colors cursor-pointer w-full justify-between"
+                                                >
+                                                    <span>Read Full Story</span>
+                                                    <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                                                </Link>
                                             )}
                                         </div>
-                                    </div>
+                                    </div>v>
                                 </div>
                             </div>
                         </div>

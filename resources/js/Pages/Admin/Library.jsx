@@ -389,7 +389,8 @@ export default function Library({ mediaList = [] }) {
                         <div className="space-y-1.5">
                             <h4 className="text-base font-bold text-white">Delete File from Library?</h4>
                             <p className="text-xs text-slate-400 leading-relaxed">
-                                Are you sure you want to permanently delete <strong className="text-white font-mono">{deleteItem.file_name}</strong>? Any pages using this URL will no longer be able to display it.
+                                Are you sure you want to delete <strong className="text-white font-mono">{deleteItem.file_name}</strong>?
+                                <span className="block text-slate-400 text-xs mt-1.5">This action cannot be undone.</span>
                             </p>
                         </div>
                         <div className="flex items-center justify-center gap-3 pt-2">
@@ -405,7 +406,7 @@ export default function Library({ mediaList = [] }) {
                                 onClick={handleDelete} // trigger
                                 className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs shadow-md shadow-rose-500/20 transition-all cursor-pointer"
                             >
-                                Delete Permanently
+                                Delete
                             </button>
                         </div>
                     </div>
@@ -422,7 +423,8 @@ export default function Library({ mediaList = [] }) {
                         <div className="space-y-1.5">
                             <h4 className="text-base font-bold text-white">Delete {selectedIds.length} File{selectedIds.length === 1 ? '' : 's'}?</h4>
                             <p className="text-xs text-slate-400 leading-relaxed">
-                                Are you sure you want to permanently delete <strong className="text-white font-mono">{selectedIds.length}</strong> selected file{selectedIds.length === 1 ? '' : 's'} from the library? Any pages or modules using their URLs will no longer be able to display them. This action cannot be undone.
+                                Are you sure you want to delete <strong className="text-white font-mono">{selectedIds.length}</strong> selected file{selectedIds.length === 1 ? '' : 's'}?
+                                <span className="block text-slate-400 text-xs mt-1.5">This action cannot be undone.</span>
                             </p>
                         </div>
                         <div className="flex items-center justify-center gap-3 pt-2">

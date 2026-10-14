@@ -42,21 +42,12 @@ const GAME_DISCIPLINES = [
     'Multi-Title Championship'
 ];
 
-const TOURNAMENT_FORMATS = [
-    'Group Stage + Single Elimination',
-    'Double Elimination Playoffs',
-    'Round Robin Circuit',
-    'Single Elimination Bracket',
-    'Swiss Stage + Finals'
-];
-
 const DISPLAY_OPTIONS_CONFIG = [
     { id: 'prize_pool', label: 'Prize Pool', icon: Trophy, desc: 'Display total prize bounty' },
     { id: 'dates', label: 'Tournament Dates', icon: Calendar, desc: 'Display event date schedule' },
     { id: 'closing_date', label: 'Closing Date', icon: Clock, desc: 'Display registration deadline' },
     { id: 'slots', label: 'Team Slots', icon: Users, desc: 'Display maximum team capacity' },
     { id: 'fee', label: 'Entry Fee', icon: Coins, desc: 'Display participation price' },
-    { id: 'format', label: 'Format / Structure', icon: Layers, desc: 'Display tournament bracket format' },
     { id: 'location', label: 'Venue / Location', icon: MapPin, desc: 'Display physical or online venue' }
 ];
 
@@ -75,7 +66,6 @@ export default function Edit({ league }) {
         season: league?.season || '',
         game_title: league?.game_title || '',
         tier: league?.tier || '',
-        format: league?.format || '',
         prize_pool: league?.prize_pool || '',
         start_date: league?.start_date || '',
         end_date: league?.end_date || '',
@@ -84,7 +74,7 @@ export default function Edit({ league }) {
         entry_fee: league?.entry_fee || 'Free Entry',
         location: league?.location || 'Malaysia',
         registration_status: league?.registration_status || 'REGISTRATION OPEN',
-        display_options: league?.display_options || ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'format', 'location'],
+        display_options: league?.display_options || ['prize_pool', 'dates', 'closing_date', 'slots', 'fee', 'location'],
         description: league?.description || '',
         banner: null,
         library_banner_path: null,
@@ -183,7 +173,7 @@ export default function Edit({ league }) {
                                 Edit League: {league.name}
                             </h1>
                             <p className="text-xs text-slate-400 mt-0.5">
-                                Modify tournament identity, competition format, schedule, and banner artwork.
+                                Modify tournament identity, schedule, prize pool, and banner artwork.
                             </p>
                         </div>
                     </div>
@@ -221,7 +211,7 @@ export default function Edit({ league }) {
                         <div className="lg:col-span-8 space-y-6">
                             {/* card 1: tournament identity */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="border-b border-white/10 pb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-xl bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400">
                                             <Trophy className="w-4 h-4" />
@@ -235,9 +225,6 @@ export default function Edit({ league }) {
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 1
-                                    </span>
                                 </div>
 
                                 {/* title & season */}
@@ -250,7 +237,6 @@ export default function Edit({ league }) {
                                             type="text"
                                             required
                                             value={data.name} // state
-                                            placeholder="e.g. Malaysia Esports League 2026"
                                             onChange={(e) => setData('name', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 focus:ring-1 focus:ring-amber-400/30 text-white text-sm font-semibold outline-none transition-all font-sans"
                                         />
@@ -264,7 +250,6 @@ export default function Edit({ league }) {
                                         <input
                                             type="text"
                                             value={data.season} // state
-                                            placeholder="e.g. Season 4 / 2026"
                                             onChange={(e) => setData('season', e.target.value)} // trigger
                                             className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
                                         />
@@ -321,7 +306,6 @@ export default function Edit({ league }) {
                                     <textarea
                                         rows={3}
                                         value={data.description || ''} // state
-                                        placeholder="Brief overview of the league format, eligibility, or qualifier stages..."
                                         onChange={(e) => setData('description', e.target.value)} // trigger
                                         className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans resize-none"
                                     />
@@ -329,153 +313,25 @@ export default function Edit({ league }) {
                                 </div>
                             </div>
 
-                            {/* card 2: structure, prize & capacity */}
+                            {/* card 2: organized schedule & competition essentials */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
-                                            <Coins className="w-4 h-4" />
-                                        </div>
-                                        <div>
-                                            <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Format & Prize Structure
-                                            </h2>
-                                            <p className="text-xs text-slate-400">
-                                                Tournament bracket format, prize pool, team slots, and entry fees
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 2
-                                    </span>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Tournament Structure
-                                        </label>
-                                        <select
-                                            value={data.format} // state
-                                            onChange={(e) => setData('format', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-[#0d1424] border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
-                                        >
-                                            <option value="">Choose Tournament Structure</option>
-                                            {TOURNAMENT_FORMATS.map((fmt) => (
-                                                <option key={fmt} value={fmt}>
-                                                    {fmt}
-                                                </option>
-                                            ))}
-                                        </select>
-                                        {errors.format && <p className="text-xs text-rose-400 mt-1">{errors.format}</p>}
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Total Prize Pool
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.prize_pool} // state
-                                            placeholder="e.g. RM 50,000"
-                                            onChange={(e) => setData('prize_pool', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm font-semibold outline-none transition-all font-sans"
-                                        />
-                                        {errors.prize_pool && <p className="text-xs text-rose-400 mt-1">{errors.prize_pool}</p>}
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Max Team Capacity / Slots
-                                        </label>
-                                        <input
-                                            type="number"
-                                            min={2}
-                                            max={256}
-                                            value={data.slots} // state
-                                            placeholder="e.g. 16 or 32"
-                                            onChange={(e) => setData('slots', e.target.value ? parseInt(e.target.value) : '')} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
-                                        />
-                                        {errors.slots && <p className="text-xs text-rose-400 mt-1">{errors.slots}</p>}
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Entry Fee / Price
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.entry_fee} // state
-                                            placeholder="e.g. Free Entry, RM 50/team"
-                                            onChange={(e) => setData('entry_fee', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
-                                        />
-                                        {errors.entry_fee && <p className="text-xs text-rose-400 mt-1">{errors.entry_fee}</p>}
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* card 3: schedule, registration & location */}
-                            <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="border-b border-white/10 pb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
                                             <Calendar className="w-4 h-4" />
                                         </div>
                                         <div>
                                             <h2 className="text-sm font-bold uppercase tracking-wider text-white">
-                                                Schedule, Registration & Location
+                                                Schedule & Competition Details
                                             </h2>
                                             <p className="text-xs text-slate-400">
-                                                Competition dates, registration deadlines, participation state, and venue
+                                                Event schedule, registration status, prize pool, and capacity
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 3
-                                    </span>
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Registration State
-                                        </label>
-                                        <select
-                                            value={data.registration_status} // state
-                                            onChange={(e) => setData('registration_status', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-[#0d1424] border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
-                                        >
-                                            <option value="">Choose Registration State</option>
-                                            <option value="REGISTRATION OPEN">Registration Open</option>
-                                            <option value="open">Open for Team Registration</option>
-                                            <option value="closed">Registration Closed</option>
-                                            <option value="REGISTRATION CLOSED">Registration Closed</option>
-                                            <option value="invitational">By Invitation Only</option>
-                                            <option value="INVITATIONAL">By Invitation Only</option>
-                                        </select>
-                                        {errors.registration_status && <p className="text-xs text-rose-400 mt-1">{errors.registration_status}</p>}
-                                    </div>
-
-                                    <div className="space-y-1.5">
-                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
-                                            Venue / Location
-                                        </label>
-                                        <input
-                                            type="text"
-                                            value={data.location} // state
-                                            placeholder="e.g. Online Qualifier / Kuala Lumpur LAN"
-                                            onChange={(e) => setData('location', e.target.value)} // trigger
-                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
-                                        />
-                                        {errors.location && <p className="text-xs text-rose-400 mt-1">{errors.location}</p>}
-                                    </div>
-                                </div>
-
-                                {/* dates & deadlines */}
+                                {/* dates row */}
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div className="space-y-1.5">
                                         <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
@@ -516,11 +372,74 @@ export default function Edit({ league }) {
                                         {errors.registration_deadline && <p className="text-xs text-rose-400 mt-1">{errors.registration_deadline}</p>}
                                     </div>
                                 </div>
+
+                                {/* registration status & location */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Registration Status
+                                        </label>
+                                        <select
+                                            value={data.registration_status} // state
+                                            onChange={(e) => setData('registration_status', e.target.value)} // trigger
+                                            className="w-full px-4 py-3 rounded-2xl bg-[#0d1424] border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all cursor-pointer font-sans"
+                                        >
+                                            <option value="REGISTRATION OPEN">Registration Open</option>
+                                            <option value="REGISTRATION CLOSED">Registration Closed</option>
+                                            <option value="INVITATIONAL">By Invitation Only</option>
+                                        </select>
+                                        {errors.registration_status && <p className="text-xs text-rose-400 mt-1">{errors.registration_status}</p>}
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Venue / Location
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.location} // state
+                                            onChange={(e) => setData('location', e.target.value)} // trigger
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                        />
+                                        {errors.location && <p className="text-xs text-rose-400 mt-1">{errors.location}</p>}
+                                    </div>
+                                </div>
+
+                                {/* prize pool & slots */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Total Prize Pool
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.prize_pool} // state
+                                            onChange={(e) => setData('prize_pool', e.target.value)} // trigger
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm font-semibold outline-none transition-all font-sans"
+                                        />
+                                        {errors.prize_pool && <p className="text-xs text-rose-400 mt-1">{errors.prize_pool}</p>}
+                                    </div>
+
+                                    <div className="space-y-1.5">
+                                        <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                                            Max Team Slots
+                                        </label>
+                                        <input
+                                            type="number"
+                                            min={2}
+                                            max={256}
+                                            value={data.slots} // state
+                                            onChange={(e) => setData('slots', e.target.value ? parseInt(e.target.value) : '')} // trigger
+                                            className="w-full px-4 py-3 rounded-2xl bg-white/5 border border-white/15 focus:border-amber-400/60 text-white text-sm outline-none transition-all font-sans"
+                                        />
+                                        {errors.slots && <p className="text-xs text-rose-400 mt-1">{errors.slots}</p>}
+                                    </div>
+                                </div>
                             </div>
 
-                            {/* card 4: homepage card display options */}
+                            {/* card 3: homepage card display badges */}
                             <div className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-5">
-                                <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                                <div className="border-b border-white/10 pb-4">
                                     <div className="flex items-center gap-3">
                                         <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
                                             <Layers className="w-4 h-4" />
@@ -534,9 +453,6 @@ export default function Edit({ league }) {
                                             </p>
                                         </div>
                                     </div>
-                                    <span className="text-[10px] font-mono uppercase px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-slate-400">
-                                        Section 4
-                                    </span>
                                 </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">

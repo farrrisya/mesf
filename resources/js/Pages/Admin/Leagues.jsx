@@ -21,6 +21,7 @@ import {
 export default function Leagues({ leagues = [] }) {
     // --3. actions--
     const [searchQuery, setSearchQuery] = useState(''); // state
+    const [deleteModalState, setDeleteModalState] = useState({ isOpen: false, item: null }); // state
 
     const filteredLeagues = leagues.filter((league) => { // check
         return (league.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -28,12 +29,12 @@ export default function Leagues({ leagues = [] }) {
             (league.tier || '').toLowerCase().includes(searchQuery.toLowerCase());
     });
 
-    const handleDelete = (id, name) => { // trigger
-        if (confirm(`Are you sure you want to delete league "${name}"?`)) { // check
-            router.delete(route('admin.leagues.destroy', id), { // save
-                preserveScroll: true
-            });
-        }
+    const confirmDelete = () => { // trigger
+        if (!deleteModalState.item) return; // check
+        router.delete(route('admin.leagues.destroy', deleteModalState.item.id), { // save
+            preserveScroll: true,
+            onSuccess: () => setDeleteModalState({ isOpen: false, item: null }) // state
+        });
     };
 
     // --4. UI--
@@ -107,7 +108,7 @@ export default function Leagues({ leagues = [] }) {
                         {filteredLeagues.map((league) => (
                             <div
                                 key={league.id}
-                                className="group bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 hover:border-amber-400/40 rounded-3xl overflow-hidden shadow-xl transition-all flex flex-col justify-between"
+                                className="bg-[#090D18]/85 backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-xl transition-colors flex flex-col justify-between"
                             >
                                 <div>
                                     {/* banner image or fallback */}
@@ -116,7 +117,7 @@ export default function Leagues({ leagues = [] }) {
                                             <img
                                                 src={league.banner_url}
                                                 alt={league.name}
-                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                className="w-full h-full object-cover"
                                             />
                                         ) : (
                                             <div className="flex flex-col items-center justify-center gap-2 text-slate-600">
@@ -124,30 +125,27 @@ export default function Leagues({ leagues = [] }) {
                                                 <span className="text-[10px] uppercase tracking-widest text-slate-500 font-mono">No Banner Uploaded</span>
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-[#090D18] via-transparent to-transparent pointer-events-none" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-[#090D18]/40 via-transparent to-transparent pointer-events-none" />
+                                    </div>
 
-                                        {/* registration status badge */}
-                                        <div className="absolute top-3 right-3 z-10">
-                                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/15 text-amber-400">
+                                    {/* info inside the box */}
+                                    <div className="p-6 space-y-3">
+                                        {/* badges row inside the box */}
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-white/5 border border-white/10 text-white font-mono">
+                                                {league.game_title || 'All Games'}
+                                            </span>
+                                            <span className="px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider bg-amber-400/10 border border-amber-400/20 text-amber-400 font-mono">
                                                 {league.registration_status}
                                             </span>
                                         </div>
 
-                                        <div className="absolute top-3 left-3 z-10">
-                                            <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/70 backdrop-blur-md border border-white/15 text-white">
-                                                {league.game_title || 'All Games'}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* info */}
-                                    <div className="p-6 space-y-3">
                                         <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
                                             <Calendar className="w-3.5 h-3.5 text-amber-400 shrink-0" />
                                             <span>{league.date_range}</span>
                                         </div>
 
-                                        <h3 className="text-lg font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
+                                        <h3 className="text-lg font-bold text-white transition-colors line-clamp-1">
                                             {league.name}
                                         </h3>
 
@@ -195,7 +193,7 @@ export default function Leagues({ leagues = [] }) {
 
                                         <button
                                             type="button"
-                                            onClick={() => handleDelete(league.id, league.name)} // trigger
+                                            onClick={() => setDeleteModalState({ isOpen: true, item: league })} // trigger
                                             className="p-2 rounded-xl text-slate-500 hover:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer"
                                             title="Delete League"
                                         >
@@ -208,6 +206,40 @@ export default function Leagues({ leagues = [] }) {
                     </div>
                 )}
             </div>
+
+            {/* unified delete confirmation modal */}
+            {deleteModalState.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
+                    <div className="w-full max-w-md bg-[#0B0F1C] border border-white/15 rounded-3xl p-6 shadow-2xl space-y-5">
+                        <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-400">
+                            <Trash2 className="w-6 h-6" />
+                        </div>
+                        <div className="space-y-1.5">
+                            <h3 className="text-lg font-bold text-white">Delete League?</h3>
+                            <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+                                Are you sure you want to delete <span className="text-white font-semibold">"{deleteModalState.item?.name}"</span>?
+                                <span className="block text-slate-400 text-xs mt-1.5">This action cannot be undone.</span>
+                            </p>
+                        </div>
+                        <div className="flex items-center justify-end gap-3 pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setDeleteModalState({ isOpen: false, item: null })}
+                                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition-all cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={confirmDelete}
+                                className="px-5 py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white text-xs font-bold transition-all cursor-pointer shadow-lg shadow-rose-500/20"
+                            >
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </AdminLayout>
     );
 }

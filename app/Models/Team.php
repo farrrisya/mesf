@@ -19,15 +19,20 @@ class Team extends Model
         'game_title',
         'manager_name',
         'contact_email',
+        'website_url',
+        'social_links',
         'motto',
         'roster_size',
         'status',
         'logo_path',
+        'team_pic_path',
+        'image_display_mode',
         'is_active',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'roster_size' => 'integer',
+        'social_links' => 'array',
     ];
 }

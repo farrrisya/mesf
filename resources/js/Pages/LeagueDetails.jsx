@@ -313,15 +313,17 @@ export default function LeagueDetails({ league = null, otherLeagues = [] }) {
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                                         {/* format */}
-                                        <div className="p-4 rounded-xl bg-[#090E1A] border border-white/10 space-y-1">
-                                            <div className="text-neutral-400 flex items-center gap-1.5 font-medium">
-                                                <Layers className="w-3.5 h-3.5 text-neutral-400" />
-                                                <span>Format & Structure</span>
+                                        {currentLeague.format && (
+                                            <div className="p-4 rounded-xl bg-[#090E1A] border border-white/10 space-y-1">
+                                                <div className="text-neutral-400 flex items-center gap-1.5 font-medium">
+                                                    <Layers className="w-3.5 h-3.5 text-neutral-400" />
+                                                    <span>Format & Structure</span>
+                                                </div>
+                                                <div className="text-sm font-bold text-white">
+                                                    {currentLeague.format}
+                                                </div>
                                             </div>
-                                            <div className="text-sm font-bold text-white">
-                                                {currentLeague.format || '—'}
-                                            </div>
-                                        </div>
+                                        )}
 
                                         {/* location / venue */}
                                         <div className="p-4 rounded-xl bg-[#090E1A] border border-white/10 space-y-1">

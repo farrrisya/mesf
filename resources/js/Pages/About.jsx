@@ -204,13 +204,13 @@ export default function About() {
     const [copiedKey, setCopiedKey] = useState(null); // state
 
     const copyToClipboard = (text, key) => { // trigger
-        if (!text) return;
-        if (navigator?.clipboard?.writeText) {
-            navigator.clipboard.writeText(text);
+        if (!text) return; // check
+        if (navigator?.clipboard?.writeText) { // check
+            navigator.clipboard.writeText(text); // save
         }
-        setCopiedKey(key);
-        setTimeout(() => {
-            setCopiedKey((curr) => (curr === key ? null : curr));
+        setCopiedKey(key); // state
+        setTimeout(() => { // clock
+            setCopiedKey((curr) => (curr === key ? null : curr)); // state
         }, 2000);
     };
 
@@ -791,12 +791,12 @@ export default function About() {
                     )}
                 </section>
 
-                {/* Section 5: Headquarters & Contact Us (Clean, organized, executive desk) */}
+                {/* Section 5: Contact Us */}
                 <section id="contact" className="space-y-4 scroll-mt-36">
                     {/* Clean Header */}
                     <div className="flex items-center justify-between pb-1">
                         <h2 className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-white uppercase">
-                            Headquarters &amp; Contact
+                            Contact Us
                         </h2>
                         <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider px-2.5 py-1 rounded-md bg-white/5 border border-white/10">
                             Bukit Jalil, KL

@@ -173,6 +173,7 @@ Route::get('/', function () {
                 'game' => $t->game_title,
                 'status' => $t->status ?: 'ACTIVE',
                 'logo' => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
+                'team_pic' => $t->team_pic_path ? \Illuminate\Support\Facades\Storage::url($t->team_pic_path) : null,
                 'manager' => $t->manager_name,
                 'motto' => $t->motto,
             ];
@@ -575,6 +576,8 @@ Route::get('/teams', function () {
                 'logo' => $t->logo_path ? \Illuminate\Support\Facades\Storage::url($t->logo_path) : null,
                 'manager' => $t->manager_name,
                 'motto' => $t->motto,
+                'roster_size' => $t->roster_size ?: 5,
+                'since' => $t->created_at ? $t->created_at->format('Y') : '2024',
                 'rosters' => [$t->game_title ?: 'National Squad'],
             ];
         });
@@ -837,6 +840,7 @@ Route::get('/teams/{slug}', function ($slug) {
         'roster_size' => $team->roster_size,
         'status' => $team->status ?: 'ACTIVE',
         'logo' => $team->logo_path ? \Illuminate\Support\Facades\Storage::url($team->logo_path) : null,
+        'team_pic' => $team->team_pic_path ? \Illuminate\Support\Facades\Storage::url($team->team_pic_path) : null,
     ] : null;
 
     $otherTeams = Team::where('is_active', true)

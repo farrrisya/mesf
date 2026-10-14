@@ -63,6 +63,12 @@ class HandleInertiaRequests extends Middleware
                     })
                     ->exists(); // check
             },
+            'flash' => [
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
+                'saved' => fn () => $request->session()->get('saved'),
+                'created' => fn () => $request->session()->get('created'),
+            ],
         ];
     }
 }
