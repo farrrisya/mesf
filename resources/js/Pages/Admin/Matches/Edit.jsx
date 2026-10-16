@@ -58,6 +58,7 @@ const STATUS_OPTIONS = [
 // --3. main component--
 export default function Edit({ match = {} }) {
     const [showSuccess, setShowSuccess] = useState(false); // state
+    const [isSaved, setIsSaved] = useState(false); // state
 
     const { data, setData, put, processing, errors } = useForm({ // state
         tournament_name: match.tournament_name || '',
@@ -78,11 +79,31 @@ export default function Edit({ match = {} }) {
         is_active: match.is_active !== undefined ? match.is_active : true,
     });
 
+    // check if any field has changed
+    const isChanged =
+        data.tournament_name !== (match.tournament_name || '') ||
+        data.game_title !== (match.game_title || '') ||
+        data.round !== (match.round || 'Group Stage') ||
+        data.format !== (match.format || 'BO3') ||
+        data.team_a_name !== (match.team_a_name || '') ||
+        data.team_a_tag !== (match.team_a_tag || '') ||
+        String(data.team_a_score ?? '') !== String(match.team_a_score ?? '') ||
+        data.team_b_name !== (match.team_b_name || '') ||
+        data.team_b_tag !== (match.team_b_tag || '') ||
+        String(data.team_b_score ?? '') !== String(match.team_b_score ?? '') ||
+        data.scheduled_date !== (match.scheduled_date || '') ||
+        data.scheduled_time !== (match.scheduled_time || '') ||
+        data.venue !== (match.venue || 'Online Arena') ||
+        data.stream_url !== (match.stream_url || '') ||
+        data.status !== (match.status ? match.status.toUpperCase() : 'UPCOMING') ||
+        Boolean(data.is_active) !== Boolean(match.is_active !== undefined ? match.is_active : true);
+
     // --4. actions--
     const handleSubmit = (e) => { // trigger
         e.preventDefault(); // check
         put(route('admin.matches.update', match.id), { // save
             onSuccess: () => { // trigger
+                setIsSaved(true); // save
                 setShowSuccess(true); // state
             },
         });
@@ -120,10 +141,25 @@ export default function Edit({ match = {} }) {
                         <button
                             type="button"
                             onClick={handleSubmit} // trigger
-                            disabled={processing} // check
-                            className="px-5 py-2 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.3)] cursor-pointer disabled:opacity-50"
+                            disabled={(!isChanged && !isSaved) || processing} // check
+                            className={`px-5 py-2 rounded-xl font-bold text-xs tracking-wider uppercase transition-all cursor-pointer flex items-center gap-1.5 ${
+                                isSaved
+                                    ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20'
+                                    : !isChanged || processing
+                                        ? 'bg-white/10 text-slate-500 cursor-not-allowed border border-white/5 opacity-50'
+                                        : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-[0_4px_16px_rgba(251,191,36,0.3)]'
+                            }`}
                         >
-                            {processing ? 'Saving...' : 'Save Changes'}
+                            {isSaved ? (
+                                <>
+                                    <span>✓</span>
+                                    <span>SAVED</span>
+                                </>
+                            ) : processing ? (
+                                <span>Saving...</span>
+                            ) : (
+                                <span>Save Changes</span>
+                            )}
                         </button>
                     </div>
                 </div>
@@ -547,10 +583,25 @@ export default function Edit({ match = {} }) {
                                 <div className="pt-3 border-t border-white/10 space-y-2.5">
                                     <button
                                         type="submit"
-                                        disabled={processing} // check
-                                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
+                                        disabled={(!isChanged && !isSaved) || processing} // check
+                                        className={`w-full py-2.5 rounded-xl font-bold text-xs tracking-wider uppercase transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                                            isSaved
+                                                ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20'
+                                                : !isChanged || processing
+                                                    ? 'bg-white/10 text-slate-500 cursor-not-allowed border border-white/5 opacity-50'
+                                                    : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-[0_4px_16px_rgba(251,191,36,0.35)]'
+                                        }`}
                                     >
-                                        {processing ? 'Saving Changes...' : 'Save Changes'}
+                                        {isSaved ? (
+                                            <>
+                                                <span>✓</span>
+                                                <span>SAVED</span>
+                                            </>
+                                        ) : processing ? (
+                                            <span>Saving...</span>
+                                        ) : (
+                                            <span>Save Changes</span>
+                                        )}
                                     </button>
 
                                     <Link

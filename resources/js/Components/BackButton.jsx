@@ -3,15 +3,11 @@ import React from 'react';
 import { router } from '@inertiajs/react';
 
 // --2. main component--
-export default function BackButton({ href = '/', label = 'Back', className = '' }) {
+export default function BackButton({ href = '/?view=dashboard', label = 'Back', className = '' }) {
     // --3. actions--
     const handleClick = (e) => { // trigger
         e.preventDefault();
-        if (typeof window !== 'undefined' && window.history.length > 1) {
-            window.history.back(); // trigger
-        } else {
-            router.visit(href); // redirect
-        }
+        router.visit(href); // redirect
     };
 
     // --4. UI--

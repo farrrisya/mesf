@@ -605,9 +605,20 @@ export default function Edit({ team }) {
                                     <button
                                         type="submit"
                                         disabled={processing} // check
-                                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs tracking-wider uppercase transition-all shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50"
+                                        className={`w-full py-2.5 rounded-xl font-extrabold text-xs tracking-wider uppercase transition-all duration-300 shadow-[0_4px_16px_rgba(251,191,36,0.35)] cursor-pointer disabled:opacity-50 flex items-center justify-center gap-1.5 ${
+                                            showSuccess
+                                                ? 'bg-emerald-500 text-black shadow-emerald-500/30 border border-emerald-400'
+                                                : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black'
+                                        }`}
                                     >
-                                        {processing ? 'Saving...' : 'Save Changes'}
+                                        {showSuccess ? (
+                                            <>
+                                                <Check className="w-4 h-4 stroke-[3]" />
+                                                <span>SAVED</span>
+                                            </>
+                                        ) : (
+                                            <span>{processing ? 'Saving...' : 'Save Changes'}</span>
+                                        )}
                                     </button>
 
                                     <Link

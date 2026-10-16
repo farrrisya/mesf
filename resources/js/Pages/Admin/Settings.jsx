@@ -1859,10 +1859,20 @@ export default function Settings({ settings = {}, sliders = [] }) {
                             <button
                                 type="submit"
                                 disabled={isSaving} // check
-                                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black text-xs font-black uppercase tracking-wider shadow-lg shadow-amber-400/25 transition-all cursor-pointer disabled:opacity-70"
+                                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-300 cursor-pointer disabled:opacity-70 ${
+                                    showSuccessToast
+                                        ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30 border border-emerald-400'
+                                        : 'bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black shadow-lg shadow-amber-400/25'
+                                }`}
                             >
-                                <Save className="w-4 h-4" />
-                                {isSaving ? 'Saving...' : 'Save Settings'}
+                                {showSuccessToast ? (
+                                    <>
+                                        <Check className="w-4 h-4 stroke-[3]" />
+                                        <span>SAVED</span>
+                                    </>
+                                ) : (
+                                    <span>{isSaving ? 'Saving...' : 'Save Settings'}</span>
+                                )}
                             </button>
                         </div>
                     </div>

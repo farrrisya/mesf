@@ -1,6 +1,6 @@
 // --1. imports--
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, Link, router, useForm, usePage } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
 import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import {
@@ -30,13 +30,20 @@ export default function Login({ status, canResetPassword }) {
     const [showPassword, setShowPassword] = useState(false); // state
 
     // --3. actions--
+    useEffect(() => {
+        // prevent browser back navigation into protected pages after logout
+        const handlePopState = (e) => { // trigger
+            e.preventDefault();
+            router.visit('/?view=dashboard'); // redirect
+        };
+        window.history.pushState(null, '', window.location.href);
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, []);
+
     const handleBack = (e) => { // trigger
         e.preventDefault();
-        if (typeof window !== 'undefined' && window.history.length > 1) { // check
-            window.history.back(); // redirect
-        } else {
-            window.location.href = '/'; // redirect
-        }
+        router.visit('/?view=dashboard'); // redirect
     };
 
     const submit = (e) => { // trigger
@@ -48,10 +55,8 @@ export default function Login({ status, canResetPassword }) {
 
     // --4. UI--
     return (
-        <div className="relative h-screen max-h-screen w-full font-sans bg-[#070B14] text-white selection:bg-amber-400 selection:text-black overflow-hidden flex flex-col justify-between py-3 sm:py-4 px-4 sm:px-6">
+        <div className="relative min-h-screen w-full font-sans bg-[#070B14] text-white selection:bg-amber-400 selection:text-black flex flex-col justify-between py-6 sm:py-8 px-4 sm:px-6">
             <Head title="Log In - MESF" />
-
-
 
             {/* background wallpaper and gradients */}
             <div className="fixed inset-0 z-0 h-screen w-full overflow-hidden pointer-events-none">
@@ -79,22 +84,25 @@ export default function Login({ status, canResetPassword }) {
                 />
             </div>
 
-            {/* top navigation bar */}
-            <header className="relative z-10 w-full max-w-[410px] mx-auto flex items-center justify-start shrink-0 pt-1">
-                <button
-                    type="button"
-                    onClick={handleBack} // trigger
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 hover:border-white/20 text-slate-400 hover:text-white text-xs font-medium transition-all backdrop-blur-md cursor-pointer group"
-                >
-                    <ArrowLeft className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-colors" />
-                    <span>Back</span>
-                </button>
-            </header>
+            {/* main centered container */}
+            <main className="relative z-10 w-full flex-1 flex flex-col items-center justify-center my-auto py-4">
+                {/* back button positioned directly above the card */}
+                <div className="w-full max-w-[420px] mb-3 flex items-center justify-between px-1">
+                    <button
+                        type="button"
+                        onClick={handleBack} // trigger
+                        className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-amber-400/40 text-slate-300 hover:text-white text-xs font-semibold transition-all backdrop-blur-md cursor-pointer group shadow-sm"
+                    >
+                        <ArrowLeft className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-colors" />
+                        <span>Back to Portal</span>
+                    </button>
+                    <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
+                        AUTHENTICATION
+                    </span>
+                </div>
 
-            {/* main centered card */}
-            <main className="relative z-10 w-full flex-1 flex items-center justify-center min-h-0 py-2">
                 <div
-                    className="w-full max-w-[410px] text-white rounded-3xl p-5 sm:p-6 shadow-[0_25px_80px_rgba(0,0,0,0.98),0_0_1px_1px_rgba(255,255,255,0.08)] border border-white/10 relative overflow-hidden flex flex-col justify-center"
+                    className="w-full max-w-[420px] text-white rounded-3xl p-6 sm:p-7 shadow-[0_25px_80px_rgba(0,0,0,0.98),0_0_1px_1px_rgba(255,255,255,0.08)] border border-white/10 relative overflow-hidden flex flex-col justify-center"
                     style={{
                         backgroundColor: 'rgba(7, 11, 22, 0.94)',
                         backdropFilter: 'blur(36px) saturate(190%)',

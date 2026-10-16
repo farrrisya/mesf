@@ -47,6 +47,11 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended(route('secretary.dashboard', absolute: false)); // redirect
         }
 
+        if ($user->role === 'member') { // check
+            $request->session()->forget('url.intended'); // properties
+            return redirect()->route('profile.edit'); // redirect
+        }
+
         return redirect()->intended('/'); // redirect
     }
 

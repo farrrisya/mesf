@@ -17,11 +17,12 @@ import {
     X,
     ArrowRight,
     ArrowLeft,
-    CheckCircle2
+    CheckCircle2,
+    IdCard
 } from 'lucide-react';
 
 // --2. properties--
-const IDLE_TIMEOUT_MS = 15 * 60 * 1000; // clock
+const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // clock
 const WARNING_DURATION_MS = 60 * 1000; // clock
 const WARNING_THRESHOLD_MS = IDLE_TIMEOUT_MS - WARNING_DURATION_MS; // clock
 
@@ -39,6 +40,7 @@ const NAV_CATEGORIES = [
     {
         category: 'Operations',
         items: [
+            { label: 'Members', href: '/admin/members', icon: IdCard, roles: ['admin', 'secretariat'] },
             { label: 'Inquiries', href: '/admin/inquiries', icon: MessageSquare, roles: ['admin', 'secretariat'] },
         ],
     },
@@ -139,7 +141,7 @@ export default function AdminLayout({
         if (isLoggingOutRef.current) return; // check
         isLoggingOutRef.current = true; // save
         setShowIdleModal(false); // toggle
-        router.post(route('logout')); // redirect
+        router.post(route('logout'), {}, { replace: true }); // redirect
     }, []);
 
     const resetIdleTimer = useCallback(() => { // trigger
@@ -423,6 +425,7 @@ export default function AdminLayout({
                             href={route('logout')} // redirect
                             method="post"
                             as="button"
+                            replace
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all cursor-pointer"
                             onClick={(e) => { // trigger
                                 if (!window.confirm("Adakah anda pasti mahu log keluar daripada akaun?")) { // check

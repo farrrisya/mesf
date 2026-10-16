@@ -1,14 +1,18 @@
 // --1. imports--
 import { Head, Link } from '@inertiajs/react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Footer from '@/Components/Footer';
 import PublicNavbar from '@/Components/PublicNavbar';
+import NewsVideoPlayer from '@/Components/NewsVideoPlayer';
 import {
+    Play,
     Search,
     X,
     ArrowRight,
     Calendar,
     Newspaper,
+    Video,
+    Film,
     ExternalLink
 } from 'lucide-react';
 
@@ -26,6 +30,24 @@ export default function News({
     // --4. actions--
     const [activeCategory, setActiveCategory] = useState(initialCategory); // state
     const [searchQuery, setSearchQuery] = useState(initialSearch); // state
+    const [videoModalArticle, setVideoModalArticle] = useState(null); // state
+
+    // lock background scroll when video modal is active
+    useEffect(() => {
+        if (!videoModalArticle) return; // check
+        const originalOverflow = document.body.style.overflow; // state
+        document.body.style.overflow = 'hidden'; // state
+
+        const handleKeyDown = (e) => { // trigger
+            if (e.key === 'Escape') setVideoModalArticle(null); // state
+        };
+        window.addEventListener('keydown', handleKeyDown); // trigger
+
+        return () => {
+            document.body.style.overflow = originalOverflow; // state
+            window.removeEventListener('keydown', handleKeyDown); // trigger
+        };
+    }, [videoModalArticle]);
 
     // filter articles by category and search keyword
     const filteredArticles = useMemo(() => { // filter
@@ -213,7 +235,7 @@ export default function News({
                                                 </Link>
                                             )}
                                         </div>
-                                    </div>v>
+                                    </div>
                                 </div>
                             </div>
                         </div>

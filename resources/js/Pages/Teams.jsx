@@ -316,6 +316,15 @@ export default function Teams({ uploadedTeams = [] }) {
                         <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
                             Official directory of national teams and accredited state associations.
                         </p>
+                        <div className="pt-1">
+                            <Link
+                                href="/register-team"
+                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(251,191,36,0.25)] transition-all cursor-pointer"
+                            >
+                                <Users className="w-4 h-4" />
+                                <span>Register Team</span>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -47,8 +47,12 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        Auth::login($user); // save
 
-        return redirect()->intended('/');
+        if ($user->role === 'member') { // check
+            return redirect()->intended(route('profile.edit', absolute: false)); // redirect
+        }
+
+        return redirect()->intended('/'); // redirect
     }
 }

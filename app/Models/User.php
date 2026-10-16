@@ -21,6 +21,11 @@ class User extends Authenticatable
      */
     protected $fillable = [ // properties
         'name',
+        'gamer_tag',
+        'primary_game',
+        'state_region',
+        'game_ids',
+        'avatar_path',
         'email',
         'password',
         'ic_number',
@@ -55,6 +60,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'game_ids' => 'array',
         ];
     }
 }

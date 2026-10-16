@@ -13,11 +13,13 @@ use App\Http\Controllers\EditorController;
 use App\Http\Controllers\SecretaryController;
 use App\Http\Controllers\InquiryController;
 use App\Http\Controllers\Admin\InquiryManagementController;
+use App\Http\Controllers\Admin\MemberManagementController;
 use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\Admin\LeagueController as AdminLeagueController;
 use App\Http\Controllers\Admin\TeamController as AdminTeamController;
 use App\Http\Controllers\Admin\MatchController as AdminMatchController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
+use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\PublicNewsController;
 use App\Models\Gallery;
 use App\Models\League;
@@ -961,6 +963,10 @@ Route::get('/host-tournament', function () {
     return Inertia::render('Public/HostTournament'); // screen
 })->name('host-tournament');
 
+Route::get('/register-team', [TeamRegistrationController::class, 'create'])->name('register-team'); // screen
+Route::post('/register-team', [TeamRegistrationController::class, 'store'])->name('register-team.store'); // save
+Route::get('/teams/register', fn() => redirect()->route('register-team')); // redirect
+
 Route::post('/inquiries', [InquiryController::class, 'store'])->name('inquiries.store'); // save
 
 // --3. auth routes--
@@ -969,7 +975,15 @@ Route::middleware('auth')->group(function () { // check
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::post('/switch-back', [UserManagementController::class, 'switchBack'])->name('admin.users.switch-back'); // redirect
+    Route::get('/my-teams/{team}/manage', [\App\Http\Controllers\UserTeamController::class, 'edit'])->name('user.teams.manage'); // screen
+    Route::post('/my-teams/{team}/manage', [\App\Http\Controllers\UserTeamController::class, 'update'])->name('user.teams.update'); // save
+    Route::post('/my-teams/{team}/request-delete', [\App\Http\Controllers\UserTeamController::class, 'requestDelete'])->name('user.teams.request-delete'); // save
+    Route::post('/my-teams/{team}/cancel-delete', [\App\Http\Controllers\UserTeamController::class, 'cancelDelete'])->name('user.teams.cancel-delete'); // save
 });
+
+Route::get('/member', fn() => redirect()->route('profile.edit'));
+Route::get('/members', fn() => redirect()->route('profile.edit'));
+Route::get('/passport', fn() => redirect()->route('profile.edit'));
 
 // --4. member portal / generic dashboard redirection--
 Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
@@ -983,6 +997,9 @@ Route::get('/dashboard', function (\Illuminate\Http\Request $request) {
         }
         if ($user->role === 'secretariat') { // check
             return redirect()->route('secretary.dashboard'); // redirect
+        }
+        if ($user->role === 'member') { // check
+            return redirect()->route('profile.edit'); // redirect
         }
     }
     return redirect('/'); // redirect
@@ -1037,6 +1054,8 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::put('/teams/{team}', [AdminTeamController::class, 'update'])->name('teams.update'); // save
         Route::post('/teams/{team}', [AdminTeamController::class, 'update'])->name('teams.update-post'); // save
         Route::delete('/teams/{team}', [AdminTeamController::class, 'destroy'])->name('teams.destroy'); // save
+        Route::post('/teams/{team}/approve', [AdminTeamController::class, 'approve'])->name('teams.approve'); // save
+        Route::post('/teams/{team}/reject', [AdminTeamController::class, 'reject'])->name('teams.reject'); // save
 
         Route::get('/library', [AdminMediaController::class, 'index'])->name('library'); // screen
         Route::get('/library/upload', [AdminMediaController::class, 'create'])->name('library.create'); // screen
@@ -1053,6 +1072,16 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
     Route::middleware('role:secretariat,admin')->group(function () { // check
         Route::get('/inquiries', [InquiryManagementController::class, 'index'])->name('inquiries'); // screen
         Route::put('/inquiries/{inquiry}', [InquiryManagementController::class, 'update'])->name('inquiries.update'); // save
+    });
+
+    // Members management (Admin, Secretariat)
+    Route::middleware('role:admin,secretariat')->group(function () { // check
+        Route::get('/members', [MemberManagementController::class, 'index'])->name('members.index'); // screen
+        Route::post('/members', [MemberManagementController::class, 'store'])->name('members.store'); // save
+        Route::put('/members/{user}', [MemberManagementController::class, 'update'])->name('members.update'); // save
+        Route::patch('/members/{user}', [MemberManagementController::class, 'update'])->name('members.patch'); // save
+        Route::post('/members/{user}/toggle-status', [MemberManagementController::class, 'toggleStatus'])->name('members.toggle-status'); // toggle
+        Route::delete('/members/{user}', [MemberManagementController::class, 'destroy'])->name('members.destroy'); // save
     });
 
     // Admin top-level routes

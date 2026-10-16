@@ -1,9 +1,13 @@
 // --1. imports--
 import { Link, router, usePage } from '@inertiajs/react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Notification from '@/Components/Notification';
 
 // --2. properties--
+const IDLE_TIMEOUT_MS = 5 * 60 * 1000; // clock
+const WARNING_DURATION_MS = 60 * 1000; // clock
+const WARNING_THRESHOLD_MS = IDLE_TIMEOUT_MS - WARNING_DURATION_MS; // clock
+
 const NAV_ITEMS = [
     { id: 'news', label: 'NEWS', href: '/news' },
     { id: 'leagues', label: 'LEAGUES', href: '/leagues' },
@@ -21,16 +25,27 @@ export default function PublicNavbar({
     style = {}
 }) {
     // --4. actions--
-    const { settings, hasLiveMatches: pageHasLiveMatches } = usePage().props; // properties
+    const { auth, settings, hasLiveMatches: pageHasLiveMatches } = usePage().props; // properties
+    const currentUser = auth?.user || null; // check
     const hasLiveMatches = propHasLiveMatches ?? pageHasLiveMatches ?? false; // check
     const logoUrl = settings?.logoUrl || '/images/mesf_logo.png'; // properties
     const [hoveredTab, setHoveredTab] = useState(null); // state
     const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 }); // state
     const [isNavInitialized, setIsNavInitialized] = useState(false); // state
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false); // state
+    const [showIdleModal, setShowIdleModal] = useState(false); // state
+    const [countdownSeconds, setCountdownSeconds] = useState(60); // state
+
     const centerNavRef = useRef(null); // ref
     const navRefs = useRef({}); // ref
     const bellRef = useRef(null); // ref
+
+    // idle timeout refs
+    const warningTimerRef = useRef(null); // properties
+    const logoutTimerRef = useRef(null); // properties
+    const intervalRef = useRef(null); // properties
+    const isLoggingOutRef = useRef(false); // properties
+    const lastActivityRef = useRef(Date.now()); // properties
 
     const currentTab = hoveredTab || activeTab; // state
 
@@ -66,6 +81,67 @@ export default function PublicNavbar({
         };
     }, [activeTab, hoveredTab, hasLiveMatches]);
 
+    const performLogout = useCallback(() => { // trigger
+        if (isLoggingOutRef.current) return; // check
+        isLoggingOutRef.current = true; // save
+        setShowIdleModal(false); // toggle
+        router.post(route('logout'), {}, { replace: true }); // redirect
+    }, []);
+
+    const resetIdleTimer = useCallback(() => { // trigger
+        if (!currentUser || isLoggingOutRef.current) return; // check
+        lastActivityRef.current = Date.now(); // clock
+        setShowIdleModal(false); // toggle
+        setCountdownSeconds(60); // clock
+
+        if (warningTimerRef.current) clearTimeout(warningTimerRef.current); // trigger
+        if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current); // trigger
+        if (intervalRef.current) clearInterval(intervalRef.current); // trigger
+
+        warningTimerRef.current = setTimeout(() => { // clock
+            setShowIdleModal(true); // toggle
+            setCountdownSeconds(60); // clock
+
+            let remaining = 60; // clock
+            intervalRef.current = setInterval(() => { // clock
+                remaining -= 1; // clock
+                if (remaining <= 0) { // check
+                    clearInterval(intervalRef.current); // trigger
+                    performLogout(); // redirect
+                } else {
+                    setCountdownSeconds(remaining); // clock
+                }
+            }, 1000);
+        }, WARNING_THRESHOLD_MS);
+
+        logoutTimerRef.current = setTimeout(() => { // clock
+            performLogout(); // redirect
+        }, IDLE_TIMEOUT_MS);
+    }, [currentUser, performLogout]);
+
+    // activity listeners for idle timeout
+    useEffect(() => {
+        if (!currentUser) return; // check
+
+        resetIdleTimer(); // trigger
+
+        const handleActivity = () => { // trigger
+            if (!showIdleModal && Date.now() - lastActivityRef.current > 2000) { // check
+                resetIdleTimer(); // trigger
+            }
+        };
+
+        const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+        events.forEach((event) => window.addEventListener(event, handleActivity, { passive: true })); // trigger
+
+        return () => {
+            if (warningTimerRef.current) clearTimeout(warningTimerRef.current); // trigger
+            if (logoutTimerRef.current) clearTimeout(logoutTimerRef.current); // trigger
+            if (intervalRef.current) clearInterval(intervalRef.current); // trigger
+            events.forEach((event) => window.removeEventListener(event, handleActivity)); // trigger
+        };
+    }, [currentUser, showIdleModal, resetIdleTimer]);
+
     const handleItemClick = (e, tabId) => { // trigger
         e.preventDefault(); // trigger
         if (onNavClick) { // check
@@ -87,148 +163,211 @@ export default function PublicNavbar({
         } else if (tabId === 'about') {
             router.visit('/about');
         } else if (tabId === 'profile') {
-            router.visit('/login');
+            if (!currentUser) { // check
+                router.visit('/login'); // redirect
+            } else if (currentUser.role === 'admin') { // check
+                router.visit('/admin'); // redirect
+            } else if (currentUser.role === 'editor') { // check
+                router.visit('/editor/dashboard'); // redirect
+            } else if (currentUser.role === 'secretariat') { // check
+                router.visit('/secretary/dashboard'); // redirect
+            } else {
+                router.visit('/profile'); // redirect
+            }
         }
     };
 
     // --5. UI--
     return (
-        <nav
-            className={`relative flex items-center justify-between w-[94vw] max-w-5xl px-3 md:px-5 py-2 rounded-full backdrop-blur-2xl bg-[#090D18]/90 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
-            style={style}
-        >
-            {/* far left: mesf logo section */}
-            <div className="flex items-center">
-                <button
-                    type="button"
-                    onClick={(e) => handleItemClick(e, 'home')}
-                    className="relative z-10 flex items-center justify-center h-10 w-10 md:h-11 md:w-11 px-1 rounded-full transition-opacity duration-200 hover:opacity-85 active:opacity-70 cursor-pointer"
-                    aria-label="MESF Home"
-                >
-                    <img
-                        src={logoUrl}
-                        alt="MESF Logo"
-                        onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = '/images/mesf_logo.png';
-                        }}
-                        className="h-8 w-8 md:h-9 md:w-9 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
-                    />
-                </button>
-            </div>
-
-            {/* left-center vertical glass divider */}
-            <div className="h-5 w-[1px] bg-white/10 mx-1.5 md:mx-4" />
-
-            {/* center: smooth gliding nav buttons pill container */}
-            <div
-                ref={centerNavRef}
-                onMouseLeave={() => setHoveredTab(null)}
-                className="relative flex items-center space-x-1 md:space-x-1.5 flex-1 justify-center py-0.5"
+        <>
+            <nav
+                className={`relative flex items-center justify-between w-[94vw] max-w-5xl px-3 md:px-5 py-2 rounded-full backdrop-blur-2xl bg-[#090D18]/90 border border-white/10 shadow-[0_22px_65px_rgba(0,0,0,0.9),0_0_1px_1px_rgba(255,255,255,0.05)] ${className}`}
+                style={style}
             >
-                {/* sliding fluid pill indicator */}
-                <div
-                    className="absolute pointer-events-none rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 shadow-[0_0_20px_rgba(251,191,36,0.4)] z-0 top-0 bottom-0 left-0 my-auto h-9 md:h-10 will-change-transform"
-                    style={{
-                        transform: `translateX(${indicatorStyle.left}px)`,
-                        width: `${indicatorStyle.width}px`,
-                        opacity: indicatorStyle.opacity,
-                        transition: isNavInitialized
-                            ? 'transform 260ms cubic-bezier(0.16, 1, 0.3, 1), width 260ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease-out'
-                            : 'opacity 180ms ease-out'
-                    }}
-                />
-
-                {NAV_ITEMS.map((item) => {
-                    const isSelected = currentTab === item.id;
-                    const isLiveItem = item.id === 'matches' && hasLiveMatches;
-                    return (
-                        <button
-                            key={item.id}
-                            ref={(el) => (navRefs.current[item.id] = el)}
-                            type="button"
-                            onMouseEnter={() => setHoveredTab(item.id)}
-                            onClick={(e) => handleItemClick(e, item.id)}
-                            className={`relative z-10 h-9 md:h-10 px-3.5 md:px-5 rounded-full flex items-center justify-center text-xs md:text-sm font-bold tracking-wider uppercase transition-colors duration-200 select-none cursor-pointer ${
-                                isSelected
-                                    ? 'text-slate-950 font-black'
-                                    : 'text-neutral-300 hover:text-white'
-                            }`}
-                        >
-                            <span className="flex items-center gap-1.5">
-                                <span>{item.label}</span>
-                                {isLiveItem && (
-                                    <span
-                                        className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase transition-colors select-none ${
-                                            isSelected
-                                                ? 'bg-slate-950 text-red-400'
-                                                : 'bg-red-500/15 border border-red-500/35 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.25)]'
-                                        }`}
-                                    >
-                                        <span className="relative flex h-1.5 w-1.5">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                                            <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
-                                        </span>
-                                        <span className="font-mono leading-none">LIVE</span>
-                                    </span>
-                                )}
-                            </span>
-                        </button>
-                    );
-                })}
-            </div>
-
-            {/* center-right vertical glass divider */}
-            <div className="h-5 w-[1px] bg-white/10 mx-1.5 md:mx-4" />
-
-            {/* far right: action buttons with clean, subtle circle hovers */}
-            <div className="flex items-center space-x-1 md:space-x-1.5">
-                {/* notification bell button */}
-                <div className="relative">
+                {/* far left: mesf logo section */}
+                <div className="flex items-center">
                     <button
-                        ref={bellRef}
                         type="button"
-                        onClick={(e) => {
-                            e.preventDefault();
-                            setIsNotificationsOpen((prev) => !prev);
-                        }}
-                        className={`relative z-10 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 rounded-full transition-all duration-200 cursor-pointer ${
-                            isNotificationsOpen
-                                ? 'bg-amber-400 text-slate-950 shadow-[0_0_15px_rgba(251,191,36,0.4)]'
-                                : 'text-neutral-300 hover:text-white hover:bg-white/[0.08]'
-                        }`}
-                        aria-label="Notifications"
+                        onClick={(e) => handleItemClick(e, 'home')}
+                        className="relative z-10 flex items-center justify-center h-10 w-10 md:h-11 md:w-11 px-1 rounded-full transition-opacity duration-200 hover:opacity-85 active:opacity-70 cursor-pointer"
+                        aria-label="MESF Home"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
-                        </svg>
-                        {/* notification alert dot */}
-                        <span className="absolute top-2 right-2 flex h-2 w-2">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
-                            <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500 ring-2 ring-[#090D18]" />
-                        </span>
+                        <img
+                            src={logoUrl}
+                            alt="MESF Logo"
+                            onError={(e) => {
+                                e.currentTarget.onerror = null;
+                                e.currentTarget.src = '/images/mesf_logo.png';
+                            }}
+                            className="h-8 w-8 md:h-9 md:w-9 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]"
+                        />
                     </button>
-
-                    <Notification
-                        isOpen={isNotificationsOpen}
-                        onClose={() => setIsNotificationsOpen(false)}
-                        anchorRef={bellRef}
-                    />
                 </div>
 
-                {/* user profile / login button */}
-                <button
-                    type="button"
-                    onClick={(e) => handleItemClick(e, 'profile')}
-                    className="relative z-10 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 rounded-full text-neutral-300 hover:text-white hover:bg-white/[0.08] transition-all duration-200 cursor-pointer"
-                    aria-label="Log In"
-                    title="Log In"
+                {/* left-center vertical glass divider */}
+                <div className="h-5 w-[1px] bg-white/10 mx-1.5 md:mx-4" />
+
+                {/* center: smooth gliding nav buttons pill container */}
+                <div
+                    ref={centerNavRef}
+                    onMouseLeave={() => setHoveredTab(null)}
+                    className="relative flex items-center space-x-1 md:space-x-1.5 flex-1 justify-center py-0.5"
                 >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                </button>
-            </div>
-        </nav>
+                    {/* sliding fluid pill indicator */}
+                    <div
+                        className="absolute pointer-events-none rounded-full bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 shadow-[0_0_20px_rgba(251,191,36,0.4)] z-0 top-0 bottom-0 left-0 my-auto h-9 md:h-10 will-change-transform"
+                        style={{
+                            transform: `translateX(${indicatorStyle.left}px)`,
+                            width: `${indicatorStyle.width}px`,
+                            opacity: indicatorStyle.opacity,
+                            transition: isNavInitialized
+                                ? 'transform 260ms cubic-bezier(0.16, 1, 0.3, 1), width 260ms cubic-bezier(0.16, 1, 0.3, 1), opacity 180ms ease-out'
+                                : 'opacity 180ms ease-out'
+                        }}
+                    />
+
+                    {NAV_ITEMS.map((item) => {
+                        const isSelected = currentTab === item.id;
+                        const isLiveItem = item.id === 'matches' && hasLiveMatches;
+                        return (
+                            <button
+                                key={item.id}
+                                ref={(el) => (navRefs.current[item.id] = el)}
+                                type="button"
+                                onMouseEnter={() => setHoveredTab(item.id)}
+                                onClick={(e) => handleItemClick(e, item.id)}
+                                className={`relative z-10 h-9 md:h-10 px-3.5 md:px-5 rounded-full flex items-center justify-center text-xs md:text-sm font-bold tracking-wider uppercase transition-colors duration-200 select-none cursor-pointer ${
+                                    isSelected
+                                        ? 'text-slate-950 font-black'
+                                        : 'text-neutral-300 hover:text-white'
+                                }`}
+                            >
+                                <span className="flex items-center gap-1.5">
+                                    <span>{item.label}</span>
+                                    {isLiveItem && (
+                                        <span
+                                            className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase transition-colors select-none ${
+                                                isSelected
+                                                    ? 'bg-slate-950 text-red-400'
+                                                    : 'bg-red-500/15 border border-red-500/35 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.25)]'
+                                            }`}
+                                        >
+                                            <span className="relative flex h-1.5 w-1.5">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-red-500" />
+                                            </span>
+                                            <span className="font-mono leading-none">LIVE</span>
+                                        </span>
+                                    )}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+
+                {/* center-right vertical glass divider */}
+                <div className="h-5 w-[1px] bg-white/10 mx-1.5 md:mx-4" />
+
+                {/* far right: action buttons with clean, subtle circle hovers */}
+                <div className="flex items-center space-x-1 md:space-x-1.5">
+                    {/* notification bell button */}
+                    <div className="relative">
+                        <button
+                            ref={bellRef}
+                            type="button"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                setIsNotificationsOpen((prev) => !prev);
+                            }}
+                            className={`relative z-10 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 rounded-full transition-all duration-200 cursor-pointer ${
+                                isNotificationsOpen
+                                    ? 'bg-amber-400 text-slate-950 shadow-[0_0_15px_rgba(251,191,36,0.4)]'
+                                    : 'text-neutral-300 hover:text-white hover:bg-white/[0.08]'
+                            }`}
+                            aria-label="Notifications"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                            </svg>
+                            {/* notification alert dot */}
+                            <span className="absolute top-2 right-2 flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500 ring-2 ring-[#090D18]" />
+                            </span>
+                        </button>
+
+                        <Notification
+                            isOpen={isNotificationsOpen}
+                            onClose={() => setIsNotificationsOpen(false)}
+                            anchorRef={bellRef}
+                        />
+                    </div>
+
+                    {/* user profile / login button */}
+                    <button
+                        type="button"
+                        onClick={(e) => handleItemClick(e, 'profile')}
+                        className="relative z-10 flex items-center justify-center h-9 w-9 md:h-10 md:w-10 rounded-full text-neutral-300 hover:text-white hover:bg-white/[0.08] transition-all duration-200 cursor-pointer"
+                        aria-label={currentUser ? 'Profile' : 'Log In'}
+                        title={currentUser ? 'Profile' : 'Log In'}
+                    >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="1.8">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </button>
+                </div>
+            </nav>
+
+            {/* idle inactivity warning modal (5 min timeout) */}
+            {showIdleModal && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+                    <div className="relative w-full max-w-md rounded-2xl bg-[#090D18] border border-amber-400/30 p-6 text-white shadow-[0_25px_60px_rgba(0,0,0,0.95)]">
+                        <div className="flex items-start gap-4">
+                            <div className="h-12 w-12 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center text-amber-400 shrink-0">
+                                <svg className="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-base font-black tracking-wide text-white">
+                                    SESSION EXPIRATION WARNING
+                                </h3>
+                                <p className="text-xs text-neutral-300 leading-relaxed">
+                                    You have been inactive for 4 minutes. For security, your session will automatically log out in:
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* countdown display */}
+                        <div className="mt-5 p-4 rounded-xl bg-white/[0.04] border border-white/10 flex items-center justify-center gap-3">
+                            <span className="text-3xl font-black text-amber-400 font-mono tracking-wider">
+                                {countdownSeconds}s
+                            </span>
+                            <span className="text-xs text-neutral-400 uppercase font-bold tracking-wider">
+                                until auto logout
+                            </span>
+                        </div>
+
+                        {/* action buttons */}
+                        <div className="mt-6 flex items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={resetIdleTimer}
+                                className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_20px_rgba(251,191,36,0.3)] cursor-pointer"
+                            >
+                                Stay Logged In
+                            </button>
+                            <button
+                                type="button"
+                                onClick={performLogout}
+                                className="py-2.5 px-4 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-neutral-300 hover:text-white font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+                            >
+                                Log Out Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </>
     );
 }

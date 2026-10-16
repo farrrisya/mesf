@@ -31,7 +31,7 @@ const INQUIRY_OPTIONS = [
         badgeBg: 'bg-purple-500/10 text-purple-300 border-purple-500/25',
         accentGlow: 'group-hover:bg-purple-500/20',
         hoverBorder: 'hover:border-purple-500/50',
-        actionLabel: 'Register Team',
+        actionLabel: 'Enter Tournament',
         highlights: [
             'National league & qualifier entry',
             'State team selection trials',

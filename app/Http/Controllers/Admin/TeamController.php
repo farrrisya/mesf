@@ -242,4 +242,30 @@ class TeamController extends Controller
 
         return back()->with('success', 'Team deleted successfully.'); // redirect
     }
+
+    /**
+     * Approve and activate a pending team registration.
+     */
+    public function approve(Team $team)
+    {
+        $team->update([
+            'status' => 'ACTIVE', // state
+            'is_active' => true, // state
+        ]); // save
+
+        return back()->with('success', "Team '{$team->name}' has been approved and activated."); // redirect
+    }
+
+    /**
+     * Reject a team registration.
+     */
+    public function reject(Team $team)
+    {
+        $team->update([
+            'status' => 'REJECTED', // state
+            'is_active' => false, // state
+        ]); // save
+
+        return back()->with('success', "Team '{$team->name}' registration has been rejected."); // redirect
+    }
 }
