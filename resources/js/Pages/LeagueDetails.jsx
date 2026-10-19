@@ -129,7 +129,7 @@ export default function LeagueDetails({ league = null, otherLeagues = [] }) {
                 
                 {/* navigation bar: back button + share */}
                 <div className="mb-3 sm:mb-4 flex flex-wrap items-center justify-between gap-4">
-                    <BackButton href="/leagues" label="Back to Leagues" />
+                    <BackButton href="/leagues" label="Back" />
 
                     {currentLeague && (
                         <button

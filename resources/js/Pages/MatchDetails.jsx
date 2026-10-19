@@ -73,7 +73,7 @@ export default function MatchDetails({ match = null, otherMatches = [] }) {
             <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-20 sm:pt-22 pb-16 flex-1">
                 {/* top bar: back button + share */}
                 <div className="mb-3 sm:mb-4 flex flex-wrap items-center justify-between gap-4">
-                    <BackButton href="/matches" label="Back to Match Schedule" />
+                    <BackButton href="/matches" label="Back" />
 
                     {currentMatch && (
                         <div className="flex items-center gap-3">

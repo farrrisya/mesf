@@ -103,7 +103,7 @@ export default function NewsArticle({ article = {}, latestFeed = [] }) {
                     <div className="space-y-5">
                         {/* back navigation */}
                         <div>
-                            <BackButton href="/news" label="Back to News" />
+                            <BackButton href="/news" label="Back" />
                         </div>
 
                         {/* category badge & metadata row */}

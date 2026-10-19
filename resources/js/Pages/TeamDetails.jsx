@@ -48,7 +48,7 @@ export default function TeamDetails({ team = null, otherTeams = [] }) {
                 {/* top navigation bar */}
                 <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-white/10">
                     <div className="flex items-center gap-3">
-                        <BackButton href="/teams" label="Back to Directory" />
+                        <BackButton href="/teams" label="Back" />
                         <span className="text-xs text-neutral-500 font-mono hidden sm:inline">/</span>
                         <span className="text-xs font-mono text-neutral-400 uppercase tracking-wider hidden sm:inline">
                             {team?.name || 'Profile'}

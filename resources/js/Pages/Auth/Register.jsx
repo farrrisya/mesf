@@ -30,20 +30,15 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false); // state
 
     // --3. actions--
-    useEffect(() => {
-        // prevent browser back navigation into protected pages after logout
-        const handlePopState = (e) => { // trigger
-            e.preventDefault();
-            router.visit('/?view=dashboard'); // redirect
-        };
-        window.history.pushState(null, '', window.location.href);
-        window.addEventListener('popstate', handlePopState);
-        return () => window.removeEventListener('popstate', handlePopState);
-    }, []);
+    
 
     const handleBack = (e) => { // trigger
         e.preventDefault();
-        router.visit('/?view=dashboard'); // redirect
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+            window.history.back();
+        } else {
+            router.visit('/'); // fallback
+        }
     };
 
     const submit = (e) => { // trigger
@@ -96,7 +91,7 @@ export default function Register() {
                         className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-white/10 hover:border-amber-400/40 text-slate-300 hover:text-white text-xs font-semibold transition-all backdrop-blur-md cursor-pointer group shadow-sm"
                     >
                         <ArrowLeft className="w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-colors" />
-                        <span>Back to Portal</span>
+                        <span>Back</span>
                     </button>
                     <span className="text-[10px] font-mono text-neutral-400 uppercase tracking-widest">
                         REGISTRATION

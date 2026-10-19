@@ -229,7 +229,7 @@ export default function ManageTeam({ team = {} }) {
             {/* Hero Header */}
             <header className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-32 sm:pt-36 pb-8">
                 <div className="flex items-center justify-between gap-4 mb-8">
-                    <BackButton href="/profile" label="Back to Profile" />
+                    <BackButton href="/profile" label="Back" />
                     <Link
                         href={`/teams/${team.slug || team.id}`} // redirect
                         className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-neutral-300 hover:text-white bg-white/5 hover:bg-white/10 border border-white/10 transition-colors cursor-pointer font-sans"

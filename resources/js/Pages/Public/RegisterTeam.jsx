@@ -185,7 +185,7 @@ export default function RegisterTeam({ auth = {} }) {
             {/* Hero Header */}
             <header className="relative z-20 w-full max-w-4xl mx-auto px-4 sm:px-6 md:px-8 pt-32 sm:pt-36 pb-8">
                 <div className="mb-8">
-                    <BackButton href="/profile" label="Back to Profile" />
+                    <BackButton href="/profile" label="Back" />
                 </div>
 
                 <div className="pb-6 border-b border-white/10 space-y-2">

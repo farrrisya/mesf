@@ -138,7 +138,7 @@ export default function GetInvolved() {
             <main className="relative z-20 w-full max-w-7xl mx-auto px-6 sm:px-10 md:px-14 pt-36 sm:pt-40 pb-36 text-left">
                 {/* Standard Back Button */}
                 <div className="mb-10 sm:mb-12">
-                    <BackButton href="/" label="Back to Home" />
+                    <BackButton href="/" label="Back" />
                 </div>
 
                 {/* Hero Header Section */}

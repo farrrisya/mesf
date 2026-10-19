@@ -3,7 +3,7 @@ import React from 'react';
 import { router } from '@inertiajs/react';
 
 // --2. main component--
-export default function BackButton({ href = '/?view=dashboard', label = 'Back', className = '' }) {
+export default function BackButton({ href = '/', label = 'Back', className = '' }) {
     // --3. actions--
     const handleClick = (e) => { // trigger
         e.preventDefault();
@@ -31,7 +31,7 @@ export default function BackButton({ href = '/?view=dashboard', label = 'Back', 
             >
                 <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
-            <span>{label}</span>
+            <span>Back</span>
         </button>
     );
 }

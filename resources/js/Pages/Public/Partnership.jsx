@@ -86,7 +86,7 @@ export default function Partnership() {
             <header className="relative z-20 w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 pt-32 pb-8">
                 {/* Back Link */}
                 <div className="mb-6">
-                    <BackButton href="/get-involved" label="Back to Inquiries" />
+                    <BackButton href="/get-involved" label="Back" />
                 </div>
 
                 <div className="pb-6 border-b border-white/10 space-y-4">
