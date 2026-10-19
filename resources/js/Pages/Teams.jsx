@@ -316,50 +316,56 @@ export default function Teams({ uploadedTeams = [] }) {
                         <p className="text-xs sm:text-sm md:text-base text-neutral-300 font-normal leading-relaxed whitespace-normal md:whitespace-nowrap">
                             Official directory of national teams and accredited state associations.
                         </p>
-                        <div className="pt-1">
-                            <Link
-                                href="/register-team"
-                                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-bold text-xs uppercase tracking-wider shadow-[0_0_20px_rgba(251,191,36,0.25)] transition-all cursor-pointer"
-                            >
-                                <Users className="w-4 h-4" />
-                                <span>Register Team</span>
-                            </Link>
-                        </div>
                     </div>
                 </div>
             </section>
 
-            {/* 2. clean, simple, premium yellow theme counter box */}
-            <section className="relative z-20 w-full max-w-3xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10">
-                <div className="grid grid-cols-2 gap-4 p-4 sm:p-5 rounded-2xl bg-[#0B1220]/95 border border-amber-400/30 shadow-[0_15px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl">
-                    {/* card 1: national teams (yellow/amber highlight) */}
-                    <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-amber-400/[0.08] border border-amber-400/30 text-left">
-                        <div className="w-12 h-12 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center shrink-0">
-                            <Trophy className="w-6 h-6 text-amber-400" />
-                        </div>
-                        <div className="min-w-0">
-                            <div className="text-3xl sm:text-4xl font-black font-mono text-amber-400 tracking-tight leading-none">
-                                {nationalTeams.length}
+            {/* 2. clean, simple, premium yellow theme counter box with register team button on the right */}
+            <section className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10">
+                <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#0B1220]/95 border border-amber-400/30 shadow-[0_15px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+                    {/* left side: total number counters */}
+                    <div className="grid grid-cols-2 gap-3 sm:gap-4 flex-1">
+                        {/* card 1: national teams (yellow/amber highlight) */}
+                        <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-amber-400/[0.08] border border-amber-400/30 text-left">
+                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center shrink-0">
+                                <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
                             </div>
-                            <div className="text-xs font-mono uppercase tracking-wider text-neutral-200 font-bold mt-1.5 truncate">
-                                National Teams
+                            <div className="min-w-0">
+                                <div className="text-2xl sm:text-4xl font-black font-mono text-amber-400 tracking-tight leading-none">
+                                    {nationalTeams.length}
+                                </div>
+                                <div className="text-[11px] sm:text-xs font-mono uppercase tracking-wider text-neutral-200 font-bold mt-1.5 truncate">
+                                    National Teams
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* card 2: state affiliates */}
+                        <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/10 text-left">
+                            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                                <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-neutral-300" />
+                            </div>
+                            <div className="min-w-0">
+                                <div className="text-2xl sm:text-4xl font-black font-mono text-white tracking-tight leading-none">
+                                    {allStateAffiliates.length}
+                                </div>
+                                <div className="text-[11px] sm:text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold mt-1.5 truncate">
+                                    State Affiliates
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* card 2: state affiliates */}
-                    <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-white/[0.02] border border-white/10 text-left">
-                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
-                            <Shield className="w-6 h-6 text-neutral-300" />
-                        </div>
-                        <div className="min-w-0">
-                            <div className="text-3xl sm:text-4xl font-black font-mono text-white tracking-tight leading-none">
-                                {allStateAffiliates.length}
-                            </div>
-                            <div className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold mt-1.5 truncate">
-                                State Affiliates
-                            </div>
-                        </div>
+                    {/* right side: register team action button */}
+                    <div className="lg:pl-2 shrink-0 flex items-center">
+                        <Link
+                            href="/register-team"
+                            className="w-full lg:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_4px_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer whitespace-nowrap"
+                        >
+                            <Users className="w-4 h-4 text-black shrink-0" />
+                            <span>Register Team</span>
+                            <ArrowRight className="w-4 h-4 text-black shrink-0" />
+                        </Link>
                     </div>
                 </div>
             </section>
