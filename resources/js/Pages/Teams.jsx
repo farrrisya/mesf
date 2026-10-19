@@ -1,5 +1,5 @@
 // --1. imports--
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { useState, useMemo } from 'react';
 import {
     Search,
@@ -209,6 +209,8 @@ const ZONE_METADATA = [
 
 // --3. main component--
 export default function Teams({ uploadedTeams = [] }) {
+    const { auth } = usePage().props;
+    const isLoggedIn = Boolean(auth?.user);
     // --4. actions--
     const [selectedZone, setSelectedZone] = useState('All'); // state
     const [searchQuery, setSearchQuery] = useState(''); // state
@@ -354,9 +356,9 @@ export default function Teams({ uploadedTeams = [] }) {
                             </div>
                         </div>
 
-                        {/* card 3: register team (exact same size & style as the total number boxes) */}
+                        {/* card 3: register team (requires sign in / log in first if unauthenticated) */}
                         <Link
-                            href="/register-team" // redirect
+                            href={isLoggedIn ? '/register-team' : '/login'} // redirect
                             className="group flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-amber-400/[0.08] hover:bg-amber-400/[0.16] border border-amber-400/30 hover:border-amber-400/60 text-left transition-all cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(251,191,36,0.15)]"
                         >
                             <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
@@ -368,7 +370,7 @@ export default function Teams({ uploadedTeams = [] }) {
                                         Register Team
                                     </div>
                                     <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-amber-400 font-semibold mt-1 truncate flex items-center gap-1">
-                                        <span>Join Directory</span>
+                                        <span>{isLoggedIn ? 'Join Directory' : 'Sign In to Apply'}</span>
                                     </div>
                                 </div>
                             </div>

@@ -7,7 +7,12 @@ export default function BackButton({ href = '/?view=dashboard', label = 'Back', 
     // --3. actions--
     const handleClick = (e) => { // trigger
         e.preventDefault();
-        router.visit(href); // redirect
+        // Go back to the exact previous page and scroll position in browser history
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+            window.history.back();
+        } else {
+            router.visit(href, { preserveScroll: true }); // fallback redirect
+        }
     };
 
     // --4. UI--
