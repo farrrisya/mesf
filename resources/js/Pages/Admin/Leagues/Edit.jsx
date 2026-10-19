@@ -516,7 +516,7 @@ export default function Edit({ league }) {
                                         Official Banner Artwork
                                     </h2>
                                     <p className="text-[11px] text-slate-400 mt-0.5">
-                                        Upload full poster or banner artwork (full size preserved, no auto-cropping).
+                                        Upload tournament poster or banner artwork (full size preserved). <span className="text-amber-400/90 font-medium">Recommended size: 1024 × 1280 px (4:5 portrait)</span>.
                                     </p>
                                 </div>
 

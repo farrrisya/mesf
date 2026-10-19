@@ -240,41 +240,54 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
     ];
 
 
-    const adminNationalTeams = (teams || []).filter((t) => t.type === 'national'); // filter
+    const adminNationalTeams = (teams || []).filter((t) => t.type === 'national' || t.type === 'pro'); // filter
     const TOTAL_SLOTS = 7; // properties
     const teamRoster = useMemo(() => { // convert
-        if (adminNationalTeams.length > 0) {
-            return adminNationalTeams.map((team, idx) => ({
-                id: team.slug || `national-team-${team.id}`,
-                code: team.tag || `MAS-NAT-${idx + 1}`,
-                monogram: team.tag || 'MAS',
-                name: team.name || 'TEAM NAME',
-                game: team.game || 'GAME NAME',
-                division: team.motto || team.region || 'National Division',
-                format: 'National Representation',
-                athletes: `${team.roster_size || 5} Athletes`,
-                image: team.team_pic || team.logo || null,
-                accolade: 'National Squad',
-                status: team.status || 'Active Roster',
-                desc: team.motto || 'Official national squad representing Malaysia.'
-            }));
+        const realSquads = adminNationalTeams.map((team, idx) => ({
+            id: team.slug || `national-team-${team.id}`,
+            slug: team.slug || team.id,
+            code: team.tag || `MAS-NAT-${idx + 1}`,
+            monogram: team.tag || 'MAS',
+            name: team.name || 'TEAM NAME',
+            game: team.game || 'Official Esports Title',
+            division: team.motto || team.region || (team.type === 'pro' ? 'Club / Pro Team' : 'National Division'),
+            format: 'National Representation',
+            athletes: `${team.roster_size || 5} Athletes`,
+            image: team.team_pic || team.logo || null,
+            logo: team.logo || null,
+            accolade: team.type === 'pro' ? 'Professional Team' : 'National Squad',
+            status: team.status || 'Active Roster',
+            desc: team.motto || 'Official squad representing Malaysia.',
+            isPlaceholder: false,
+        }));
+
+        if (realSquads.length >= TOTAL_SLOTS) {
+            return realSquads;
         }
 
-        // fallback unassigned placeholder cards (amount preserved, clean placeholder state)
-        return Array.from({ length: TOTAL_SLOTS }, (_, i) => ({
-            id: `national-slot-${i + 1}`,
-            code: `MAS-SLOT-${i + 1}`,
-            monogram: 'MAS',
-            name: 'TEAM NAME',
-            game: 'GAME NAME',
-            division: 'DIVISION',
-            format: 'TBD',
-            athletes: 'TBD',
-            image: null,
-            accolade: 'National Squad',
-            status: 'UNASSIGNED',
-            desc: 'National team profile pending federation registration.'
-        }));
+        // Fill remaining slots with clean unassigned placeholders so 3D Cover Flow maintains depth
+        const placeholderSquads = Array.from({ length: TOTAL_SLOTS - realSquads.length }, (_, i) => {
+            const slotNum = realSquads.length + i + 1;
+            return {
+                id: `national-slot-${slotNum}`,
+                slug: null,
+                code: `MAS-SLOT-${slotNum}`,
+                monogram: 'MAS',
+                name: 'TEAM NAME',
+                game: 'GAME NAME',
+                division: 'DIVISION',
+                format: 'TBD',
+                athletes: 'TBD',
+                image: null,
+                logo: null,
+                accolade: 'National Squad',
+                status: 'UNASSIGNED',
+                desc: 'National team profile pending federation registration.',
+                isPlaceholder: true,
+            };
+        });
+
+        return [...realSquads, ...placeholderSquads];
     }, [adminNationalTeams]);
 
     const handlePrevSquad = () => { // action
@@ -1223,8 +1236,25 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                                 {/* subtle ambient backlight */}
                                                 <div className="absolute w-36 h-36 bg-amber-400/[0.06] rounded-full blur-2xl pointer-events-none" />
 
-                                                {/* team lineup silhouette frame */}
+                                                {/* team lineup silhouette frame or official logo */}
                                                 <div className="relative w-full max-w-[280px] sm:max-w-[320px] h-36 sm:h-44 md:h-48 rounded-2xl bg-white/[0.02] border border-white/[0.08] backdrop-blur-md flex items-center justify-center p-4 shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]">
+                                                    {squad.logo ? (
+                                                        <img
+                                                            src={squad.logo}
+                                                            alt={squad.name}
+                                                            onError={(e) => { // error
+                                                                e.currentTarget.style.display = 'none';
+                                                                if (e.currentTarget.nextSibling) {
+                                                                    e.currentTarget.nextSibling.style.display = 'flex';
+                                                                }
+                                                            }}
+                                                            className="h-24 w-24 sm:h-28 sm:w-28 object-contain filter drop-shadow-[0_8px_20px_rgba(0,0,0,0.7)]"
+                                                        />
+                                                    ) : null}
+                                                    <div
+                                                        className="w-full h-full flex items-center justify-center"
+                                                        style={{ display: squad.logo ? 'none' : 'flex' }}
+                                                    >
                                                     <svg
                                                         viewBox="0 0 160 100"
                                                         className="w-full h-full max-h-36 drop-shadow-[0_6px_16px_rgba(0,0,0,0.7)]"
@@ -1266,21 +1296,35 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                                         <circle cx="80" cy="34" r="14" fill="url(#centerPlayerGrad)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
                                                         <path d="M56 84 C56 65 68 57 80 57 C92 57 104 65 104 84 Z" fill="url(#centerPlayerGrad)" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
                                                     </svg>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {/* poster bottom: game discipline & name placeholder */}
-                                        <div className="relative z-10 space-y-1 text-left">
-                                            <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400">
-                                                {squad.game}
-                                            </span>
-                                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight">
-                                                {squad.name}
-                                            </h3>
-                                            <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide">
-                                                {squad.division}
-                                            </p>
+                                        {/* poster bottom: game discipline & name with details action */}
+                                        <div className="relative z-10 space-y-1 text-left flex items-end justify-between gap-3">
+                                            <div className="min-w-0 flex-1">
+                                                <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400 block truncate">
+                                                    {squad.game}
+                                                </span>
+                                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight truncate">
+                                                    {squad.name}
+                                                </h3>
+                                                <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide truncate">
+                                                    {squad.division}
+                                                </p>
+                                            </div>
+
+                                            {squad.slug && isCenter && (
+                                                <Link
+                                                    href={`/teams/${squad.slug}`} // redirect
+                                                    onClick={(e) => e.stopPropagation()}
+                                                    className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs tracking-wider uppercase transition-all shrink-0 cursor-pointer shadow-lg flex items-center gap-1.5"
+                                                >
+                                                    <span>Details</span>
+                                                    <ArrowRight className="w-3.5 h-3.5 text-black" />
+                                                </Link>
+                                            )}
                                         </div>
                                     </div>
                                 );

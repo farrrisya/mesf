@@ -348,7 +348,7 @@ export default function Create({ categories = DEFAULT_CATEGORIES }) {
                                                 <UploadCloud className="w-6 h-6" />
                                             </div>
                                             <p className="text-xs font-semibold text-slate-200">Select Featured Cover Image</p>
-                                            <p className="text-[11px] text-slate-500 mt-0.5 mb-4">PNG, JPG, WEBP up to 10MB (16:9 recommended)</p>
+                                            <p className="text-[11px] text-slate-500 mt-0.5 mb-4">PNG, JPG, WEBP up to 10MB · Recommended: 1600 × 900 px (16:9 landscape)</p>
                                             <div className="flex items-center gap-2.5 w-full max-w-sm">
                                                 <button
                                                     type="button"

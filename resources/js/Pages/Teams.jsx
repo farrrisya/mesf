@@ -748,8 +748,9 @@ function StateAffiliateCard({ state, onQuickPreview }) {
 
 // Subcomponent: National Team Card (Modern layout with Member and Since boxes)
 function NationalTeamCard({ team }) {
+    const teamSlug = team.slug || team.id;
     return (
-        <div className="rounded-2xl bg-[#090E1A]/80 border border-white/10 p-5 sm:p-6 flex flex-col justify-between shadow-lg text-left space-y-5">
+        <div className="rounded-2xl bg-[#090E1A]/80 border border-white/10 hover:border-white/20 p-5 sm:p-6 flex flex-col justify-between shadow-lg text-left space-y-5 transition-all">
             {/* top row: tag & status */}
             <div className="flex items-center justify-between text-xs">
                 <span className="px-2 py-0.5 rounded bg-[#060913] border border-white/10 font-mono text-[10px] font-bold text-amber-300 tracking-wider">
@@ -762,8 +763,11 @@ function NationalTeamCard({ team }) {
             </div>
 
             {/* center: crest & name */}
-            <div className="flex flex-col items-center text-center space-y-3 pt-1">
-                <div className="w-16 h-16 rounded-2xl bg-[#060913] border border-white/10 p-2.5 flex items-center justify-center shrink-0 shadow-inner">
+            <Link
+                href={`/teams/${teamSlug}`} // redirect
+                className="flex flex-col items-center text-center space-y-3 pt-1 group cursor-pointer"
+            >
+                <div className="w-16 h-16 rounded-2xl bg-[#060913] border border-white/10 p-2.5 flex items-center justify-center shrink-0 shadow-inner group-hover:border-amber-400/40 transition-colors">
                     {team.logo ? (
                         <img
                             src={team.logo}
@@ -788,10 +792,15 @@ function NationalTeamCard({ team }) {
                     </div>
                 </div>
 
-                <h3 className="font-bold text-base text-white tracking-tight truncate w-full">
-                    {team.name}
-                </h3>
-            </div>
+                <div className="space-y-0.5 w-full">
+                    <h3 className="font-bold text-base text-white tracking-tight truncate w-full group-hover:text-amber-400 transition-colors">
+                        {team.name}
+                    </h3>
+                    <p className="text-xs text-neutral-400 font-medium truncate">
+                        {team.game || team.region || 'National Representation'}
+                    </p>
+                </div>
+            </Link>
 
             {/* bottom: member and since boxes */}
             <div className="grid grid-cols-2 gap-2.5 pt-3 border-t border-white/[0.08] text-xs">
@@ -814,6 +823,17 @@ function NationalTeamCard({ team }) {
                         {team.since || '2024'}
                     </span>
                 </div>
+            </div>
+
+            {/* action: direct link to details page */}
+            <div className="pt-1">
+                <Link
+                    href={`/teams/${teamSlug}`} // redirect
+                    className="w-full py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-xs font-semibold text-neutral-200 hover:text-white transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                    <span>View Details</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-neutral-400" />
+                </Link>
             </div>
         </div>
     );

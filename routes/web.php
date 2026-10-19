@@ -174,6 +174,8 @@ Route::get('/', function () {
                 'team_pic' => $t->team_pic_path ? \Illuminate\Support\Facades\Storage::url($t->team_pic_path) : null,
                 'manager' => $t->manager_name,
                 'motto' => $t->motto,
+                'roster_size' => $t->roster_size ?: 5,
+                'since' => $t->created_at ? $t->created_at->format('Y') : '2024',
             ];
         });
 
