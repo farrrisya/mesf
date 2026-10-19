@@ -1197,7 +1197,11 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                     <div
                                         key={squad.id}
                                         onClick={() => { // state
-                                            if (!isCenter) setSquadIndex(idx);
+                                            if (!isCenter) {
+                                                setSquadIndex(idx);
+                                            } else if (squad.slug) {
+                                                router.visit(`/teams/${squad.slug}`);
+                                            }
                                         }}
                                         style={{
                                             transform: `translate(calc(-50% + ${offset * 72}%), -50%) scale(${scale})`,
@@ -1207,7 +1211,9 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                         }}
                                         className={`absolute top-1/2 left-1/2 w-[280px] sm:w-[340px] md:w-[380px] lg:w-[400px] aspect-[4/5] rounded-2xl sm:rounded-3xl border transition-all duration-500 ease-out overflow-hidden flex flex-col justify-between p-6 sm:p-8 ${
                                             isCenter
-                                                ? 'border-white/20 bg-gradient-to-b from-[#0F172A] via-[#090E1A] to-[#050811] shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(251,191,36,0.08)] cursor-default'
+                                                ? `border-white/20 bg-gradient-to-b from-[#0F172A] via-[#090E1A] to-[#050811] shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_35px_rgba(251,191,36,0.08)] ${
+                                                    squad.slug ? 'cursor-pointer hover:border-amber-400/50 hover:ring-1 hover:ring-amber-400/35 transition-all' : 'cursor-default'
+                                                  }`
                                                 : 'border-white/10 bg-[#080D18]/95 backdrop-blur-md shadow-[0_15px_35px_rgba(0,0,0,0.7)] cursor-pointer hover:border-white/25'
                                         }`}
                                     >
@@ -1301,30 +1307,17 @@ export default function Welcome({ latestByCategory = {}, latestUpdates = [], all
                                             </div>
                                         </div>
 
-                                        {/* poster bottom: game discipline & name with details action */}
-                                        <div className="relative z-10 space-y-1 text-left flex items-end justify-between gap-3">
-                                            <div className="min-w-0 flex-1">
-                                                <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400 block truncate">
-                                                    {squad.game}
-                                                </span>
-                                                <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight truncate">
-                                                    {squad.name}
-                                                </h3>
-                                                <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide truncate">
-                                                    {squad.division}
-                                                </p>
-                                            </div>
-
-                                            {squad.slug && isCenter && (
-                                                <Link
-                                                    href={`/teams/${squad.slug}`} // redirect
-                                                    onClick={(e) => e.stopPropagation()}
-                                                    className="px-3.5 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-black font-extrabold text-xs tracking-wider uppercase transition-all shrink-0 cursor-pointer shadow-lg flex items-center gap-1.5"
-                                                >
-                                                    <span>Details</span>
-                                                    <ArrowRight className="w-3.5 h-3.5 text-black" />
-                                                </Link>
-                                            )}
+                                        {/* poster bottom: game discipline & name */}
+                                        <div className="relative z-10 space-y-1 text-left">
+                                            <span className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase text-amber-400 block truncate">
+                                                {squad.game}
+                                            </span>
+                                            <h3 className="text-2xl sm:text-3xl md:text-4xl font-black text-white uppercase tracking-tight truncate">
+                                                {squad.name}
+                                            </h3>
+                                            <p className="text-xs sm:text-sm text-neutral-400 font-medium tracking-wide truncate">
+                                                {squad.division}
+                                            </p>
                                         </div>
                                     </div>
                                 );

@@ -320,18 +320,17 @@ export default function Teams({ uploadedTeams = [] }) {
                 </div>
             </section>
 
-            {/* 2. clean, simple, premium yellow theme counter box with register team button on the right */}
+            {/* 2. clean, unified counter & action grid with matching styles and sizes */}
             <section className="relative z-20 w-full max-w-5xl mx-auto px-4 sm:px-6 -mt-8 sm:-mt-10">
-                <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-[#0B1220]/95 border border-amber-400/30 shadow-[0_15px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl">
-                    {/* left side: total number counters */}
-                    <div className="grid grid-cols-2 gap-3 sm:gap-4 flex-1">
-                        {/* card 1: national teams (yellow/amber highlight) */}
+                <div className="p-4 sm:p-5 rounded-2xl bg-[#0B1220]/95 border border-amber-400/30 shadow-[0_15px_40px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
+                        {/* card 1: national teams */}
                         <div className="flex items-center gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl bg-amber-400/[0.08] border border-amber-400/30 text-left">
                             <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center shrink-0">
                                 <Trophy className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
                             </div>
                             <div className="min-w-0">
-                                <div className="text-2xl sm:text-4xl font-black font-mono text-amber-400 tracking-tight leading-none">
+                                <div className="text-2xl sm:text-3xl font-black font-mono text-amber-400 tracking-tight leading-none">
                                     {nationalTeams.length}
                                 </div>
                                 <div className="text-[11px] sm:text-xs font-mono uppercase tracking-wider text-neutral-200 font-bold mt-1.5 truncate">
@@ -346,7 +345,7 @@ export default function Teams({ uploadedTeams = [] }) {
                                 <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-neutral-300" />
                             </div>
                             <div className="min-w-0">
-                                <div className="text-2xl sm:text-4xl font-black font-mono text-white tracking-tight leading-none">
+                                <div className="text-2xl sm:text-3xl font-black font-mono text-white tracking-tight leading-none">
                                     {allStateAffiliates.length}
                                 </div>
                                 <div className="text-[11px] sm:text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold mt-1.5 truncate">
@@ -354,17 +353,28 @@ export default function Teams({ uploadedTeams = [] }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* right side: register team action button */}
-                    <div className="lg:pl-2 shrink-0 flex items-center">
+                        {/* card 3: register team (exact same size & style as the total number boxes) */}
                         <Link
-                            href="/register-team"
-                            className="w-full lg:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-black font-extrabold text-xs sm:text-sm uppercase tracking-wider shadow-[0_4px_20px_rgba(251,191,36,0.3)] transition-all cursor-pointer whitespace-nowrap"
+                            href="/register-team" // redirect
+                            className="group flex items-center justify-between gap-3 p-3.5 sm:p-4 rounded-xl bg-amber-400/[0.08] hover:bg-amber-400/[0.16] border border-amber-400/30 hover:border-amber-400/60 text-left transition-all cursor-pointer shadow-sm hover:shadow-[0_0_20px_rgba(251,191,36,0.15)]"
                         >
-                            <Users className="w-4 h-4 text-black shrink-0" />
-                            <span>Register Team</span>
-                            <ArrowRight className="w-4 h-4 text-black shrink-0" />
+                            <div className="flex items-center gap-3.5 sm:gap-4 min-w-0">
+                                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-amber-400/15 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                    <Users className="w-5 h-5 sm:w-6 sm:h-6 text-amber-400" />
+                                </div>
+                                <div className="min-w-0">
+                                    <div className="text-sm sm:text-base font-extrabold uppercase tracking-tight text-white group-hover:text-amber-300 leading-snug truncate">
+                                        Register Team
+                                    </div>
+                                    <div className="text-[10px] sm:text-[11px] font-mono uppercase tracking-wider text-amber-400 font-semibold mt-1 truncate flex items-center gap-1">
+                                        <span>Join Directory</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="w-8 h-8 rounded-lg bg-amber-400/15 border border-amber-400/30 flex items-center justify-center text-amber-400 group-hover:bg-amber-400 group-hover:text-black transition-all shrink-0">
+                                <ArrowRight className="w-4 h-4" />
+                            </div>
                         </Link>
                     </div>
                 </div>
@@ -675,10 +685,10 @@ export default function Teams({ uploadedTeams = [] }) {
     );
 }
 
-// Subcomponent: State Affiliate Card (Displayed differently: modern, spacious horizontal format)
+// Subcomponent: State Affiliate Card (Matches National Team Card hover aesthetics)
 function StateAffiliateCard({ state, onQuickPreview }) {
     return (
-        <div className="rounded-2xl bg-[#090E1A]/80 border border-white/10 p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left shadow-lg">
+        <div className="group rounded-2xl bg-[#090E1A]/80 border border-white/10 hover:border-amber-400/40 hover:bg-[#0c1222] p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left shadow-lg transition-all">
             {/* left block: crest + identity */}
             <div className="flex items-start sm:items-center gap-4 min-w-0 flex-1">
                 {/* crest placeholder or uploaded logo */}
