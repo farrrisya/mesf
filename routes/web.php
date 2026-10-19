@@ -2,9 +2,6 @@
 
 // --1. imports--
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\NoticeController;
-use App\Http\Controllers\Admin\GalleryController;
-use App\Http\Controllers\Admin\AlbumController;
 use App\Http\Controllers\Admin\SliderController;
 use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\UserManagementController;
@@ -21,7 +18,6 @@ use App\Http\Controllers\Admin\MatchController as AdminMatchController;
 use App\Http\Controllers\Admin\MediaController as AdminMediaController;
 use App\Http\Controllers\TeamRegistrationController;
 use App\Http\Controllers\PublicNewsController;
-use App\Models\Gallery;
 use App\Models\League;
 use App\Models\Team;
 use App\Models\EsportMatch;
@@ -872,76 +868,7 @@ Route::get('/teams/{slug}', function ($slug) {
     ]);
 })->name('teams.show');
 
-Route::get('/dokumen', function () {
-    return redirect()->route('home'); // redirect
-})->name('dokumen');
 
-Route::get('/profil', function () {
-    return Inertia::render('Public/Profil');
-})->name('profil');
-
-Route::get('/galeri', function () {
-    return Inertia::render('Public/Galeri', [ // screen
-        'galleries' => \App\Models\Gallery::whereNull('album_id')->orderBy('created_at', 'desc')->get(), // state
-        'albums' => \App\Models\Album::with(['latestGallery', 'galleries'])->withCount('galleries')->orderBy('created_at', 'desc')->get(), // state
-        'activeType' => request('type', 'gambar'), // state
-    ]);
-})->name('galeri');
-
-Route::get('/galeri/album/{album}', function (\App\Models\Album $album) {
-    $album->load(['galleries' => function($query) {
-        $query->orderBy('created_at', 'desc');
-    }]);
-
-    $otherAlbums = \App\Models\Album::where('id', '!=', $album->id)
-        ->with('latestGallery')
-        ->orderBy('created_at', 'desc')
-        ->limit(3)
-        ->get();
-
-    return Inertia::render('Public/AlbumShow', [ // screen
-        'album' => $album,
-        'otherAlbums' => $otherAlbums
-    ]);
-})->name('galeri.album');
-
-Route::get('/galeri/{gallery}', function (\App\Models\Gallery $gallery) {
-    $otherGalleries = \App\Models\Gallery::where('id', '!=', $gallery->id)
-        ->whereNull('album_id')
-        ->orderBy('created_at', 'desc')
-        ->limit(3)
-        ->get();
-
-    return Inertia::render('Public/GalleryShow', [
-        'galleryItem' => $gallery,
-        'otherGalleries' => $otherGalleries
-    ]);
-})->name('galeri.show');
-
-Route::get('/hubungi-kami', function () {
-    return Inertia::render('Public/HubungiKami', [ // screen
-        'settings' => \App\Models\Setting::all()->pluck('value', 'key') // state
-    ]);
-})->name('hubungi-kami');
-
-Route::get('/keanggotaan', function () {
-    return Inertia::render('Public/Keanggotaan');
-})->name('keanggotaan');
-
-Route::get('/penerbitan', function () {
-    return Inertia::render('Public/Penerbitan', [ // screen
-        'buletinKontemporari' => \App\Models\Penerbitan::where('is_active', true)->where('category', 'buletin')->where('sub_category', 'kontemporari')->orderBy('created_at', 'desc')->get(), // state
-        'laporanTahunan' => \App\Models\Penerbitan::where('is_active', true)->where('category', 'laporan')->orderBy('created_at', 'desc')->get() // state
-    ]);
-})->name('public.penerbitan');
-
-Route::get('/hebahan', [NoticeController::class, 'publicIndex'])->name('public.notices'); // redirect
-Route::get('/notices/{notice}', [NoticeController::class, 'show'])->name('notices.show'); // redirect
-Route::get('/penerbitan/{penerbitan}', function (\App\Models\Penerbitan $penerbitan) {
-    return Inertia::render('Public/PenerbitanShow', [
-        'penerbitan' => $penerbitan
-    ]);
-})->name('penerbitan.show');
 
 Route::get('/get-involved', function () {
     return Inertia::render('Public/GetInvolved'); // screen
@@ -1065,8 +992,7 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::get('/library/items', [AdminMediaController::class, 'getItems'])->name('library.items'); // screen
     });
 
-    // Redirect legacy documents route
-    Route::redirect('/documents', '/admin/news'); // redirect
+
 
     // Inquiries management (Secretariat, Admin)
     Route::middleware('role:secretariat,admin')->group(function () { // check

@@ -56,11 +56,7 @@ trait LogsActivity
         $className = class_basename(get_class($model));
 
         $names = [
-            'Notice' => 'News Article',
-            'Penerbitan' => 'Publication',
-            'Document' => 'Official Document',
-            'Gallery' => 'Gallery',
-            'Album' => 'Photo Album',
+            'News' => 'News Article',
             'Slider' => 'Banner Slider',
             'Setting' => 'System Setting',
             'User' => 'Staff User',

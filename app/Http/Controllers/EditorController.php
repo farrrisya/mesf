@@ -3,9 +3,8 @@
 // --1. imports--
 namespace App\Http\Controllers;
 
-use App\Models\Album;
 use App\Models\News;
-use App\Models\Notice;
+use App\Models\League;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,7 +19,7 @@ class EditorController extends Controller
         return Inertia::render('Editor/Dashboard', [ // screen
             'stats' => [
                 'newsCount' => News::count(), // state
-                'albumsCount' => Album::count(), // state
+                'leaguesCount' => League::count(), // state
             ]
         ]);
     }

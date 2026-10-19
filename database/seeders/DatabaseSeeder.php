@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Notice;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -46,19 +45,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Seed Notices (MESF placeholder structure)
-        $notices = [
-            // Future MESF notices can be added here
-        ];
-
-        foreach ($notices as $notice) {
-            Notice::updateOrCreate(
-                ['title' => $notice['title']],
-                $notice
-            );
-        }
-
-        // 3. Seed State Affiliates
+        // 2. Seed State Affiliates
         $this->call(StateAffiliatesSeeder::class);
     }
 }
