@@ -44,11 +44,6 @@ class MemberManagementController extends Controller
             $query->where('state_region', $request->state);
         }
 
-        // primary game filter
-        if ($request->filled('game') && $request->game !== 'ALL') { // check
-            $query->where('primary_game', $request->game);
-        }
-
         // status filter
         if ($request->filled('status') && $request->status !== 'ALL') { // check
             $isActive = $request->status === 'active';
@@ -68,7 +63,6 @@ class MemberManagementController extends Controller
                 'name' => $member->name,
                 'email' => $member->email,
                 'gamer_tag' => $member->gamer_tag ?: $member->name,
-                'primary_game' => $member->primary_game ?: 'Mobile Legends: Bang Bang (MLBB)',
                 'state_region' => $member->state_region ?: 'Selangor',
                 'phone_number' => $member->phone_number ?: '—',
                 'game_ids' => $member->game_ids ?: ['mlbb' => '', 'pubg' => '', 'valorant' => ''],
@@ -79,38 +73,21 @@ class MemberManagementController extends Controller
             ];
         });
 
-        // calculate stats
+        // clean summary stats
         $totalMembers = User::where('role', 'member')->count(); // count
         $activeMembers = User::where('role', 'member')->where('is_active', true)->count(); // count
-
-        $topGame = User::where('role', 'member')
-            ->whereNotNull('primary_game')
-            ->selectRaw('primary_game, count(*) as count')
-            ->groupBy('primary_game')
-            ->orderByDesc('count')
-            ->first(); // check
-
-        $topState = User::where('role', 'member')
-            ->whereNotNull('state_region')
-            ->selectRaw('state_region, count(*) as count')
-            ->groupBy('state_region')
-            ->orderByDesc('count')
-            ->first(); // check
 
         return Inertia::render('Admin/Members/Index', [ // screen
             'members' => $members,
             'filters' => [
                 'search' => $request->input('search', ''),
                 'state' => $request->input('state', 'ALL'),
-                'game' => $request->input('game', 'ALL'),
                 'status' => $request->input('status', 'ALL'),
             ],
             'stats' => [
                 'total' => $totalMembers,
                 'active' => $activeMembers,
                 'inactive' => $totalMembers - $activeMembers,
-                'top_game' => $topGame ? $topGame->primary_game : 'MLBB',
-                'top_state' => $topState ? $topState->state_region : 'Selangor',
             ]
         ]);
     }
@@ -170,11 +147,26 @@ class MemberManagementController extends Controller
             'primary_game' => 'nullable|string|max:100',
             'state_region' => 'nullable|string|max:100',
             'phone_number' => 'nullable|string|max:50',
+            'password' => 'nullable|string|min:6',
             'is_active' => 'required|boolean',
             'game_ids' => 'nullable|array',
         ]);
 
-        $user->update($validated); // save
+        $updateData = [
+            'name' => $validated['name'],
+            'gamer_tag' => !empty($validated['gamer_tag']) ? $validated['gamer_tag'] : $validated['name'],
+            'primary_game' => $validated['primary_game'] ?? null,
+            'state_region' => $validated['state_region'] ?? null,
+            'phone_number' => $validated['phone_number'] ?? null,
+            'is_active' => $validated['is_active'],
+            'game_ids' => $validated['game_ids'] ?? null,
+        ];
+
+        if (!empty($validated['password'])) {
+            $updateData['password'] = bcrypt($validated['password']);
+        }
+
+        $user->update($updateData); // save
 
         ActivityLog::create([ // log
             'user_id' => Auth::id(),
@@ -184,6 +176,32 @@ class MemberManagementController extends Controller
         ]);
 
         return redirect()->back()->with('saved', 'Member profile updated successfully.'); // redirect
+    }
+
+    /**
+     * Reset member password directly by admin.
+     */
+    public function resetPassword(Request $request, User $user): RedirectResponse
+    {
+        if ($user->role !== 'member') { // check
+            abort(403, 'Unauthorized.');
+        }
+
+        $validated = $request->validate([
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user->password = bcrypt($validated['password']);
+        $user->save();
+
+        ActivityLog::create([
+            'user_id' => Auth::id(),
+            'action' => 'password_reset',
+            'description' => "Reset password for member: {$user->name} (" . ($user->gamer_tag ?: $user->email) . ")",
+            'ip_address' => $request->ip(),
+        ]);
+
+        return redirect()->back()->with('saved', "Password for {$user->name} has been successfully updated.");
     }
 
     /**

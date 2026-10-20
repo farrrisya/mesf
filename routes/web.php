@@ -944,9 +944,7 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
     });
 
     Route::middleware('role:admin')->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('Admin/Dashboard'); // screen
-        })->name('dashboard');
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
     });
 
     // Content management (Admin, Editor)
@@ -1008,6 +1006,7 @@ Route::middleware(['auth', 'verified', 'role:admin,editor,secretariat'])->prefix
         Route::post('/members', [MemberManagementController::class, 'store'])->name('members.store'); // save
         Route::put('/members/{user}', [MemberManagementController::class, 'update'])->name('members.update'); // save
         Route::patch('/members/{user}', [MemberManagementController::class, 'update'])->name('members.patch'); // save
+        Route::post('/members/{user}/reset-password', [MemberManagementController::class, 'resetPassword'])->name('members.reset-password'); // save
         Route::post('/members/{user}/toggle-status', [MemberManagementController::class, 'toggleStatus'])->name('members.toggle-status'); // toggle
         Route::delete('/members/{user}', [MemberManagementController::class, 'destroy'])->name('members.destroy'); // save
     });
@@ -1059,4 +1058,6 @@ Route::middleware(['auth', 'verified', 'role:secretariat,admin'])->prefix('secre
 });
 
 require __DIR__.'/auth.php';
+
+
 
